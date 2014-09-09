@@ -18,7 +18,7 @@ function [svolpulse, spulse, spulse_per_vol, verbose] = tapas_physio_get_onsets_
 %           .Nprep          - number of non-dummy, volume like preparation pulses
 %                             before 1st dummy scan. If set, logfile is read from beginning,
 %                             otherwise volumes are counted from last detected volume in the logfile
-%           .TimeSliceToSlice - time between the acquisition of 2 subsequent
+%           .time_slice_to_slice - time between the acquisition of 2 subsequent
 %                             slices; typically TR/Nslices or
 %                             minTR/Nslices, if minimal temporal slice
 %                             spacing was chosen
@@ -45,7 +45,7 @@ function [svolpulse, spulse, spulse_per_vol, verbose] = tapas_physio_get_onsets_
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_onsets_from_locs.m 354 2013-12-02 22:21:41Z kasperla $
+% $Id: tapas_physio_get_onsets_from_locs.m 466 2014-04-27 13:10:48Z kasperla $
 
 Nscans          = sqpar.Nscans;
 Ndummies        = sqpar.Ndummies;

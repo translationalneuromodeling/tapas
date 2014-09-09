@@ -35,12 +35,12 @@ function physio = tapas_physio_new(default_scheme, physio_in)
 % Created: 2013-04-23
 % Copyright (C) 2013 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.
 %
-% This file is part of the TNU CheckPhysRETROICOR toolbox, which is released under the terms of the GNU General Public
+% This file is part of the TAPAS PhysIO Toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_new.m 423 2014-02-15 14:22:53Z kasperla $
+% $Id: tapas_physio_new.m 488 2014-05-03 09:52:49Z kasperla $
 
 % if not specified differently, create everything empty
 if ~nargin
@@ -50,132 +50,93 @@ end
 ons_secs = [];
 
 if nargin >= 2
+    save_dir = physio_in.save_dir;
     log_files   = physio_in.log_files;
     thresh  = physio_in.thresh;
     sqpar   = physio_in.sqpar;
     model   = physio_in.model;
     verbose = physio_in.verbose;
 else
-    
+    %% save_dir 
+    % directory where output model and figure-files are saved to
+    % leave empty to use current directory
+    save_dir = ''; 
     
     %% log_files
     % structure containing general physiological log-file information
-    log_files.vendor       = ''; % 'Philips', 'GE', ('Siemens') or 'Custom'
-    %                               'depending on your MR Scanner system
-                                 %
-                                 %  'Custom' expects the logfiles (separate files for cardiac and respiratory)
-                                 %  to be plain text, with one cardiac (or 
-                                 %  respiratory) sample per row; 
-                                 %  If heartbeat (R-wave peak) events are
-                                 %  recorded as well, they have to be put
-                                 %  as a 2nd column in the cardiac logfile
-                                 %  by specifying a 1; 0 in all other rows
-                                 %  e.g.:  
-                                 %      0.2  0
-                                 %      0.4  1 <- cardiac pulse event
-                                 %      0.2  0
-                                 %      -0.3 0
-                                 %
-                                 %
-                                 %  NOTE: the sampling interval has to be
-                                 %  specified for these files as well
-                                 %  (s.b.)
+    
+    % vendor name           'Philips', 'GE', ('Siemens') or 'Custom'
+    %                       'depending on your MR Scanner system
+    %
+    %  'Custom' expects the logfiles (separate files for cardiac and respiratory)
+    %  to be plain text, with one cardiac (or
+    %  respiratory) sample per row;
+    %  If heartbeat (R-wave peak) events are
+    %  recorded as well, they have to be put
+    %  as a 2nd column in the cardiac logfile
+    %  by specifying a 1; 0 in all other rows
+    %  e.g.:
+    %      0.2  0
+    %      0.4  1 <- cardiac pulse event
+    %      0.2  0
+    %      -0.3 0
+    %
+    %
+    % NOTE: the sampling interval has to be specified for these files as 
+    % well (s.b.)
+    log_files.vendor       = '';
                                 
     log_files.cardiac      = ''; % 'SCANPHYSLOG.log'; logfile with cardiac data
-    log_files.respiration  = ''; % 'SCANPHYSLOG.log'; logfile with respiratory data
-    %                    (same as .cardiac for Philips)
-    log_files.sampling_interval = 2e-3;   % in seconds, 2e-3 for Philips, variable for GE,
-    % e.g. 40e-3
-    log_files.startScanSeconds = 0; % time (in seconds) when the 1st scan
-                                    % (or, if existing, dummy) started,
-                                    % relative to the start of the logfile
-                                    % recording;
-                                    % e.g.  0 if simultaneous start
-                                    %       10, if 1st scan starts 10
-                                    %       seconds AFTER physiological
-                                    %       recording
-                                    %       -20, if first scan started 20
-                                    %       seconds BEFORE phys recording
-                                    % NOTE: For Philips SCANPHYSLOG, this
-                                    % parameter is ignored, if
-                                    % thresh.scan_timing is set
     
+    % ogfile with respiratory data, e.g. 'SCANPHYSLOG.log'; 
+    % (same as .cardiac for Philips)
+    log_files.respiration  = ''; 
+    
+    % sampling interval in seconds (i.e. time between two rows in logfile
+    % if empty, default value will be set: 2e-3 for Philips, variable for GE, e.g. 40e-3
+    log_files.sampling_interval = []; 
+    
+    % time (in seconds) when the 1st scan (or, if existing, dummy) started,
+    % relative to the start of the logfile recording; 
+    % e.g.  0 if simultaneous start
+    %       10, if 1st scan starts 10
+    %       seconds AFTER physiological
+    %       recording
+    %       -20, if first scan started 20
+    %       seconds BEFORE phys recording
+    % NOTE: For Philips SCANPHYSLOG, this parameter is ignored, if
+    %       thresh.scan_timing is set
+    log_files.relative_start_acquisition = 0;
     
     %% sqpar
+    
     sqpar.Nslices           = [];   % number of slices per volume in fMRI scan
     sqpar.NslicesPerBeat    = [];   % usually equals Nslices, unless you trigger with the heart beat
     sqpar.TR                = [];   % volume repetition time in seconds
     sqpar.Ndummies          = [];   % number of dummy volumes
-    sqpar.Nscans            = [];   % number of full volumes saved (volumes in nifti file,
+    
+    % number of full volumes saved (volumes in nifti file,
     % usually rows in your design matrix)
-    sqpar.Nprep             = [];   % set to >=0 to count scans and dummy
+    sqpar.Nscans            = [];   
+    
+    % set to >=0 to count scans and dummy
     % number of non-dummy, volume like preparation pulses
     % before 1st dummy scan. If set, logfile is read from beginning,
     % otherwise volumes are counted from last detected volume in the logfile
-    sqpar.TimeSliceToSlice  = [];   % time between the acquisition of 2 subsequent
+    sqpar.Nprep             = [];   
+    
+    % time between the acquisition of 2 subsequent
     % slices; typically TR/Nslices or minTR/Nslices,
     % if minimal temporal slice spacing was chosen
     % NOTE: only necessary, if thresh.grad_direction
     % is empty and nominal scan timing is used
-    sqpar.onset_slice       = 19;   % slice whose scan onset determines the adjustment of the
+    sqpar.time_slice_to_slice  = [];   
+    
+    % slice whose scan onset determines the adjustment of the
     % regressor timing to a particular slice for the whole volume
     % volumes from beginning of run, i.e. logfile,
-    % includes counting of preparation gradients
-    
-    
-    %% thresh
-    % determines thresholds used in preprocessing physiological logfiles,
-    % either their timing (thresh.scan_timing) or the peripheral measures
-    % itself (thresh.cardiac, thresh.respiration)
-    
-    % thresh.scan_timing.source = 'nominal', 'grad_x', 'grad_y', 'grad_z'
-    thresh.scan_timing = [];    % leave empty or set to 'nominal', if nominal scan timing,
-                                % derived from sqpar, shall be used
-    
-    thresh.scan_timing.grad_direction = ''; % 'x', 'y', or 'z';
-    % if set, sequence timing is calculated
-    % from logged gradient timecourse along
-    % this coordinate axis;
-    thresh.scan_timing.zero     = [];   % gradient values below this value are set to zero;
-    % should be those which are unrelated to slice acquisition start
-    thresh.scan_timing.slice    = [];   % minimum gradient amplitude to be exceeded when a slice scan starts
-    thresh.scan_timing.vol      = [];   % minimum gradient amplitude to be exceeded when a new
-    % volume scan starts;
-    % leave [], if volume events shall be determined as
-    % every Nslices-th scan event or via vol_spacing
-    thresh.vol_spacing          = [];   % duration (in seconds) from last slice acq to
-    % first slice of next volume;
-    % leave [], if .vol-threshold shall be used
-    
-    thresh.cardiac = [];
-    thresh.cardiac.modality = ''; % 'ECG','ECG_raw', or 'OXY'/'PPU' (for pulse oximetry), 'OXY_OLD', [deprecated]
-    
-    % The initial cardiac pulse selection structure: Determines how the
-    % majority of cardiac pulses is detected
-    thresh.cardiac.initial_cpulse_select.method = 'load_from_logfile'; % 'load_from_logfile', 'manual' (rather: threshold...autocorrelate?), 'load'
-    thresh.cardiac.initial_cpulse_select.file = ''; % file containing reference ECG-peak (variable kRpeak)
-    % used for method 'manual' or 'load' [default: not set] string of file containing a
-    % if method == 'manual', this file is saved after picking the QRS-wave
-    % such that results are reproducible
-    thresh.cardiac.initial_cpulse_select.min = [];  % threshold for correlation with QRS-wave to find cardiac pulses
-    thresh.cardiac.initial_cpulse_select.kRpeak = []; % variable saving an example cardiac QRS-wave to correlate with ECG time series
-    
-    % The posthoc cardiac pulse selection structure: If only few (<20)
-    % cardiac pulses are missing in a session due to bad signal quality, a
-    % manual selection after visual inspection is possible using the
-    % following parameters. The results are saved for reproducibility
-    thresh.cardiac.posthoc_cpulse_select.method = 'off'; % 'off', 'manual', 'load'
-    % 'off' - no manual selection of peaks
-    % 'manual' - pick and save additional peaks manually
-    % 'load' - load previously selected cardiac pulses
-    thresh.cardiac.posthoc_cpulse_select.file = '';  % filename where cardiac pulses are saved after manual picking
-    
-    % Suspicious positions of missing or too many cardiac pulses are
-    % pre-selected by detecting outliers in histogram of
-    % heart-beat-2-beat-intervals
-    thresh.cardiac.posthoc_cpulse_select.percentile = 80; % percentile of beat-2-beat interval histogram that constitutes the "average heart beat duration" in the session
-    thresh.cardiac.posthoc_cpulse_select.upperThresh = 60; % minimum exceedance (in %) from average heartbeat duration to be classified as missing heartbeat
-    thresh.cardiac.posthoc_cpulse_select.lowerThresh = 60; % minimum reduction (in %) from average heartbeat duration to be classified an abundant heartbeat
+    % includes counting of preparation gradients    
+    sqpar.onset_slice       = 19;  
     
     
     %% model
@@ -204,6 +165,77 @@ else
     %   'mult'            - only multiplicative regressors are orthogonalised
     %   'all'             - all physiological regressors are orthogonalised to each other
     model.R = [];                               % output design matrix of confound regressors, saved in 'multiple_regressors.mat'
+    
+    
+    %% thresh
+    % determines thresholds used in preprocessing physiological logfiles,
+    % either their timing (thresh.scan_timing) or the peripheral measures
+    % itself (thresh.cardiac, thresh.respiration)
+     
+    % Determination of session timing 
+    %'nominal' or 'gradient' 'gradient_log'
+    thresh.scan_timing.method = 'gradient_log'; 
+    thresh.scan_timing.grad_direction = ''; % 'x', 'y', or 'z';
+    
+    % if set, sequence timing is calculated
+    % from logged gradient timecourse along
+    % this coordinate axis;
+    
+    thresh.scan_timing.zero     = [];   % gradient values below this value are set to zero;
+    
+    % should be those which are unrelated to slice acquisition start
+    
+     % minimum gradient amplitude to be exceeded when a slice scan starts
+    thresh.scan_timing.slice    = [];  
+    
+    % minimum gradient amplitude to be exceeded when a new volume starts;
+    % leave [], if volume events shall be determined as
+    % every Nslices-th scan event or via vol_spacing
+    thresh.scan_timing.vol      = [];  
+    
+    
+    % duration (in seconds) from last slice acq to
+    % first slice of next volume;
+    % leave [], if .vol-threshold shall be used
+    thresh.scan_timing.vol_spacing          = [];   
+    
+    thresh.cardiac = [];
+    thresh.cardiac.modality = ''; % 'ECG','ECG_raw', or 'OXY'/'PPU' (for pulse oximetry), 'OXY_OLD', [deprecated]
+    
+    % The initial cardiac pulse selection structure: Determines how the
+    % majority of cardiac pulses is detected
+    % 'auto'    - auto generation of representative QRS-wave; detection via
+    %             maximising auto-correlation with it
+    % 'load_from_logfile' - from phys logfile, detected R-peaks of scanner 
+    % 'manual'  - via manually selected QRS-wave for autocoreelations
+    % 'load'    - from previous manual/auto run
+    thresh.cardiac.initial_cpulse_select.method = 'load_from_logfile'; 
+    thresh.cardiac.initial_cpulse_select.file = ''; % file containing reference ECG-peak (variable kRpeak)
+    % used for method 'manual' or 'load' [default: not set] string of file containing a
+    % if method == 'manual', this file is saved after picking the QRS-wave
+    % such that results are reproducible
+    thresh.cardiac.initial_cpulse_select.min = [];  % threshold for correlation with QRS-wave to find cardiac pulses
+    thresh.cardiac.initial_cpulse_select.kRpeak = []; % variable saving an example cardiac QRS-wave to correlate with ECG time series
+    
+    % The posthoc cardiac pulse selection structure: If only few (<20)
+    % cardiac pulses are missing in a session due to bad signal quality, a
+    % manual selection after visual inspection is possible using the
+    % following parameters. The results are saved for reproducibility
+    thresh.cardiac.posthoc_cpulse_select.method = 'off'; % 'off', 'manual', 'load'
+    % 'off' - no manual selection of peaks
+    % 'manual' - pick and save additional peaks manually
+    % 'load' - load previously selected cardiac pulses
+  
+    % filename where cardiac pulses are saved after manual picking
+      thresh.cardiac.posthoc_cpulse_select.file = '';  
+    % Suspicious positions of missing or too many cardiac pulses are
+    % pre-selected by detecting outliers in histogram of
+    % heart-beat-2-beat-intervals
+    thresh.cardiac.posthoc_cpulse_select.percentile = 80; % percentile of beat-2-beat interval histogram that constitutes the "average heart beat duration" in the session
+    thresh.cardiac.posthoc_cpulse_select.upper_thresh = 60; % minimum exceedance (in %) from average heartbeat duration to be classified as missing heartbeat
+    thresh.cardiac.posthoc_cpulse_select.lower_thresh = 60; % minimum reduction (in %) from average heartbeat duration to be classified an abundant heartbeat
+    
+    
     
     %% verbose
     % determines how many figures shall be generated to follow the workflow
@@ -242,6 +274,11 @@ else
     verbose.level = 1;
     verbose.fig_handles = [];     % collector of all generated figure handles during a run of tapas_physio_main_create_regressors
     verbose.fig_output_file = ''; % file name (including extension) where to print all physIO output figures to,
+    verbose.use_tabs = false;    % if true, plots are performed in tabs of SPM graphics window
+    %                                   TODO: implement via
+    %                               [handles] = spm_uitab(hparent,labels,callbacks,...
+    %                                           tag,active,height,tab_height)
+    %
     % e.g. 'PhysIO_output.ps' or 'PhysIO_output.jpg'
     % The specified extension determines how the
     % figures will be saved
@@ -298,9 +335,11 @@ switch default_scheme
 end
 
 %% assemble output
+
+physio.save_dir = save_dir;
 physio.log_files   = log_files;
-physio.thresh  = thresh;
 physio.sqpar   = sqpar;
 physio.model   = model;
+physio.thresh  = thresh;
 physio.verbose = verbose;
 physio.ons_secs = ons_secs;

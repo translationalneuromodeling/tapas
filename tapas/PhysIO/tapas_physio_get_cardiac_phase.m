@@ -14,7 +14,7 @@ function [cardiac_phase, fh] = tapas_physio_get_cardiac_phase(pulset,scannert, v
 %        cardiac_phase - phase in heart-cycle when each slice of each
 %        volume was acquired
 %        fh         - figure handle
-% 
+%
 % The regressors are calculated as described in
 % Glover et al, 2000, MRM, (44) 162-167
 % Josephs et al, 1997, ISMRM, p1682
@@ -30,7 +30,7 @@ function [cardiac_phase, fh] = tapas_physio_get_cardiac_phase(pulset,scannert, v
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_phase.m 354 2013-12-02 22:21:41Z kasperla $
+% $Id: tapas_physio_get_cardiac_phase.m 489 2014-05-03 12:22:54Z kasperla $
 %
 
 
@@ -42,23 +42,23 @@ end
 scannertpriorpulse = zeros(1,length(scannert));
 scannertafterpulse = scannertpriorpulse;
 for i=1:length(scannert)
-   n = find(pulset < scannert(i), 1, 'last');
-   if ~isempty(n) && (n+1)<=size(pulset,1)
-      scannertpriorpulse(i) = pulset(n);
-      scannertafterpulse(i) = pulset(n+1);
-   else
-      scannert(i)=NaN;
-      scannertafterpulse(i) = NaN;
-      scannertpriorpulse(i)= 0;
-   end
-end 
+    n = find(pulset < scannert(i), 1, 'last');
+    if ~isempty(n) && (n+1)<=size(pulset,1)
+        scannertpriorpulse(i) = pulset(n);
+        scannertafterpulse(i) = pulset(n+1);
+    else
+        scannert(i)=NaN;
+        scannertafterpulse(i) = NaN;
+        scannertpriorpulse(i)= 0;
+    end
+end
 
 % Calculate cardiac phase at each slice (from Glover et al, 2000).
 cardiac_phase=(2*pi*(scannert'-scannertpriorpulse)./(scannertafterpulse-scannertpriorpulse))';
 
 
 
-if verbose 
+if verbose
     % 1. plot chosen slice start event
     % 2. plot chosen c_sample phase on top of chosen slice scan start, (as a stem
     % and line of phases)
@@ -67,10 +67,10 @@ if verbose
     titstr = 'tapas_physio_get_cardiac_phase: scanner and R-wave pulses - output phase';
     fh = tapas_physio_get_default_fig_params();
     set(fh, 'Name', titstr);
-    stem(scannert, cardiac_phase, 'k'); hold on; 
+    stem(scannert, cardiac_phase, 'k'); hold on;
     plot(scannert, cardiac_phase, 'k');
-    stem(pulset,3*ones(size(pulset)),'r', 'LineWidth',2);    
-    stem(svolpulse,7*ones(size(svolpulse)),'g', 'LineWidth',2);    
+    stem(pulset,3*ones(size(pulset)),'r', 'LineWidth',2);
+    stem(svolpulse,7*ones(size(svolpulse)),'g', 'LineWidth',2);
     legend('estimated phase at slice events', ...
         '', ...
         'heart beat R-peak', ...
@@ -78,19 +78,29 @@ if verbose
     title(regexprep(titstr,'_', '\\_'));
     xlabel('t (seconds)');
     %stem(scannertpriorpulse,ones(size(scannertpriorpulse))*2,'g');
-    %stem(scannertafterpulse,ones(size(scannertafterpulse))*2,'b');    
+    %stem(scannertafterpulse,ones(size(scannertafterpulse))*2,'b');
 end
 
 
 
 %cardiac_phase=cardiac_phase((nslices*ndummies)+slicenum:nslices:end);
 n=find(isnan(cardiac_phase));
-if ~isempty(n)
-    warningmsg=sprintf('Zero-padding for non-existent pulse data in %d slice(s)',size(n,1));
+
+if ~isempty(n) % probably no heartbeat after last scan found
     Nvol = length(svolpulse);
     Nsli = length(scannert)/Nvol;
-    warningmsg=sprintf('%s\nFirst occurence: Volume %d, slice %d',warningmsg, ceil(n(1)/Nsli), Nsli - mod(Nsli - n(1),Nsli));
-    warningmsg=sprintf('%s\nNOTE: This is only detrimental, if sqpar.onset_slice is greater or equal %d',warningmsg, Nsli - mod(Nsli - n(1),Nsli));
-    warningmsg=sprintf('%s\n      and if this occurs in a volume before your last volume of interest %d.\n', warningmsg, Nvol);
-    warning(warningmsg);
+    
+    iVolPhaseNaN = ceil(n/Nsli);
+    
+    [iVolExamples, iVolinN] = unique(iVolPhaseNaN'); % show only first occurence
+    
+    if min(iVolExamples) < Nvol
+        warning('Zero-padding for non-existent pulse data in %d slice(s)',size(n,1));
+        
+        for iVol = setdiff(iVolExamples, Nvol)
+            iSli = Nsli - mod(Nsli - n(iVolinN(iVol)),Nsli);
+            fprintf('Volume %d, first occurence in slice %d\n', iVol, iSli);  
+        end
+        fprintf('NOTE: cardiac phase regressors might be mis-estimated for these volumes\n');
+    end
 end

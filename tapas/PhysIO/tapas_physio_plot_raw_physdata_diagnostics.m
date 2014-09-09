@@ -1,4 +1,5 @@
-function fh = tapas_physio_plot_raw_physdata_diagnostics(cpulse, yResp, thresh_cardiac)
+function fh = tapas_physio_plot_raw_physdata_diagnostics(cpulse, yResp, thresh_cardiac, ...
+    isVerbose)
 % plots diagnostics for raw physiological time series as monitoried by the
 % MR scanner breathing belt/ECG
 %
@@ -11,30 +12,42 @@ function fh = tapas_physio_plot_raw_physdata_diagnostics(cpulse, yResp, thresh_c
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_plot_raw_physdata_diagnostics.m 423 2014-02-15 14:22:53Z kasperla $
+% $Id: tapas_physio_plot_raw_physdata_diagnostics.m 496 2014-05-03 20:51:07Z kasperla $
 
 % cardiac analysis of heartbeat rates
 
 hasCardiacData = ~isempty(cpulse);
 hasRespData = ~isempty(yResp);
-fh = tapas_physio_get_default_fig_params();
-set(fh, 'Name','Diagnostics raw phys time series');
-ah = subplot(2,1,1);
+
+if isVerbose
+    fh = tapas_physio_get_default_fig_params();
+    set(fh, 'Name','Diagnostics raw phys time series');
+    ah = subplot(2,1,1);
+else 
+    fh = [];
+    ah = [];
+end
 
 if hasCardiacData
     percentile = thresh_cardiac.percentile;
-    upperThresh = thresh_cardiac.upperThresh;
-    lowerThresh = thresh_cardiac.lowerThresh;
-    [outliersHigh,outliersLow,fh] = tapas_physio_cardiac_detect_outliers(cpulse, percentile, upperThresh, lowerThresh, ah);
+    upperThresh = thresh_cardiac.upper_thresh;
+    lowerThresh = thresh_cardiac.lower_thresh;
+    [outliersHigh,outliersLow,fh] = tapas_physio_cardiac_detect_outliers(...
+        cpulse, percentile, upperThresh, lowerThresh, isVerbose, ah);
 end
 title( 'temporal lag between subsequent heartbeats (seconds)');
 
 % histogram of breathing amplitudes
-subplot(2,1,2);
+
+
 
 if hasRespData
     nBins = min(length(unique(yResp)), floor(length(yResp)/100));
-    hist(yResp, nBins);
+    
+    if isVerbose
+        subplot(2,1,2);
+        hist(yResp, nBins);
+    end
 end
 title('histogram of breathing belt amplitudes');
 end

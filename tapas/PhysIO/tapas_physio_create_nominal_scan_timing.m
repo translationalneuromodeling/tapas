@@ -23,7 +23,7 @@ function [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, sqpar)
 %           .Nprep          - number of non-dummy, volume like preparation pulses
 %                             before 1st dummy scan. If set, logfile is read from beginning,
 %                             otherwise volumes are counted from last detected volume in the logfile
-%           .TimeSliceToSlice - time between the acquisition of 2 subsequent
+%           .time_slice_to_slice - time between the acquisition of 2 subsequent
 %                             slices; typically TR/Nslices or
 %                             minTR/Nslices, if minimal temporal slice
 %                             spacing was chosen
@@ -49,7 +49,7 @@ function [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, sqpar)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_nominal_scan_timing.m 423 2014-02-15 14:22:53Z kasperla $
+% $Id: tapas_physio_create_nominal_scan_timing.m 466 2014-04-27 13:10:48Z kasperla $
 
 Nscans          = sqpar.Nscans;
 Ndummies        = sqpar.Ndummies;
@@ -61,8 +61,8 @@ LOCS = zeros(NallVols*Nslices,1);
 TR = sqpar.TR;
    
 
-if isempty(sqpar.TimeSliceToSlice) %default for equidistantly spaced slices
-    sqpar.TimeSliceToSlice = TR/Nslices;
+if isempty(sqpar.time_slice_to_slice) %default for equidistantly spaced slices
+    sqpar.time_slice_to_slice = TR/Nslices;
 end
 
 do_count_from_start = isfield(sqpar, 'Nprep') && ~isempty(sqpar.Nprep);
@@ -70,7 +70,7 @@ if do_count_from_start % t = 0 is assumed to be the start of the scan
     for n = 1:NallVols
         [tmp, VOLLOCS(n)] = min(abs(t - TR*(n-1)));
         for s = 1:Nslices
-            [tmp, LOCS((n-1)*Nslices + s)] = min(abs(t - (TR*(n-1)+sqpar.TimeSliceToSlice*(s-1))));
+            [tmp, LOCS((n-1)*Nslices + s)] = min(abs(t - (TR*(n-1)+sqpar.time_slice_to_slice*(s-1))));
         end
     end   
 else
@@ -78,7 +78,7 @@ else
     for n = 1:NallVols
         [tmp, VOLLOCS(NallVols-n+1)] = min(abs(t - (tRef-TR*n)));
         for s = 1:Nslices
-            [tmp, LOCS((NallVols - n)*Nslices + s)] = min(abs(t - (tRef-TR*n+sqpar.TimeSliceToSlice*(s-1))));
+            [tmp, LOCS((NallVols - n)*Nslices + s)] = min(abs(t - (tRef-TR*n+sqpar.time_slice_to_slice*(s-1))));
         end
     end
 end

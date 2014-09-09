@@ -36,7 +36,7 @@ function [cardiac_sess, respire_sess, mult_sess, ons_secs, verbose, ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_retroicor_regressors.m 427 2014-02-18 16:40:48Z kasperla $
+% $Id: tapas_physio_create_retroicor_regressors.m 494 2014-05-03 12:58:54Z kasperla $
 
 %% variable renaming
 if ~exist('verbose', 'var')
@@ -57,7 +57,7 @@ rsampint    = t(2)-t(1);
 %% Get phase, downsample and Fourier-expand
 sample_points   = tapas_physio_get_sample_points(ons_secs, sqpar);
 
-if order.c && hasCardiacData
+if (order.c || order.cr) && hasCardiacData
     if verbose.level >= 3
     [c_phase, verbose.fig_handles(end+1)]    = ...
         tapas_physio_get_cardiac_phase(cpulse, spulse, verbose.level, svolpulse);
@@ -71,7 +71,7 @@ else
     c_sample_phase = [];
 end
 
-if order.r && hasRespData
+if (order.r || order.cr) && hasRespData
     fr = ons_secs.fr; 
     
     if verbose.level >=3

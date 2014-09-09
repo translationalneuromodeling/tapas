@@ -1,5 +1,5 @@
-function [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(log_files, ...
-    thresh, sqpar, model, verbose)
+function [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(...
+    log_files, sqpar, model, thresh, verbose, save_dir)
 % RETROICOR - regressor creation based on Glover, G. MRM 44, 2000
 %
 % USAGE
@@ -7,8 +7,8 @@ function [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(log_fil
 %
 %   OR
 %
-% [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(log_files, ...
-%    thresh, sqpar, model, verbose)
+% [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(...
+%    log_files, sqpar, model, thresh, verbose, save_dir);
 %
 %------------------------------------------------------------------------
 % IN
@@ -31,7 +31,7 @@ function [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(log_fil
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_main_create_regressors.m 423 2014-02-15 14:22:53Z kasperla $
+% $Id: tapas_physio_main_create_regressors.m 496 2014-05-03 20:51:07Z kasperla $
 %
 
 
@@ -43,14 +43,33 @@ end
 
 if nargin == 1 % assuming sole PhysIO-object as input
     physio      = log_files; % first argument of function
-    log_files = physio.log_files;
-    thresh  = physio.thresh;
-    sqpar   = physio.sqpar;
-    model   = physio.model;
-    verbose = physio.verbose;
+else % assemble physio-structure
+    physio = tapas_physio_new();
+    physio.save_dir = save_dir;
+    physio.log_files = log_files;
+    physio.thresh  = thresh;
+    physio.sqpar   = sqpar;
+    physio.model   = model;
+    physio.verbose = verbose;
 end
 
+% fill up empty parameters
+physio = tapas_physio_fill_empty_parameters(physio);
 
+% replace cellstrings
+physio = tapas_physio_cell2char(physio);
+
+% prepend absolute directories - save_dir
+physio = tapas_physio_prepend_absolute_paths(physio);
+
+% set sub-structures for readability; NOTE: copy by value, physio-structure not
+% updated!
+save_dir = physio.save_dir;
+log_files = physio.log_files;
+thresh  = physio.thresh;
+sqpar   = physio.sqpar;
+model   = physio.model;
+verbose = physio.verbose;
 
 %% 1. Read in vendor-specific physiological log-files
 [ons_secs.c, ons_secs.r, ons_secs.t, ons_secs.cpulse] = ...
@@ -68,7 +87,7 @@ end
 % the latter is only necessary, if no patch is used and therefore no scan event
 % triggers are written into the last column of the scanphyslog-file
 useNominal = isempty(thresh.scan_timing) || ...
-    strcmpi(thresh.scan_timing, 'nominal');
+    strcmpi(thresh.scan_timing.method, 'nominal');
 if useNominal
     [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(ons_secs.t, sqpar);
 else
@@ -84,11 +103,12 @@ end
 % plot whether physdata is alright or events are missing (too low/high
 % heart rate? breathing amplitude overshoot?)
 if hasCardiacData
+    % thresh.cardiac.modality = 'OXY'; % 'ECG' or 'OXY' (for pulse oximetry)
     
     %% initial pulse select via load from logfile or autocorrelation with 1
     %% cardiac pulse
     switch thresh.cardiac.initial_cpulse_select.method
-        case {'manual', 'load'}
+        case {'manual', 'load', 'auto'}
             [ons_secs.cpulse, verbose] = tapas_physio_get_cardiac_pulses(ons_secs.t, ons_secs.c, ...
                 thresh.cardiac.initial_cpulse_select, thresh.cardiac.modality, [], verbose);
         case {'load_from_logfile', ''}
@@ -127,7 +147,11 @@ end
 
 if verbose.level >= 1
     verbose.fig_handles(end+1) = ...
-        tapas_physio_plot_raw_physdata_diagnostics(ons_secs.cpulse, ons_secs.r, thresh.cardiac.posthoc_cpulse_select);
+        tapas_physio_plot_raw_physdata_diagnostics(ons_secs.cpulse, ...
+        ons_secs.r, thresh.cardiac.posthoc_cpulse_select, verbose.level);
+else % without figure creation
+     tapas_physio_plot_raw_physdata_diagnostics(ons_secs.cpulse, ...
+        ons_secs.r, thresh.cardiac.posthoc_cpulse_select, 0);
 end
 
 if hasRespData
@@ -171,17 +195,18 @@ else
     input_R = [];
 end
 
+input_R = [input_R, convHRV, convRVT];
+
 
 % 4.2   Orthogonalisation of regressors ensures numerical stability for
 %       otherwise correlated cardiac regressors
 [R, verbose] = tapas_physio_orthogonalise_physiological_regressors(cardiac_sess, respire_sess, ...
     mult_sess, input_R, model.order.orthogonalise, verbose);
 
-R = [R, convHRV, convRVT];
-
 if isempty(R)
     error('Please specify valid model.type');
 end
+
 
 % 4.3   Save Multiple Regressors file for SPM
 [fpfx, fn, fsfx] = fileparts(model.output_multiple_regressors);
@@ -198,6 +223,7 @@ if isfield(verbose, 'fig_output_file') && ~isempty(verbose.fig_output_file)
     tapas_physio_print_figs_to_file(verbose);
 end
 
+physio_out.save_dir     = save_dir;
 physio_out.log_files    = log_files;
 physio_out.thresh       = thresh;
 physio_out.sqpar        = sqpar;

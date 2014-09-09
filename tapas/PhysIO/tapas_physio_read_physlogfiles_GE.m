@@ -35,7 +35,7 @@ function [c, r, t, cpulse] = tapas_physio_read_physlogfiles_GE(log_files)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_read_physlogfiles_GE.m 423 2014-02-15 14:22:53Z kasperla $
+% $Id: tapas_physio_read_physlogfiles_GE.m 466 2014-04-27 13:10:48Z kasperla $
 
 %% read out values
 
@@ -53,7 +53,7 @@ end
 
 dt = log_files.sampling_interval;
 Nsamples = size(c,1);
-t = -log_files.startScanSeconds + ((0:(Nsamples-1))*dt)'; 
+t = -log_files.relative_start_acquisition + ((0:(Nsamples-1))*dt)'; 
 cpulse = [];
 
 end

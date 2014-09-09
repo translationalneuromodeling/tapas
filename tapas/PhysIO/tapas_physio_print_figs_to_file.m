@@ -1,4 +1,4 @@
-function physio_print_figs_to_ps(verbose)
+function tapas_physio_print_figs_to_file(verbose, save_dir)
 % prints all figure handles in verbose-struct to specified filename there
 %
 %   physio_print_figs_to_ps(verbose)
@@ -25,9 +25,14 @@ function physio_print_figs_to_ps(verbose)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_print_figs_to_file.m 354 2013-12-02 22:21:41Z kasperla $
-if isempty(verbose.fig_handles)
-    warning('No figures found to save into PS-file')
+% $Id: tapas_physio_print_figs_to_file.m 489 2014-05-03 12:22:54Z kasperla $
+if nargin > 1
+    verbose.fig_output_file = fullfile(save_dir, verbose.fig_output_file);
+end
+
+if isempty(verbose.fig_handles) && verbose.level > 0 && ...
+    ~isempty(verbose.fig_output_file)
+    warning('No figures found to save to file')
 else
     [pfx fn sfx] = fileparts(verbose.fig_output_file);
     switch sfx
@@ -48,6 +53,7 @@ else
             for k=1:length(verbose.fig_handles)
                 saveas(verbose.fig_handles(k), fullfile(pfx,[fn sprintf('_%02d', k) sfx]));
             end
+        case '' % empty, do nothing!
         otherwise %'jpg', 'tiff', 'fig', ... basically everything Matlab supports via print
             switch sfx
                 case {'.jpeg', '.jpg'}

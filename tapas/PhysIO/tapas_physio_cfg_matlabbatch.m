@@ -1,14 +1,254 @@
-function checkphysretroicor = tnu_cfg_checkphysretroicor
+function physio = tapas_physio_cfg_matlabbatch
 % Lars Kasper, March 2013
 %
 % Copyright (C) 2013, Institute for Biomedical Engineering, ETH/Uni Zurich.
 %
-% This file is part of the TNU CheckPhysRETROICOR toolbox, which is released under the terms of the GNU General Public
+% This file is part of the TAPAS PhysIO Toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_cfg_matlabbatch.m 354 2013-12-02 22:21:41Z kasperla $
+% $Id: tapas_physio_cfg_matlabbatch.m 493 2014-05-03 12:53:54Z kasperla $
+
+
+pathThis = fileparts(mfilename('fullpath')); % TODO: more elegant via SPM!
+addpath(pathThis);
+
+
+%--------------------------------------------------------------------------
+% save_dir (directory) - where all data is saved
+%--------------------------------------------------------------------------
+save_dir         = cfg_files;
+save_dir.tag     = 'save_dir';
+save_dir.name    = 'save_dir';
+save_dir.val     = {{''}};
+save_dir.help    = {'Specify a directory where output of modelling and figures shall be saved.'
+    'Default: current working directory'};
+save_dir.filter  = 'dir';
+save_dir.ufilter = '.*';
+save_dir.num     = [0 1];
+
+%==========================================================================
+%% Sub-structure log_files
+%==========================================================================
+
+%--------------------------------------------------------------------------
+% vendor
+%--------------------------------------------------------------------------
+vendor        = cfg_menu;
+vendor.tag    = 'vendor';
+vendor.name   = 'vendor';
+vendor.help   = {'Choose Vendor of your scanner from list or Custom (e.g. for BrainVoyager)'
+    ''
+    '''Custom'' expects the logfiles (separate files for cardiac and respiratory)'
+    '  to be plain text, with one cardiac (or respiratory) sample per row.'
+    '  If heartbeat (R-wave peak) events are recorded as well, they have to be put'
+    '  as a 2nd column in the cardiac logfile by specifying a 1; 0 in all other rows'
+    '  e.g.:'
+    '      0.2  0'
+    '      0.4  1 <- cardiac pulse event'
+    '      0.2  0'
+    '      -0.3 0'
+    ''
+    ' NOTE: the sampling interval has to be specified'
+    'for these files as well (s.b.)'
+    };
+vendor.labels = {'Philips', 'GE', 'Siemens', 'Custom'};
+vendor.values = {'Philips', 'GE', 'Siemens', 'Custom'};
+vendor.val    = {'Philips'};
+
+%--------------------------------------------------------------------------
+% cardiac
+%--------------------------------------------------------------------------
+cardiac         = cfg_files;
+cardiac.tag     = 'cardiac';
+cardiac.name    = 'log_cardiac';
+%cardiac.val     = {{'/Users/kasperla/Documents/code/matlab/smoothing_trunk/tSNR_fMRI_SPM/CheckPhysRETROICOR/PhysIOToolbox/examples/Philips/ECG3T/SCANPHYSLOG.log'}};
+cardiac.help    = {'logfile with cardiac, i.e. ECG/PPU (pulse oximetry) data'
+    'Select 0 files, if only respiratory data is available'
+    'For Philips, same as respiratory logfile.'
+    };
+cardiac.filter  = 'any';
+cardiac.ufilter = '.*';
+cardiac.num     = [0 1];
+
+%--------------------------------------------------------------------------
+% respiration (filename)
+%--------------------------------------------------------------------------
+respiration         = cfg_files;
+respiration.tag     = 'respiration';
+respiration.name    = 'log_respiration';
+% respiration.val     = {{'/Users/kasperla/Documents/code/matlab/smoothing_trunk/tSNR_fMRI_SPM/CheckPhysRETROICOR/PhysIOToolbox/examples/Philips/ECG3T/SCANPHYSLOG.log'}};
+respiration.help    = {'logfile with respiratory, i.e. breathing belt amplitude data'
+    'Select 0 files, if only cardiac data available'
+    'For Philips, same as cardiac logfile.'
+    };
+respiration.filter  = 'any';
+respiration.ufilter = '.*';
+respiration.num     = [0 1];
+
+
+%--------------------------------------------------------------------------
+% sampling_interval
+%--------------------------------------------------------------------------
+sampling_interval         = cfg_entry;
+sampling_interval.tag     = 'sampling_interval';
+sampling_interval.name    = 'sampling_interval';
+sampling_interval.help    = {
+    'sampling interval of phys log files (in seconds)'
+    ' If empty, default values are used: 2 ms for Philips, 25 ms for GE and others'
+};
+sampling_interval.strtype = 'e';
+sampling_interval.num     = [Inf Inf];
+sampling_interval.val     = {[]};
+
+%--------------------------------------------------------------------------
+% relative_start_acquisition
+%--------------------------------------------------------------------------
+relative_start_acquisition         = cfg_entry;
+relative_start_acquisition.tag     = 'relative_start_acquisition';
+relative_start_acquisition.name    = 'relative_start_acquisition';
+relative_start_acquisition.help    = {'start time of 1st scan (or dummy) relative to start of phys logfile'};
+relative_start_acquisition.strtype = 'e';
+relative_start_acquisition.num     = [Inf Inf];
+relative_start_acquisition.val     = {0};
+
+
+%--------------------------------------------------------------------------
+% files
+%--------------------------------------------------------------------------
+files      = cfg_branch;
+files.tag  = 'log_files';
+files.name = 'log_files';
+files.val  = {vendor cardiac respiration sampling_interval, relative_start_acquisition};
+files.help = {'Specify log files where peripheral data was stored, and their properties.'};
+
+
+
+
+%==========================================================================
+%% Sub-structure sqpar
+%==========================================================================
+
+
+
+%--------------------------------------------------------------------------
+% Nscans
+%--------------------------------------------------------------------------
+Nscans         = cfg_entry;
+Nscans.tag     = 'Nscans';
+Nscans.name    = 'Nscans';
+Nscans.help    = {'Number of scans (volumes) in design matrix'};
+Nscans.strtype = 'e';
+Nscans.num     = [Inf Inf];
+%Nscans.val     = {495};
+
+%--------------------------------------------------------------------------
+% Ndummies
+%--------------------------------------------------------------------------
+Ndummies         = cfg_entry;
+Ndummies.tag     = 'Ndummies';
+Ndummies.name    = 'Ndummies';
+Ndummies.help    = {
+    'Number of dummies that were acquired (but do not show up in design matrix'
+    '(also enter correct number, if dummies are not saved in imaging file'
+    };
+Ndummies.strtype = 'e';
+Ndummies.num     = [Inf Inf];
+%Ndummies.val     = {3};
+
+%--------------------------------------------------------------------------
+% TR
+%--------------------------------------------------------------------------
+TR         = cfg_entry;
+TR.tag     = 'TR';
+TR.name    = 'TR';
+TR.help    = {'Repetition time in seconds'};
+TR.strtype = 'e';
+TR.num     = [Inf Inf];
+%TR.val     = {2.5};
+
+%--------------------------------------------------------------------------
+% NslicesPerBeat
+%--------------------------------------------------------------------------
+NslicesPerBeat         = cfg_entry;
+NslicesPerBeat.tag     = 'NslicesPerBeat';
+NslicesPerBeat.name    = 'NslicesPerBeat';
+NslicesPerBeat.help    = {'Only for triggered (gated) sequences: '
+    'Number of slices acquired per heartbeat'};
+NslicesPerBeat.strtype = 'e';
+NslicesPerBeat.num     = [Inf Inf];
+NslicesPerBeat.val     = {[]};
+
+
+%--------------------------------------------------------------------------
+% Nslices
+%--------------------------------------------------------------------------
+Nslices         = cfg_entry;
+Nslices.tag     = 'Nslices';
+Nslices.name    = 'Nslices';
+Nslices.help    = {'Number of slices in one volume'};
+Nslices.strtype = 'e';
+Nslices.num     = [Inf Inf];
+%Nslices.val     = {37};
+
+
+
+%--------------------------------------------------------------------------
+% onset_slice
+%--------------------------------------------------------------------------
+onset_slice         = cfg_entry;
+onset_slice.tag     = 'onset_slice';
+onset_slice.name    = 'onset_slice';
+onset_slice.help    = {
+    'slice to which regressors are temporally aligned'
+    'Typically the slice where your most important activation is expected'};
+onset_slice.strtype = 'e';
+onset_slice.num     = [Inf Inf];
+%onset_slice.val     = {19};
+
+%--------------------------------------------------------------------------
+% Nprep
+%--------------------------------------------------------------------------
+Nprep         = cfg_entry;
+Nprep.tag     = 'Nprep';
+Nprep.name    = 'Nprep';
+Nprep.help    = {'Preparation (e.g. shimming) volumes acquired before first dummy'};
+Nprep.strtype = 'e';
+Nprep.num     = [Inf Inf];
+Nprep.val     = {[]};
+
+%--------------------------------------------------------------------------
+% time_slice_to_slice
+%--------------------------------------------------------------------------
+time_slice_to_slice         = cfg_entry;
+time_slice_to_slice.tag     = 'time_slice_to_slice';
+time_slice_to_slice.name    = 'time_slice_to_slice';
+time_slice_to_slice.help    = {
+    'duration between acquisition of two different slices'
+    'if empty, set to default value TR/Nslices'
+    'differs e.g. if slice timing was minimal and TR was bigger than needed'
+    'to acquire Nslices'
+    };
+time_slice_to_slice.strtype = 'e';
+time_slice_to_slice.num     = [Inf Inf];
+time_slice_to_slice.val     = {[]};
+
+%--------------------------------------------------------------------------
+% sqpar
+%--------------------------------------------------------------------------
+sqpar      = cfg_branch;
+sqpar.tag  = 'sqpar';
+sqpar.name = 'sqpar (Sequence timing parameters)';
+sqpar.val  = {Nslices NslicesPerBeat TR Ndummies Nscans onset_slice time_slice_to_slice Nprep};
+sqpar.help = {'...'};
+
+
+
+
+%==========================================================================
+%% Sub-structure model
+%==========================================================================
 
 
 %--------------------------------------------------------------------------
@@ -48,8 +288,8 @@ cr.val     = {1};
 % orthog
 %--------------------------------------------------------------------------
 orthog        = cfg_menu;
-orthog.tag    = 'orthog';
-orthog.name   = 'orthog';
+orthog.tag    = 'orthogonalise';
+orthog.name   = 'orthogonalise';
 orthog.help   = {'...'};
 orthog.labels = {'none' 'cardiac' 'resp' 'mult' 'all'};
 orthog.values = {'none' 'cardiac' 'resp' 'mult' 'all'};
@@ -65,237 +305,31 @@ order.val  = {c r cr orthog};
 order.help = {'...'};
 
 %--------------------------------------------------------------------------
-% Nprep
+% model_type
 %--------------------------------------------------------------------------
-Nprep         = cfg_entry;
-Nprep.tag     = 'Nprep';
-Nprep.name    = 'Nprep';
-Nprep.help    = {'...'};
-Nprep.strtype = 'e';
-Nprep.num     = [Inf Inf];
-
-%--------------------------------------------------------------------------
-% TimeSliceToSlice
-%--------------------------------------------------------------------------
-TimeSliceToSlice         = cfg_entry;
-TimeSliceToSlice.tag     = 'TimeSliceToSlice';
-TimeSliceToSlice.name    = 'TimeSliceToSlice';
-TimeSliceToSlice.help    = {'...'};
-TimeSliceToSlice.strtype = 'e';
-TimeSliceToSlice.num     = [Inf Inf];
-
-%--------------------------------------------------------------------------
-% onset_slice
-%--------------------------------------------------------------------------
-onset_slice         = cfg_entry;
-onset_slice.tag     = 'onset_slice';
-onset_slice.name    = 'onset_slice';
-onset_slice.help    = {'...'};
-onset_slice.strtype = 'e';
-onset_slice.num     = [Inf Inf];
-
-%--------------------------------------------------------------------------
-% Nscans
-%--------------------------------------------------------------------------
-Nscans         = cfg_entry;
-Nscans.tag     = 'Nscans';
-Nscans.name    = 'Nscans';
-Nscans.help    = {'...'};
-Nscans.strtype = 'e';
-Nscans.num     = [Inf Inf];
-
-%--------------------------------------------------------------------------
-% Ndummies
-%--------------------------------------------------------------------------
-Ndummies         = cfg_entry;
-Ndummies.tag     = 'Ndummies';
-Ndummies.name    = 'Ndummies';
-Ndummies.help    = {'...'};
-Ndummies.strtype = 'e';
-Ndummies.num     = [Inf Inf];
-
-%--------------------------------------------------------------------------
-% TR
-%--------------------------------------------------------------------------
-TR         = cfg_entry;
-TR.tag     = 'TR';
-TR.name    = 'TR';
-TR.help    = {'...'};
-TR.strtype = 'e';
-TR.num     = [Inf Inf];
-
-%--------------------------------------------------------------------------
-% NslicesPerBeat
-%--------------------------------------------------------------------------
-NslicesPerBeat         = cfg_entry;
-NslicesPerBeat.tag     = 'NslicesPerBeat';
-NslicesPerBeat.name    = 'NslicesPerBeat';
-NslicesPerBeat.help    = {'...'};
-NslicesPerBeat.strtype = 'e';
-NslicesPerBeat.num     = [Inf Inf];
-
-%--------------------------------------------------------------------------
-% Nslices
-%--------------------------------------------------------------------------
-Nslices         = cfg_entry;
-Nslices.tag     = 'Nslices';
-Nslices.name    = 'Nslices';
-Nslices.help    = {'...'};
-Nslices.strtype = 'e';
-Nslices.num     = [Inf Inf];
-
-%--------------------------------------------------------------------------
-% sqpar
-%--------------------------------------------------------------------------
-sqpar      = cfg_branch;
-sqpar.tag  = 'sqpar';
-sqpar.name = 'Sequence timing parameters';
-sqpar.val  = {Nslices NslicesPerBeat TR Ndummies Nscans onset_slice TimeSliceToSlice Nprep};
-sqpar.help = {'...'};
-
-%--------------------------------------------------------------------------
-% resp_max
-%--------------------------------------------------------------------------
-resp_max         = cfg_entry;
-resp_max.tag     = 'resp_max';
-resp_max.name    = 'resp_max';
-resp_max.help    = {'...'};
-resp_max.strtype = 'e';
-resp_max.num     = [Inf Inf];
-
-%--------------------------------------------------------------------------
-% respiratory
-%--------------------------------------------------------------------------
-respiratory      = cfg_branch;
-respiratory.tag  = 'respiratory';
-respiratory.name = 'respiratory';
-respiratory.val  = {resp_max};
-respiratory.help = {'...'};
-
-%--------------------------------------------------------------------------
-% manual_peak_select
-%--------------------------------------------------------------------------
-manual_peak_select        = cfg_menu;
-manual_peak_select.tag    = 'manual_peak_select';
-manual_peak_select.name   = 'manual_peak_select';
-manual_peak_select.help   = {'...'};
-manual_peak_select.labels = {'true' 'false'};
-manual_peak_select.values = {true false};
-manual_peak_select.val    = {true};
-
-%--------------------------------------------------------------------------
-% kRpeakfile
-%--------------------------------------------------------------------------
-kRpeakfile         = cfg_files;
-kRpeakfile.tag     = 'kRpeakfile';
-kRpeakfile.name    = 'kRpeakfile';
-kRpeakfile.val     = {{''}};
-kRpeakfile.help    = {'...'};
-kRpeakfile.filter  = 'any';
-kRpeakfile.ufilter = '.*';
-kRpeakfile.num     = [0 1];
-
-%--------------------------------------------------------------------------
-% min
-%--------------------------------------------------------------------------
-min       = cfg_entry;
-min.tag     = 'min';
-min.name    = 'min';
-min.help    = {'...'};
-min.strtype = 'e';
-min.num     = [Inf Inf];
-
-%--------------------------------------------------------------------------
-% modality
-%--------------------------------------------------------------------------
-modality        = cfg_menu;
-modality.tag    = 'modality';
-modality.name   = 'modality';
-modality.help   = {'...'};
-modality.labels = {'ECG', 'OXY'};
-modality.values = {'ECG', 'OXY'};
-
-%--------------------------------------------------------------------------
-% cardiac
-%--------------------------------------------------------------------------
-cardiac      = cfg_branch;
-cardiac.tag  = 'cardiac';
-cardiac.name = 'cardiac';
-cardiac.val  = {modality min kRpeakfile manual_peak_select};
-cardiac.help = {'...'};
-
-%--------------------------------------------------------------------------
-% grad_direction
-%--------------------------------------------------------------------------
-grad_direction        = cfg_menu;
-grad_direction.tag    = 'grad_direction';
-grad_direction.name   = 'grad_direction';
-grad_direction.help   = {'...'};
-grad_direction.labels = {'use nominal timing' 'x' 'y' 'z'};
-grad_direction.values = {[] 'x' 'y' 'z'};
-grad_direction.val    = {[]};
-
-%--------------------------------------------------------------------------
-% vol_spacing
-%--------------------------------------------------------------------------
-vol_spacing         = cfg_entry;
-vol_spacing.tag     = 'vol_spacing';
-vol_spacing.name    = 'vol_spacing';
-vol_spacing.help    = {'...'};
-vol_spacing.strtype = 'e';
-vol_spacing.num     = [Inf Inf];
-vol_spacing.val     = {[]};
-
-%--------------------------------------------------------------------------
-% vol
-%--------------------------------------------------------------------------
-vol         = cfg_entry;
-vol.tag     = 'vol';
-vol.name    = 'vol';
-vol.help    = {'...'};
-vol.strtype = 'e';
-vol.num     = [Inf Inf];
-vol.val     = {[]};
-
-%--------------------------------------------------------------------------
-% slice
-%--------------------------------------------------------------------------
-slice         = cfg_entry;
-slice.tag     = 'slice';
-slice.name    = 'slice';
-slice.help    = {'...'};
-slice.strtype = 'e';
-slice.num     = [Inf Inf];
-slice.val     = {[]};
-
-%--------------------------------------------------------------------------
-% zero
-%--------------------------------------------------------------------------
-zero         = cfg_entry;
-zero.tag     = 'zero';
-zero.name    = 'zero';
-zero.help    = {'...'};
-zero.strtype = 'e';
-zero.num     = [Inf Inf];
-zero.val     = {[]};
-
-%--------------------------------------------------------------------------
-% scan_timing
-%--------------------------------------------------------------------------
-scan_timing      = cfg_branch;
-scan_timing.tag  = 'scan_timing';
-scan_timing.name = 'scan_timing';
-scan_timing.val  = {zero slice vol vol_spacing grad_direction};
-scan_timing.help = {'...'};
-
-%--------------------------------------------------------------------------
-% thresh
-%--------------------------------------------------------------------------
-thresh      = cfg_branch;
-thresh.tag  = 'thresh';
-thresh.name = 'thresh';
-thresh.val  = {scan_timing cardiac respiratory};
-thresh.help = {'...'};
+model_type        = cfg_menu;
+model_type.tag    = 'type';
+model_type.name   = 'type';
+model_type.help   = {'...'};
+model_type.labels = {
+    'RETROICOR (RETRO)' 
+    'Heart Rate Variability (HRV)'
+    'Respiratory Volume per Time (RVT)'
+    'RETRO+HRV'
+    'RETRO+RVT'
+    'HRV+RVT'
+    'RETRO+HRV+RVT'
+    };
+model_type.values = {
+    'RETROICOR' 
+    'HRV'
+    'RVT'
+    'RETROICOR_HRV'
+    'RETROICOR_RVT'
+    'HRV_RVT'
+    'RETROICOR_HRV_RVT'
+    };
+model_type.val    = {'RETROICOR'};
 
 %--------------------------------------------------------------------------
 % output_multiple_regressors
@@ -306,7 +340,7 @@ output_multiple_regressors.name    = 'output_multiple_regressors';
 output_multiple_regressors.help    = {'...'};
 output_multiple_regressors.strtype = 's';
 output_multiple_regressors.num     = [1 Inf];
-output_multiple_regressors.val     = {'multiple_regressors.mat'};
+output_multiple_regressors.val     = {'multiple_regressors.txt'};
 
 %--------------------------------------------------------------------------
 % input_other_multiple_regressors
@@ -316,91 +350,426 @@ input_other_multiple_regressors.tag     = 'input_other_multiple_regressors';
 input_other_multiple_regressors.name    = 'input_other_multiple_regressors';
 input_other_multiple_regressors.val     = {{''}};
 input_other_multiple_regressors.help    = {'...'};
-input_other_multiple_regressors.filter  = 'mat';
-input_other_multiple_regressors.ufilter = '.*';
+input_other_multiple_regressors.filter  = '.*';
+input_other_multiple_regressors.ufilter = '.mat$|.txt$';
 input_other_multiple_regressors.num     = [0 1];
 
 %--------------------------------------------------------------------------
-% log_respiration
+% model
 %--------------------------------------------------------------------------
-log_respiration         = cfg_files;
-log_respiration.tag     = 'log_respiration';
-log_respiration.name    = 'log_respiration';
-log_respiration.val     = {{''}};
-log_respiration.help    = {'...'};
-log_respiration.filter  = 'any';
-log_respiration.ufilter = '.*';
-log_respiration.num     = [0 1];
+model      = cfg_branch;
+model.tag  = 'model';
+model.name = 'model';
+model.val  = {model_type, order, input_other_multiple_regressors, ...
+    output_multiple_regressors};
+model.help = {'...'};
+
+
+
+
+% ==========================================================================
+%% Sub-structure thresh
+%==========================================================================
+
+
+% ==========================================================================
+%% Subsub-structure scan_timing
+%==========================================================================
 
 %--------------------------------------------------------------------------
-% log_cardiac
+% scan_timing_method
 %--------------------------------------------------------------------------
-log_cardiac         = cfg_files;
-log_cardiac.tag     = 'log_cardiac';
-log_cardiac.name    = 'log_cardiac';
-log_cardiac.val     = {{''}};
-log_cardiac.help    = {'...'};
-log_cardiac.filter  = 'any';
-log_cardiac.ufilter = '.*';
-log_cardiac.num     = [1 1];
+scan_timing_method        = cfg_menu;
+scan_timing_method.tag    = 'method';
+scan_timing_method.name   = 'method';
+scan_timing_method.help   = {
+ 'method to determine slice onset times for regressors'
+'''nominal'' - to derive slice acquisition timing from sqpar directly'
+'''gradient'' or ''gradient_log'' - derive from logged gradient time courses'
+    };
+scan_timing_method.labels = {'nominal' 'gradient_log'};
+scan_timing_method.values = {'nominal' 'gradient_log'};
+scan_timing_method.val    = {'nominal'};
+
 
 %--------------------------------------------------------------------------
-% vendor
+% grad_direction
 %--------------------------------------------------------------------------
-vendor        = cfg_menu;
-vendor.tag    = 'vendor';
-vendor.name   = 'vendor';
-vendor.help   = {'...'};
-vendor.labels = {'Philips', 'GE', 'Siemens'};
-vendor.values = {'Philips', 'GE', 'Siemens'};
-vendor.val    = {};
+grad_direction        = cfg_menu;
+grad_direction.tag    = 'grad_direction';
+grad_direction.name   = 'grad_direction';
+grad_direction.help   = {'...'};
+grad_direction.labels = {'x' 'y' 'z'};
+grad_direction.values = {'x' 'y' 'z'};
+grad_direction.val    = {'y'};
 
 %--------------------------------------------------------------------------
-% files
+% vol_spacing
 %--------------------------------------------------------------------------
-files      = cfg_branch;
-files.tag  = 'files';
-files.name = 'files';
-files.val  = {vendor log_cardiac log_respiration input_other_multiple_regressors output_multiple_regressors};
-files.help = {'...'};
+vol_spacing         = cfg_entry;
+vol_spacing.tag     = 'vol_spacing';
+vol_spacing.name    = 'vol_spacing';
+vol_spacing.help    = {'time (in seconds) between last slice of n-th volume' 
+    'and 1st slice of n+1-th volume(overrides .vol-threshold)'
+    'NOTE: Leave empty if .vol shall be used'};
+vol_spacing.strtype = 'e';
+vol_spacing.num     = [Inf Inf];
+vol_spacing.val     = {[]};
+
+%--------------------------------------------------------------------------
+% vol
+%--------------------------------------------------------------------------
+vol         = cfg_entry;
+vol.tag     = 'vol';
+vol.name    = 'vol';
+vol.help    = {'Gradient Amplitude Threshold for Start of new Volume'};
+vol.strtype = 'e';
+vol.num     = [Inf Inf];
+vol.val     = {[]};
+
+%--------------------------------------------------------------------------
+% slice
+%--------------------------------------------------------------------------
+slice         = cfg_entry;
+slice.tag     = 'slice';
+slice.name    = 'slice';
+slice.help    = {'Gradient Amplitude Threshold for Start of new slice'};
+slice.strtype = 'e';
+slice.num     = [Inf Inf];
+slice.val     = {1800};
+
+%--------------------------------------------------------------------------
+% zero
+%--------------------------------------------------------------------------
+zero         = cfg_entry;
+zero.tag     = 'zero';
+zero.name    = 'zero';
+zero.help    = {'Gradient Amplitude Threshold below which values will be set to 0.'};
+zero.strtype = 'e';
+zero.num     = [Inf Inf];
+zero.val     = {1700};
+
+%--------------------------------------------------------------------------
+% scan_timing
+%--------------------------------------------------------------------------
+scan_timing      = cfg_branch;
+scan_timing.tag  = 'scan_timing';
+scan_timing.name = 'scan_timing';
+scan_timing.val  = {scan_timing_method grad_direction zero slice vol vol_spacing};
+scan_timing.help = {'Determines scan timing from nominal scan parameters or logged gradient time courses'};
+
+
+% ==========================================================================
+%% Subsub-structure cardiac
+%==========================================================================
+
+
+%--------------------------------------------------------------------------
+% modality
+%--------------------------------------------------------------------------
+modality        = cfg_menu;
+modality.tag    = 'modality';
+modality.name   = 'modality';
+modality.help   = {'Shall ECG or PPU data be read from logfiles?'};
+modality.labels = {'ECG', 'OXY/PPU'};
+modality.values = {'ECG', 'PPU'};
+modality.val    = {'ECG'};
+
+
+%--------------------------------------------------------------------------
+% initial_cpulse_select_method
+%--------------------------------------------------------------------------
+initial_cpulse_select_method        = cfg_menu;
+initial_cpulse_select_method.tag    = 'method';
+initial_cpulse_select_method.name   = 'method';
+initial_cpulse_select_method.help   = {
+     'The initial cardiac pulse selection structure: Determines how the'
+    'majority of cardiac pulses is detected'
+    ' ''auto''    - auto generation of representative QRS-wave; detection via'
+    '             maximising auto-correlation with it'
+    ' ''load_from_logfile'' - from phys logfile, detected R-peaks of scanner' 
+    ' ''manual''  - via manually selected QRS-wave for autocoreelations'
+    ' ''load''    - from previous manual/auto run'
+   };
+initial_cpulse_select_method.labels = {
+    'auto', 'load_from_logfile', 'manual', 'load'};
+initial_cpulse_select_method.values = { 'auto', 'load_from_logfile', 'manual', 'load'};
+initial_cpulse_select_method.val    = {'load_from_logfile'};
+
+%--------------------------------------------------------------------------
+% initial_cpulse_select_file
+%--------------------------------------------------------------------------
+initial_cpulse_select_file         = cfg_entry;
+initial_cpulse_select_file.tag     = 'file';
+initial_cpulse_select_file.name    = 'file';
+initial_cpulse_select_file.help    = {'...'};
+initial_cpulse_select_file.strtype = 's';
+initial_cpulse_select_file.num     = [0 Inf];
+initial_cpulse_select_file.val     = {'initial_cpulse_kRpeakfile.mat'};
+
+
+
+%--------------------------------------------------------------------------
+% min
+%--------------------------------------------------------------------------
+min       = cfg_entry;
+min.tag     = 'min';
+min.name    = 'min';
+min.help    = {'minimum correlation value considered a peak (for auto, manual, load-methods).'};
+min.strtype = 'e';
+min.num     = [Inf Inf];
+min.val     = {0.4};
+
+
+%--------------------------------------------------------------------------
+% initial_cpulse_select
+%--------------------------------------------------------------------------
+initial_cpulse_select      = cfg_branch;
+initial_cpulse_select.tag  = 'initial_cpulse_select';
+initial_cpulse_select.name = 'initial_cpulse_select';
+initial_cpulse_select.val  = {initial_cpulse_select_method min initial_cpulse_select_file};
+initial_cpulse_select.help = {
+    'The initial cardiac pulse selection structure: Determines how the'
+    'majority of cardiac pulses is detected.'
+   };
+
+
+
+%--------------------------------------------------------------------------
+% posthoc_cpulse_select_method
+%--------------------------------------------------------------------------
+posthoc_cpulse_select_method        = cfg_menu;
+posthoc_cpulse_select_method.tag    = 'method';
+posthoc_cpulse_select_method.name   = 'method';
+posthoc_cpulse_select_method.help   = {
+    '''off'' - no manual selection of peaks'
+    '''manual'' - pick and save additional peaks manually'
+    '''load'' - load previously selected cardiac pulses'
+   };
+posthoc_cpulse_select_method.labels = {
+    'off', 'manual', 'load'};
+posthoc_cpulse_select_method.values = {'off', 'manual', 'load'};
+posthoc_cpulse_select_method.val    = {'off'};
+
+%--------------------------------------------------------------------------
+% posthoc_cpulse_select_file
+%--------------------------------------------------------------------------
+posthoc_cpulse_select_file         = cfg_entry;
+posthoc_cpulse_select_file.tag     = 'file';
+posthoc_cpulse_select_file.name    = 'file';
+posthoc_cpulse_select_file.help    = {'...'};
+posthoc_cpulse_select_file.strtype = 's';
+posthoc_cpulse_select_file.num     = [0 Inf];
+posthoc_cpulse_select_file.val     = {'posthoc_cpulse.mat'};
+
+
+
+%--------------------------------------------------------------------------
+% posthoc_cpulse_select_percentile
+%--------------------------------------------------------------------------
+posthoc_cpulse_select_percentile       = cfg_entry;
+posthoc_cpulse_select_percentile.tag     = 'percentile';
+posthoc_cpulse_select_percentile.name    = 'percentile';
+posthoc_cpulse_select_percentile.help    = {
+    'percentile of beat-2-beat interval histogram that constitutes the'
+    'average heart beat duration in the session'};
+posthoc_cpulse_select_percentile.strtype = 'e';
+posthoc_cpulse_select_percentile.num     = [Inf Inf];
+posthoc_cpulse_select_percentile.val     = {80};
+
+%--------------------------------------------------------------------------
+% posthoc_cpulse_select_upper_thresh
+%--------------------------------------------------------------------------
+posthoc_cpulse_select_upper_thresh       = cfg_entry;
+posthoc_cpulse_select_upper_thresh.tag     = 'upper_thresh';
+posthoc_cpulse_select_upper_thresh.name    = 'upper_thresh';
+posthoc_cpulse_select_upper_thresh.help    = {
+    'minimum exceedance (in %) from average heartbeat duration '
+    'to be classified as missing heartbeat'};
+posthoc_cpulse_select_upper_thresh.strtype = 'e';
+posthoc_cpulse_select_upper_thresh.num     = [Inf Inf];
+posthoc_cpulse_select_upper_thresh.val     = {60};
+
+%--------------------------------------------------------------------------
+% posthoc_cpulse_select_lower_thresh
+%--------------------------------------------------------------------------
+posthoc_cpulse_select_lower_thresh       = cfg_entry;
+posthoc_cpulse_select_lower_thresh.tag     = 'lower_thresh';
+posthoc_cpulse_select_lower_thresh.name    = 'lower_thresh';
+posthoc_cpulse_select_lower_thresh.help    = {
+    'minimum reduction (in %) from average heartbeat duration'
+    'to be classified an abundant heartbeat'};
+posthoc_cpulse_select_lower_thresh.strtype = 'e';
+posthoc_cpulse_select_lower_thresh.num     = [Inf Inf];
+posthoc_cpulse_select_lower_thresh.val     = {60};
+
+
+%--------------------------------------------------------------------------
+% posthoc_cpulse_select
+%--------------------------------------------------------------------------
+posthoc_cpulse_select      = cfg_branch;
+posthoc_cpulse_select.tag  = 'posthoc_cpulse_select';
+posthoc_cpulse_select.name = 'posthoc_cpulse_select';
+posthoc_cpulse_select.val  = {posthoc_cpulse_select_method ...
+    posthoc_cpulse_select_file ...
+    posthoc_cpulse_select_percentile ...
+    posthoc_cpulse_select_upper_thresh ...
+    posthoc_cpulse_select_lower_thresh};
+posthoc_cpulse_select.help = {
+    'The posthoc cardiac pulse selection structure: If only few (<20)'
+    'cardiac pulses are missing in a session due to bad signal quality, a'
+    'manual selection after visual inspection is possible using the'
+    'following parameters. The results are saved for reproducibility.' 
+   };
+
+
+
+%--------------------------------------------------------------------------
+% cardiac
+%--------------------------------------------------------------------------
+cardiac      = cfg_branch;
+cardiac.tag  = 'cardiac';
+cardiac.name = 'cardiac';
+cardiac.val  = {modality initial_cpulse_select posthoc_cpulse_select};
+cardiac.help = {'...'};
+
+
+%--------------------------------------------------------------------------
+% thresh
+%--------------------------------------------------------------------------
+thresh      = cfg_branch;
+thresh.tag  = 'thresh';
+thresh.name = 'thresh (Thresholding parameters for de-noising and timing)';
+thresh.val  = {scan_timing cardiac};
+thresh.help = {'Thresholding parameters for de-noising of raw peripheral data'
+    'and determination of sequence timing from logged MR gradient time courses'};
+
+
+
+%==========================================================================
+%% Sub-structure verbose
+%==========================================================================
+
+%--------------------------------------------------------------------------
+% level
+%--------------------------------------------------------------------------
+level         = cfg_entry;
+level.tag     = 'level';
+level.name    = 'level';
+level.help    = {'...'};
+level.strtype = 'e';
+level.num     = [Inf Inf];
+level.val     = {2};
+
+%--------------------------------------------------------------------------
+% fig_output_file
+%--------------------------------------------------------------------------
+fig_output_file         = cfg_entry;
+fig_output_file.tag     = 'fig_output_file';
+fig_output_file.name    = 'fig_output_file';
+fig_output_file.help    = {'file name where figures are saved to;'
+    'supported figure formats(via filename-suffix): jpg, png, fig, ps'
+    'leave empty to not save output figures'};
+fig_output_file.strtype = 's';
+fig_output_file.num     = [0 Inf];
+fig_output_file.val     = {''};
+
+
+
+
+%--------------------------------------------------------------------------
+% use_tabs
+%--------------------------------------------------------------------------
+use_tabs        = cfg_menu;
+use_tabs.tag    = 'use_tabs';
+use_tabs.name   = 'use_tabs';
+use_tabs.help   = {'use spm_tabs for plotting'};
+use_tabs.labels = {'true' 'false'};
+use_tabs.values = {true, false};
+use_tabs.val    = {false};
+
 
 %--------------------------------------------------------------------------
 % verbose
 %--------------------------------------------------------------------------
-verbose        = cfg_menu;
+verbose        = cfg_branch;
 verbose.tag    = 'verbose';
-verbose.name   = 'Display informative figures';
-verbose.help   = {'...'};
-verbose.labels = {'Yes' 'No'};
-verbose.values = {1 0};
-verbose.val    = {0};
+verbose.name   = 'verbose';
+verbose.help   = {
+' determines how many figures shall be generated to follow the workflow'
+    ' of the toolbox and whether the graphical output shall be saved (to a'
+    ' PostScript-file)'
+    ' 0 = no graphical output;'
+    ' 1 = (default) main plots : Fig 1: gradient scan timing (if selected) ;'
+    '                            Fig 2: heart beat/breathing statistics & outlier;'
+    '                            Fig 3: final multiple_regressors matrix'
+    ' 2 = debugging plots        for setting up new study or if Fig 2 had'
+    '                            outliers'
+    '                            Fig 1: raw phys logfile data'
+    '                            Fig 2: gradient scan timing (if selected)'
+    '                            Fig 3: cutout interval of logfile for'
+    '                            regressor creation (including scan timing'
+    '                            and raw phys data)'
+    '                            Fig 4: heart beat/breathing statistics & outlier;'
+    '                            Fig 5: time course of all sampled RETROICOR'
+    '                                   regressors'
+    '                            Fig 6: final multiple_regressors matrix'
+    ''
+    ' 3 = all plots'
+    '                            Fig 1: raw phys logfile data'
+    '                            Fig 2: gradient scan timing (if selected)'
+    '                            Fig 3: Slice assignment to volumes'
+    '                            Fig 4: cutout interval of logfile for'
+    '                            regressor creation (including scan timing'
+    '                            and raw phys data)'
+    '                            Fig 5: heart beat/breathing statistics & outlier;'
+    '                            Fig 6: cardiac phase data of all slices'
+    '                            Fig 7: respiratory phase data and'
+    '                                   histogram transfer function'
+    '                            Fig 8: time course of all sampled RETROICOR'
+    '                                   regressors'
+    '                            Fig 9: final multiple_regressors matrix'
+     
+};
+verbose.val    = {level fig_output_file use_tabs};
 
-%--------------------------------------------------------------------------
-% checkphysretroicor
-%--------------------------------------------------------------------------
-checkphysretroicor      = cfg_exbranch;
-checkphysretroicor.tag  = 'checkphysretroicor';
-checkphysretroicor.name = 'TNU checkphysretroicor';
-checkphysretroicor.val  = {files thresh sqpar order verbose};
-checkphysretroicor.help = {'...'};
-checkphysretroicor.prog = @run_checkphysretroicor;
-checkphysretroicor.vout = @vout_checkphysretroicor;
+
 
 
 %==========================================================================
-% function out = run_checkphysretroicor(job)
+%% Structure physio Assemblance
 %==========================================================================
-function out = run_checkphysretroicor(job)
-R = main_create_RETROICOR_regressors(job.files, job.thresh, job.sqpar, job.order, job.verbose);
 
-out.physnoisereg = job.files.output_multiple_regressors;
+
+%--------------------------------------------------------------------------
+% physio
+%--------------------------------------------------------------------------
+physio      = cfg_exbranch;
+physio.tag  = 'physio';
+physio.name = 'TAPAS PhysIO Toolbox';
+physio.val  = {save_dir files sqpar model thresh verbose};
+physio.help = {'...'};
+physio.prog = @run_physio;
+physio.vout = @vout_physio;
+
+
+%==========================================================================
+% function out = run_physio(job)
+%==========================================================================
+function out = run_physio(job)
+
+job.verbose.fig_handles = [];
+[~, R] = tapas_physio_main_create_regressors(job.log_files,  ...
+    job.sqpar, job.model, job.thresh, job.verbose, job.save_dir);
+
+out.physnoisereg = job.model.output_multiple_regressors;
 out.R = R;
 
 
 %==========================================================================
-% function dep = vout_checkphysretroicor(job)
+% function dep = vout_physio(job)
 %==========================================================================
-function dep = vout_checkphysretroicor(job)
+function dep = vout_physio(job)
 dep(1)            = cfg_dep;
 dep(1).sname      = 'physiological noise regressors file';
 dep(1).src_output = substruct('.','physnoisereg');

@@ -13,12 +13,12 @@ function [ons_secs, outliersHigh, outliersLow] = tapas_physio_correct_cardiac_pu
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_correct_cardiac_pulses_manually.m 419 2014-01-30 21:31:30Z kasperla $
+% $Id: tapas_physio_correct_cardiac_pulses_manually.m 469 2014-04-28 10:23:59Z kasperla $
 
 
 percentile = thresh_cardiac.percentile;
-upperThresh = thresh_cardiac.upperThresh;
-lowerThresh = thresh_cardiac.lowerThresh;
+upperThresh = thresh_cardiac.upper_thresh;
+lowerThresh = thresh_cardiac.lower_thresh;
 
 [outliersHigh,outliersLow,fh] = tapas_physio_cardiac_detect_outliers(ons_secs.cpulse, percentile, upperThresh, lowerThresh);
 if any(outliersHigh)
