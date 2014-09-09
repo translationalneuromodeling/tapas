@@ -32,7 +32,7 @@ function [outliersHigh,outliersLow,fh] = ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_cardiac_detect_outliers.m 496 2014-05-03 20:51:07Z kasperla $
+% $Id: tapas_physio_cardiac_detect_outliers.m 524 2014-08-13 16:21:56Z kasperla $
 
 dt = diff(tCardiac);
 
@@ -74,7 +74,7 @@ if ~isempty(percentile) && ~isempty(deviationPercentUp) && ~isempty(deviationPer
         hold all;
         hp(2) = plot( [tCardiac(2); tCardiac(end)], [upperThresh,upperThresh], 'g--', 'LineWidth',2);
         hp(3) = plot( [tCardiac(2); tCardiac(end)], [lowerThresh,lowerThresh], 'b--', 'LineWidth',2);
-        legend('Temporal lag between subsequent heartbeats', 'Upper threshold for selecting outliers', ...
+        legend(hp, 'Temporal lag between subsequent heartbeats', 'Upper threshold for selecting outliers', ...
             'Lower threshold for selecting outliers');
     end
     

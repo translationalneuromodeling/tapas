@@ -1,4 +1,5 @@
-function [c, r, t, cpulse] = tapas_physio_read_physlogfiles(log_files, cardiac_modality)
+function [c, r, t, cpulse, verbose] = tapas_physio_read_physlogfiles(log_files, cardiac_modality, ...
+    verbose)
 % reads out physiological time series and timing vector depending on the
 % MR scanner vendor and the modality of peripheral cardiac monitoring (ECG
 % or pulse oximetry)
@@ -41,10 +42,14 @@ function [c, r, t, cpulse] = tapas_physio_read_physlogfiles(log_files, cardiac_m
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_read_physlogfiles.m 422 2014-02-13 01:47:04Z kasperla $
+% $Id: tapas_physio_read_physlogfiles.m 516 2014-07-17 21:54:50Z kasperla $
 
 if nargin < 2
     cardiac_modality = 'ECG';
+end
+
+if nargin < 3
+    verbose.level = 0;
 end
 
 switch lower(log_files.vendor)
@@ -52,10 +57,13 @@ switch lower(log_files.vendor)
         [c, r, t, cpulse] = tapas_physio_read_physlogfiles_philips(...
             log_files, cardiac_modality);
     case 'ge'
-        [c, r, t, cpulse] = tapas_physio_read_physlogfiles_GE(log_files);
+        [c, r, t, cpulse] = tapas_physio_read_physlogfiles_GE(log_files, ...
+            verbose);
     case 'siemens'
-        disp('Ask the FIL about it...');
+        [c, r, t, cpulse, verbose] = tapas_physio_read_physlogfiles_siemens(log_files, ...
+            verbose);
     case 'custom'
-        [c, r, t, cpulse] = tapas_physio_read_physlogfiles_custom(log_files);
+        [c, r, t, cpulse] = tapas_physio_read_physlogfiles_custom(log_files, ...
+            verbose);
 end
 end

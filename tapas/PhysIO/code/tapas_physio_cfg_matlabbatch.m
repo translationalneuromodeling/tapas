@@ -8,7 +8,7 @@ function physio = tapas_physio_cfg_matlabbatch
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_cfg_matlabbatch.m 493 2014-05-03 12:53:54Z kasperla $
+% $Id: tapas_physio_cfg_matlabbatch.m 526 2014-08-13 17:09:19Z kasperla $
 
 
 pathThis = fileparts(mfilename('fullpath')); % TODO: more elegant via SPM!
@@ -97,7 +97,10 @@ sampling_interval.name    = 'sampling_interval';
 sampling_interval.help    = {
     'sampling interval of phys log files (in seconds)'
     ' If empty, default values are used: 2 ms for Philips, 25 ms for GE and others'
-};
+    ' Note: If you use a WiFi-Philips device for peripheral monitoring'
+    '       (Ingenia system), please change this value to 1/496, '
+    '       i.e. a sampling rate of 496 Hz)'
+    };
 sampling_interval.strtype = 'e';
 sampling_interval.num     = [Inf Inf];
 sampling_interval.val     = {[]};
@@ -108,7 +111,9 @@ sampling_interval.val     = {[]};
 relative_start_acquisition         = cfg_entry;
 relative_start_acquisition.tag     = 'relative_start_acquisition';
 relative_start_acquisition.name    = 'relative_start_acquisition';
-relative_start_acquisition.help    = {'start time of 1st scan (or dummy) relative to start of phys logfile'};
+relative_start_acquisition.help    = {
+    'start time (ins seconds) of 1st scan (or dummy)'
+    'relative to start of physiological logfile'};
 relative_start_acquisition.strtype = 'e';
 relative_start_acquisition.num     = [Inf Inf];
 relative_start_acquisition.val     = {0};
@@ -150,8 +155,8 @@ Ndummies         = cfg_entry;
 Ndummies.tag     = 'Ndummies';
 Ndummies.name    = 'Ndummies';
 Ndummies.help    = {
-    'Number of dummies that were acquired (but do not show up in design matrix'
-    '(also enter correct number, if dummies are not saved in imaging file'
+    'Number of dummies that were acquired (but will not show up in design matrix'
+    '(also enter correct number, if dummies are not saved in imaging file)'
     };
 Ndummies.strtype = 'e';
 Ndummies.num     = [Inf Inf];
@@ -163,7 +168,7 @@ Ndummies.num     = [Inf Inf];
 TR         = cfg_entry;
 TR.tag     = 'TR';
 TR.name    = 'TR';
-TR.help    = {'Repetition time in seconds'};
+TR.help    = {'Repetition time (in seconds) between consecutive image volumes'};
 TR.strtype = 'e';
 TR.num     = [Inf Inf];
 %TR.val     = {2.5};
@@ -201,8 +206,8 @@ onset_slice         = cfg_entry;
 onset_slice.tag     = 'onset_slice';
 onset_slice.name    = 'onset_slice';
 onset_slice.help    = {
-    'slice to which regressors are temporally aligned'
-    'Typically the slice where your most important activation is expected'};
+    'Slice to which regressors are temporally aligned.'
+    'Typically the slice where your most important activation is expected.'};
 onset_slice.strtype = 'e';
 onset_slice.num     = [Inf Inf];
 %onset_slice.val     = {19};
@@ -213,7 +218,10 @@ onset_slice.num     = [Inf Inf];
 Nprep         = cfg_entry;
 Nprep.tag     = 'Nprep';
 Nprep.name    = 'Nprep';
-Nprep.help    = {'Preparation (e.g. shimming) volumes acquired before first dummy'};
+Nprep.help    = {
+    'Number of preparation volumes (e.g. for shimming) acquired'
+    'before first dummy scan'
+    };
 Nprep.strtype = 'e';
 Nprep.num     = [Inf Inf];
 Nprep.val     = {[]};
@@ -225,7 +233,7 @@ time_slice_to_slice         = cfg_entry;
 time_slice_to_slice.tag     = 'time_slice_to_slice';
 time_slice_to_slice.name    = 'time_slice_to_slice';
 time_slice_to_slice.help    = {
-    'duration between acquisition of two different slices'
+    'Duration between acquisition of two different slices'
     'if empty, set to default value TR/Nslices'
     'differs e.g. if slice timing was minimal and TR was bigger than needed'
     'to acquire Nslices'
@@ -241,7 +249,7 @@ sqpar      = cfg_branch;
 sqpar.tag  = 'sqpar';
 sqpar.name = 'sqpar (Sequence timing parameters)';
 sqpar.val  = {Nslices NslicesPerBeat TR Ndummies Nscans onset_slice time_slice_to_slice Nprep};
-sqpar.help = {'...'};
+sqpar.help = {'Sequence timing parameters, (number of slices, volumes, dummies, volume TR, slice TR ...)'};
 
 
 
@@ -257,7 +265,10 @@ sqpar.help = {'...'};
 c         = cfg_entry;
 c.tag     = 'c';
 c.name    = 'cardiac';
-c.help    = {'...'};
+c.help    = {'Order of Fourier expansion for cardiac phase'
+    ' - equals 1/2 number of cardiac regressors, since sine and cosine terms'
+    'are computed, i.e. sin(phi), cos(phi), sin(2*phi), cos(2*phi), ..., sin(c*phi), cos(c*phi)'
+    };
 c.strtype = 'e';
 c.num     = [1 1];
 c.val     = {3};
@@ -268,7 +279,11 @@ c.val     = {3};
 r         = cfg_entry;
 r.tag     = 'r';
 r.name    = 'respiratory';
-r.help    = {'...'};
+r.help    = {
+    'Order of Fourier expansion for respiratory phase'
+    ' - equals 1/2 number of respiratory regressors, since sine and cosine terms'
+    'are computed, i.e. sin(phi), cos(phi), sin(2*phi), cos(2*phi), ..., sin(r*phi), cos(r*phi)'
+    };
 r.strtype = 'e';
 r.num     = [1 1];
 r.val     = {4};
@@ -279,7 +294,11 @@ r.val     = {4};
 cr         = cfg_entry;
 cr.tag     = 'cr';
 cr.name    = 'cardiac X respiratory';
-cr.help    = {'...'};
+cr.help    = {
+    'Order of Fourier expansion for interaction of cardiac and respiratory phase'
+    ' - equals 1/4 number of interaction regressors, since sine and cosine terms'
+    'are computed and multiplied, i.e. sin(phi_c)*cos(phi_r), sin(phi_r)*cos(phi_c)'
+    };
 cr.strtype = 'e';
 cr.num     = [1 1];
 cr.val     = {1};
@@ -290,7 +309,10 @@ cr.val     = {1};
 orthog        = cfg_menu;
 orthog.tag    = 'orthogonalise';
 orthog.name   = 'orthogonalise';
-orthog.help   = {'...'};
+orthog.help   = {
+    'Orthogonalize physiological regressors with respect to each other.'
+    'Note: This is only recommended for triggered/gated acquisition sequences.'
+    };
 orthog.labels = {'none' 'cardiac' 'resp' 'mult' 'all'};
 orthog.values = {'none' 'cardiac' 'resp' 'mult' 'all'};
 orthog.val    = {'none'};
@@ -312,7 +334,7 @@ model_type.tag    = 'type';
 model_type.name   = 'type';
 model_type.help   = {'...'};
 model_type.labels = {
-    'RETROICOR (RETRO)' 
+    'RETROICOR (RETRO)'
     'Heart Rate Variability (HRV)'
     'Respiratory Volume per Time (RVT)'
     'RETRO+HRV'
@@ -321,7 +343,7 @@ model_type.labels = {
     'RETRO+HRV+RVT'
     };
 model_type.values = {
-    'RETROICOR' 
+    'RETROICOR'
     'HRV'
     'RVT'
     'RETROICOR_HRV'
@@ -337,7 +359,12 @@ model_type.val    = {'RETROICOR'};
 output_multiple_regressors         = cfg_entry;
 output_multiple_regressors.tag     = 'output_multiple_regressors';
 output_multiple_regressors.name    = 'output_multiple_regressors';
-output_multiple_regressors.help    = {'...'};
+output_multiple_regressors.help    = {
+    'Output file for physiologica regressors'
+    'Choose file name with extension:'
+    '.txt for ASCII files with 1 regressor per column'
+    '.mat for matlab variable file'
+    };
 output_multiple_regressors.strtype = 's';
 output_multiple_regressors.num     = [1 Inf];
 output_multiple_regressors.val     = {'multiple_regressors.txt'};
@@ -383,9 +410,9 @@ scan_timing_method        = cfg_menu;
 scan_timing_method.tag    = 'method';
 scan_timing_method.name   = 'method';
 scan_timing_method.help   = {
- 'method to determine slice onset times for regressors'
-'''nominal'' - to derive slice acquisition timing from sqpar directly'
-'''gradient'' or ''gradient_log'' - derive from logged gradient time courses'
+    'method to determine slice onset times for regressors'
+    '''nominal'' - to derive slice acquisition timing from sqpar directly'
+    '''gradient'' or ''gradient_log'' - derive from logged gradient time courses'
     };
 scan_timing_method.labels = {'nominal' 'gradient_log'};
 scan_timing_method.values = {'nominal' 'gradient_log'};
@@ -409,7 +436,7 @@ grad_direction.val    = {'y'};
 vol_spacing         = cfg_entry;
 vol_spacing.tag     = 'vol_spacing';
 vol_spacing.name    = 'vol_spacing';
-vol_spacing.help    = {'time (in seconds) between last slice of n-th volume' 
+vol_spacing.help    = {'time (in seconds) between last slice of n-th volume'
     'and 1st slice of n+1-th volume(overrides .vol-threshold)'
     'NOTE: Leave empty if .vol shall be used'};
 vol_spacing.strtype = 'e';
@@ -471,8 +498,8 @@ modality        = cfg_menu;
 modality.tag    = 'modality';
 modality.name   = 'modality';
 modality.help   = {'Shall ECG or PPU data be read from logfiles?'};
-modality.labels = {'ECG', 'OXY/PPU'};
-modality.values = {'ECG', 'PPU'};
+modality.labels = {'ECG', 'OXY/PPU', 'ECG_WiFi', 'PPU_WiFi'};
+modality.values = {'ECG', 'PPU', 'ECG_WiFi', 'PPU_Wifi'};
 modality.val    = {'ECG'};
 
 
@@ -483,18 +510,21 @@ initial_cpulse_select_method        = cfg_menu;
 initial_cpulse_select_method.tag    = 'method';
 initial_cpulse_select_method.name   = 'method';
 initial_cpulse_select_method.help   = {
-     'The initial cardiac pulse selection structure: Determines how the'
+    'The initial cardiac pulse selection structure: Determines how the'
     'majority of cardiac pulses is detected'
-    ' ''auto''    - auto generation of representative QRS-wave; detection via'
-    '             maximising auto-correlation with it'
-    ' ''load_from_logfile'' - from phys logfile, detected R-peaks of scanner' 
-    ' ''manual''  - via manually selected QRS-wave for autocoreelations'
-    ' ''load''    - from previous manual/auto run'
-   };
+    ' ''auto_matched''     - auto generation of template QRS wave, '
+    '             matched-filter detection of heartbeats (experimental)'
+    ' ''auto_template''    - auto generation of representative QRS-wave; detection via'
+    '             maximising auto-correlation with it (default)'
+    ' ''load_from_logfile'' - from phys logfile, detected R-peaks of scanner'
+    ' ''manual_template''  - via manually selected QRS-wave for autocorrelations'
+    ' ''load_template''    - from previous manual/auto run'
+    };
 initial_cpulse_select_method.labels = {
-    'auto', 'load_from_logfile', 'manual', 'load'};
-initial_cpulse_select_method.values = { 'auto', 'load_from_logfile', 'manual', 'load'};
-initial_cpulse_select_method.val    = {'load_from_logfile'};
+    'auto_matched', 'auto_template', 'load_from_logfile', 'manual_template', 'load_template'};
+initial_cpulse_select_method.values = { 
+        'auto_matched', 'auto_template', 'load_from_logfile', 'manual_template', 'load_template'};
+initial_cpulse_select_method.val    = {'auto_template'};
 
 %--------------------------------------------------------------------------
 % initial_cpulse_select_file
@@ -531,7 +561,7 @@ initial_cpulse_select.val  = {initial_cpulse_select_method min initial_cpulse_se
 initial_cpulse_select.help = {
     'The initial cardiac pulse selection structure: Determines how the'
     'majority of cardiac pulses is detected.'
-   };
+    };
 
 
 
@@ -545,7 +575,7 @@ posthoc_cpulse_select_method.help   = {
     '''off'' - no manual selection of peaks'
     '''manual'' - pick and save additional peaks manually'
     '''load'' - load previously selected cardiac pulses'
-   };
+    };
 posthoc_cpulse_select_method.labels = {
     'off', 'manual', 'load'};
 posthoc_cpulse_select_method.values = {'off', 'manual', 'load'};
@@ -619,8 +649,8 @@ posthoc_cpulse_select.help = {
     'The posthoc cardiac pulse selection structure: If only few (<20)'
     'cardiac pulses are missing in a session due to bad signal quality, a'
     'manual selection after visual inspection is possible using the'
-    'following parameters. The results are saved for reproducibility.' 
-   };
+    'following parameters. The results are saved for reproducibility.'
+    };
 
 
 
@@ -696,7 +726,7 @@ verbose        = cfg_branch;
 verbose.tag    = 'verbose';
 verbose.name   = 'verbose';
 verbose.help   = {
-' determines how many figures shall be generated to follow the workflow'
+    ' determines how many figures shall be generated to follow the workflow'
     ' of the toolbox and whether the graphical output shall be saved (to a'
     ' PostScript-file)'
     ' 0 = no graphical output;'
@@ -729,8 +759,8 @@ verbose.help   = {
     '                            Fig 8: time course of all sampled RETROICOR'
     '                                   regressors'
     '                            Fig 9: final multiple_regressors matrix'
-     
-};
+    
+    };
 verbose.val    = {level fig_output_file use_tabs};
 
 

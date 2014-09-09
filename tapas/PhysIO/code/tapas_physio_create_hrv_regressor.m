@@ -1,4 +1,4 @@
-function [convHRV, hr, verbose] = tapas_physio_create_hrv_regressor(...
+function [convHRVOut, hrOut, verbose] = tapas_physio_create_hrv_regressor(...
     ons_secs, sqpar, verbose)
 % computes cardiac response function regressor and heart rate
 %
@@ -30,7 +30,7 @@ function [convHRV, hr, verbose] = tapas_physio_create_hrv_regressor(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_hrv_regressor.m 422 2014-02-13 01:47:04Z kasperla $
+% $Id: tapas_physio_create_hrv_regressor.m 531 2014-08-14 16:58:12Z kasperla $
 if nargin < 3
     verbose.level = [];
     verbose.fig_handles = [];
@@ -70,14 +70,23 @@ end
 
 
 % resample to slices needed
-hr = hr(sqpar.onset_slice:sqpar.Nslices:end);
-convHRV = convHRV(sqpar.onset_slice:sqpar.Nslices:end);
-sample_points = sample_points(sqpar.onset_slice:sqpar.Nslices:end);
+nSampleSlices = numel(sqpar.onset_slice);
+nScans = numel(sample_points(sqpar.onset_slice:sqpar.Nslices:end));
+
+hrOut = zeros(nScans,nSampleSlices);
+convHRVOut = zeros(nScans,nSampleSlices);
+samplePointsOut = zeros(nScans,nSampleSlices);
+for iSlice = 1:nSampleSlices
+    onset_slice = sqpar.onset_slice(iSlice);
+    hrOut(:,iSlice) = hr(onset_slice:sqpar.Nslices:end)';
+    convHRVOut(:,iSlice) = convHRV(onset_slice:sqpar.Nslices:end);
+    samplePointsOut(:,iSlice) = sample_points(onset_slice:sqpar.Nslices:end);
+end
 
 if verbose.level>=2
     subplot(2,2,4)
-    plot(sample_points, hr,'k--'); hold all;
-    plot(sample_points, convHRV,'r'); 
+    hp{1} = plot(samplePointsOut, hrOut,'k--'); hold all;
+    hp{2} = plot(samplePointsOut, convHRVOut,'r'); 
     xlabel('time (seconds)');ylabel('regessor');
-    legend('cardiac response regressor', 'heart rate (bpm)');
+    legend([hp{1}(1), hp{2}(1)], 'cardiac response regressor', 'heart rate (bpm)');
 end

@@ -40,7 +40,7 @@ function physio = tapas_physio_new(default_scheme, physio_in)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_new.m 488 2014-05-03 09:52:49Z kasperla $
+% $Id: tapas_physio_new.m 516 2014-07-17 21:54:50Z kasperla $
 
 % if not specified differently, create everything empty
 if ~nargin
@@ -272,7 +272,7 @@ else
     %                                   regressors
     %                            Fig 9: final multiple_regressors matrix
     verbose.level = 1;
-    verbose.fig_handles = [];     % collector of all generated figure handles during a run of tapas_physio_main_create_regressors
+    verbose.fig_handles = [];     % [nFigs,1] vector; collecting of all generated figure handles during a run of tapas_physio_main_create_regressors
     verbose.fig_output_file = ''; % file name (including extension) where to print all physIO output figures to,
     verbose.use_tabs = false;    % if true, plots are performed in tabs of SPM graphics window
     %                                   TODO: implement via

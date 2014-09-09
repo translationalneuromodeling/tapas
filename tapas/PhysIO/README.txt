@@ -1,7 +1,7 @@
-TNU PhysIO Toolbox Version 2014
+TAPAS PhysIO Toolbox Version 2014
 
 ************************************************************************
-Copyright (C) 2013-2014 Lars Kasper <kasper@biomed.ee.ethz.ch>
+Copyright (C) 2012-2014 Lars Kasper <kasper@biomed.ee.ethz.ch>
 Translational Neuromodeling Unit (TNU)
 Institute for Biomedical Engineering
 University of Zurich and ETH Zurich
@@ -32,7 +32,7 @@ volume per time (cardiac response function, Chang et. al, 2009, respiratory
 response function, Birn et al. 2006). The toolbox is usable via the SPM 
 batch editor, performs automatic pre-processing of noisy peripheral data 
 and outputs nuisance regressor files directly suitable for SPM 
-(?multiple_regressors.txt?).
+(multiple_regressors.txt).
 
 BACKGROUND
 
@@ -103,7 +103,8 @@ COMPATIBILITY & SUPPORT
 - Input: 
     - Fully integrated to work with physiological logfiles for Philips MR systems (SCANPHYSLOG)
     - tested for General Electric (GE) log-files
-	- also: interface for 'Custom', i.e. general heart-beat time stamps & breathing volume time courses from other log formats
+    - preliminary implementation for Siemens log-files
+    - also: interface for 'Custom', i.e. general heart-beat time stamps & breathing volume time courses from other log formats
 - Output: Nuisance regressors for mass-univariate statistical analysis with SPM5,8,12
 - Part of the TNU Software Edition: long term support and ongoing development
 
@@ -113,9 +114,15 @@ DOWNLOADS & RELEASE INFORMATION
 - Current Release: 
 
 PhysIO_Toolbox_14 (Code | Examples)
-May 3rd, 2014
+August 25th, 2014
 
 revision: $Revision: 497 $
+
+Major Release Notes (r534):
+- Read-in of Siemens plain text log files; new example dataset for Siemens
+- Speed up and debugging of ‘auto’-detection method for noisy cardiac data => new method thresh.cardiac.initial_cpulse_select.method = ‘auto_matched’
+- Error handling for temporary breathing belt failures (Eduardo Aponte, TNU Zurich)
+- slice-wise regressors can be created by setting sqpar.onset_slice to a index vector of slices
 
 Major Release Notes (r497):
 - SPM matlabbatch GUI implemented (Call via Batch -> SPM -> Tools -> TAPAS PhysIO Toolbox)
@@ -135,7 +142,7 @@ Minor Release Notes (r354):
 - computation of heart and breathing rate in Philips/PPU/main_PPU.m
 - prefix of functions with tapas_*
 
-Last Major Release Notes (r241):
+Major Release Notes (r241):
 - complete modularization of reading/preprocessing/regressor creation for peripheral physiological data
 - manual selection of missed heartbeats in ECG/pulse oximetry (courtesy of Jakob Heinzle)
 - support for logfiles from GE scanners (courtesy of Steffen Bollmann, KiSpi Zuerich)
@@ -143,14 +150,15 @@ Last Major Release Notes (r241):
 - improved documentation
 - consistent function names (prefixed by "physio_")
 
-NOTE: Your main_ECG/PPU.m etc. scripts from previous versions (<=r159) will not work with this one any more. Please adapt one of the example scripts for your needs (~5 min of work). The main benefit of this version is a complete new variable structure that is more sustainable and makes the code more readible.
+NOTE: Your main_ECG/PPU.m etc. scripts from previous versions (<=r159) will not work with this one any more. Please adapt one of the example scripts for your needs (~5 min of work). The main benefit of this version is a complete new variable structure that is more sustainable and makes the code more readable.
 
 
-Leading Programmer: Lars Kasper
+Lead Programmer: Lars Kasper, TNU & MR-Technology Group, IBT, University & ETH Zurich
 
 Contributors: 
-Jakob Heinzle, TNU Zurich
 Steffen Bollmann, Kinderspital Zurich & ETH Zurich
+Jakob Heinzle, TNU Zurich
+Eduardo Aponte, TNU Zurich
 
 Send bug reports and suggestions to: kasper@biomed.ee.ethz.ch
 
@@ -163,17 +171,18 @@ See subdirectory "manual"
 
 REFERENCES
 
-Birn, Rasmus M., Jason B. Diamond, Monica A. Smith, and Peter A. Bandettini. 2006. ?Separating Respiratory-variation-related Fluctuations from Neuronal-activity-related Fluctuations in fMRI.? NeuroImage 31 (4) (July 15): 1536?1548. 	doi:10.1016/j.neuroimage.2006.02.048.
+Birn, Rasmus M., Jason B. Diamond, Monica A. Smith, and Peter A. Bandettini. 2006. Separating Respiratory-variation-related Fluctuations from Neuronal-activity-related Fluctuations in fMRI. NeuroImage 31 (4) (July 15): 1536?1548. 	doi:10.1016/j.neuroimage.2006.02.048.
 
-Glover, G H, T Q Li, and D Ress. 2000. ?Image-based Method for Retrospective Correction of Physiological Motion Effects in fMRI: RETROICOR.? Magnetic Resonance in Medicine: Official Journal of the Society of Magnetic Resonance in Medicine / 		Society of Magnetic Resonance in Medicine 44 (1) (July): 162?7. doi:10893535.
+Glover, G H, T Q Li, and D Ress. 2000. Image-based Method for Retrospective Correction of Physiological Motion Effects in fMRI: RETROICOR. Magnetic Resonance in Medicine: Official Journal of the Society of Magnetic Resonance in Medicine 44 (1) (July): 162(7). doi:10893535.
 
-Harvey, Ann K., Kyle T.S. Pattinson, Jonathan C.W. Brooks, Stephen D. Mayhew, Mark Jenkinson, and Richard G. Wise. 2008. ?Brainstem Functional Magnetic Resonance Imaging: Disentangling Signal from Physiological Noise.? Journal of Magnetic 		Resonance Imaging 28 (6): 1337?1344. doi:10.1002/jmri.21623.
+Harvey, Ann K., Kyle T.S. Pattinson, Jonathan C.W. Brooks, Stephen D. Mayhew, Mark Jenkinson, and Richard G. Wise. 2008. Brainstem Functional Magnetic Resonance Imaging: Disentangling Signal from Physiological Noise. Journal of Magnetic 		Resonance Imaging 28 (6): 1337?1344. doi:10.1002/jmri.21623.
 
-Hutton, C., O. Josephs, J. Stadler, E. Featherstone, A. Reid, O. Speck, J. Bernarding, and N. Weiskopf. 2011. ?The Impact of Physiological Noise Correction on fMRI at 7 T.? NeuroImage 57 (1) (July 1): 101?112. 	doi:10.1016/j.neuroimage.2011.04.018.
+Hutton, C., O. Josephs, J. Stadler, E. Featherstone, A. Reid, O. Speck, J. Bernarding, and N. Weiskopf. 2011. The Impact of Physiological Noise Correction on fMRI at 7 T. NeuroImage 57 (1) (July 1): 101?112. 	doi:10.1016/j.neuroimage.2011.04.018.
 
-Josephs, O., Howseman, A.M., Friston, K., Turner, R., 1997. "Physiological noise modelling for multi-slice EPI fMRI using SPM." Proceedings of the 5th Annual Meeting of ISMRM, Vancouver, Canada, p. 1682
-Kasper, Lars, Sarah Marti, S. Johanna Vannesj?, Chloe Hutton, Ray Dolan, Nikolaus Weiskopf, Klaas Enno Stephan, and Klaas Paul Pr?ssmann. 2009. ?Cardiac Artefact Correction for Human Brainstem fMRI at 7 Tesla.? In Proc. Org. Hum.  Brain Mapping 		15, 395. San Francisco.
+Josephs, O., Howseman, A.M., Friston, K., Turner, R., 1997. Physiological noise modelling for multi-slice EPI fMRI using SPM. Proceedings of the 5th Annual Meeting of ISMRM, Vancouver, Canada, p. 1682
+
+Kasper, Lars, Sarah Marti, S. Johanna Vannesjo, Chloe Hutton, Ray Dolan, Nikolaus Weiskopf, Klaas Enno Stephan, and Klaas Paul Pruessmann. 2009. Cardiac Artefact Correction for Human Brainstem fMRI at 7 Tesla. In Proc. Org. Hum.  Brain Mapping 		15, 395. San Francisco.
 
 
 VERSION OF THIS FILE
-$Id: README.txt 497 2014-05-03 21:22:23Z kasperla $
+$Id: README.txt 534 2014-08-28 18:05:58Z kasperla $

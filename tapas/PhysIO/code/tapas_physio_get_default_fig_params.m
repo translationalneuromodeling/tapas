@@ -1,6 +1,10 @@
-function [fh, prop, MyColors] = tapas_physio_get_default_fig_params(xscale, yscale)
+function [fh, prop, MyColors] = tapas_physio_get_default_fig_params(...
+    convfac, xscale, yscale)
 % set and return General settings for plots
 %
+%  IN
+%       convfac     conversion factor (1...Inf) to scale size of text and
+%                   lines in plot
 % -------------------------------------------------------------------------
 % Lars Kasper, August 2011
 %
@@ -11,13 +15,17 @@ function [fh, prop, MyColors] = tapas_physio_get_default_fig_params(xscale, ysca
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_default_fig_params.m 407 2014-01-17 17:09:27Z kasperla $
+% $Id: tapas_physio_get_default_fig_params.m 526 2014-08-13 17:09:19Z kasperla $
 %
-switch nargin
-    case 0
+if nargin < 1
+   convfac = 2; % conversion factor
+end
+
+if nargin < 2
         xscale = 0.5;
-        yscale = 0.5;
-    case 1
+end
+
+if nargin < 3
         yscale = 0.5;
 end
 
@@ -39,7 +47,6 @@ set(fh,'DefaultAxesColorOrder',MyColors);
 
 
 %% for printing output
-convfac = 2; % conversion factor
 out_width = 21*xscale;
 out_height = 30*yscale;
 FontName = 'Helvetica';

@@ -31,7 +31,7 @@ function [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_main_create_regressors.m 496 2014-05-03 20:51:07Z kasperla $
+% $Id: tapas_physio_main_create_regressors.m 524 2014-08-13 16:21:56Z kasperla $
 %
 
 
@@ -72,8 +72,12 @@ model   = physio.model;
 verbose = physio.verbose;
 
 %% 1. Read in vendor-specific physiological log-files
-[ons_secs.c, ons_secs.r, ons_secs.t, ons_secs.cpulse] = ...
-    tapas_physio_read_physlogfiles(log_files, thresh.cardiac.modality);
+[ons_secs.c, ons_secs.r, ons_secs.t, ons_secs.cpulse, verbose] = ...
+    tapas_physio_read_physlogfiles(log_files, thresh.cardiac.modality, ...
+    verbose);
+
+% since resampling might have occured, dt is recalculated
+dt = ons_secs.t(2)-ons_secs.t(1); 
 
 hasCardiacData = ~isempty(ons_secs.c);
 hasRespData = ~isempty(ons_secs.r);
@@ -108,10 +112,12 @@ if hasCardiacData
     %% initial pulse select via load from logfile or autocorrelation with 1
     %% cardiac pulse
     switch thresh.cardiac.initial_cpulse_select.method
-        case {'manual', 'load', 'auto'}
+        case {'load_from_logfile', ''}
+            % do nothing
+        otherwise
+            % run one of the various cardiac pulse detection algorithms
             [ons_secs.cpulse, verbose] = tapas_physio_get_cardiac_pulses(ons_secs.t, ons_secs.c, ...
                 thresh.cardiac.initial_cpulse_select, thresh.cardiac.modality, [], verbose);
-        case {'load_from_logfile', ''}
     end
     
     %% post-hoc: hand pick additional cardiac pulses or load from previous
@@ -148,7 +154,8 @@ end
 if verbose.level >= 1
     verbose.fig_handles(end+1) = ...
         tapas_physio_plot_raw_physdata_diagnostics(ons_secs.cpulse, ...
-        ons_secs.r, thresh.cardiac.posthoc_cpulse_select, verbose.level);
+        ons_secs.r, thresh.cardiac.posthoc_cpulse_select, verbose.level, ...
+    ons_secs.t, ons_secs.c);
 else % without figure creation
      tapas_physio_plot_raw_physdata_diagnostics(ons_secs.cpulse, ...
         ons_secs.r, thresh.cardiac.posthoc_cpulse_select, 0);
@@ -156,7 +163,8 @@ end
 
 if hasRespData
     % filter respiratory signal
-    ons_secs.fr = tapas_physio_filter_respiratory(ons_secs.r, log_files.sampling_interval);
+    ons_secs.fr = tapas_physio_filter_respiratory(ons_secs.r, ...
+        dt);
 end
 
 %% 4. Create RETROICOR/response function regressors for SPM

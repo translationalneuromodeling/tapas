@@ -1,6 +1,11 @@
 function tapas_init()
+ 
+% Get the version number
+fileID = fopen('README.txt', 'rt'); 
+firstLine = fgets(fileID);
+fclose(fileID);
 
-disp('Initializing TAPAS..');
+disp(strcat('Initializing TAPAS',{' '},firstLine,{' '},'...'));
 
 disp( '_________   _____                _____       _____           ____                ');
 disp( '   |       |     |              |_____|     |     |         |          ');

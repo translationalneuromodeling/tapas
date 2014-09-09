@@ -40,7 +40,7 @@ function [events, ECG_min, kRpeak] = tapas_physio_find_ecg_r_peaks(t,y, ECG_min,
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_find_ecg_r_peaks.m 354 2013-12-02 22:21:41Z kasperla $
+% $Id: tapas_physio_find_ecg_r_peaks.m 516 2014-07-17 21:54:50Z kasperla $
 %
 manual_mode = ~exist('kRpeak', 'var') || isempty(kRpeak);
 
@@ -79,12 +79,14 @@ sy = conv(y./sqrt(sum(kRpeak.^2)),kRpeak/sqrt(sum(kRpeak.^2)),'same');
 
 peaks_found     = false;
 thresh_changed  = false;
+dt = t(2) - t(1);
+nSamplesBpm120 = floor((60/120)/dt);
 % lower threshold until peaks are found in autocorrelation function
 while ~peaks_found
     if ECG_min < 0
-        [tmp, events] = tapas_physio_findpeaks(-sy,'minpeakheight', -ECG_min, 'minpeakdistance',200);
+        [tmp, events] = tapas_physio_findpeaks(-sy,'minpeakheight', -ECG_min, 'minpeakdistance',nSamplesBpm120);
     else
-        [tmp, events] = tapas_physio_findpeaks(sy,'minpeakheight', ECG_min, 'minpeakdistance',200);
+        [tmp, events] = tapas_physio_findpeaks(sy,'minpeakheight', ECG_min, 'minpeakdistance',nSamplesBpm120);
     end
     peaks_found = ~isempty(events);
     if ~peaks_found

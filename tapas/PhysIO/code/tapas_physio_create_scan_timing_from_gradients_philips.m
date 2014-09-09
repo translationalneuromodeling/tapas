@@ -75,7 +75,7 @@ function [VOLLOCS, LOCS, verbose] = tapas_physio_create_scan_timing_from_gradien
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_scan_timing_from_gradients_philips.m 466 2014-04-27 13:10:48Z kasperla $
+% $Id: tapas_physio_create_scan_timing_from_gradients_philips.m 508 2014-06-30 17:00:42Z kasperla $
     
 % everything stored in 1 logfile
 if ~isfield(log_files, 'cardiac') || isempty(log_files.cardiac)
@@ -114,7 +114,7 @@ y = cell2mat(z);
 
 Nsamples=size(y,1);
 
-dt = log_files.sampling_interval; 
+dt = log_files.sampling_interval(1); 
 
 %default: 500 Hz sampling frequency
 if isempty(dt)

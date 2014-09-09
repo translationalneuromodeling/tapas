@@ -39,7 +39,7 @@ function [rvt, rpulseMax, rpulseMin, verbose] = ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_rvt.m 422 2014-02-13 01:47:04Z kasperla $
+% $Id: tapas_physio_rvt.m 531 2014-08-14 16:58:12Z kasperla $
 
 
 dt = t(2)-t(1);
@@ -49,6 +49,7 @@ dtBreath = round(2/dt); %in seconds, minimum distance between two breaths
 % times)
 thresh_cardiac = [];
 thresh_cardiac.min = .1; 
+thresh_cardiac.method = 'auto_template';
 
 if nargin < 4
     verbose.level = 0;
