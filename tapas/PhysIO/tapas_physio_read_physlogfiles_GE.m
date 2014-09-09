@@ -1,11 +1,11 @@
-function [c, r, t, cpulse] = tapas_physio_read_physlogfiles_GE(files)
+function [c, r, t, cpulse] = tapas_physio_read_physlogfiles_GE(log_files)
 % reads out physiological time series and timing vector depending on the
 % MR scanner vendor and the modality of peripheral cardiac monitoring (ECG
 % or pulse oximetry)
 %
 %   [cpulse, rpulse, t, c] = tapas_physio_read_physlogfiles_GE(logfile, vendor, cardiac_modality)
 %
-% IN    files
+% IN    log_files
 %       .log_cardiac        contains ECG or pulse oximeter time course
 %                           for GE: ECGData...
 %       .log_respiration    contains breathing belt amplitude time course
@@ -35,16 +35,25 @@ function [c, r, t, cpulse] = tapas_physio_read_physlogfiles_GE(files)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_read_physlogfiles_GE.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_read_physlogfiles_GE.m 423 2014-02-15 14:22:53Z kasperla $
 
 %% read out values
 
-dt = 25/1000;
+if ~isempty(log_files.respiration)
+    r = load(log_files.respiration, 'ascii');
+else 
+    r = [];
+end
 
-c = load(files.cardiac);
-r = load(files.respiration);
+if ~isempty(log_files.cardiac)
+    c = load(log_files.cardiac, 'ascii');
+else 
+    c = [];
+end
+
+dt = log_files.sampling_interval;
 Nsamples = size(c,1);
-t =((0:(Nsamples-1))*dt)'; 
+t = -log_files.startScanSeconds + ((0:(Nsamples-1))*dt)'; 
 cpulse = [];
 
 end

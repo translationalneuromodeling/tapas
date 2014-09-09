@@ -75,7 +75,7 @@ function [VOLLOCS, LOCS, verbose] = tapas_physio_create_scan_timing_from_gradien
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_scan_timing_from_gradients_philips.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_create_scan_timing_from_gradients_philips.m 423 2014-02-15 14:22:53Z kasperla $
     
 % everything stored in 1 logfile
 if ~isfield(log_files, 'cardiac') || isempty(log_files.cardiac)
@@ -84,7 +84,7 @@ else
     logfile = log_files.cardiac;
 end
 
-do_detect_vol_events_by_count = ~isfield(thresh, 'vol') || isempty(thresh.vol);
+do_detect_vol_events_by_count = (~isfield(thresh, 'vol') || isempty(thresh.vol)) && (~isfield(thresh, 'vol_spacing') || isempty(thresh.vol_spacing));
 do_detect_vol_events_by_grad_height = ~do_detect_vol_events_by_count && (~isfield(thresh, 'vol_spacing') || isempty(thresh.vol_spacing));
 
 % check consistency of thresh-values
@@ -114,8 +114,14 @@ y = cell2mat(z);
 
 Nsamples=size(y,1);
 
-dt = 2e-3; %500 Hz sampling frequency
-t=((0:(Nsamples-1))*dt)';
+dt = log_files.sampling_interval; 
+
+%default: 500 Hz sampling frequency
+if isempty(dt)
+    dt = 2e-3;
+end
+
+t = -log_files.startScanSeconds + ((0:(Nsamples-1))*dt)';
 
 
 
@@ -164,10 +170,14 @@ t=((0:(Nsamples-1))*dt)';
         VOLLOCS = [];
     end
     
-    if verbose.level>=2
+    if verbose.level>=1
         verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
         set(gcf,'Name', 'Thresholding Gradient for slice acq start detection');
-        fs(1) = subplot(2,1,1);
+        fs(1) = subplot(3,1,1);
+        plot(t, y(:,7:9));
+        legend('gradient x', 'gradient y', 'gradient z');
+        title('Raw Gradient Time-courses');
+        fs(2) = subplot(3,1,2);
         hp = plot(t,[gradient_choice z2]); hold all;
         hp(end+1) = plot(t, repmat(thresh.zero, length(t),1));
         hp(end+1) = plot(t, repmat(thresh.slice, length(t),1));
@@ -192,27 +202,35 @@ t=((0:(Nsamples-1))*dt)';
     
     if do_count_from_start
         if length(VOLLOCS)< (Nprep+Nscans+Ndummies)
-            error('Not enough volume events found. Please lower thresh.vol');
+            error(['Not enough volume events found. \n\tFound:  %d\n ' ...
+                '\tNeeded: %d+%d+%d (Nprep+Ndummies+Nscans)\n' ...
+                'Please lower thresh.vol or thresh.vol_spacing\n'], ...
+                length(VOLLOCS), Nprep, Ndummies, Nscans);
         end
     else
         if length(VOLLOCS)< (Nscans+Ndummies)
-            error('Not enough volume events found. Please lower thresh.vol');
+               error(['Not enough volume events found. \n\tFound:  %d\n ' ...
+                '\tNeeded: %d+%d (Ndummies+Nscans)\n' ...
+                'Please lower thresh.vol or thresh.vol_spacing\n'], ...
+                length(VOLLOCS), Ndummies, Nscans);
         end
     end
     
     %% Plot gradient thresholding for slice timing determination
-    if verbose.level >= 2 % continue figure, if sth was found!
+    if verbose.level >= 1 % continue figure, if sth was found!
         hp(end+1) = stem(t(VOLLOCS),1.25*max(gradient_choice)*ones(size(VOLLOCS))); hold all
         hp(end+1) = stem(t(LOCS),max(gradient_choice)*ones(size(LOCS))); hold all
         lg = {lg{:}, 'found volume events', 'found slice events'};
         legend(hp, lg);
-        ymin = tapas_physio_prctile(diff(LOCS), 25);
-        ymax = tapas_physio_prctile(diff(LOCS), 99);
         
-        fs(2) = subplot(2,1,2);
-        plot(t(LOCS(1:end-1)), diff(LOCS)); title('duration betwenn scan events - search for bad peaks here!');
-        xlabel('t(s)');
-        ylabel('t(ms)');
+        dLocsSecs = diff(LOCS)*dt*1000;
+        ymin = tapas_physio_prctile(dLocsSecs, 25);
+        ymax = tapas_physio_prctile(dLocsSecs, 99);
+        
+        fs(3) = subplot(3,1,3);
+        plot(t(LOCS(1:end-1)), dLocsSecs); title('duration betwenn scan events - search for bad peaks here!');
+        xlabel('t (s)');
+        ylabel('t (ms)');
         ylim([0.9*ymin, 1.1*ymax]);
         linkaxes(fs,'x');
     end

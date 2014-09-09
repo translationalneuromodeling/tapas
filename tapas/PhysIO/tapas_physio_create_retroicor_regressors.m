@@ -1,5 +1,6 @@
-function [cardiac_sess, respire_sess, mult_sess, verbose, c_sample_phase, r_sample_phase] ...
-    = tapas_physio_create_retroicor_regressors(ons_secs, sqpar, thresh, order, verbose) 
+function [cardiac_sess, respire_sess, mult_sess, ons_secs, verbose, ...
+    c_sample_phase, r_sample_phase] ...
+    = tapas_physio_create_retroicor_regressors(ons_secs, sqpar, order, verbose) 
 % calculation of regressors for physiological motion correction using RETROICOR (Glover, MRM, 2000)
 %
 % USAGE:
@@ -25,9 +26,6 @@ function [cardiac_sess, respire_sess, mult_sess, verbose, c_sample_phase, r_samp
 %            onset_slice    - slice whose scan onset determines the adjustment of the 
 %                             regressor timing to a particular slice for the whole volume
 %
-%   thresh
-%           .resp_max       -  if set, all peaks above that breathing belt amplitude 
-%                              are ignored for respiratory phase evaluation
 %
 % -------------------------------------------------------------------------
 % Lars Kasper, March 2012
@@ -38,7 +36,7 @@ function [cardiac_sess, respire_sess, mult_sess, verbose, c_sample_phase, r_samp
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_retroicor_regressors.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_create_retroicor_regressors.m 427 2014-02-18 16:40:48Z kasperla $
 
 %% variable renaming
 if ~exist('verbose', 'var')
@@ -49,15 +47,17 @@ cpulse          = ons_secs.cpulse;
 r               = ons_secs.r;
 spulse          = ons_secs.spulse;
 t               = ons_secs.t;
-slicenum        = sqpar.onset_slice;
+
+hasRespData = ~isempty(r);
+hasCardiacData = ~isempty(cpulse);
 
 %parameters for resampling
 rsampint    = t(2)-t(1);
 
 %% Get phase, downsample and Fourier-expand
-sample_points   = tapas_physio_get_sample_points(ons_secs, sqpar, slicenum);
+sample_points   = tapas_physio_get_sample_points(ons_secs, sqpar);
 
-if order.c
+if order.c && hasCardiacData
     if verbose.level >= 3
     [c_phase, verbose.fig_handles(end+1)]    = ...
         tapas_physio_get_cardiac_phase(cpulse, spulse, verbose.level, svolpulse);
@@ -71,15 +71,15 @@ else
     c_sample_phase = [];
 end
 
-if order.r
-    fr = tapas_physio_filter_respiratory(r,rsampint);
+if order.r && hasRespData
+    fr = ons_secs.fr; 
     
     if verbose.level >=3
         [r_phase, verbose.fig_handles(end+1)] = ...
             tapas_physio_get_respiratory_phase( ...
-                fr,rsampint, verbose.level, thresh);
+                fr,rsampint, verbose.level);
     else
-        r_phase = tapas_physio_get_respiratory_phase(fr,rsampint, 0, thresh);
+        r_phase = tapas_physio_get_respiratory_phase(fr,rsampint, 0);
     end
     r_sample_phase  = tapas_physio_downsample_phase(t, r_phase, sample_points, rsampint);
     respire_sess    = tapas_physio_get_fourier_expansion(r_sample_phase,order.r);
@@ -89,13 +89,16 @@ else
 end
 
 % Multiplicative terms as specified in Harvey et al., 2008
-if order.cr
+if order.cr && hasRespData && hasCardiacData
     crplus_sess = tapas_physio_get_fourier_expansion(c_sample_phase+r_sample_phase,order.cr);
     crdiff_sess = tapas_physio_get_fourier_expansion(c_sample_phase-r_sample_phase,order.cr);
     mult_sess = [crplus_sess crdiff_sess];
 else
     mult_sess = [];
 end
+
+ons_secs.c_sample_phase = c_sample_phase;
+ons_secs.r_sample_phase = r_sample_phase;
 
 subj='';
 %% plot cardiac & resp. regressors

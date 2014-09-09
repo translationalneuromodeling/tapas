@@ -10,7 +10,7 @@ function fh = tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar)
 %
 % OUTPUT
 %   fh          figure handle of output figure
-% 
+%
 % Author: Lars Kasper
 %
 % Copyright (C) 2013, Institute for Biomedical Engineering, ETH/Uni Zurich.
@@ -20,7 +20,7 @@ function fh = tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_plot_cropped_phys_to_acqwindow.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_plot_cropped_phys_to_acqwindow.m 423 2014-02-15 14:22:53Z kasperla $
 [fh, MyColors] = tapas_physio_get_default_fig_params();
 set(fh,'Name','Cutout actual scans - all events and gradients');
 
@@ -36,7 +36,19 @@ c           = ons_secs.raw.c;
 spulse      = ons_secs.raw.spulse;
 svolpulse   = ons_secs.raw.svolpulse;
 
-maxVal = max(max(abs(r)), max(abs(c))); 
+hasCardiacData = ~isempty(c);
+hasRespData = ~isempty(r);
+
+maxValc = max(abs(c));
+maxValr = max(abs(r));
+if hasCardiacData && hasRespData
+    maxVal = max(maxValc, maxValr);
+elseif hasCardiacData
+    maxVal = maxValc;
+else
+    maxVal = maxValr;
+end
+
 ampsv = maxVal/2.25;
 amps = maxVal / 3;
 ampc = maxVal / 2;
@@ -47,7 +59,10 @@ stem(spulse(1:Ndummies*Nslices),amps*ones(Ndummies*Nslices,1),'r--');
 hold on;
 stem(svolpulse(Ndummies+1:end),ampsv*ones(length(svolpulse)-Ndummies,1),'--g', 'LineWidth',2);
 stem(spulse((Ndummies*Nslices+1):end), amps*ones(length(spulse)-Ndummies*Nslices,1), 'c--') ;
-stem(cpulse, ampc*ones(length(cpulse),1), 'm--') ;
+
+if hasCardiacData
+    stem(cpulse, ampc*ones(length(cpulse),1), 'm--') ;
+end
 plot(t(1:sampling:end), x, '--');
 
 
@@ -70,17 +85,40 @@ hs(1) = stem(spulse(1:Ndummies*Nslices),amps*ones(Ndummies*Nslices,1),'r');
 hold on;
 hs(end+1) = stem(svolpulse(Ndummies+1:end),ampsv*ones(length(svolpulse)-Ndummies,1),'g', 'LineWidth',2);
 hs(end+1) = stem(spulse((Ndummies*Nslices+1):end), amps*ones(length(spulse)-Ndummies*Nslices,1), 'c') ;
-hs(end+1) = stem(cpulse, ampc*ones(length(cpulse),1), 'm') ;
+
+if hasCardiacData
+    hs(end+1) = stem(cpulse, ampc*ones(length(cpulse),1), 'm') ;
+end
 hs2 = plot(t(1:sampling:end), x, '-')';
 hs = [hs, hs2];
-hs(end+1) = plot(t,r,'ko');
+
+if hasRespData
+    hs(end+1) = plot(t,r,'ko');
+else
+    hs(end+1) = plot(t,c,'ko');
+end
 
 xlabel('t (s)'); ylabel('Amplitude (a. u.)');
 title('Cutout region for physiological regressors');
+
+if hasCardiacData && hasRespData
+
 legend( hs, {['dummy scan event marker (N = ' int2str(Ndummies*Nslices) ')'], ...
     ['volume event marker (N = ' int2str(length(svolpulse)-Ndummies) '), without dummies'], ...
     ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
     ['cardiac pulse (heartbeat) marker (N = ' int2str(length(cpulse)) ')'], ...
     'cardiac signal', 'respiratory signal', 'used respiratory signal'});
-ylim(1.2*maxVal*[-1 1]);
+elseif hasCardiacData
+    legend( hs, {['dummy scan event marker (N = ' int2str(Ndummies*Nslices) ')'], ...
+    ['volume event marker (N = ' int2str(length(svolpulse)-Ndummies) '), without dummies'], ...
+    ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
+    ['cardiac pulse (heartbeat) marker (N = ' int2str(length(cpulse)) ')'], ...
+    'cardiac signal', 'used cardiac signal'});
+else % only respData
+legend( hs, {['dummy scan event marker (N = ' int2str(Ndummies*Nslices) ')'], ...
+    ['volume event marker (N = ' int2str(length(svolpulse)-Ndummies) '), without dummies'], ...
+    ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
+    'respiratory signal', 'used respiratory signal'});
 end
+
+ylim(1.2*maxVal*[-1 1]);

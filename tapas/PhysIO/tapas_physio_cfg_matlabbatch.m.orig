@@ -1,4 +1,4 @@
-function checkphysretroicor = tnu_cfg_checkphysretroicor
+function physio = tapas_physio_cfg_matlabbatch
 % Lars Kasper, March 2013
 %
 % Copyright (C) 2013, Institute for Biomedical Engineering, ETH/Uni Zurich.
@@ -153,24 +153,6 @@ sqpar.name = 'Sequence timing parameters';
 sqpar.val  = {Nslices NslicesPerBeat TR Ndummies Nscans onset_slice TimeSliceToSlice Nprep};
 sqpar.help = {'...'};
 
-%--------------------------------------------------------------------------
-% resp_max
-%--------------------------------------------------------------------------
-resp_max         = cfg_entry;
-resp_max.tag     = 'resp_max';
-resp_max.name    = 'resp_max';
-resp_max.help    = {'...'};
-resp_max.strtype = 'e';
-resp_max.num     = [Inf Inf];
-
-%--------------------------------------------------------------------------
-% respiratory
-%--------------------------------------------------------------------------
-respiratory      = cfg_branch;
-respiratory.tag  = 'respiratory';
-respiratory.name = 'respiratory';
-respiratory.val  = {resp_max};
-respiratory.help = {'...'};
 
 %--------------------------------------------------------------------------
 % manual_peak_select

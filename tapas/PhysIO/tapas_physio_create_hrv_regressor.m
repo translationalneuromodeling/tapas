@@ -1,11 +1,11 @@
-function [convHRV, hr] = tapas_physio_create_hrv_regressor(ons_secs, sqpar )
-% computes cardiac response function regressor and heart rate after
-% running tapas_physio_main_create_regressors
+function [convHRV, hr, verbose] = tapas_physio_create_hrv_regressor(...
+    ons_secs, sqpar, verbose)
+% computes cardiac response function regressor and heart rate
 %
 %    [convHRV, hr] = tapas_physio_create_hrv_regressor(ons_secs, sqpar )
 %
 % Reference:
-%   Chang, Catie, John P. Cunningham, and Gary H. Glover. �Influence of Heart Rate on the BOLD Signal: The Cardiac Response Function.� NeuroImage 44, no. 3 (February 1, 2009): 857�869. doi:10.1016/j.neuroimage.2008.09.029.
+%   Chang, Catie, John P. Cunningham, and Gary H. Glover. ???Influence of Heart Rate on the BOLD Signal: The Cardiac Response Function.??? NeuroImage 44, no. 3 (February 1, 2009): 857???869. doi:10.1016/j.neuroimage.2008.09.029.
 %
 % IN
 %   ons_secs.
@@ -30,18 +30,22 @@ function [convHRV, hr] = tapas_physio_create_hrv_regressor(ons_secs, sqpar )
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_hrv_regressor.m 235 2013-08-19 16:28:07Z kasperla $
-DEBUG = true;
+% $Id: tapas_physio_create_hrv_regressor.m 422 2014-02-13 01:47:04Z kasperla $
+if nargin < 3
+    verbose.level = [];
+    verbose.fig_handles = [];
+end
 
 slicenum = 1:sqpar.Nslices;
 
 sample_points  = tapas_physio_get_sample_points(ons_secs, sqpar, slicenum);
 hr = tapas_physio_hr(ons_secs.cpulse, sample_points);
 
-if DEBUG
-    figure;
+if verbose.level>=2
+    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
+    set(gcf, 'Name', 'Regressors Heart Rate: HRV X CRF');
     subplot(2,2,1)
-    plot(sample_points,hr);xlabel('time (seconds)');ylabel('heart rate (bpm)');
+    plot(sample_points,hr,'r');xlabel('time (seconds)');ylabel('heart rate (bpm)');
 end
 
 % create convolution for whole time series first...
@@ -50,18 +54,18 @@ t = 0:dt:32; % 32 seconds regressor
 crf = tapas_physio_crf(t);
 crf = crf/max(abs(crf));
 % crf = spm_hrf(dt);
-if DEBUG
+if verbose.level>=2
     subplot(2,2,2)
-    plot(t, crf);xlabel('time (seconds)');ylabel('cardiac response function');
+    plot(t, crf,'r');xlabel('time (seconds)');ylabel('cardiac response function');
 end
 
 % NOTE: the removal of the mean was implemented to avoid over/undershoots
 % at the 1st and last scans of the session due to convolution
 convHRV = conv(hr-mean(hr), crf, 'same');
 
-if DEBUG
+if verbose.level>=2
     subplot(2,2,3)
-    plot(sample_points, convHRV);xlabel('time (seconds)');ylabel('cardiac response function');
+    plot(sample_points, convHRV,'r');xlabel('time (seconds)');ylabel('heart rate X cardiac response function');
 end
 
 
@@ -70,10 +74,10 @@ hr = hr(sqpar.onset_slice:sqpar.Nslices:end);
 convHRV = convHRV(sqpar.onset_slice:sqpar.Nslices:end);
 sample_points = sample_points(sqpar.onset_slice:sqpar.Nslices:end);
 
-if DEBUG
+if verbose.level>=2
     subplot(2,2,4)
-    plot(sample_points, convHRV); hold all;
-    plot(sample_points, hr);
+    plot(sample_points, hr,'k--'); hold all;
+    plot(sample_points, convHRV,'r'); 
     xlabel('time (seconds)');ylabel('regessor');
     legend('cardiac response regressor', 'heart rate (bpm)');
 end

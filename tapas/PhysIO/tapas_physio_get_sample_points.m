@@ -9,7 +9,7 @@ function sample_points = tapas_physio_get_sample_points(ons_secs, sqpar, slicenu
 %   ons_secs
 %   sqpar
 %   slicenum    - slice number (1<=slicenum<=Nslices) where signal shall be
-%                 sampled
+%                 sampled; alternative: specify sqpar.onset_slice
 %
 % OUTPUT:
 %   sample_points   - absolute time (in seconds) where the specified slice was
@@ -24,23 +24,29 @@ function sample_points = tapas_physio_get_sample_points(ons_secs, sqpar, slicenu
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_sample_points.m 235 2013-08-19 16:28:07Z kasperla $
-if nargin<3 || isempty(slicenum)
-    sample_points = [];
-    for n = 1:sqpar.Nscans
-        sample_points = [sample_points; ons_secs.spulse_per_vol{n + sqpar.Ndummies}];
+% $Id: tapas_physio_get_sample_points.m 413 2014-01-21 01:26:20Z kasperla $
+
+% slicenum should be field of onset_slice
+if nargin<3
+    if isfield(sqpar, 'onset_slice')
+        slicenum = sqpar.onset_slice;
     end
-else
-    nSampleSlices = length(slicenum);
-    sample_points = zeros(sqpar.Nscans*nSampleSlices,1);
-    for n = 1:sqpar.Nscans
-        spulse = ons_secs.spulse_per_vol{n + sqpar.Ndummies};
-        if length(spulse) < max(slicenum)
-            error('scan %d: only %d slice scan events. Cannot resample to slice %d', ...
-                n, length(spulse), max(slicenum));
-        else
-            sample_points((n-1)*nSampleSlices + (1:nSampleSlices)) = spulse(slicenum);
-        end
+end
+
+% default timing: first slice
+if isempty(slicenum)
+    slicenum = 1;
+end
+
+nSampleSlices = length(slicenum);
+sample_points = zeros(sqpar.Nscans*nSampleSlices,1);
+for n = 1:sqpar.Nscans
+    spulse = ons_secs.spulse_per_vol{n + sqpar.Ndummies};
+    if length(spulse) < max(slicenum)
+        error('scan %d: only %d slice scan events. Cannot resample to slice %d', ...
+            n, length(spulse), max(slicenum));
+    else
+        sample_points((n-1)*nSampleSlices + (1:nSampleSlices)) = spulse(slicenum);
     end
 end
 

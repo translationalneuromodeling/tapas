@@ -25,7 +25,7 @@ function physio_print_figs_to_ps(verbose)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_print_figs_to_file.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_print_figs_to_file.m 354 2013-12-02 22:21:41Z kasperla $
 if isempty(verbose.fig_handles)
     warning('No figures found to save into PS-file')
 else

@@ -24,7 +24,7 @@ function R = tapas_physio_load_other_multiple_regressors(filename_other_regresso
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_load_other_multiple_regressors.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_load_other_multiple_regressors.m 354 2013-12-02 22:21:41Z kasperla $
 [fp, fn, fs] = fileparts(filename_other_regressors);
 
 if ~exist(filename_other_regressors, 'file')

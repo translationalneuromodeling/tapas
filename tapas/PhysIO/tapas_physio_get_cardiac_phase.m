@@ -30,7 +30,7 @@ function [cardiac_phase, fh] = tapas_physio_get_cardiac_phase(pulset,scannert, v
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_phase.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_get_cardiac_phase.m 354 2013-12-02 22:21:41Z kasperla $
 %
 
 
@@ -90,7 +90,7 @@ if ~isempty(n)
     Nvol = length(svolpulse);
     Nsli = length(scannert)/Nvol;
     warningmsg=sprintf('%s\nFirst occurence: Volume %d, slice %d',warningmsg, ceil(n(1)/Nsli), Nsli - mod(Nsli - n(1),Nsli));
-    warningmsg=sprintf('%s\nNOTE: This is only detrimental, if the microtime onset slice is greater or equal %d',warningmsg, Nsli - mod(Nsli - n(1),Nsli));
-    warningmsg=sprintf('%s\n      and if this occurs in a volume before your last volume of interest.\n', warningmsg);
+    warningmsg=sprintf('%s\nNOTE: This is only detrimental, if sqpar.onset_slice is greater or equal %d',warningmsg, Nsli - mod(Nsli - n(1),Nsli));
+    warningmsg=sprintf('%s\n      and if this occurs in a volume before your last volume of interest %d.\n', warningmsg, Nvol);
     warning(warningmsg);
 end

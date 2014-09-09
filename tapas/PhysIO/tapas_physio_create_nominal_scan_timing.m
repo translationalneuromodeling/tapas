@@ -7,12 +7,12 @@ function [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, sqpar)
 % 7-9), the actual time-course of the sequence has to be inferred from the
 % nominal sequence parameters in sqpar. Here, the corresponding slice scan
 % events are generated for the resampling of regressors in the GLM under
-% the assumption that the SCANPHYSLOG-file-�gging ended exactly when the scan ended
+% the assumption that the SCANPHYSLOG-file ended exactly when the scan ended
 % ...which is usually the case if a scan is not stopped manually
 %
 % IN
 %   t       - timing vector of SCANPHYSLOG-file, usually sampled with 500
-%             Hz
+%             Hz (Philips)
 %   sqpar                   - sequence timing parameters
 %           .Nslices        - number of slices per volume in fMRI scan
 %           .NslicesPerBeat - usually equals Nslices, unless you trigger with the heart beat
@@ -27,7 +27,7 @@ function [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, sqpar)
 %                             slices; typically TR/Nslices or
 %                             minTR/Nslices, if minimal temporal slice
 %                             spacing was chosen
-%           .onset_slice    - slice whose scan onset determines the adjustment of the 
+%           .onset_slice    - slice whose scan onset determines the adjustment of the
 %                             regressor timing to a particular slice for the whole volume
 
 % OUT
@@ -49,26 +49,37 @@ function [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, sqpar)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_nominal_scan_timing.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_create_nominal_scan_timing.m 423 2014-02-15 14:22:53Z kasperla $
 
 Nscans          = sqpar.Nscans;
 Ndummies        = sqpar.Ndummies;
 Nslices         = sqpar.Nslices;
-do_count_from_start = isfield(sqpar, 'Nprep') && ~isempty(sqpar.Nprep);
-if do_count_from_start
-    Nprep = sqpar.Nprep;
-else
-    Nprep = 0;
-end
-NallVols = (Nprep+Ndummies+Nscans);
-tRef = t(end);
+
+NallVols = (Ndummies+Nscans);
 VOLLOCS = zeros(NallVols,1);
 LOCS = zeros(NallVols*Nslices,1);
 TR = sqpar.TR;
-for n = 1:NallVols
-    [tmp, VOLLOCS(NallVols-n+1)] = min(abs(t - (tRef-TR*n)));
-    for s = 1:Nslices
-        [tmp, LOCS((NallVols - n)*Nslices + s)] = min(abs(t - (tRef-TR*n+sqpar.TimeSliceToSlice*(s-1))));
+   
+
+if isempty(sqpar.TimeSliceToSlice) %default for equidistantly spaced slices
+    sqpar.TimeSliceToSlice = TR/Nslices;
+end
+
+do_count_from_start = isfield(sqpar, 'Nprep') && ~isempty(sqpar.Nprep);
+if do_count_from_start % t = 0 is assumed to be the start of the scan
+    for n = 1:NallVols
+        [tmp, VOLLOCS(n)] = min(abs(t - TR*(n-1)));
+        for s = 1:Nslices
+            [tmp, LOCS((n-1)*Nslices + s)] = min(abs(t - (TR*(n-1)+sqpar.TimeSliceToSlice*(s-1))));
+        end
+    end   
+else
+    tRef = t(end);
+    for n = 1:NallVols
+        [tmp, VOLLOCS(NallVols-n+1)] = min(abs(t - (tRef-TR*n)));
+        for s = 1:Nslices
+            [tmp, LOCS((NallVols - n)*Nslices + s)] = min(abs(t - (tRef-TR*n+sqpar.TimeSliceToSlice*(s-1))));
+        end
     end
 end
-VOLLOCS(1:Nprep) = [];
+end

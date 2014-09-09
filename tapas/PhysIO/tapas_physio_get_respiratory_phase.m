@@ -1,4 +1,5 @@
-function [rphase, fh] = tapas_physio_get_respiratory_phase(pulset,rsampint, verbose, thresh)
+function [rphase, fh] = tapas_physio_get_respiratory_phase(pulset,rsampint,...
+    verbose, thresh)
 
 % get_respiratory_phase is a function for creating respiratory phase regressor.
 % from physiological monitoring files acquired using spike, that
@@ -36,9 +37,13 @@ function [rphase, fh] = tapas_physio_get_respiratory_phase(pulset,rsampint, verb
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_respiratory_phase.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_get_respiratory_phase.m 413 2014-01-21 01:26:20Z kasperla $
 
 %% get histogram of amplitudes of breathing belt signal
+if nargin < 3
+    verbose = false;
+end
+
 correct_resp_overshoot = (nargin > 3) && isfield(thresh, 'resp_max') && ~isempty(thresh.resp_max);
     
 if correct_resp_overshoot
@@ -62,7 +67,7 @@ end
 % over 1 sec of data as described in Glover et al.
 ksize=round(0.5*(1/rsampint));
 kernel=[ones(1,ksize)*-1 0 ones(1,ksize)];
-dnormpulse=conv(normpulse,kernel);
+dnormpulse=-conv(normpulse,kernel);
 dnormpulse=dnormpulse(ksize+1:end-ksize);
 n=find(abs(dnormpulse)==0);
 if ~isempty(n)
@@ -108,7 +113,7 @@ if verbose
     %figure('Name', 'Histogram: Respiration phase estimation');
     hs(4) = subplot(2,2,4);
     plot(t, [normpulse*10, dnormpulse, (rphase-pi)]);
-    legend('10*normalized breathing belt amplitude', '1 = exhale, -1 = inhale', 'estimated respiratory phase');    
+    legend('10*normalized breathing belt amplitude', '-1 = exhale, 1 = inhale', 'estimated respiratory phase');    
     ylim([-10.2 10.2]);
     title('Histogram-based respiration phase estimation');
     

@@ -46,8 +46,14 @@ function [R, verbose] = tapas_physio_orthogonalise_physiological_regressors(card
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_orthogonalise_physiological_regressors.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_orthogonalise_physiological_regressors.m 408 2014-01-20 00:25:56Z kasperla $
 R_non_orth = [cardiac_sess, respire_sess, mult_sess input_R];
+
+if isempty(R_non_orth)
+    R = [];
+    return;
+end
+
 switch lower(orthogonalise)
     case {'c', 'cardiac'}
         R = [tapas_physio_scaleorthmean_regressors(cardiac_sess), respire_sess, tapas_physio_scaleorthmean_regressors(mult_sess) input_R];

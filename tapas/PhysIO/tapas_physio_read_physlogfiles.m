@@ -18,7 +18,7 @@ function [c, r, t, cpulse] = tapas_physio_read_physlogfiles(log_files, cardiac_m
 %                           files
 %       .log_respiration    contains breathing belt amplitude time course
 %                           for Philips: same as .log_cardiac
-%   cardiac_modality    'ECG' for ECG, 'OXY' for pulse oximetry, default: 'ECG'
+%   cardiac_modality    'ECG' for ECG, 'OXY'/'PPU' for pulse oximetry, default: 'ECG'
 %
 % OUT
 %   cpulse              time events of R-wave peak in cardiac time series (seconds)
@@ -41,7 +41,7 @@ function [c, r, t, cpulse] = tapas_physio_read_physlogfiles(log_files, cardiac_m
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_read_physlogfiles.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_read_physlogfiles.m 422 2014-02-13 01:47:04Z kasperla $
 
 if nargin < 2
     cardiac_modality = 'ECG';
@@ -49,15 +49,13 @@ end
 
 switch lower(log_files.vendor)
     case 'philips'
-        % everything stored in 1 logfile
-        if ~isfield(log_files, 'cardiac') || isempty(log_files.cardiac)
-            logfile = log_files.respiration;
-        else
-            logfile = log_files.cardiac;
-        end
-        [c, r, t, cpulse] = tapas_physio_read_physlogfiles_philips(logfile, cardiac_modality);
+        [c, r, t, cpulse] = tapas_physio_read_physlogfiles_philips(...
+            log_files, cardiac_modality);
     case 'ge'
         [c, r, t, cpulse] = tapas_physio_read_physlogfiles_GE(log_files);
     case 'siemens'
         disp('Ask the FIL about it...');
+    case 'custom'
+        [c, r, t, cpulse] = tapas_physio_read_physlogfiles_custom(log_files);
+end
 end

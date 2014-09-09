@@ -1,5 +1,11 @@
 function [pks,locs] = tapas_physio_findpeaks(X,varargin)
 %tapas_physio_findpeaks Find local peaks in data
+%
+% NOTE: This copy of function findpeaks is included in the TAPAS PhysIO 
+%       Toolbox to make the dependency on Matlab's signal processing toolbox 
+%       explicit. Please do not use this function if you haven't purchased
+%       the signal processing toolbox.
+%
 %   PKS = tapas_physio_findpeaks(X) finds local peaks in the data vector X. A local peak
 %   is defined as a data sample which is either larger than the two
 %   neighboring samples or is equal to Inf.
@@ -36,7 +42,7 @@ function [pks,locs] = tapas_physio_findpeaks(X,varargin)
 %   See also DSPDATA/FINDPEAKS
 
 %   Copyright 2007-2010 The MathWorks, Inc.
-%   $Revision: 235 $  $Date: 2013-08-19 18:28:07 +0200 (Mo, 19 Aug 2013) $
+%   $Revision: 235 $  $Date: 2013-08-19 18:28:07 +0200 (Mon, 19 Aug 2013) $
 
 error(nargchk(1,11,nargin,'struct'));
 
@@ -60,7 +66,7 @@ if (M < 3)
 end
 
 %#function dspopts.findpeaks
-hopts = uddpvparse('dspopts.findpeaks',varargin{:});
+hopts = tapas_physio_uddpvparse('dspopts.findpeaks',varargin{:});
 Ph  = hopts.MinPeakHeight;
 Pd  = hopts.MinPeakDistance;
 Th  = hopts.Threshold;

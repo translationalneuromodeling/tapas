@@ -44,7 +44,7 @@ function [ons_secs, sqpar] = tapas_physio_crop_scanphysevents_to_acq_window(ons_
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_crop_scanphysevents_to_acq_window.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_crop_scanphysevents_to_acq_window.m 423 2014-02-15 14:22:53Z kasperla $
 
 %% parameter settings
     Nscans          = sqpar.Nscans;
@@ -73,13 +73,17 @@ spulse((maxscan*Nslices+1):end) = [];
 
 acqwindow   = sort([find(cpulse<=tend & cpulse>=tstart); ...
                 find(cpulse<tstart,1,'last'); find(cpulse>tend,1,'first')]);
-cpulse      = cpulse(acqwindow);
+
+if ~isempty(cpulse), cpulse      = cpulse(acqwindow); end;
 
 % same for respiratory signal
 acqwindow   = sort([find(t<=tend & t>=tstart); ...
                 find(t<tstart,1,'last'); find(t>tend,1,'first')]);
-r      = r(acqwindow);
-c           = c(acqwindow);
+
+            
+if ~isempty(r), r      = r(acqwindow); end;
+if ~isempty(c), c      = c(acqwindow); end;
+
 ons_secs.t  = t(acqwindow);
 
 % necessary vector for t1correction, all volume excitations needed

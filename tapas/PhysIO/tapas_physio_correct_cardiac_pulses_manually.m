@@ -3,7 +3,7 @@ function [ons_secs, outliersHigh, outliersLow] = tapas_physio_correct_cardiac_pu
 % outliers (more or less than a threshold given by a percentile increased
 % or decreased by upperTresh or lowerThresh percent respectively.
 %
-% Author: Jakob Heinzle, TNU, 
+% Author: Jakob Heinzle, TNU,
 %           adaptation: Lars Kasper
 %
 % Copyright (C) 2013, Institute for Biomedical Engineering, ETH/Uni Zurich.
@@ -13,7 +13,7 @@ function [ons_secs, outliersHigh, outliersLow] = tapas_physio_correct_cardiac_pu
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_correct_cardiac_pulses_manually.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_correct_cardiac_pulses_manually.m 419 2014-01-30 21:31:30Z kasperla $
 
 
 percentile = thresh_cardiac.percentile;
@@ -22,8 +22,8 @@ lowerThresh = thresh_cardiac.lowerThresh;
 
 [outliersHigh,outliersLow,fh] = tapas_physio_cardiac_detect_outliers(ons_secs.cpulse, percentile, upperThresh, lowerThresh);
 if any(outliersHigh)
-    disp('Press Enter to proceed to manual peak selection!');
-    pause;
+    %disp('Press Enter to proceed to manual peak selection!');
+    %pause;
     additionalPulse=[];
     fh2=figure;
     for outk=1:length(outliersHigh)
@@ -43,6 +43,7 @@ if any(outliersHigh)
                 plot(I1(ii),J1, 'b*', 'MarkerSize',10);
                 
             end
+            
             s=input('If you agree with the selected triggers, press 1 (then enter) : ');
             if isempty(s)
                 s=0;
@@ -57,48 +58,52 @@ close(fh);
 
 
 [outliersHigh,outliersLow,fh] = tapas_physio_cardiac_detect_outliers(ons_secs.cpulse, percentile, upperThresh, lowerThresh);
-finalIndex=1:length(ons_secs.cpulse);
-if any(outliersLow)
-    disp('Press Enter to proceed to manual peak deletion!');
-    pause;
-    fh3=figure;
-    for outk=1:length(outliersLow)
-        s=0;
-        while ~(s==1)
-            indStart = outliersLow(outk)-2; indEnd = outliersLow(outk)+2;
-            ind=find(ons_secs.t>=ons_secs.cpulse(indStart), 1, 'first')-100:find(ons_secs.t<=ons_secs.cpulse(indEnd), 1, 'last')+100;
-            figure(fh3); clf;
-            plot(ons_secs.t(ind),ons_secs.c(ind),'r')
-            hold on;
-            plot(ons_secs.cpulse(indStart:indEnd),ones(5,1)*max(ons_secs.c(ind)),'ko','MarkerFaceColor','r');
-            alreadyDeleted=intersect(indStart:indEnd,setdiff(1:length(ons_secs.cpulse),finalIndex));
-            plot(ons_secs.cpulse(alreadyDeleted),ones(size(alreadyDeleted))*max(ons_secs.c(ind)),'ro');
-            for kk=indStart:indEnd
-                text(ons_secs.cpulse(kk),max(ons_secs.c(ind))*1.05,int2str(kk));
-            end
-            
-            delInd= [];
-            
-            delInd=input('Enter the index of a pulse you want to delete (0 if none): ');
-            plot(ons_secs.cpulse(delInd),max(ons_secs.c(ind)), 'rx', 'MarkerSize',20);
-            
-            s=input('If you agree with the deleted triggers, press 1 (then enter) : ');
-            if isempty(s)
-                s=0;
-            end
-            finalIndex=setdiff(finalIndex,delInd');
+
+nPulses = length(ons_secs.cpulse);
+finalIndex=1:nPulses;
+
+nWindow = 10;
+
+%show windows with suspicious outliers only
+for indStart = round(nWindow/2):nWindow-2:nPulses
+    indEnd = indStart+nWindow-1;
+    if any(ismember(outliersLow, indStart:indEnd))
+        %disp('Press Enter to proceed to manual peak deletion!');
+        %pause;
+        fh3=figure('Position', [500 500 1000 500]);
+        ind=find(ons_secs.t>=ons_secs.cpulse(indStart), 1, 'first')-100:find(ons_secs.t<=ons_secs.cpulse(indEnd), 1, 'last')+100;
+        figure(fh3); clf;
+        plot(ons_secs.t(ind),ons_secs.c(ind),'r')
+        hold on;
+        plot(ons_secs.cpulse(indStart:indEnd),ones(nWindow,1)*max(ons_secs.c(ind)),'ko','MarkerFaceColor','r');
+        alreadyDeleted=intersect(indStart:indEnd,setdiff(1:nPulses,finalIndex));
+        plot(ons_secs.cpulse(alreadyDeleted),ones(size(alreadyDeleted))*max(ons_secs.c(ind)),'ro');
+        for kk=indStart:indEnd
+            text(ons_secs.cpulse(kk),max(ons_secs.c(ind))*1.05,int2str(kk));
         end
         
+        delInd= [];
+        
+        delInd=input('Enter the indices of pulses you want to delete (0 if none, put multiple in [], e.g. [19,20]): ');
+        
+        if ~isempty(delInd) && any(find(delInd~=0))
+            plot(ons_secs.cpulse(delInd),max(ons_secs.c(ind))*ones(size(delInd)), 'rx', 'MarkerSize',20);
+            finalIndex=setdiff(finalIndex,delInd');
+        end
         close(fh3);
     end
-    ons_secs.cpulse = sort(ons_secs.cpulse(finalIndex));
+    
 end
+ons_secs.cpulse = sort(ons_secs.cpulse(finalIndex));
 close(fh);
 [outliersHigh,outliersLow,fh] = tapas_physio_cardiac_detect_outliers(ons_secs.cpulse, percentile, upperThresh, lowerThresh);
 close(fh);
 % recursively determine outliers
 if ~isempty(outliersHigh) || ~isempty(outliersLow)
-    [ons_secs, outliersHigh, outliersLow] = tapas_physio_correct_cardiac_pulses_manually(ons_secs,thresh_cardiac);
+     doManualCorrectionAgain = input('More outliers detected after correction. Do you want to remove them? (1=yes, 0=no; ENTER)');
+    if doManualCorrectionAgain
+        [ons_secs, outliersHigh, outliersLow] = tapas_physio_correct_cardiac_pulses_manually(ons_secs,thresh_cardiac);
+    end
 end
 
 cpulse = ons_secs.cpulse;

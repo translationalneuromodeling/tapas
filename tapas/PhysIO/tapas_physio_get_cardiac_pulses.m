@@ -1,4 +1,5 @@
-function [cpulse, verbose] = tapas_physio_get_cardiac_pulses(t, c, thresh_cardiac, cardiac_modality, verbose)
+function [cpulse, verbose] = tapas_physio_get_cardiac_pulses(t, c, thresh_cardiac, cardiac_modality, ...
+    dt120, verbose)
 % extract heartbeat events from ECG or pulse oximetry time course
 %
 %   cpulse = tapas_physio_get_cardiac_pulses(t, c, thresh_cardiac, cardiac_modality, verbose);
@@ -7,7 +8,7 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses(t, c, thresh_cardia
 %   t                  vector of time series of log file (in seconds, corresponds to c)
 %   c                  raw time series of ECG or pulse oximeter
 %   thresh_cardiac      is a structure with the following elements
-%           .modality - 'ecg' or 'oxy'; ECG or Pulse oximeter used?
+%           .modality - 'ecg' or 'oxy'/'ppu'; ECG or Pulse oximeter used?
 %           .min -     - for modality 'ECG': [percent peak height of sample QRS wave]
 %                      if set, ECG heartbeat event is calculated from ECG
 %                      timeseries by detecting local maxima of
@@ -27,9 +28,13 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses(t, c, thresh_cardia
 %           .manual_peak_select [false] or true; if true, a user input is
 %           required to specify a characteristic R-peak interval in the ECG
 %           or pulse oximetry time series
+%   dt120           - minimum distance between heart beats; default 120
+%                   bpm, i.e. 0.5 s
 %   verbose            debugging plot for thresholding, only provided, if verbose.level >=2
 %
 % OUT
+%   cpulse          vector of onset-times (in seconds) of occuring heart
+%                   beats
 %
 % EXAMPLE
 %   ons_samples.cpulse = tapas_physio_get_cardiac_pulses(ons_secs.c,
@@ -47,31 +52,33 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses(t, c, thresh_cardia
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_pulses.m 235 2013-08-19 16:28:07Z kasperla $
+% $Id: tapas_physio_get_cardiac_pulses.m 423 2014-02-15 14:22:53Z kasperla $
 
 %% detection of cardiac R-peaks
 
-% debug=true;
-debug=false;
+debug=verbose.level > 3;
+
+dt = t(2)-t(1);
+if nargin < 5 || isempty(dt120)
+    dt120 = round(0.5/dt); % heart rate < 120 bpm
+end
 switch lower(cardiac_modality)
-case 'oxy_old'
-     c = c-mean(c); c = c./max(c); % normalize time series
-        dt = t(2)-t(1);
-        dt120 = round(0.5/dt); % heart rate < 120 bpm
+    case 'oxy_old'
+        c = c-mean(c); c = c./max(c); % normalize time series
         
         % smooth noisy pulse oximetry data to detect peaks
         w = gausswin(dt120,1);
         sc = conv(c, w, 'same');
         sc = sc-mean(sc); sc = sc./max(sc); % normalize time series
-
+        
         % Highpass filter to remove drifts
         cutoff=1/dt; %1 seconds/per sampling units
         forder=2;
         [b,a]=butter(forder,2/cutoff, 'high');
         sc =filter(b,a, sc);
         sc = sc./max(sc);
-
-                [tmp, cpulse] = tapas_physio_findpeaks(sc,'minpeakheight',thresh_cardiac.min,'minpeakdistance', dt120); 
+        
+        [tmp, cpulse] = tapas_physio_findpeaks(sc,'minpeakheight',thresh_cardiac.min,'minpeakdistance', dt120);
         
         if verbose.level >=2 % visualise influence of smoothing on peak detection
             verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
@@ -85,19 +92,17 @@ case 'oxy_old'
             hold all;stem(t(cpulse),sc(cpulse), 'm', 'LineWidth', 2);
             plot(t, repmat(thresh_cardiac.min, length(t),1),'g-');
             legend('Raw PPU time series', 'Smoothed PPU Time Series', ...
-            'Detected Heartbeats in Raw Time Series', ...
-            'Detected Heartbeats in Smoothed Time Series', ...
-            'Threshold (Min) for Heartbeat Detection');
+                'Detected Heartbeats in Raw Time Series', ...
+                'Detected Heartbeats in Smoothed Time Series', ...
+                'Threshold (Min) for Heartbeat Detection');
         end
         
         cpulse = t(cpulse);
-
+        
         
         %courtesy of Steffen Bollmann, KiSpi Zurich
-        case 'oxy'
+    case {'oxy','ppu'}
         c = c-mean(c); c = c./std(c); % normalize time series
-        dt = t(2)-t(1);
-        dt120 = round(0.5/dt); % heart rate < 120 bpm
         
         
         % DEBUG
@@ -121,8 +126,8 @@ case 'oxy_old'
             'minpeakdistance', round(0.5*averageHeartRateInSamples));
         
         if debug
-%             hold on;
-%             stem(t(cpulseSecondGuess),4*ones(length(cpulseSecondGuess),1),'r')
+           hold on;
+           stem(t(cpulseSecondGuess),4*ones(length(cpulseSecondGuess),1),'r')
         end
         
         %test signal/detection quality
@@ -142,15 +147,15 @@ case 'oxy_old'
         end
         
         %always use the correlation based method for testing
-%         signalQualityIsBad = true;
-       
+        %         signalQualityIsBad = true;
+        
         if signalQualityIsBad
             %build template based on the guessed peaks
             halfTemplateWidthInSeconds = 0.2;
-            halfTempalteWithInSamples = halfTemplateWidthInSeconds / dt;
+            halfTemplateWidthInSamples = round(halfTemplateWidthInSeconds / dt);
             for n=2:numel(cpulseSecondGuess)-2
-                startTemplate = cpulseSecondGuess(n)-halfTempalteWithInSamples;
-                endTemplate = cpulseSecondGuess(n)+halfTempalteWithInSamples;
+                startTemplate = cpulseSecondGuess(n)-halfTemplateWidthInSamples;
+                endTemplate = cpulseSecondGuess(n)+halfTemplateWidthInSamples;
                 
                 template(n,:) = c(startTemplate:endTemplate);
             end
@@ -183,11 +188,11 @@ case 'oxy_old'
             end
             
             %determine starting peak for the search
-            forStart=2*halfTempalteWithInSamples+1;
+            forStart=round(2*halfTemplateWidthInSamples+1);
             forEnd=cpulseSecondGuess(20);
             for n=forStart:forEnd
-                startSignalIndex=n-halfTempalteWithInSamples;
-                endSignalIndex=n+halfTempalteWithInSamples;
+                startSignalIndex=n-halfTemplateWidthInSamples;
+                endSignalIndex=n+halfTemplateWidthInSamples;
                 
                 signalPart = c(startSignalIndex:endSignalIndex);
                 correlation = corrcoef(signalPart,pulseCleanedTemplate);
@@ -208,31 +213,31 @@ case 'oxy_old'
             %now compute backwards to the beginning
             n=I_bestMatch;
             peakNumber = 1;
-            similarityToTemplate=zeros(size(t),1);
+            similarityToTemplate=zeros(size(t,1),1);
             
             searchStepsTotal=round(0.5*averageHeartRateInSamples);
-            while n > 1+searchStepsTotal+halfTempalteWithInSamples
+            while n > 1+searchStepsTotal+halfTemplateWidthInSamples
                 for searchPosition=-searchStepsTotal:1:searchStepsTotal
-                    startSignalIndex=n-halfTempalteWithInSamples+searchPosition;
-                    endSignalIndex=n+halfTempalteWithInSamples+searchPosition;
+                    startSignalIndex=n-halfTemplateWidthInSamples+searchPosition;
+                    endSignalIndex=n+halfTemplateWidthInSamples+searchPosition;
                     
                     signalPart = c(startSignalIndex:endSignalIndex);
                     correlation = corrcoef(signalPart,pulseCleanedTemplate);
                     
                     %DEBUG
-%                     if debug
-%                         figure(1);
-%                         subplot 212;
-%                         plot(signalPart);
-%                         hold all;
-%                         plot(pulseCleanedTemplate);
-%                         hold off;
-%                     end
+                    %                     if debug
+                    %                         figure(1);
+                    %                         subplot 212;
+                    %                         plot(signalPart);
+                    %                         hold all;
+                    %                         plot(pulseCleanedTemplate);
+                    %                         hold off;
+                    %                     end
                     %DEBUG
                     
                     gaussianWindow = gausswin(2*searchStepsTotal+1);
-%                     currentWeight = gaussianWindow(searchPosition+searchStepsTotal+1);
-
+                    %                     currentWeight = gaussianWindow(searchPosition+searchStepsTotal+1);
+                    
                     currentWeight = abs(c(n+searchPosition+1));
                     correlationWeighted =  currentWeight .* correlation(1,2);
                     similarityToTemplate(n+searchPosition) = correlationWeighted;
@@ -261,10 +266,10 @@ case 'oxy_old'
                 cpulse(peakNumber) = bestPosition;
                 peakNumber = peakNumber+1;
                 
-
+                
                 n=bestPosition-averageHeartRateInSamples;
             end
-
+            
             
             n=bestPosition;
             peakNumber=1;
@@ -275,36 +280,36 @@ case 'oxy_old'
             %deviating from the initial starting point by a gaussian
             searchStepsTotal=round(0.5*averageHeartRateInSamples);
             
-            if n< searchStepsTotal+halfTempalteWithInSamples+1
-                n=searchStepsTotal+halfTempalteWithInSamples+1;
+            if n< searchStepsTotal+halfTemplateWidthInSamples+1
+                n=searchStepsTotal+halfTemplateWidthInSamples+1;
             end
             
-            while n < size(c,1)-searchStepsTotal-halfTempalteWithInSamples
+            while n < size(c,1)-searchStepsTotal-halfTemplateWidthInSamples
                 %search around peak
                 
                 for searchPosition=-searchStepsTotal:1:searchStepsTotal
-                    startSignalIndex=n-halfTempalteWithInSamples+searchPosition;
-                    endSignalIndex=n+halfTempalteWithInSamples+searchPosition;
+                    startSignalIndex=n-halfTemplateWidthInSamples+searchPosition;
+                    endSignalIndex=n+halfTemplateWidthInSamples+searchPosition;
                     
                     signalPart = c(startSignalIndex:endSignalIndex);
                     correlation = corrcoef(signalPart,pulseCleanedTemplate);
                     
                     %DEBUG
-%                     if debug
-%                         figure(1);
-%                         subplot 212;
-%                         plot(signalPart);
-%                         hold all;
-%                         plot(pulseCleanedTemplate);
-%                         hold off;
-%                     end
+                    %                     if debug
+                    %                         figure(1);
+                    %                         subplot 212;
+                    %                         plot(signalPart);
+                    %                         hold all;
+                    %                         plot(pulseCleanedTemplate);
+                    %                         hold off;
+                    %                     end
                     %DEBUG
                     
                     gaussianWindow = gausswin(2*searchStepsTotal+1);
                     locationWeight = gaussianWindow(searchPosition+searchStepsTotal+1);
-%                     locationWeight = 1;
+                    %                     locationWeight = 1;
                     amplitudeWeight = abs(c(n+searchPosition+1));
-%                     amplitudeWeight = 1;
+                    %                     amplitudeWeight = 1;
                     correlationWeighted =  locationWeight .* amplitudeWeight .* correlation(1,2);
                     similarityToTemplate(n+searchPosition) = correlationWeighted;
                     
@@ -375,11 +380,11 @@ case 'oxy_old'
         if verbose.level >=2
             verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
             titstr = 'PPU-OXY: Heart Beat Detection';
-            set(gcf, 'Name', titstr);           
+            set(gcf, 'Name', titstr);
             plot(t, c, 'k');
             hold all;
             stem(t(cpulse),4*ones(size(cpulse)), 'r');
-            legend('PPU time course', 'Detected cardiac pulses');           
+            legend('PPU time course', 'Detected cardiac pulses');
             title(titstr);
         end
         
@@ -390,8 +395,21 @@ case 'oxy_old'
         
     case 'ecg'
         do_manual_peakfind = strcmp(thresh_cardiac.method, 'manual');
+        
+        % manual peak selection, if no file selected and loading is
+        % specified
+        hasKrpeakLogfile = exist(thresh_cardiac.file,'file') || ...
+            exist([thresh_cardiac.file '.mat'],'file');
+        if ~hasKrpeakLogfile && strcmp(thresh_cardiac.method, 'load');
+            do_manual_peakfind = true;
+        end
+        
         if do_manual_peakfind
             thresh_cardiac.kRpeak = [];
+            hasECGMin = isfield(thresh_cardiac, 'min') && ~isempty(thresh_cardiac.min);
+            if ~hasECGMin
+                thresh_cardiac.min = 0.5;
+            end
         else
             ECGfile = load(thresh_cardiac.file);
             thresh_cardiac.min = ECGfile.ECG_min;
