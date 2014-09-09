@@ -20,7 +20,7 @@
 %         evidence of the simple beta-binomial model.
 
 % Kay H. Brodersen, ETH Zurich, Switzerland
-% $Id: bicp_evidence_bnb.m 15572 2012-04-23 12:17:43Z bkay $
+% $Id: bicp_evidence_bnb.m 18931 2013-02-15 10:14:09Z bkay $
 % -------------------------------------------------------------------------
 function [lme,tmp] = bicp_evidence_bnb(ks,ns,nSamples)
     
@@ -40,15 +40,12 @@ function [lme,tmp] = bicp_evidence_bnb(ks,ns,nSamples)
     Lambda_0 = inv([1 0; 0 1]);
     nu_0 = 5;
 
-% OLD PRIOR FROM MANUSCRIPT
-% mu_0 = [0; 0];
-% kappa_0 = 1;
-% Lambda_0 = inv([0.125 0; 0 0.125]);
-% nu_0 = 8;
-
+    % OLD PRIOR FROM MANUSCRIPT
+    % mu_0 = [0; 0];
+    % kappa_0 = 1;
+    % Lambda_0 = inv([0.125 0; 0 0.125]);
+    % nu_0 = 8;
     
-    %
-    %pis = NaN(2,nSamples);
     mus = NaN(2,nSamples);
     Sigmas = NaN(2,2,nSamples);
     %
@@ -58,8 +55,6 @@ function [lme,tmp] = bicp_evidence_bnb(ks,ns,nSamples)
         mus(:,t) = mu(:);
         Sigmas(:,:,t) = Sigma;
     end
-    
-    % AFTER DISCUSSION WITH JEAN [18/01/2012]
     
     % ---------------------------------------------------------------------
     % Part II: approximate log model evidence

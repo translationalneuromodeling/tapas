@@ -73,19 +73,23 @@ DOWNLOADS & RELEASE INFORMATION
 - Current Release: 
 
 PhysIO_Toolbox_13 (Code | Examples)
-April 25th, 2013
+August 19th, 2013
 
-revision: $Rev: 183$
+revision: $Revision: 238 $
 
-NOTE: Your main_ECG/PPU.m etc. scripts from previous versions (<=r159) will not work with this one any more. Please adapt one of the example scripts for your needs (~5 min of work). The main benefit of this version is a complete new variable structure that is more sustainable and makes the code more readible.
+Minor Release Notes
+- computation of heart and breathing rate in Philips/PPU/main_PPU.m
+- prefix of functions with tapas_*
 
-Release Notes:
+Last Major Release Notes:
 - complete modularization of readin/preprocessing/regressor creation for peripheral physiological data
 - manual selection of missed heartbeats in ECG/pulse oximetry (courtesy of Jakob Heinzle)
 - support for logfiles from GE scanners (courtesy of Steffen Bollmann, KiSpi Zuerich)
 - improved detection of pulse oximetry peaks (courtesy of Steffen Bollmann)
 - improved documentation
 - consistent function names (prefixed by "physio_")
+
+NOTE: Your main_ECG/PPU.m etc. scripts from previous versions (<=r159) will not work with this one any more. Please adapt one of the example scripts for your needs (~5 min of work). The main benefit of this version is a complete new variable structure that is more sustainable and makes the code more readible.
 
 
 Leading Programmer: Lars Kasper
@@ -118,4 +122,4 @@ Kasper, Lars, Sarah Marti, S. Johanna Vannesjö, Chloe Hutton, Ray Dolan, Nikolau
 
 
 VERSION OF THIS FILE
-$Id: README.txt 183 2013-04-25 15:55:05Z kasperla $
+$Id: README.txt 238 2013-08-19 16:58:36Z kasperla $

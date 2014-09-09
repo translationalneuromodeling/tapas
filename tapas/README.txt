@@ -1,4 +1,4 @@
-version 1.0.0.0
+Version 1.0.1.0
 ________________________________________________________________________
 
      T  A  P  A  S - TNU Algorithms for Psychiatry-Advancing Science.
@@ -49,6 +49,13 @@ publications relevant to the software.
 
 For queries and discussions please join the mailing list at http://sympa.ethz.ch/sympa/info/tapas
 Bugs in the software can be emailed directly to: tapas-bugs@biomed.ee.ethz.ch
+
+
+-------------------------------
+Global Changes in this version
+-------------------------------
+
+All function names are prefixed with "tapas_"
 
 
 -------
