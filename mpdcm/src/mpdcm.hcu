@@ -1,0 +1,99 @@
+ /*aponteeduardo@gmail.com */
+/* copyright 2014 */
+
+# ifndef DDM_HEADER
+# define DDM_HEADER
+
+
+
+# ifdef __CUDACC__
+
+# include "math.h"
+# include "curand_kernel.h"
+# include "curand.h"
+# include <stdio.h>
+
+# define HANDLE_ERROR( err ) {if (err != cudaSuccess ) { \
+        printf( "%s in %s at line %d\n", cudaGetErrorString( err ), \
+                __FILE__, __LINE__ ); \
+        exit( EXIT_FAILURE ); \
+    }}
+
+# define HANDLE_NULL( a ) {if (a == NULL) { \
+                            printf( "Host memory failed in %s at line %d\n", \
+                                    __FILE__, __LINE__ ); \
+                            exit( EXIT_FAILURE );}}
+
+# endif
+
+# ifdef __CUDACC__
+# define BDDM_EXTERN extern "C"
+# else
+# define BDDM_EXTERN
+# endif
+
+typedef enum { MF_TRUE, MF_FALSE } MatFlag;
+
+/*  Degrees of freedom */
+typedef struct
+{
+    int dim_x;
+    int dim_u;
+
+    /* This flag indicates whether the matrix should be used or not. */
+
+    MatFlag fA;
+    MatFlag fB;
+    MatFlag fC;
+
+    double *A;
+    double *B;
+    double *C;
+
+    double *epsilon; 
+    double *K; /* Kappa */
+    double *tau;
+
+    double V0;
+    double E0;
+    double k1;
+    double k2;
+    double k3;
+
+    double alpha;
+    double gamma;
+
+} ThetaDCM;
+
+/* Fixed values */
+typedef struct
+{
+    double dt; /* Step size in the integration */
+    double dyu; /* Ratio of the sampling rate of y and u. */ 
+    char mode; /* Either 'f' or 'c'. It's the type of array of the theta, i.e.
+        fortran or c. */
+} PThetaDCM;
+
+
+BDDM_EXTERN
+int hdcm_fmri( double *x, double *y, double *u, 
+    void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
+    int nx, int ny, int nu, int dp, int nt, int nb);
+    /* 
+    Integrate DCM using a parallel architecture. 
+    x -- States. Will not be used explicitely.
+    y -- Observables. Output will be stored here.
+    u -- Input. Input to the process.
+    theta -- Parameters
+    d_theta -- Data of the parameters of variable size
+    ptheta -- Priors and fixed values
+    d_ptheta -- Data of the prior of variable size
+    nx -- Dimensions of x
+    nu -- Dimensions of u
+    ny -- Dimensions of y
+    dp -- Number of data points
+    nt -- Size of theta second dimension
+    nb -- Size of theta first dimension 
+    */
+
+# endif

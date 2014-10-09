@@ -1,0 +1,14 @@
+# Compilers tested:
+
+- CUDA 6.4.3
+- CUDA 4.0
+
+# OS tested
+
+- Linux: 3.13.0-34-generic Ubuntu 14.04
+- Linux: 2.6.32-358.6.2.el6.x86_64 CentOS 64
+
+# Architectures 
+
+- Arch 2.0
+- Arch 3.0
