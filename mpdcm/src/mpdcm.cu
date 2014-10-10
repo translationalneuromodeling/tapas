@@ -1,11 +1,12 @@
-// Should implement Rugge Kutta 4 ....
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2014 */
 
-# include "mpdcm.hcu"
+
+#include "mpdcm.hcu"
 
 #define DIM_PTHETA 3
 #define DIM_DPTHETA 0
 
-// For the time being
 #define DIM_X 5 
 #define INDEX_X 0
 #define INDEX_F 1
@@ -478,7 +479,7 @@ __host__ void dam_ptheta(
 
 // Host code
 extern "C"
-int hdcm_fmri( double *x, double *y, double *u,
+int mpdcm_fmri( double *x, double *y, double *u,
     void *theta, double *d_theta,
     void *ptheta, double *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb)

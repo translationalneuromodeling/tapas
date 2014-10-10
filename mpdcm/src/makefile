@@ -4,12 +4,14 @@ BDDM_MATLAB = /usr/local/MATLAB/R2014a
 
 # nvcc flags
 
-CC = nvcc
- 
+NVCC = nvcc
+MATCC = gcc
+
+
 LCUDA = -arch=sm_30 -L/usr/local/cuda/lib64 -lcuda -lcudart
 LNUM = -lm
 
-CFLAGS = -arch=sm_30 -rdc=true --shared -Xcompiler -fPIC -c
+NVCCFLAGS = -arch=sm_30 -rdc=true --shared -Xcompiler -fPIC -c
 
 # Mex Flags
 
@@ -25,21 +27,34 @@ LOP1 = -Wl,-rpath-link,/usr/local/MATLAB/R2012b/bin/glnxa64 -L$(BDDM_MATLAB)/bin
 	gcc $(LOP0) -o $@ $^ $(LOP1)
 
 %.o : %.cu
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+	$(NVCC) -c $(NVCCFLAGS) $< -o $@
 
-# Compilation
+# ===========================================================================
+# Compilation 
+# ===========================================================================
 
 all: c_mpdcm_fmri_int.mexa64
 
-c_mpdcm_fmri_int.mexa64 : c_mpdcm_fmri_int.o c_mpdcm.o mpdcm.so
+# Link
+
+c_mpdcm_fmri_int.mexa64 : c_mpdcm.o mpdcm.so c_mpdcm_fmri_int.o 
+
+# Compile mex
+
+c_mpdcm_fmri_int.o : c_mpdcm_fmri_int.c
+	$(MATCC) -c $(MATFLAGS) -o $@ $^
+
+# Compile c
 
 c_mpdcm.o : c_mpdcm.c
+	$(MATCC) -c $(MATFLAGS) -o $@ $^
 
-
-mpdcm.so : mpdcm.o
-	$(CC) -shared -o $@ $^ $(LCUDA) 
+# Compile cuda
 
 mpdcm.o : mpdcm.cu
+mpdcm.so : mpdcm.o
+	$(NVCC) -shared -o $@ $^ $(LCUDA) 
+
 
 clean :
 	$(RM) *.o *.so *.mexa64

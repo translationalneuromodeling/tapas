@@ -1,10 +1,8 @@
- /*aponteeduardo@gmail.com */
+/*aponteeduardo@gmail.com */
 /* copyright 2014 */
 
 # ifndef DDM_HEADER
 # define DDM_HEADER
-
-
 
 # ifdef __CUDACC__
 
@@ -76,7 +74,7 @@ typedef struct
 
 
 BDDM_EXTERN
-int hdcm_fmri( double *x, double *y, double *u, 
+int mpdcm_fmri( double *x, double *y, double *u, 
     void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb);
     /* 

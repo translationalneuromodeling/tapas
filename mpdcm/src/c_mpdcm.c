@@ -1,10 +1,8 @@
-#include <matrix.h>
-#include <mex.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include "cuda_ddm.hcu"
-#include "cuda_dcm.h"
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2014 */
+
+#include "mpdcm.hcu"
+#include "c_mpdcm.h"
 
 #define DIM_X 5
 
@@ -187,7 +185,7 @@ void mpdcm_prepare_input(
 
 }
 
-void mpdcm_int_fmri(mxArray **y, const mxArray **u,
+void mpdcm_fmri_int(mxArray **y, const mxArray **u,
     const mxArray **theta, const mxArray **ptheta,
     int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
 {
