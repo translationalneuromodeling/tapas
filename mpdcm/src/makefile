@@ -1,3 +1,19 @@
+# aponteeduardo@gmail.com
+# copyright (C) 2014
+
+MAJOR := 0
+MINOR := 1
+VERSION := $(MAJOR).$(MINOR)
+
+NAME := mpdcm
+
+
+
+# ===========================================================================
+# Set up
+# ===========================================================================
+
+
 # Other things
 
 BDDM_MATLAB = /usr/local/MATLAB/R2014a
@@ -37,7 +53,7 @@ all: c_mpdcm_fmri_int.mexa64
 
 # Link
 
-c_mpdcm_fmri_int.mexa64 : c_mpdcm.o mpdcm.so c_mpdcm_fmri_int.o 
+c_mpdcm_fmri_int.mexa64 : c_mpdcm.o libmpdcm.so c_mpdcm_fmri_int.o 
 
 # Compile mex
 
@@ -52,7 +68,8 @@ c_mpdcm.o : c_mpdcm.c
 # Compile cuda
 
 mpdcm.o : mpdcm.cu
-mpdcm.so : mpdcm.o
+
+libmpdcm.so : mpdcm.o
 	$(NVCC) -shared -o $@ $^ $(LCUDA) 
 
 

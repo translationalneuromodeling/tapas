@@ -209,7 +209,7 @@ k1 = 4.3*nu0*0.4*TE;
 k2 = ep*r0*0.4*TE;
 k3 = 1 - ep;
 
-d =  test_dcm_fmri_load_td();
+d =  test_mpdcm_fmri_load_td();
 
 theta = cell(5, 1);
 u = cell(5, 1);
@@ -250,6 +250,7 @@ end
 
 ptheta.dyu = 2.0*size(y, 2) / size(u0, 2);
 
+ptheta1.dyu = 2.0*size(y, 2) / size(u0, 2);
 ptheta1.dt = 0.05;
 
 tic
@@ -293,9 +294,9 @@ for i = 1:5
     d{i}.IS = 'spm_int_E';
     d{i}.M.IS = 'spm_int_E';
     
-    tic;
-    cy = spm_dcm_generate(d{i});
-    toc;
+    %tic;
+    %cy = spm_dcm_generate(d{i});
+    %toc;
     tic;
     theta = cell(20, 1);
     theta(:) = {theta0};
@@ -314,7 +315,7 @@ for i = 1:5
         hold on; 
         plot(ny{1}(:, 1:2:end)'); 
         plot(d{i}.y, '.'); 
-        plot(cy.y, 'k');
+        %plot(cy.y, 'k');
     end
 
 end

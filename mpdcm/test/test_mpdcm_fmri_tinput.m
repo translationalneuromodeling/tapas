@@ -5,7 +5,11 @@ function test_mpdcm_fmri_tinput()
 % copyright (C) 2014
 %
 
-d =  test_dcm_fmri_load_td();
+display('===========================')
+display('Testing mpdcm_fmri_tinput')
+display('===========================')
+
+d =  test_mpdcm_fmri_load_td();
 
 P = cell(numel(d), 1);
 U = cell(numel(d), 1);
@@ -17,8 +21,11 @@ end
 
 [u, theta, ptheta] = mpdcm_fmri_tinput(U, P);
 
-mpdcm_fmri_int_check_input(u, theta, ptheta);
-
-[y] = mpdcm_fmri_int(u, theta, ptheta);
-
+try
+    mpdcm_fmri_int_check_input(u, theta, ptheta);
+    [y] = mpdcm_fmri_int(u, theta, ptheta);
+    display('   Passed')
+catch err
+    d = dbstack();
+    fprintf('   Not passed at line %d\n', d(1).line)
 end
