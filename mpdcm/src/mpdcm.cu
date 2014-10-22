@@ -388,9 +388,8 @@ __global__ void kdcm_fmri(double *x, double *y, double *u,
             nx * nx + // A
             nx * nx * nu + // B 
             nx * nu + // C
-            nx + // Epsilon
             nx + // Kappa (K)
-            nx); // Epsilon
+            nx); // tau
         
         theta[i].A = o;
         o += nx * nx;
@@ -400,9 +399,6 @@ __global__ void kdcm_fmri(double *x, double *y, double *u,
 
         theta[i].C = o; 
         o+= nx * nu;
-
-        theta[i].epsilon = o; 
-        o += nx; 
 
         theta[i].K = o;
         o += nx;
@@ -454,7 +450,6 @@ __host__ void dam_theta(
         (nx * nx +      // A:
         nx * nx * nu +  // B's
         nx * nu +       // C
-        nx + // epsilon
         nx + // kappa
         nx); // tau 
 

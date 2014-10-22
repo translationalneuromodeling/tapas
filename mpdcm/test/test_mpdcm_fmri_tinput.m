@@ -11,19 +11,11 @@ display('===========================')
 
 d =  test_mpdcm_fmri_load_td();
 
-P = cell(numel(d), 1);
-U = cell(numel(d), 1);
-
-for i = 1:numel(d)
-    P{i} = d{i}.M.pE;
-    U{i} = d{i}.U;
-end
-
-[u, theta, ptheta] = mpdcm_fmri_tinput(U, P);
+[u, theta, ptheta] = mpdcm_fmri_tinput(d{1});
 
 try
-    mpdcm_fmri_int_check_input(u, theta, ptheta);
-    [y] = mpdcm_fmri_int(u, theta, ptheta);
+    mpdcm_fmri_int_check_input({u}, {theta}, ptheta);
+    [y] = mpdcm_fmri_int({u}, {theta}, ptheta);
     display('   Passed')
 catch err
     d = dbstack();

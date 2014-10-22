@@ -47,11 +47,6 @@ void mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, double *dtheta)
     o += i;
 
     i = ctheta->dim_x;
-    memcpy(dtheta + o, mxGetPr(mxGetField(theta, 0, "epsilon")),
-        i * sizeof(double));
-    o += i;
-
-    i = ctheta->dim_x;
     memcpy(dtheta + o, mxGetPr(mxGetField(theta, 0, "K")),
         i * sizeof(double));
     o += i;
@@ -111,7 +106,6 @@ void mpdcm_prepare_input(
     o = nx[0] * nx[0] + /*A*/
         nx[0] * nx[0] * nu[0] + /*B*/
         nx[0] * nu[0] + /*C*/
-        nx[0] + /* epsilon */
         nx[0] + /* Kappa */
         nx[0]; /* tau */
 

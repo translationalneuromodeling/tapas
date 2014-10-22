@@ -11,12 +11,12 @@ lpp = zeros(size(theta));
 
 nt = numel(theta);
 
-p = mpdcm_fmri_get_parameters(theta);
+p = mpdcm_fmri_get_parameters(theta, ptheta);
 
 for i = 1:nt
-    ttheta = p{i};
-    e = pt - ptheta.mtheta;
-    lpp(i) = (tp' * ptheta.ctheta * tp;
+    pt = p{i};
+    et = pt - ptheta.mtheta;
+    lpp(i) = et' * ptheta.ictheta * et;
 end
 
 end

@@ -1,17 +1,15 @@
-function [p1] = mpdcm_fmri_sample(p0, htheta)
-%% Draws a new sample fro
+function [np] = mpdcm_fmri_sample(op, ptheta, htheta)
+%% Draws a new sample from a Gaussian proposal distribution.
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2014
 %
 
-nt = numel(p0);
-p1 = cell(size(p0));
+nt = numel(op);
+np = cell(size(op));
 
 for i = 1:nt
-    p1{i} = htheta.
-
+    np{i} = full(op{i} + htheta.c_c * randn(size(op{i})));
 end
-
 
 end

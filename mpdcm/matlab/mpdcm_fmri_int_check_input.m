@@ -94,8 +94,8 @@ function check_matrix(theta, ns, field, element)
         element, field)
     assert(all(size(m) == ns), ...
         sprintf('mpdcm:fmri:int:input:theta:cell:%s:dsize', field), ...
-        'theta{%d}.%s should have dimensions [%d,%d]', element, field, ...
-        ns(1), ns(2)) ;
+        'theta{%d}.%s should have dimensions [%d,%d], instead [%d,%d].', ...
+        element, field, ns(1), ns(2), size(m, 1), size(m, 2));
 end
 
 
@@ -173,7 +173,6 @@ for i = 1:numel(theta)
     end
 
     check_matrix(theta, [dx, du], 'C', i);
-    check_matrix(theta, [dx, 1], 'epsilon', i);
     check_matrix(theta, [dx, 1], 'K', i);
     check_matrix(theta, [dx, 1], 'tau', i);
 
@@ -184,14 +183,6 @@ for i = 1:numel(theta)
     check_matrix(theta, [1, 1], 'k3', i);
     check_matrix(theta, [1, 1], 'alpha', i);
     check_matrix(theta, [1, 1], 'gamma', i);
-
-    % The number of field needs to be controlled for the gradient assent
-    % to work
-
-    assert(numel(fieldnames(theta{i})) == 18, ...
-        'mpdcm:fmri:int:input:theta:cell:unknown_field', ...
-        'Unknown field in theta{%d}', i)
-        
 
 end
 end

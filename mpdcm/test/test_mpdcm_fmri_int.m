@@ -306,14 +306,14 @@ for i = 1:5
     ny = mpdcm_fmri_int(u, theta, ptheta);
     toc;
 
-    if all(abs(d{i}.y - ny{1}(:, 1:2:end )') < 1e-2)
+    if all(abs(d{i}.y - ny{1}) < 1e-2)
         display('    Passed')
     else
         td = dbstack();
         fprintf('   Not passed at line %d\n', td(1).line)
         figure(); 
         hold on; 
-        plot(ny{1}(:, 1:2:end)'); 
+        plot(ny{1}); 
         plot(d{i}.y, '.'); 
         %plot(cy.y, 'k');
     end

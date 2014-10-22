@@ -48,7 +48,6 @@ typedef struct
     double *B;
     double *C;
 
-    double *epsilon; 
     double *K; /* Kappa */
     double *tau;
 

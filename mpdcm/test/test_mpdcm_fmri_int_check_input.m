@@ -498,23 +498,6 @@ catch err
     end
 end
 
-try
-    [u0, theta0, ptheta] = standard_values(8, 8);
-    u = {u0};
-    theta0.G = 4;
-    theta = {theta0};
-    mpdcm_fmri_int_check_input(u, theta, ptheta);
-    error('    Not passed')
-catch err
-    if strcmp(err.identifier, ...
-        'mpdcm:fmri:int:input:theta:cell:unknown_field')
-        display('   Passed')
-    else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
-    end
-end
-
 end
 
 function [u, theta, ptheta] = standard_values(dim_x, dim_u)
