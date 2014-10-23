@@ -5,13 +5,13 @@ function [htheta] = mpdcm_fmri_htheta(ptheta)
 % copyright (C) 2014
 %
 
-hA = 0.01;
-hB = 0.01;
-hC = 0.01;
+hA = 0.00005;
+hB = 0.00005;
+hC = 0.00005;
 
-ht = 0.01;
-hd = 0.01;
-he = 0.01;
+ht = 0.00005;
+hd = 0.00005;
+he = 0.00005;
 
 hlambda = 0.01;
 
@@ -30,7 +30,7 @@ c_transit = ht * eye(nr);
 c_decay = hd * eye(nr);
 c_epsilon = he * eye(1);
 
-c_lambda = hlambda * eye(size(ptheta.Q, 3));
+c_lambda = hlambda * eye(numel(ptheta.Q));
 
 htheta.c_c = sparse(blkdiag(chol(c_A), chol(c_B), chol(c_C), ...
     chol(c_transit), chol(c_decay), chol(c_epsilon), chol(c_lambda)));

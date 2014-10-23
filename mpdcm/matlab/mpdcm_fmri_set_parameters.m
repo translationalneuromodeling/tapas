@@ -7,7 +7,7 @@ function [theta] = mpdcm_fmri_set_parameters(p, theta, ptheta)
 
 
 nt = numel(theta);
-nl = size(ptheta.Q, 3);
+nl = numel(ptheta.Q);
 
 for i = 1:nt
 

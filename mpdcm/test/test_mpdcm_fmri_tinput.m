@@ -11,13 +11,16 @@ display('===========================')
 
 d =  test_mpdcm_fmri_load_td();
 
-[u, theta, ptheta] = mpdcm_fmri_tinput(d{1});
+[y, u, theta, ptheta] = mpdcm_fmri_tinput(d{1});
 
 try
     mpdcm_fmri_int_check_input({u}, {theta}, ptheta);
-    [y] = mpdcm_fmri_int({u}, {theta}, ptheta);
+    [ny] = mpdcm_fmri_int({u}, {theta}, ptheta);
+    ny{1}' - y;
     display('   Passed')
 catch err
+    display(getReport(err, 'extended'));
     d = dbstack();
     fprintf('   Not passed at line %d\n', d(1).line)
 end
+

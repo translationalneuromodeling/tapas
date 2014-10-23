@@ -33,12 +33,12 @@ end
 
 nh = numel(ptheta.Q);
 
-Q = zeros(size(ptheta.Q{1}, 1), size(ptheta.Q{1}, 2), nh);
-for i = 1:nh
-    Q(:, :, i) = ptheta.Q{i};
-end
+%Q = zeros(size(ptheta.Q{1}, 1), size(ptheta.Q{1}, 2), nh);
+%for i = 1:nh
+%    Q(:, :, i) = ptheta.Q{i};
+%end
 
-ptheta.Q = Q;
+%ptheta.Q = Q;
 
 % hyperpriors - expectation
 
@@ -103,27 +103,27 @@ theta.dim_x = size(dcm.a, 1);
 theta.dim_u = size(dcm.c, 2);
 
 theta.A = full(dcm.A);
-if any(dcm.a)
-    theta.fA = 0;
-else
+if any(dcm.a(:))
     theta.fA = 1;
+else
+    theta.fA = 0;
 end
 
 theta.B = cell(theta.dim_u, 1);
 
 for j = 1:theta.dim_u
-    theta.B{j} = full(pE.B(:,:,j));
+    theta.B{j} = full(dcm.B(:,:,j));
 end
 
-if any(dcm.b)
-    theta.fB = 0;
-else
+if any(dcm.b(:))
     theta.fB = 1;
+else
+    theta.fB = 0;
 end
 
-theta.C = full(pE.C)/16;
+theta.C = full(dcm.C)/16;
 
-if any(dcm.c)
+if any(dcm.c(:))
     theta.fC = 1;
 else
     theta.fC = 0;
@@ -153,6 +153,6 @@ u = dcm.U.u';
 
 % Sampling frequency
 
-ptheta.dyu = 0.5*dyu;
+ptheta.dyu = 2.0*size(y, 2)/size(u, 2);
 
 

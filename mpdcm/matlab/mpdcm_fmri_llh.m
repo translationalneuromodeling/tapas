@@ -24,18 +24,23 @@ for i = 1:s1
     y0 = y{s1}(:);
     for j = 1:s2
         theta0 = theta{(i-1)*s1 + j};
+        if eigs(theta0.A, 1) > 0
+            llh((i-1)*s1+j) = -inf;
+        end
         ny0 = ny{(i-1)*s1 + j}(:);
 
         e = y0 - ny0;
 
         % Compute the hyperpriors
 
-        tlambda = ones(1, 1, size(ptheta.Q, 3));
-        tlambda(:) = exp(theta0.lambda);
+        tlambda = exp(theta0.lambda);
 
-        %tQ = sum(bsxfun(@times, ptheta.Q, tlambda), 3);
+        nQ = tlambda(1) * ptheta.Q{1};
+        for k = 2:numel(ptheta.Q)
+            nQ = nQ + tlambda(k) * ptheta.Q{k};
+        end
 
-        llh((i-1)*s1+j) = e' * e;
+        llh((i-1)*s1+j) = -0.5 * e' * (nQ\e);
     end
 end
 

@@ -28,7 +28,7 @@ y = c_mpdcm_fmri_int(u, theta, ptheta);
 % Downsample
 
 for i = 1:numel(y)
-    y{i} = y{i}';
+    y{i} = y{i}(:, 1:2:end)';
 end
 
 

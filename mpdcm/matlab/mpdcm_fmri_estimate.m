@@ -7,7 +7,7 @@ function [dcm] = mpdcm_fmri_estimate(dcm, pars)
 
 if nargin < 2
     pars = struct();
-    pars.T = linspace(0.3, 1, 20);
+    pars.T = linspace(0.1, 1, 20)^5;
     pars.nburnin = 2000;
     pars.niter = 5000;
 end
@@ -36,8 +36,10 @@ Y.scale = scale;
 dcm.U = U;
 dcm.Y = Y;
 
-dcm = mpdcm_fmri_ps(dcm, pars);
+[dcm, fe] = mpdcm_fmri_ps(dcm, pars);
 
 % Unpack dcm
+
+dcm.F = fe;
 
 end
