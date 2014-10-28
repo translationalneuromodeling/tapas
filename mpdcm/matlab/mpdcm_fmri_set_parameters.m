@@ -36,11 +36,11 @@ for i = 1:nt
 
     oi = ni;
     ni = oi + nr;
-    theta{i}.tau = indexing(tp, oi, ni);
+    theta{i}.tau(:) = indexing(tp, oi, ni);
 
     oi = ni;
     ni = oi + 1;
-    theta{i}.epsilon = indexing(tp, oi, ni);
+    theta{i}.epsilon(:) = indexing(tp, oi, ni);
 
     oi = ni;
     ni = oi + nl;
@@ -57,6 +57,6 @@ if li == hi
     return
 end
 
-na = a(li+1:hi);
+na = full(a(li+1:hi));
 
 end

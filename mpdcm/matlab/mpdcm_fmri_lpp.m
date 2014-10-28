@@ -13,10 +13,13 @@ nt = numel(theta);
 
 p = mpdcm_fmri_get_parameters(theta, ptheta);
 
+c = -0.5*numel(ptheta.mtheta)*log(2*pi) + ...
+    2*sum(log(diag(ptheta.chol_ictheta)));
+
 for i = 1:nt
     pt = p{i};
     et = pt - ptheta.mtheta;
-    lpp(i) = et' * ptheta.ictheta * et;
+    lpp(i) =  c + -0.5 * et' * ptheta.ictheta * et;
 end
 
 end

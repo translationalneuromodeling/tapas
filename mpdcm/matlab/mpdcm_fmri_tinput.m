@@ -33,14 +33,22 @@ end
 
 nh = numel(ptheta.Q);
 
-%Q = zeros(size(ptheta.Q{1}, 1), size(ptheta.Q{1}, 2), nh);
-%for i = 1:nh
-%    Q(:, :, i) = ptheta.Q{i};
-%end
+dm = 1;
+for i = 1:nh
+    dm = dm*isdiag(ptheta.Q{i});
+end
 
-%ptheta.Q = Q;
+if dm
+    ptheta.dQ.dm = 1;
+    ptheta.dQ.Q = cell(1, nh);
+    for i = 1:nh
+        ptheta.dQ.Q{i} = diag(ptheta.Q{i});
+    end
+else
+    ptheta.dQ.dm = 0;
+    ptheta.dQ.Q = {};
+end
 
-% hyperpriors - expectation
 
 try
     hE = dcm.M.hE(:);
@@ -73,6 +81,7 @@ ptheta.mtheta = ptheta.mtheta(v);
 ptheta.ctheta = sparse(blkdiag(pC, hC));
 ptheta.ctheta = ptheta.ctheta(v, v);
 ptheta.ictheta = inv(ptheta.ctheta);
+ptheta.chol_ictheta = chol(ptheta.ictheta);
 
 ptheta.a = dcm.a;
 ptheta.b = dcm.b;
@@ -102,7 +111,7 @@ kappa   = 0.64*exp(decay);
 theta.dim_x = size(dcm.a, 1);
 theta.dim_u = size(dcm.c, 2);
 
-theta.A = full(dcm.A);
+theta.A = full(pE.A);
 if any(dcm.a(:))
     theta.fA = 1;
 else
@@ -112,7 +121,7 @@ end
 theta.B = cell(theta.dim_u, 1);
 
 for j = 1:theta.dim_u
-    theta.B{j} = full(dcm.B(:,:,j));
+    theta.B{j} = full(pE.B(:,:,j));
 end
 
 if any(dcm.b(:))
@@ -121,7 +130,7 @@ else
     theta.fB = 0;
 end
 
-theta.C = full(dcm.C)/16;
+theta.C = full(pE.C);
 
 if any(dcm.c(:))
     theta.fC = 1;
@@ -145,7 +154,7 @@ theta.k3 = k3;
 
 % Noise
 
-theta.lambda = full(hE);
+theta.lambda = hE;
 
 dyu = dcm.U.dt;
 
@@ -155,4 +164,5 @@ u = dcm.U.u';
 
 ptheta.dyu = 2.0*size(y, 2)/size(u, 2);
 
+end
 

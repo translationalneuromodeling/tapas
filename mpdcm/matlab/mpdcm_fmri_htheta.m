@@ -5,15 +5,15 @@ function [htheta] = mpdcm_fmri_htheta(ptheta)
 % copyright (C) 2014
 %
 
-hA = 0.00005;
-hB = 0.00005;
-hC = 0.00005;
+hA = 0.00001;
+hB = 0.00001;
+hC = 0.00001;
 
-ht = 0.00005;
-hd = 0.00005;
-he = 0.00005;
+ht = 0.00001;
+hd = 0.00001;
+he = 0.00001;
 
-hlambda = 0.01;
+hlambda = 0.00001;
 
 htheta = struct('c_c', []);
 

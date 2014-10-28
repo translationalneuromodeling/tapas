@@ -133,7 +133,7 @@ __device__ double dcm_ds(dbuff x, dbuff y, dbuff u, void *p_theta,
     //PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
 
     ds = x.arr[INDEX_X * x.dim + i] - 
-        theta->K[i] * x.arr[INDEX_S * x.dim + i] -
+        exp(theta->K[i]) * x.arr[INDEX_S * x.dim + i] -
         theta->gamma * (exp(x.arr[INDEX_F * x.dim + i]) - 1);
 
     return ds;
@@ -163,7 +163,7 @@ __device__ double dcm_dv(dbuff x, dbuff y, dbuff u, void *p_theta,
     dv = exp(x.arr[INDEX_F * x.dim + i] - x.arr[INDEX_V * x.dim + i]) -
         exp(x.arr[INDEX_V * x.dim + i] * (1/theta->alpha - 1));
 
-    return dv/theta->tau[i];
+    return dv/exp(theta->tau[i]);
 }
 
 __device__ double dcm_dq(dbuff x, dbuff y, dbuff u, void *p_theta, 

@@ -7,16 +7,37 @@ function test_mpdcm_fmri_estimate()
 
 d = test_mpdcm_fmri_load_td();
 
-try
-profile off
-profile clear
-profile on
-    pars = struct();
-    pars.T = linspace(1e-1, 1, 40).^5;
-    pars.nburnin = 300;
-    pars.niter = 700;
+% Check that there are no fatal error
 
+try
+    pars = struct();
+    pars.T = linspace(1e-1, 1, 100).^5;
+    pars.nburnin = 20;
+    pars.niter = 20;
+    profile clear
+    profile on
     dcm = mpdcm_fmri_estimate(d{1}, pars);
+    profile off
+    profile viewer
+    
+    display('    Passed')
+catch err
+    d = dbstack();
+    fprintf('   Not passed at line %d\n', d(1).line)
+    disp(getReport(err, 'extended'));
+end
+
+% Make a more intensive test of the function
+
+try
+    pars = struct();
+    pars.T = linspace(1e-1, 1, 100).^5;
+    pars.nburnin = 1000;
+    pars.niter = 3000;
+
+    tic
+    dcm = mpdcm_fmri_estimate(d{1}, pars);
+    toc
 
     fprintf('Fe: %0.5f', dcm.F);
     display('    Passed')
@@ -25,6 +46,4 @@ catch err
     fprintf('   Not passed at line %d\n', d(1).line)
     disp(getReport(err, 'extended'));
 end
-profile off
-profile viewer
 end

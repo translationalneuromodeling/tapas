@@ -17,6 +17,7 @@ if ~sloppy
 end
 
 for i = 1:numel(theta)
+    theta{i}.C = theta{i}.C/16;
     [k1, k2, k3] = mpdcm_fmri_k(theta{i});
     theta{i}.k1 = k1;
     theta{i}.k2 = k2;
