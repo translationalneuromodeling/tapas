@@ -1,9 +1,13 @@
-function [dfdx ny] = mpdcm_fmri_gradient(p, u, theta, ptheta)
-%% 
+function [dfdx ny] = mpdcm_fmri_gradient(p, u, theta, ptheta, sloppy)
+%% Computes the numerical gradient using finate differences method. 
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2014
 %
+
+if nargin < 5
+    sloppy = 0;
+end
 
 
 dt = 1e-5;
@@ -20,7 +24,7 @@ ntheta(:) = {theta{1}};
 
 ntheta = mpdcm_fmri_set_parameters(np, ntheta, ptheta);
 
-ny = mpdcm_fmri_int(u, ntheta, ptheta);
+ny = mpdcm_fmri_int(u, ntheta, ptheta, sloppy);
 
 dfdx = cell(1, numel(p));
 

@@ -124,14 +124,24 @@ for i = 1:nburnin+niter
 
     % Apply an exchange operator
 
-    k = ceil(rand(nt) * (nt - 1) );
+%    k = ceil(rand(nt, 1) * nt );
+%    b = 2*round(rand(nt, 1))-1;
+%    b(k == 1) = 1;
+%    b(k == nt) = -1;
+%    b = k + b; 
+%    o = 1:nt;
+%
+%    for ik = 1:nt
+%        tllh = ollh(k(ik)) - ollh(b(ik));
+%        ev =  [tllh, -tllh] * T([k(ik) b(ik)])';
+%        if exp(ev) > rand()
+%            ollh([k(ik), b(ik)]) = ollh([b(ik) k(ik)]);
+%            o([k(ik), b(ik)]) = o([b(ik) k(ik)]); 
+%        end
+%    end
+%
+%    op(:, o) = op;
 
-
-    ev =  [(ollh(k+1) - ollh(k)) (ollh(k) - ollh(k+1))] *T(k:k+1)';
-    if exp(ev) > rand()
-        ollh(k:k+1) = ollh(k+1:-1:k);
-        op(:, k:k+1) = op(:, k+1:-1:k);
-    end
 end
 
 clf('reset');

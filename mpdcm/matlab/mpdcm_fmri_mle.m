@@ -14,13 +14,15 @@ np = zeros(size(op));
 
 dt = 1e-3;
 
+mpdcm_fmri_int_check_input(u, theta, ptheta);
+
 for j = 1:100
 
     if mod(j, 10) == 0
         fprintf(1, 'Iteration: %d, RSE: %0.5f\n', j, e'*e);
     end
-
-    [dfdx, ny] = mpdcm_fmri_gradient(op, u, theta, ptheta);
+    
+    [dfdx, ny] = mpdcm_fmri_gradient(op, u, theta, ptheta, 1);
 
     ny = ny{1};
     e = y{1}' - ny;

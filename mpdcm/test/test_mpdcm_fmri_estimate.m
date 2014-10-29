@@ -32,8 +32,8 @@ end
 try
     pars = struct();
     pars.T = linspace(1e-1, 1, 100).^5;
-    pars.nburnin = 1000;
-    pars.niter = 3000;
+    pars.nburnin = 500;
+    pars.niter = 5000;
 
     tic
     dcm = mpdcm_fmri_estimate(d{1}, pars);
