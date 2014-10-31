@@ -9,6 +9,11 @@ d = test_mpdcm_fmri_load_td();
 
 % Check that there are no fatal error
 
+nd = d{1};
+nd.U.u = nd.U.u(1:4:end,:);
+keyboard
+nd.U.dt = 1.0;
+
 try
     pars = struct();
     pars.T = linspace(1e-1, 1, 100).^5;
@@ -16,7 +21,7 @@ try
     pars.niter = 20;
     profile clear
     profile on
-    dcm = mpdcm_fmri_estimate(d{1}, pars);
+    dcm = mpdcm_fmri_estimate(nd, pars);
     profile off
     profile viewer
     

@@ -301,8 +301,7 @@ for i = 1:5
     theta = cell(20, 1);
     theta(:) = {theta0};
     u = cell(20, 1);
-    %u(:) = {u0};
-    u(:) = {u0
+    u(:) = {u0};
     ny = mpdcm_fmri_int(u, theta, ptheta);
     toc;
 
