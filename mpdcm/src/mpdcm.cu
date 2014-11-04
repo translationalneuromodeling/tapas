@@ -14,7 +14,7 @@
 #define INDEX_V 3
 #define INDEX_Q 4
 
-#define PRELOC_SIZE_X 4
+#define PRELOC_SIZE_X 2
 
 #define DIM_THETA 7
 
@@ -204,222 +204,119 @@ __device__ double dcm_l(dbuff x, dbuff y, dbuff u, void *p_theta,
 }
 
 __device__ void dcm_upx(dbuff ox, dbuff y, dbuff u, void *p_theta,
-     void *p_ptheta, dbuff tk, dbuff tx, dbuff nx)
+     void *p_ptheta, dbuff nx)
 {
 
     //ThetaDCM *theta = (ThetaDCM *) p_theta;
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
 
-    int td = blockDim.y;
-    int i;
-    int j;
+    int j = threadIdx.x%y.dim;
     int ss;
-    int ib;
-    int ti;
-    // Coefficients of Kutta Runge 4
-    double a[] = {0.0, 0.5, 0.5, 1.0};
-    double b[] = {1.0/6.0, 1.0/3.0, 1.0/3.0, 1.0/6.0};
     double dt;
-    double dfdt;
 
-    // Prepare memory arrays. Shared memory would be better but that since
-    // the sice of the models can change, that's too much memory to handle
-
-    memcpy(tx.arr, ox.arr, ox.dim * DIM_X * sizeof(double));
-    memset(nx.arr, 0, ox.dim * DIM_X * sizeof(double));
-    
     // Make the values to be closer in range
 
     ss = ceil(1.0/(ptheta->dt * ptheta->dyu));
     dt = 1.0/((double ) ss);
-
-    __syncthreads();
-
-    for ( ib = 0; ib < 4; ++ib ) 
-    {
-        // Compute k
-
-        i = threadIdx.y;
-        while (i < ox.dim * DIM_X)
+ 
+    if ( isnan( *u.arr ) ){
+        if ( threadIdx.y == 0 )
         {
-            // Network node index
-            j = i%ox.dim;
-            if ( isnan( *u.arr ) ){
-                if ( i%DIM_X == 0 )
-                {
-                    nx.arr[ INDEX_X * ox.dim + j] = NAN;
-                    nx.arr[ INDEX_F * ox.dim + j] = NAN;
-                    nx.arr[ INDEX_S * ox.dim + j] = NAN;
-                    nx.arr[ INDEX_V * ox.dim + j] = NAN;
-                    nx.arr[ INDEX_Q * ox.dim + j] = NAN;
-                }
-                i += td; 
-                continue;
-            }
-
-            ti = i%DIM_X * ox.dim + j;
-
-            switch ( i%DIM_X )
-            {
-                case INDEX_X:
-                    dfdt = dcm_dx(ox, y, u, p_theta, p_ptheta, j);
-                    break;
-                case INDEX_F:
-                    dfdt = dcm_df(ox, y, u, p_theta, p_ptheta, j);
-                    break;
-                case INDEX_S:
-                    dfdt = dcm_ds(ox, y, u, p_theta, p_ptheta, j);
-                    break;
-                case INDEX_V:
-                    dfdt = dcm_dv(ox, y, u, p_theta, p_ptheta, j);
-                    break;
-                case INDEX_Q:
-                    dfdt = dcm_dq(ox, y, u, p_theta, p_ptheta, j);
-                    break;
-            }
-
-            tk.arr[ ti ] = dfdt;
-            nx.arr[ ti ] += b[ ib ] * dfdt;
-
-            i += td;
+            nx.arr[ INDEX_X * ox.dim + j] = NAN;
+            nx.arr[ INDEX_F * ox.dim + j] = NAN;
+            nx.arr[ INDEX_S * ox.dim + j] = NAN;
+            nx.arr[ INDEX_V * ox.dim + j] = NAN;
+            nx.arr[ INDEX_Q * ox.dim + j] = NAN;
         }
-
-        __syncthreads();
-
-        // Compute y + h*k
-
-        i = threadIdx.y;
-        while (i < ox.dim * DIM_X)
-        {
-            // Network node index
-            j = i%ox.dim;
-
-            if ( isnan( *u.arr ) )
-            {
-                i += td;
-                continue;
-            }
-
-            ti = i%DIM_X * ox.dim + j;
-            tx.arr[ ti ] = ox.arr[ ti ] + dt * a[ib] * tk.arr[ ti ];
-
-            i += td;
-        }
-
-        __syncthreads();
     }
 
-    // Save results
-
-    i = threadIdx.y;
-    while (i < ox.dim * DIM_X)
+    switch ( threadIdx.y )
     {
-        // Network node index
-        j = i%ox.dim;
-        if ( isnan( *u.arr ) )
-        {
-            i += td;
-            continue;
-        }
-
-        ti = i%DIM_X * ox.dim + j;
-        nx.arr[ ti ] = ox.arr[ ti ] + dt * nx.arr[ ti ];
-
-        i += td;
+    case INDEX_X:
+        nx.arr[INDEX_X * ox.dim + j] = ox.arr[ INDEX_X * ox.dim + j] + 
+            dt * dcm_dx(ox, y, u, p_theta, p_ptheta, j);
+    case INDEX_F:
+        nx.arr[ INDEX_F * ox.dim + j] = ox.arr[ INDEX_F * ox.dim + j] + 
+            dt * dcm_df(ox, y, u, p_theta, p_ptheta, j);
+    case INDEX_S:
+        nx.arr[ INDEX_S * ox.dim + j] = ox.arr[ INDEX_S * ox.dim + j] + 
+            dt * dcm_ds(ox, y, u, p_theta, p_ptheta, j);
+    case INDEX_V:
+        nx.arr[ INDEX_V * ox.dim + j] = ox.arr[ INDEX_V * ox.dim + j] + 
+            dt * dcm_dv(ox, y, u, p_theta, p_ptheta, j);
+    case INDEX_Q:
+        nx.arr[ INDEX_Q * ox.dim + j] = ox.arr[ INDEX_Q * ox.dim + j] + 
+            dt * dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
     }
-    
-    __syncthreads();
 
 }
-
 
 __device__ void dcm_upy(dbuff x, dbuff y, dbuff u, void *theta,
      void *ptheta)
 {
-
-    int td = blockDim.y;
-    int i = threadIdx.y;
-
-    while (i < y.dim)
+    // Network node
+    int nn = threadIdx.x%x.dim;
+    if ( isnan( *u.arr ) )
     {
-        if ( isnan( *u.arr ) ){
-            y.arr[i] = NAN;
-            continue;
-        } 
-        y.arr[i] = dcm_l(x, y, u, theta, ptheta, i);
-        i += td;
+        y.arr[nn] = NAN;
+    } else 
+    {
+        y.arr[nn] = dcm_l(x, y, u, theta, ptheta, nn);
     }
-    __syncthreads();
 }
 
 __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
     void *p_ptheta, int dp)
 {
     int i;
-    int j;
     double *t;
     // Number of integration steps done between each data point
     int ss, dy;
+    // Point where threads are not synchronized to anything
+    int maxx = y.dim * (blockDim.x/y.dim);
 
-    //ThetaDCM *theta = (ThetaDCM *) p_theta; 
+    ThetaDCM *theta = (ThetaDCM *) p_theta;
+    ThetaDCM *ltheta;
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     dbuff ox;
     dbuff nx;
-    dbuff tk;
-    dbuff tx;
-
-    tk.dim = x.dim;
-    tx.dim = x.dim;
 
     dbuff ty;
     dbuff tu;
-    
+
     ox.dim = x.dim;
     nx.dim = x.dim;
 
-    ox.arr = x.arr;
-    nx.arr = x.arr + DIM_X * nx.dim;
-    tk.arr = x.arr + 2 * DIM_X * nx.dim;
-    tx.arr = x.arr + 3 * DIM_X * nx.dim;
+    ox.arr = x.arr + (threadIdx.x/x.dim) * x.dim * DIM_X * PRELOC_SIZE_X ;
+    nx.arr = ox.arr + nx.dim * DIM_X;
 
-    for (j = 0; j < DIM_X * x.dim ; j++){
-        switch ( j/x.dim )
-        {
-            case INDEX_X:
-                ox.arr[j] = 0;
-                break;
-            case INDEX_F:
-                ox.arr[j] = 0;
-                break;
-            case INDEX_S:
-                ox.arr[j] = 0;
-                break;
-            default:
-                ox.arr[j] = 0;
-                break;
-        }
-    }
+    ltheta = theta + threadIdx.x/x.dim;
+
+    if ( threadIdx.x < maxx )
+        ox.arr[threadIdx.y] = 0;
 
     ty.dim = y.dim;
     tu.dim = u.dim;
 
-    ty.arr = y.arr;
+    ty.arr = y.arr + y.dim * dp * blockDim.x/y.dim;
     tu.arr = u.arr;
 
     // How many samples are gonna be taken
     ss = ceil(1.0/ptheta->dt);
     dy = ceil(1.0/(ptheta->dt * ptheta->dyu));
+
     for (i=0; i < dp*ss; i++)
     {
-        dcm_upx(ox, ty, tu, p_theta, p_ptheta, tk, tx, nx);
-
+        if ( threadIdx.x < maxx )
+            dcm_upx(ox, ty, tu, (void *) ltheta, p_ptheta, nx);
+        __syncthreads();
         // Only sample every 1/ptheta->dt times
         if ( i%ss == 0 )
         {
-            //tu.arr += u.dim; 
             if ( i%dy == 0 ) 
             {
-                dcm_upy(nx, ty, tu, p_theta, p_ptheta);
+                if ( threadIdx.x < maxx )
+                    dcm_upy(nx, ty, tu, (void *) ltheta, p_ptheta);
                 ty.arr += y.dim;            
             }
             if ( i > 0 )
@@ -437,29 +334,19 @@ __global__ void kdcm_fmri(double *x, double *y, double *u,
     void *p_theta, double *d_theta, void *p_ptheta, double *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb )
 {
-    int i = threadIdx.x;
+    
     int bs = blockDim.x;
-    int bi = blockIdx.x;
-    int gs = gridDim.x;
+    int i = blockIdx.x;
+    int j;
+    dbuff tx, ty, tu;
     // Assign pointers to theta
 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
 
-    i = bi * bs + i;
-
+    // Organize the data
     while ( i < nt * nb )
     {
         double *o;
-        dbuff tx, ty, tu;
-
-        tx.dim = nx;
-        tx.arr = x + PRELOC_SIZE_X * DIM_X * nx * i;
-
-        tu.dim = nu; 
-        tu.arr = u + (i%nt) * nu * dp;
-        
-        ty.dim = nx;
-        ty.arr = y + i * nx * ny;
 
         // Get the new address
 
@@ -483,9 +370,31 @@ __global__ void kdcm_fmri(double *x, double *y, double *u,
         o += nx;
 
         theta[i].tau = o; 
+        
+        i += bs;
+    }
 
-        dcm_int(tx, ty, tu, (void *) (theta + i), (p_ptheta), dp);
-        i += gs * bs;
+
+    tu.dim = nu;  
+    ty.dim = nx;
+
+    // Iterate in chuncks
+    for (j=0; j<nb; j++ )
+    {
+
+        tu.arr = u + j * nu * dp;
+
+        i = gridDim.x * ( blockDim.x / nx );
+        while ( i < nt )
+        {
+            // ????
+            tx.arr = x + PRELOC_SIZE_X * DIM_X * nx * i;
+            ty.arr = y + j * nb * nx * ny + i * nx * ny;
+
+            dcm_int(tx, ty, tu, (void *) (theta + j*nb + i), p_ptheta, dp);
+            i += gridDim.x * (blockDim.x / nx );
+        }
+        
     }
 }
 
@@ -496,8 +405,8 @@ __host__ void ldcm_fmri(double *x, double *y, double *u,
     int nx, int ny, int nu, int dp, int nt, int nb )
 {
 
-    dim3 gthreads(32, 16);
-    dim3 gblocks(4, 1);
+    dim3 gthreads(64, 5);
+    dim3 gblocks(8, 1);
 
     kdcm_fmri<<<gblocks, gthreads>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
@@ -563,6 +472,7 @@ int mpdcm_fmri( double *x, double *y, double *u,
     void *pd_theta, *pd_ptheta;
     double *dd_theta, *dd_ptheta;
 
+
     // x
 
     HANDLE_ERROR( cudaMalloc( (void **) &d_x, 
@@ -620,6 +530,3 @@ int mpdcm_fmri( double *x, double *y, double *u,
     
     return 0; 
 }
-
-
-
