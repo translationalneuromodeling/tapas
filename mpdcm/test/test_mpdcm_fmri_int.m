@@ -253,6 +253,16 @@ ptheta.dyu = 2.0*size(y, 2) / size(u0, 2);
 ptheta1.dyu = 2.0*size(y, 2) / size(u0, 2);
 ptheta1.dt = 0.05;
 
+theta1 = cell(1, 800);
+u1 = cell(1, 1);
+
+theta1(:) = {theta0};
+u1(:) = {u0};
+
+tic
+y0 = mpdcm_fmri_int(u1, theta1, ptheta);
+toc
+
 tic
 y0 = mpdcm_fmri_int(u, theta, ptheta);
 toc

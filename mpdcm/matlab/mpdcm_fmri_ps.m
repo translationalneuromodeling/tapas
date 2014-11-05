@@ -93,6 +93,8 @@ for i = 1:nburnin+niter
             kt(diagnostics > 0.7) = kt(diagnostics > 0.7)*1.8;
         end
         diagnostics(:) = 0;
+        toc;
+        tic;
     end
 
     np = mpdcm_fmri_sample(op, ptheta, htheta, num2cell(kt));

@@ -11,14 +11,13 @@ d = test_mpdcm_fmri_load_td();
 
 nd = d{1};
 nd.U.u = nd.U.u(1:4:end,:);
-keyboard
 nd.U.dt = 1.0;
 
 try
     pars = struct();
     pars.T = linspace(1e-1, 1, 100).^5;
-    pars.nburnin = 20;
-    pars.niter = 20;
+    pars.nburnin = 500;
+    pars.niter = 4000;
     profile clear
     profile on
     dcm = mpdcm_fmri_estimate(nd, pars);
@@ -41,7 +40,7 @@ try
     pars.niter = 5000;
 
     tic
-    dcm = mpdcm_fmri_estimate(d{1}, pars);
+    %dcm = mpdcm_fmri_estimate(d{1}, pars);
     toc
 
     fprintf('Fe: %0.5f', dcm.F);
