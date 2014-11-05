@@ -199,7 +199,6 @@ __device__ double dcm_l(dbuff x, dbuff y, dbuff u, void *p_theta,
         theta->k1 * ( 1 - q) +
         theta->k2 * ( 1 - q/v) +
         theta->k3 * ( 1 - v)); 
-
     return l;
 }
 
@@ -280,7 +279,6 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
     // Point where threads are not synchronized to anything
     int maxx = y.dim * (blockDim.x/y.dim);
 
-    ThetaDCM *ltheta;
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     dbuff ox;
     dbuff nx;
@@ -295,8 +293,11 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
     nx.arr = ox.arr + nx.dim * DIM_X;
 
     if ( threadIdx.x < maxx )
-        ox.arr[DIM_X * threadIdx.y + threadIdx.x%x.dim] = 0;
+        memset(x.arr, 0, nx.dim * DIM_X * sizeof(double));
+    //if ( threadIdx.x < maxx )
+    //    ox.arr[threadIdx.y + DIM_X * threadIdx.x%y.dim] = 0;
 
+    __syncthreads();
     ty.dim = y.dim;
     tu.dim = u.dim;
 
@@ -319,7 +320,7 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
             {
                 if ( threadIdx.x < maxx )
                 {
-                    dcm_upy(nx, ty, tu, (void *) ltheta, p_ptheta);
+                    dcm_upy(nx, ty, tu, p_theta, p_ptheta);
                 }
                 ty.arr += y.dim; 
             }
@@ -343,41 +344,20 @@ __global__ void kdcm_fmri(double *x, double *y, double *u,
     int i = blockIdx.x;
     int j;
     dbuff tx, ty, tu;
+    __shared__ double sx[320 * PRELOC_SIZE_X];
+
     // Assign pointers to theta
 
+
     ThetaDCM *theta = (ThetaDCM *) p_theta;
+    ThetaDCM *ltheta;
 
-    // Organize the data
-    while ( i < nt * nb )
-    {
-        double *o;
+    PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
+    __shared__ PThetaDCM lptheta[1];
 
-        // Get the new address
-
-        o = d_theta + i * (
-            nx * nx + // A
-            nx * nx * nu + // B 
-            nx * nu + // C
-            nx + // Kappa (K)
-            nx); // tau
-        
-        theta[i].A = o;
-        o += nx * nx;
-
-        theta[i].B = o;
-        o += nx * nx * nu;
-
-        theta[i].C = o; 
-        o+= nx * nu;
-
-        theta[i].K = o;
-        o += nx;
-
-        theta[i].tau = o; 
-        
-        i += gridDim.x;
-    }
-
+    lptheta->dt = ptheta->dt;
+    lptheta->dyu = ptheta->dyu;
+    lptheta->mode = ptheta->mode;
 
     tu.dim = nu;
     tx.dim = nx; 
@@ -389,13 +369,43 @@ __global__ void kdcm_fmri(double *x, double *y, double *u,
 
         tu.arr = u + j * nu * dp;
 
-        i = threadIdx.x / nx ;
+        i = threadIdx.x/nx + (blockDim.x / nx) * blockIdx.x;
         while ( i < nb )
         {
-            tx.arr = x + PRELOC_SIZE_X * DIM_X * nx * i;
+            double *o;
+            int ti = i + j*nb;
+
+            // Get the new address
+
+            ltheta = theta + ti;
+
+            o = d_theta + ti * (
+                nx * nx + // A
+                nx * nx * nu + // B 
+                nx * nu + // C
+                nx + // Kappa (K)
+                nx); // tau
+            
+            ltheta->A = o;
+            o += nx * nx;
+
+            ltheta->B = o;
+            o += nx * nx * nu;
+
+            ltheta->C = o; 
+            o+= nx * nu;
+
+            ltheta->K = o;
+            o += nx;
+
+            ltheta->tau = o; 
+
+            // !!
+            tx.arr = sx + PRELOC_SIZE_X * DIM_X * nx * (threadIdx.x/nx);
+            //tx.arr = x + PRELOC_SIZE_X * DIM_X * nx * i;
             ty.arr = y + j * nb * nx * ny + i * nx * ny;
-            //dcm_int(tx, ty, tu, (void *) (theta + j*nb + i), p_ptheta, dp);
-            dcm_int(tx, ty, tu, (void *) theta, p_ptheta, dp);
+
+            dcm_int(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp);
             i += gridDim.x * (blockDim.x / nx );
         }
         
@@ -410,7 +420,7 @@ __host__ void ldcm_fmri(double *x, double *y, double *u,
 {
 
     dim3 gthreads(64, 5);
-    dim3 gblocks(8, 1);
+    dim3 gblocks(4, 1);
 
     kdcm_fmri<<<gblocks, gthreads>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
@@ -479,8 +489,9 @@ int mpdcm_fmri( double *x, double *y, double *u,
 
     // x
 
-    HANDLE_ERROR( cudaMalloc( (void **) &d_x, 
-        nx * DIM_X * PRELOC_SIZE_X  * nt * nb * sizeof(double) ) );
+    d_x = 0;
+    //HANDLE_ERROR( cudaMalloc( (void **) &d_x, 
+    //    nx * DIM_X * PRELOC_SIZE_X  * nt * nb * sizeof(double) ) );
 
     // y
 
@@ -522,7 +533,7 @@ int mpdcm_fmri( double *x, double *y, double *u,
 
 
     // free the memory allocated on the GPU
-    HANDLE_ERROR( cudaFree( d_x ) );
+    //HANDLE_ERROR( cudaFree( d_x ) );
     HANDLE_ERROR( cudaFree( d_y ) );
     HANDLE_ERROR( cudaFree( d_u ) );
 
