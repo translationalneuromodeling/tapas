@@ -341,8 +341,7 @@ __global__ void kdcm_fmri(double *x, double *y, double *u,
     int nx, int ny, int nu, int dp, int nt, int nb )
 {
     
-    int i = blockIdx.x;
-    int j;
+    int i;
     dbuff tx, ty, tu;
     __shared__ double sx[320 * PRELOC_SIZE_X];
 
@@ -363,52 +362,44 @@ __global__ void kdcm_fmri(double *x, double *y, double *u,
     tx.dim = nx; 
     ty.dim = nx;
 
+    i = threadIdx.x/nx + (blockDim.x / nx) * blockIdx.x;
     // Iterate in chuncks
-    for (j=0; j<nt; j++ )
+    while ( i < nb * nt )
     {
+        double *o;
 
-        tu.arr = u + j * nu * dp;
+        tu.arr = u + (i/nb) * nu * dp;
+        // Get the new address
 
-        i = threadIdx.x/nx + (blockDim.x / nx) * blockIdx.x;
-        while ( i < nb )
-        {
-            double *o;
-            int ti = i + j*nb;
+        ltheta = theta + i;
 
-            // Get the new address
-
-            ltheta = theta + ti;
-
-            o = d_theta + ti * (
-                nx * nx + // A
-                nx * nx * nu + // B 
-                nx * nu + // C
-                nx + // Kappa (K)
-                nx); // tau
-            
-            ltheta->A = o;
-            o += nx * nx;
-
-            ltheta->B = o;
-            o += nx * nx * nu;
-
-            ltheta->C = o; 
-            o+= nx * nu;
-
-            ltheta->K = o;
-            o += nx;
-
-            ltheta->tau = o; 
-
-            // !!
-            tx.arr = sx + PRELOC_SIZE_X * DIM_X * nx * (threadIdx.x/nx);
-            //tx.arr = x + PRELOC_SIZE_X * DIM_X * nx * i;
-            ty.arr = y + j * nb * nx * ny + i * nx * ny;
-
-            dcm_int(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp);
-            i += gridDim.x * (blockDim.x / nx );
-        }
+        o = d_theta + i * (
+            nx * nx + // A
+            nx * nx * nu + // B 
+            nx * nu + // C
+            nx + // Kappa (K)
+            nx); // tau
         
+        ltheta->A = o;
+        o += nx * nx;
+
+        ltheta->B = o;
+        o += nx * nx * nu;
+
+        ltheta->C = o; 
+        o+= nx * nu;
+
+        ltheta->K = o;
+        o += nx;
+
+        ltheta->tau = o; 
+
+        tx.arr = sx + PRELOC_SIZE_X * DIM_X * nx * (threadIdx.x/nx);
+        //tx.arr = x + PRELOC_SIZE_X * DIM_X * nx * i;
+        ty.arr = y + i * nx * ny;
+
+        dcm_int(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp);
+        i += gridDim.x * (blockDim.x / nx );        
     }
 }
 
