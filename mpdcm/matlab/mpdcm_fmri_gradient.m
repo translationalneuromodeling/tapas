@@ -1,5 +1,20 @@
 function [dfdx ny] = mpdcm_fmri_gradient(p, u, theta, ptheta, sloppy)
-%% Computes the numerical gradient using finate differences method. 
+%% [dfdx ny] = mpdcm_fmri_gradient(p, u, theta, ptheta, sloppy
+% Computes the numerical gradient using forward finate differences method.
+% p is the location of the evalution of the gradient.
+%
+% Input:
+% 
+% p -- Cell array of parameters in matrix form
+% u -- Cell array of experimental inputs.
+% theta -- Cell array of parameters in structure from
+% ptheta -- Structure of hyperparameters
+% sloppy -- Flag for not checking theta before integration. Defaults to False.
+% 
+% Output:
+%
+% dfdx -- Cell array of matrices with the gradients
+% ny -- Cell array of the matrices of evaluation a system in p
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2014
@@ -9,29 +24,32 @@ if nargin < 5
     sloppy = 0;
 end
 
-
 dt = 1e-5;
 
-np = cell(1, numel(p)+1);
-np(:) = {p};
+sp1 = size(p, 1);
+sp2 = numel(p{1});
 
-for i = 2:numel(p)+1
-    np{i}(i-1) = np{i}(i-1)  + dt;
+np = repmat(p, 1, sp2+1);
+
+for j = 1:sp1
+    for i = 2:sp2+1
+        np{j, i}(i-1) = np{j, i}(i-1)  + dt;
+    end
 end
 
-ntheta = cell(1, numel(p)+1);
-ntheta(:) = {theta{1}};
-
+ntheta = repmat(theta, 1, sp2+1);
 ntheta = mpdcm_fmri_set_parameters(np, ntheta, ptheta);
 
 ny = mpdcm_fmri_int(u, ntheta, ptheta, sloppy);
 
-dfdx = cell(1, numel(p));
+dfdx = cell(sp1, numel(p{1}));
 
-for i = 1:numel(p)
-   dfdx{i} = (ny{i+1} - ny{1})/dt;
+for j = 1:sp1
+    for i = 1:sp2
+        dfdx{j, i} = (ny{j, i+1} - ny{j, 1})/dt;
+    end
 end
 
-ny = ny(1);
+ny = ny(:, 1);
 
 end

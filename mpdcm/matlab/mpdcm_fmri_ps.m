@@ -35,6 +35,8 @@ theta = {theta0};
 
 [op, olambda] = mpdcm_fmri_mle(y, u, {theta0}, ptheta);
 
+op = op{1};
+olambda = olambda{1};
 % This is purely heuristics. There is an interpolation between the prior and
 % the mle estimator such that not all chains are forced into high llh regions.
 % Moreover, at low temperatures the chains are started in more sensible regime
@@ -77,10 +79,6 @@ diagnostics = zeros(1, nt);
 kt = ones(1, nt);
 
 for i = 1:nburnin+niter
-
-    %if mod(i, 80) == 0
-    %    fprintf(1, 'Iteration: %d; llh: %0.5f\n', i, ollh(end));
-    %end
 
     if mod(i, DIAGN) == 0
         diagnostics = diagnostics/DIAGN;

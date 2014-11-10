@@ -1,5 +1,14 @@
 function [theta] = mpdcm_fmri_set_parameters(p, theta, ptheta)
-%% Sets the parameters introduced in vectorial form
+%% [ntheta] = mpdcm_fmri_set_parameters(p, theta, ptheta)
+% Sets the parameters introduced in vectorial form.
+%
+% Input:
+%
+% p -- Cell array of parameters in matrix form
+% theta -- Cell array of parameters in structure form
+% ptheta -- Hyperparameters
+%
+% Ouput -- Cell array of parameters in structure form
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2014

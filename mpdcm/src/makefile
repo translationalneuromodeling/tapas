@@ -27,12 +27,12 @@ BDDM_MATLAB = /usr/local/MATLAB/R2014a
 NVCC = nvcc
 MATCC = gcc
 
-ICUDA = -I/usr/local/cuda-6.5/include
+ICUDA = -I$(CUDA_PATH)/include
 
-LCUDA = -arch=sm_30 -L$(CUDA_PAHT)/lib64 -lcuda -lcudart
+LCUDA = -arch=sm_20 -L$(CUDA_PATH)/lib64 -lcuda -lcudart
 LNUM = -lm
 
-NVCCFLAGS = -arch=sm_30 -rdc=true --shared -Xcompiler -fPIC -c
+NVCCFLAGS = -arch=sm_20 -rdc=true --shared -Xcompiler -fPIC -c
 
 # Mex Flags
 

@@ -26,6 +26,7 @@ try
     fprintf(fp, '       Passed\n');
 catch err
     fprintf(fp, '   Not passed at line %d\n', err.stack(end).line);
+    display(getReport(err, 'extended'));
 end
 
 
