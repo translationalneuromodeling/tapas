@@ -1,7 +1,16 @@
 function [y, u, theta, ptheta] = dcm_fmri_tinput(dcm)
-%% Creates input that follows the SPM API into valid input.
+%% Transforms input that follows the SPM API into valid mpdcm input.
+%
+% Input:
 %
 % dcm -- Cell array of SPM DCM models.
+%
+% Output:
+%
+% y -- Data array
+% u -- Input array
+% theta -- Parameters structure
+% ptheta -- Hyperparameters
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2014

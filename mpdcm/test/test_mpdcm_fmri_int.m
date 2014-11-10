@@ -229,7 +229,7 @@ for i = 1:5
     theta0.B(:) = {d{i}.B(:,:,1) d{i}.B(:, :, 2)};
     theta0.fB = 1;
     
-    theta0.C = d{i}.C/16;
+    theta0.C = d{i}.C;
     theta0.fC = 1;
 
     theta0.epsilon = ep*ones(theta0.dim_x, 1);
@@ -271,49 +271,19 @@ y1 = mpdcm_fmri_int(u, theta, ptheta1);
 toc 
 
 for i = 1:5
-
-    y = d{i}.y';
-    u0 = d{i}.U.u';
-
-    theta0.dim_x = size(y, 1);
-    theta0.dim_u = size(u0, 1);
-
-    theta0.A = d{i}.A;
-    theta0.fA = 1;
-
-    theta0.B = cell(theta0.dim_u, 1);
-    theta0.B(:) = {d{i}.B(:,:,1) d{i}.B(:, :, 2)};
-    theta0.fB = 1;
-    
-    theta0.C = d{i}.C/16;
-    theta0.fC = 1;
-
-    theta0.epsilon = ep*ones(theta0.dim_x, 1);
-    theta0.K = kappa*ones(theta0.dim_x, 1);
-    theta0.tau = tau*ones(theta0.dim_x, 1);
-    theta0.E0 = E0;
-    theta0.V0 = V0;
-    theta0.alpha = alpha;
-    theta0.gamma = gamma;
-    theta0.k1 = k1;
-    theta0.k2 = k2;
-    theta0.k3 = k3;
-
-    ptheta.dyu = 2.0*size(y, 2) / size(u0, 2);
-    
-    d{i}.IS = 'spm_int_E';
-    d{i}.M.IS = 'spm_int_E';
-    
-    %tic;
-    %cy = spm_dcm_generate(d{i});
-    %toc;
-    tic;
-    theta = cell(20, 1);
-    theta(:) = {theta0};
-    u = cell(20, 1);
-    u(:) = {u0};
-    ny = mpdcm_fmri_int(u, theta, ptheta);
-    toc;
+    dcm = d{i};
+    [y, u, theta, ptheta] = mpdcm_fmri_tinput(dcm);
+    theta.A = dcm.A;
+    theta.B = cell(1, size(dcm.B,3));
+    for j = 1:size(dcm.B, 3)
+        theta.B{j} = dcm.B(:, :, j);
+    end
+    theta.C = dcm.C;
+    theta.K(:) = 0;
+    theta.tau(:) = 0;
+    tic
+    ny = mpdcm_fmri_int({u}, {theta}, ptheta);
+    toc
 
     if all(abs(d{i}.y - ny{1}) < 1e-2)
         display('    Passed')
@@ -322,9 +292,9 @@ for i = 1:5
         fprintf('   Not passed at line %d\n', td(1).line)
         figure(); 
         hold on; 
-        plot(ny{1}); 
-        plot(d{i}.y, '.'); 
-        %plot(cy.y, 'k');
+        hny = plot(ny{1}); 
+        hy  = plot(d{i}.y, '.'); 
+        legend([hny(1), hy(1)], 'mpdcm', 'dcm');
     end
 
 end

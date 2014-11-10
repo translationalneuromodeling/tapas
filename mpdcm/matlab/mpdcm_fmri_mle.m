@@ -1,7 +1,20 @@
 function [mX, cX] = mpdcm_fmri_mle(y, u, theta, ptheta)
-%% Computes a local maximum of the parameters by minimizing the square error.
+%% Minimizes the likelihood function of a dcm for fmri.
 %
-% It uses regularized Gaussian-Newton optimization with GL 
+% Input:
+%
+% y -- Cell array of experimental observations.
+% u -- Cell array of experimental design.
+% theta -- Cell array of initialization model parameters.
+% ptheta -- Structure of the hyperparameters.
+%
+% Output:
+%
+% mX -- Approximated output
+% mC -- Estimated variance.
+%
+% It uses weighted regularized Levenberg-Marquard Gaussian-Newton 
+% optimization.
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2014
@@ -15,6 +28,17 @@ np = zeros(size(op));
 dt = 1e-3;
 
 mpdcm_fmri_int_check_input(u, theta, ptheta);
+
+% Ensamble the weights. Only diagonal matrices are accepted.
+
+nQ = zeros(size(ptheta.dQ.Q{1}));
+for k = 1:numel(ptheta.dQ.Q)
+    nQ = nQ + tlambda(k)*ptheta.dQ.Q{k};
+end
+nQ = nQ(:);
+
+% Regularization parameter
+lambda = 0.1;
 
 for j = 1:100
 
