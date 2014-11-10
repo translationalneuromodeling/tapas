@@ -5,6 +5,8 @@ function startup()
 % copyright (C) 2014
 %
 
+disp('Loading mpdcm')
+
 [current, ~, ~] = fileparts(mfilename('fullpath'));
 
 mainfiles = fullfile(current, 'matlab');

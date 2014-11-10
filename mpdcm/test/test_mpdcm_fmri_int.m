@@ -290,11 +290,6 @@ for i = 1:5
     else
         td = dbstack();
         fprintf('   Not passed at line %d\n', td(1).line)
-        figure(); 
-        hold on; 
-        hny = plot(ny{1}); 
-        hy  = plot(d{i}.y, '.'); 
-        legend([hny(1), hy(1)], 'mpdcm', 'dcm');
     end
 
 end

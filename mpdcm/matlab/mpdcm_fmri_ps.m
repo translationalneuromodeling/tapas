@@ -37,6 +37,7 @@ theta = {theta0};
 
 op = op{1};
 olambda = 1./olambda{1};
+
 % This is purely heuristics. There is an interpolation between the prior and
 % the mle estimator such that not all chains are forced into high llh regions.
 % Moreover, at low temperatures the chains are started in more sensible regime
@@ -78,12 +79,14 @@ diagnostics = zeros(1, nt);
 % Optimized kernel
 kt = ones(1, nt);
 
+tic
 for i = 1:nburnin+niter
 
     if mod(i, DIAGN) == 0
         diagnostics = diagnostics/DIAGN;
         fprintf(1, 'Iter %d, diagnostics:  ', i);
         fprintf(1, '%0.2f ', diagnostics);
+        fprintf(1, '%0.2f ', ollh);
         fprintf(1, '\n');
 
         if i < nburnin
@@ -144,11 +147,6 @@ for i = 1:nburnin+niter
     olpp(:, o) = olpp;
 
 end
-
-clf('reset');
-hold on
-plot(y0'); 
-plot(ny{end});
 
 fe = trapz(T, mean(ellh, 2));
 

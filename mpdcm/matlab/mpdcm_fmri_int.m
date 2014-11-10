@@ -13,6 +13,8 @@ end
 
 
 if ~sloppy
+    assert(mpdcm_num_devices() > 0, 'mpdcm:fmri:int:no_gpu', ...
+        'No GPU device available.');
     mpdcm_fmri_int_check_input(u, theta, ptheta);  
 end
 

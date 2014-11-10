@@ -44,7 +44,7 @@ nh = numel(ptheta.Q);
 
 dm = 1;
 for i = 1:nh
-    dm = dm*isdiag(ptheta.Q{i});
+    dm = dm*(diag(diag(ptheta.Q{i})) == ptheta.Q{i});
 end
 
 if dm

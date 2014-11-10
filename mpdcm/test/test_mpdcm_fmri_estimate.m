@@ -18,12 +18,7 @@ try
     pars.T = linspace(1e-1, 1, 100).^5;
     pars.nburnin = 100;
     pars.niter = 100;
-    profile clear
-    profile on
-    dcm = mpdcm_fmri_estimate(nd, pars);
-    profile off
-    profile viewer
-    
+    dcm = mpdcm_fmri_estimate(nd, pars);   
     display('    Passed')
 catch err
     d = dbstack();
@@ -36,8 +31,8 @@ end
 try
     pars = struct();
     pars.T = linspace(1e-1, 1, 100).^5;
-    pars.nburnin = 1000;
-    pars.niter = 10000;
+    pars.nburnin = 100;
+    pars.niter = 100;
 
     tic
     dcm = mpdcm_fmri_estimate(d{1}, pars);
