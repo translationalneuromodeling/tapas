@@ -32,7 +32,7 @@ ICUDA = -I$(CUDA_PATH)/include
 LCUDA = -arch=sm_20 -L$(CUDA_PATH)/lib64 -lcuda -lcudart
 LNUM = -lm
 
-NVCCFLAGS = -arch=sm_20 -rdc=true --shared -Xcompiler -fPIC -c
+NVCCFLAGS = -arch=sm_20 --shared -Xcompiler -fPIC -c
 
 # Mex Flags
 

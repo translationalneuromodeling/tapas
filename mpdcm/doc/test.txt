@@ -1,0 +1,11 @@
+Compilation has been tested in two environments:
+
+cuda 6.0
+cuda 4.2.9
+
+Execution has been tested in the following card:
+
+Testla M2050
+Quadro K2000
+
+
