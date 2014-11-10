@@ -7,8 +7,6 @@ VERSION := $(MAJOR).$(MINOR)
 
 NAME := mpdcm
 
-
-
 # ===========================================================================
 # Set up
 # ===========================================================================
@@ -20,7 +18,7 @@ OUTDIR = build
 
 # Other things
 
-BDDM_MATLAB = /usr/local/MATLAB/R2014a
+BDDM_MATLAB = $(shell matlab -nodisplay -r "fprintf(1, matlabroot); fprintf(1, '\n'); exit;" | tail -n 2| head -n 1)
 
 # nvcc flags
 
