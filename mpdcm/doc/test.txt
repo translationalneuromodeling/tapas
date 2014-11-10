@@ -1,11 +1,16 @@
 Compilation has been tested in two environments:
 
-cuda 6.0
-cuda 4.2.9
-
 Execution has been tested in the following card:
 
 Testla M2050
-Quadro K2000
+gcc version 4.4.7 20120313 (Red Hat 4.4.7-4) (GCC) 
+MATLAB 8.1
+CentOS release 6.5 (Final)
+cuda 4.2.9
 
 
+gcc version 4.8.2 (Ubuntu 4.8.2-19ubuntu1) 
+Ubuntu 14.04.1 LTS
+Cuda compilation tools, release 6.5, V6.5.12
+GK107GL [Quadro K2000] [10DE:FFE]
+MATLAB 8.3.0.532 (R2014a)
