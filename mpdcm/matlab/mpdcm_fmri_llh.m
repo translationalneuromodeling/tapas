@@ -26,7 +26,7 @@ for i = 1:s1
     y0 = y{s1}';
     y0 = y0(:);
     for j = 1:s2
-        theta0 = theta{(i-1)*s1 + j};
+        theta0 = theta{i, j};
         % Check the eigen values
         %ev = eigs(theta0.A, 1);
 
@@ -34,7 +34,7 @@ for i = 1:s1
         %    llh((i-1)*s1+j) = -inf;
         %end
 
-        ny0 = ny{(i-1)*s1 + j}(:);
+        ny0 = ny{i, j}(:);
 
         e = y0 - ny0;
 
@@ -60,7 +60,7 @@ for i = 1:s1
                nQ = nQ + tlambda(k)*ptheta.dQ.Q{k};
             end
             nQ = nQ(:);
-            llh((i-1)*s1+j) = -numel(e) * l2p  + sum(log(nQ)) ...
+            llh(i, j) = -numel(e) * l2p  + sum(log(nQ)) ...
                 - 0.5*e'*(nQ.*e);
         end
     end
