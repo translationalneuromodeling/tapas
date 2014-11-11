@@ -10,6 +10,7 @@ if nargin < 2
     pars.T = linspace(0.1, 1, 20)^5;
     pars.nburnin = 2000;
     pars.niter = 5000;
+    pars.verbose = 0;
 end
 
 % unpack

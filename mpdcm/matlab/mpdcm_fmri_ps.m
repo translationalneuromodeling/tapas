@@ -15,6 +15,10 @@ function [ps, fe] = mpdcm_fmri_ps(dcm, pars)
 % copyright (C) 2014
 %
 
+if ~isfield(pars, 'verbose')
+    pars.verbose = 0;
+end
+
 DIAGN = 50;
 
 T = pars.T;
@@ -84,11 +88,12 @@ for i = 1:nburnin+niter
 
     if mod(i, DIAGN) == 0
         diagnostics = diagnostics/DIAGN;
-        fprintf(1, 'Iter %d, diagnostics:  ', i);
-        fprintf(1, '%0.2f ', diagnostics);
-        fprintf(1, '%0.2f ', ollh);
-        fprintf(1, '\n');
-
+        if pars.verbose
+            fprintf(1, 'Iter %d, diagnostics:  ', i);
+            fprintf(1, '%0.2f ', diagnostics);
+            fprintf(1, '%0.2f ', ollh);
+            fprintf(1, '\n');
+        end
         if i < nburnin
             kt(diagnostics < 0.3) = kt(diagnostics < 0.3)/2;
             kt(diagnostics > 0.7) = kt(diagnostics > 0.7)*1.8;

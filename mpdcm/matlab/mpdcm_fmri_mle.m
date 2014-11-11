@@ -21,11 +21,17 @@ function [mX, cX] = mpdcm_fmri_mle(y, u, theta, ptheta)
 %
 
 % Tolereance to deviation
-tol = 1e-2;
+tol = 1e-3;
 dt = 1e-3;
 
 assert(size(theta, 1) == 1, 'mpdcm:fmri:mle:input', ...
     'theta second dimension should be one, instead %d', size(theta, 2));
+
+% Trick to make all the systems stable
+
+%for i = 1:numel(theta)
+%    theta{i}.A = -0.5*eye(size(theta{i}.A));
+%end
 
 mpdcm_fmri_int_check_input(u, theta, ptheta);
 
@@ -50,8 +56,8 @@ end
 
 % Regularization parameter
 
-lambda0 = 0.1 * ones(su);
-lambda = 0.1 * ones(su);
+lambda0 = 0.5 * ones(su);
+lambda = 0.5 * ones(su);
 v = 1.1 * ones(su);
 k = 1 * ones(su);
 
@@ -103,19 +109,20 @@ for j = 1:100
         nrs(k) = e{k}'*e{k};
     end
 
-    if all(nrs - ors) < tol
+    if all(abs(nrs - ors) < tol)
         op(nrs < ors) = np(nrs < ors);
         break;
     end
+
+    nrs(isnan(nrs)) = inf;
 
     k(nrs >= ors) = k(nrs >= ors) + 1;
     k(nrs < ors) = k(nrs < ors) - 1;
     op(nrs < ors) = np(nrs < ors);
     ors(nrs < ors) = nrs(nrs < ors);
 
-    %if all(abs(dp) < 1e-3)
-    %    break;
-    %end
+    assert(any(ors < inf), 'mpdcm:fmri:mle:numeric', ... 
+       'Optimization failed with no gradient being found.')
 
 end
 
@@ -124,4 +131,5 @@ cX = cell(su);
 for i = 1:numel(u)
     cX{i} = var(reshape(e{i}, size(ny{i})));
 end
+
 end
