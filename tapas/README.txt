@@ -1,4 +1,4 @@
-Version 1.3.0.0
+Version 1.4.0.0
 ________________________________________________________________________
 
      T  A  P  A  S - TNU Algorithms for Psychiatry-Advancing Science.
@@ -55,7 +55,7 @@ Bugs in the software can be emailed directly to: tapas-bugs@biomed.ee.ethz.ch
 Global Changes in this version
 -------------------------------
 
-There are no global changes in this version. Local changes are specific to the PhysIO toolbox. Please refer to the toolbox readme file for more details.
+There are no global changes in this version. Local changes are specific to the VBLM toolbox. Please refer to the toolbox readme.txt file for more details.
 
 
 -------

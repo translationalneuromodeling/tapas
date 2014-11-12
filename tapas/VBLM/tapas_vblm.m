@@ -93,7 +93,7 @@ function [q, stats, q_trace] = tapas_vblm(y, X, a_0, b_0, c_0, d_0)
     
 end
 
-% ------------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
 % Returns the variational posterior q that maximizes the free energy.
 function [q, q_trace] = invert_model(y, X, prior)
 
@@ -118,6 +118,7 @@ function [q, q_trace] = invert_model(y, X, prior)
     
     % Variational algorithm
     nMaxIter = 30;
+    kX = X'*X;
     for i = 1:nMaxIter
         
         % (1) Update q(beta)
@@ -130,7 +131,8 @@ function [q, q_trace] = invert_model(y, X, prior)
         
         % (3) Update q(lambda)
         q.c_n = prior.c_0 + n/2;
-        q.d_n = prior.d_0 + 1/2*(y')*y -q.mu_n'*X'*y +1/2*q.mu_n'*(X')*X*q.mu_n;
+        pe = y - X*q.mu_n;
+        q.d_n = prior.d_0 + 0.5 * (pe'*pe + trace(q.Lambda_n\kX)) ;
         
         % Compute free energy
         F_old = q.F;
