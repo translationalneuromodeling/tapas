@@ -83,7 +83,6 @@ diagnostics = zeros(1, nt);
 % Optimized kernel
 kt = ones(1, nt);
 
-
 for i = 1:nburnin+niter
 
     if mod(i, DIAGN) == 0
@@ -129,28 +128,6 @@ for i = 1:nburnin+niter
     end
 
     assert(all(-inf < ollh), 'mpdcm:fmri:ps', '-inf value in the likelihood');
-
-    % Apply an exchange operator
-
-%   k = ceil(rand(nt, 1) * nt );
-%   b = 2*round(rand(nt, 1))-1;
-%   b(k == 1) = 1;
-%   b(k == nt) = -1;
-%   b = k + b; 
-%   o = 1:nt;
-%   for ik = 1:(nt/20)
-%       tllh = ollh(k(ik)) - ollh(b(ik));
-%       ev = T(b(ik))*ollh(k(ik)) + T(k(ik))*ollh(b(ik)) - ... 
-%           (T(k(ik)) * ollh(k(ik)) + T(b(ik))*ollh(b(ik)));
-%       if exp(ev) > rand()
-%           ollh([k(ik), b(ik)]) = ollh([b(ik) k(ik)]);
-%           o([k(ik), b(ik)]) = o([b(ik) k(ik)]); 
-%       end
-%   end
-    
-    op(:, o) = op;
-    olpp(:, o) = olpp;
-
 end
 
 fe = trapz(T, mean(ellh, 2));

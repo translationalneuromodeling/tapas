@@ -1,7 +1,4 @@
-Compilation has been tested in two environments:
-
-Execution has been tested in the following card:
-
+Compilation and execution has been tested in:
 
 gcc version 4.4.7 20120313 (Red Hat 4.4.7-4) (GCC) 
 CentOS release 6.5 (Final)
@@ -15,3 +12,8 @@ Cuda compilation tools, release 6.5, V6.5.12
 GK107GL [Quadro K2000] [10DE:FFE]
 MATLAB 8.3.0.532 (R2014a)
 
+gcc version 4.8.1 (Ubuntu/Linaro 4.8.1-10ubuntu9) 
+Ubuntu 13.10
+Cuda compilation tools, release 6.0, V6.0.1
+GK104 [GeForce GTX 760] [10DE:1187]
+MATLAB 8.1.0.604 (R2013a
