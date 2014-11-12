@@ -20,11 +20,13 @@ void mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, double *dtheta)
 
     ctheta->V0 = *mxGetPr(mxGetField(theta, 0, "V0"));
     ctheta->E0 = *mxGetPr(mxGetField(theta, 0, "E0"));
+    ctheta->ln1_E0 = log(1 - ctheta->E0);
     ctheta->k1 = *mxGetPr(mxGetField(theta, 0, "k1"));
     ctheta->k2 = *mxGetPr(mxGetField(theta, 0, "k2"));
     ctheta->k3 = *mxGetPr(mxGetField(theta, 0, "k3"));
 
     ctheta->alpha = *mxGetPr(mxGetField(theta, 0, "alpha"));
+    ctheta->alpha = 1/ctheta->alpha - 1;
     ctheta->gamma = *mxGetPr(mxGetField(theta, 0, "gamma"));
     
     i = ctheta->dim_x*ctheta->dim_x;
@@ -65,7 +67,6 @@ void mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, double *dptheta)
     cptheta->dt = *mxGetPr(mxGetField(ptheta, 0, "dt"));
     cptheta->dyu = *mxGetPr(mxGetField(ptheta, 0, "dyu"));
     cptheta->mode = 'f';
-
 }
 
 void mpdcm_prepare_u(const mxArray *u, double *cu)

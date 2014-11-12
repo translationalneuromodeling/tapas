@@ -7,7 +7,7 @@
 #define DIM_PTHETA 3
 #define DIM_DPTHETA 0
 
-#define DIM_X 5 
+#define DIM_X 6 
 #define INDEX_X 0
 #define INDEX_F 1
 #define INDEX_S 2
@@ -25,6 +25,8 @@
 #define INDEX_K3 4
 #define INDEX_ALPHA 5
 #define INDEX_GAMMA 6
+
+#define NUM_THREADS 64
 
 typedef struct
 {
@@ -161,7 +163,7 @@ __device__ double dcm_dv(dbuff x, dbuff y, dbuff u, void *p_theta,
     //PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
 
     dv = exp(x.arr[INDEX_F * x.dim + i] - x.arr[INDEX_V * x.dim + i]) -
-        exp(x.arr[INDEX_V * x.dim + i] * (1/theta->alpha - 1));
+        exp(x.arr[INDEX_V * x.dim + i] * theta->alpha);
 
     return dv/exp(theta->tau[i]);
 }
@@ -169,18 +171,18 @@ __device__ double dcm_dv(dbuff x, dbuff y, dbuff u, void *p_theta,
 __device__ double dcm_dq(dbuff x, dbuff y, dbuff u, void *p_theta, 
     void *p_ptheta, int i)
 {
-    double dq;
+    double dq = 0;
     double f = exp(x.arr[INDEX_F * x.dim + i]);
     double q = exp(x.arr[INDEX_Q * x.dim + i]);
-    double v = exp(x.arr[INDEX_V * x.dim + i]);
-
+    double v;
 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
-    //PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
+    
+    v = exp(x.arr[INDEX_V * x.dim + i] * theta->alpha);
 
-    dq = (f * (1.0 - pow(1.0 - theta->E0, 1.0/f)) / (q*theta->E0)) - 
-        pow(v, (1.0/theta->alpha) - 1);
+//    PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
 
+    dq = (f * (1.0 - exp(theta->ln1_E0/f)) / (q*theta->E0)) - v;
 
     return dq;
 }
@@ -318,7 +320,7 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
         {
             if ( i%dy == 0 ) 
             {
-                if ( threadIdx.x < maxx )
+                if ( threadIdx.x < maxx && threadIdx.y == 0 )
                 {
                     dcm_upy(nx, ty, tu, p_theta, p_ptheta);
                 }
@@ -343,7 +345,7 @@ __global__ void kdcm_fmri(double *x, double *y, double *u,
     
     int i;
     dbuff tx, ty, tu;
-    __shared__ double sx[320 * PRELOC_SIZE_X];
+    __shared__ double sx[NUM_THREADS * DIM_X * PRELOC_SIZE_X];
 
     // Assign pointers to theta
 
@@ -395,7 +397,7 @@ __global__ void kdcm_fmri(double *x, double *y, double *u,
         ltheta->tau = o; 
 
         tx.arr = sx + PRELOC_SIZE_X * DIM_X * nx * (threadIdx.x/nx);
-        //tx.arr = x + PRELOC_SIZE_X * DIM_X * nx * i;
+
         ty.arr = y + i * nx * ny;
 
         dcm_int(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp);
@@ -410,7 +412,7 @@ __host__ void ldcm_fmri(double *x, double *y, double *u,
     int nx, int ny, int nu, int dp, int nt, int nb )
 {
 
-    dim3 gthreads(64, 5);
+    dim3 gthreads(NUM_THREADS, DIM_X);
     dim3 gblocks(4, 1);
 
     kdcm_fmri<<<gblocks, gthreads>>>(x, y, u, 

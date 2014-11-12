@@ -53,6 +53,7 @@ typedef struct
 
     double V0;
     double E0;
+    double ln1_E0; /* For optimization. */
     double k1;
     double k2;
     double k3;

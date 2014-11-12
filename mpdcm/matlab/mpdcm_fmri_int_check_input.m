@@ -1,7 +1,9 @@
-function [y] = mpdcm_fmri_int_check_input(u, theta, ptheta)
-%%
-% sloppy -- Don't check the input
-% tflag -- Test flag, this is done
+function mpdcm_fmri_int_check_input(u, theta, ptheta)
+%% mpdcm_fmri_int_check_input(u, theta, ptheta)
+% 
+% u -- 
+% theta -- 
+% ptheta -- 
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2014

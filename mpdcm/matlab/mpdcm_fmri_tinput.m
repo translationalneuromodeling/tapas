@@ -42,10 +42,14 @@ end
 
 nh = numel(ptheta.Q);
 
-dm = 1;
+nd = size(ptheta.Q{1}, 1);
+
+tQ = speye(nd);
 for i = 1:nh
-    dm = dm*(diag(diag(ptheta.Q{i})) == ptheta.Q{i});
+    tQ = tQ + sparse(ptheta.Q{i});
 end
+
+dm = all(find(tQ)' == (nd*(0:nd-1) + (1:nd)));
 
 if dm
     ptheta.dQ.dm = 1;
