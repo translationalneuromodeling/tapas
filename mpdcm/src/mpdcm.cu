@@ -7,7 +7,7 @@
 #define DIM_PTHETA 3
 #define DIM_DPTHETA 0
 
-#define DIM_X 6 
+#define DIM_X 5 
 #define INDEX_X 0
 #define INDEX_F 1
 #define INDEX_S 2
@@ -413,7 +413,7 @@ __host__ void ldcm_fmri(double *x, double *y, double *u,
 {
 
     dim3 gthreads(NUM_THREADS, DIM_X);
-    dim3 gblocks(4, 1);
+    dim3 gblocks(8, 1);
 
     kdcm_fmri<<<gblocks, gthreads>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
