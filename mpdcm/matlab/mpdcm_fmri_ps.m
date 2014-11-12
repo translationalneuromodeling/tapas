@@ -83,7 +83,7 @@ diagnostics = zeros(1, nt);
 % Optimized kernel
 kt = ones(1, nt);
 
-tic
+
 for i = 1:nburnin+niter
 
     if mod(i, DIAGN) == 0
@@ -99,8 +99,8 @@ for i = 1:nburnin+niter
             kt(diagnostics > 0.7) = kt(diagnostics > 0.7)*1.8;
         end
         diagnostics(:) = 0;
-        toc;
-        tic;
+
+
     end
 
     np = mpdcm_fmri_sample(op, ptheta, htheta, num2cell(kt));
@@ -132,12 +132,12 @@ for i = 1:nburnin+niter
 
     % Apply an exchange operator
 
-    k = ceil(rand(nt, 1) * nt );
-    b = 2*round(rand(nt, 1))-1;
-    b(k == 1) = 1;
-    b(k == nt) = -1;
-    b = k + b; 
-    o = 1:nt;
+%   k = ceil(rand(nt, 1) * nt );
+%   b = 2*round(rand(nt, 1))-1;
+%   b(k == 1) = 1;
+%   b(k == nt) = -1;
+%   b = k + b; 
+%   o = 1:nt;
 %   for ik = 1:(nt/20)
 %       tllh = ollh(k(ik)) - ollh(b(ik));
 %       ev = T(b(ik))*ollh(k(ik)) + T(k(ik))*ollh(b(ik)) - ... 
