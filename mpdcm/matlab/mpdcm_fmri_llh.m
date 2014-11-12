@@ -60,7 +60,7 @@ for i = 1:s1
                nQ = nQ + tlambda(k)*ptheta.dQ.Q{k};
             end
             nQ = nQ(:);
-            llh(i, j) = -numel(e) * l2p  + sum(log(nQ)) ...
+            llh(i, j) = -numel(e) * l2p  + 0.5*sum(log(nQ)) ...
                 - 0.5*e'*(nQ.*e);
         end
     end
