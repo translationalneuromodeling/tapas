@@ -180,6 +180,15 @@ for i = 1:numel(theta)
 
     check_matrix(theta, [1, 1], 'V0', i);
     check_matrix(theta, [1, 1], 'E0', i);
+
+    % In one of the equations, the expression (1 - E0)**(1/f) shows up. This
+    % is problematic if E0 > 1
+
+    assert(all(theta{i}.E0 < 1), ...
+        'mpdcm:fmri:int:input:theta:E0:numeric_error', ...
+        'theta{%d}.E0 is larger than 1. This would cause numerical errors.',...
+        i);
+
     check_matrix(theta, [1, 1], 'k1', i);
     check_matrix(theta, [1, 1], 'k2', i);
     check_matrix(theta, [1, 1], 'k3', i);
