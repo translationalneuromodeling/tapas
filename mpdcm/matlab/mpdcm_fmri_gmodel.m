@@ -45,7 +45,7 @@ for i = 1:10
     
     % Estimate the noise
 
-    q.lambda.a(:) = 0.5*ns;% + ptheta.p.lambda.a - 1;
+    q.lambda.a(:) = 0.5*ns + ptheta.p.lambda.a - 1;
 
     e = ny{1} - y{1}';
     for k = 1:nr
@@ -54,9 +54,7 @@ for i = 1:10
         h = 0.5*h'*h; 
         q.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + trace(q.theta.pi\h) + ...
             ptheta.p.lambda.b(k);
-        q.lambda.b(k) = 0.5*e(:,k)'*e(:,k);
     end
-    %q.lambda.b = 1./q.lambda.b;
 end
 
 theta{1}.lambda = log(q.lambda.a) - log(q.lambda.b);

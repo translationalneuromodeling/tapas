@@ -36,7 +36,7 @@ for i = 1:nt
     end
 
     oi = ni;
-    ni = oi + sum(logical(ptheta.c));
+    ni = oi + sum(logical(ptheta.c)));
     theta{i}.C(logical(ptheta.c)) = indexing(tp, oi, ni);
 
     oi = ni;
