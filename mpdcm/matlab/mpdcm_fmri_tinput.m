@@ -21,8 +21,14 @@ nr = size(dcm.Y.y, 2);
 
 % Data
 
-y = dcm.Y.y';
+Y = dcm.Y;
 
+scale   = max(max((Y.y))) - min(min((Y.y)));
+scale   = 4/max(scale,4);
+Y.y     = Y.y*scale;
+Y.scale = scale;
+
+y = Y.y';
 
 % Priors
 
@@ -51,6 +57,8 @@ end
 
 dm = all(find(tQ)' == (nd*(0:nd-1) + (1:nd)));
 
+% Basis of the covariances
+
 if dm
     ptheta.dQ.dm = 1;
     ptheta.dQ.Q = cell(1, nh);
@@ -62,7 +70,7 @@ else
     ptheta.dQ.Q = {};
 end
 
-
+% Hyperprios expected value
 try
     hE = dcm.M.hE(:);
 catch err
@@ -71,7 +79,7 @@ catch err
     end
 end
 
-% hyperpriors - covariance
+
 try
     hC = dcm.M.hC;
 catch err

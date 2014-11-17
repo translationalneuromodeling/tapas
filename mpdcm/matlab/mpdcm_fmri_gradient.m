@@ -42,11 +42,12 @@ ntheta = mpdcm_fmri_set_parameters(np, ntheta, ptheta);
 
 ny = mpdcm_fmri_int(u, ntheta, ptheta, sloppy);
 
-dfdx = cell(sp1, numel(p{1}));
+dfdx = cell(sp1, 1);
+dfdx(:) = {zeros(size(ny{1}, 1), size(ny{2}, 2), numel(p{1}))};
 
 for j = 1:sp1
     for i = 1:sp2
-        dfdx{j, i} = (ny{j, i+1} - ny{j, 1})/dt;
+        dfdx{j}(:, :, i) = (ny{j, i+1} - ny{j, 1})/dt;
     end
 end
 

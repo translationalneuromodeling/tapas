@@ -33,20 +33,25 @@ htheta = mpdcm_fmri_htheta(ptheta);
 u = {u0};
 y = {y0};
 theta = {theta0};
+otheta = {theta0};
 
+[q, otheta] = mpdcm_fmri_gmodel(y, u, otheta, ptheta);
+[ollh, ny] = mpdcm_fmri_llh(y, u, otheta, ptheta);
+fprintf(1, 'Starting llh: %0.5d\n', ollh);
 
-% Initilize in the mle estimator of the parameters and noise avoiding problems
+[op] = mpdcm_fmri_get_parameters(otheta, ptheta);
 
-[op, olambda] = mpdcm_fmri_mle(y, u, {theta0}, ptheta);
+%[op, ~, ~] = mpdcm_fmri_map(y, u, otheta, ptheta);
+%otheta = mpdcm_fmri_set_parameters(op, {theta0}, ptheta);
 
-op = op{1};
-olambda = 1./olambda{1};
+%[ollh, ny] = mpdcm_fmri_llh(y, u, otheta, ptheta);
+%display(ollh);
 
 % This is purely heuristics. There is an interpolation between the prior and
 % the mle estimator such that not all chains are forced into high llh regions.
 % Moreover, at low temperatures the chains are started in more sensible regime
 
-op(end-numel(olambda)+1:end) = log(olambda);
+op = op{1};
 np = [(linspace(0, 1, nt)').^5 (1-linspace(0, 1, nt)).^5'] * ...
     [op ptheta.mtheta]';
 np = mat2cell(np', numel(op), ones(1, nt));
@@ -128,6 +133,8 @@ for i = 1:nburnin+niter
     end
 
     assert(all(-inf < ollh), 'mpdcm:fmri:ps', '-inf value in the likelihood');
+
+
 end
 
 fe = trapz(T, mean(ellh, 2));
@@ -138,6 +145,4 @@ ps.y = mpdcm_fmri_int(u, ps.theta, ptheta);
 ps.theta = ps.theta{:};
 ps.y = ps.y{:};
 ps.F = fe;
-
-end
 

@@ -1,4 +1,4 @@
-function [mu, ny, dfdx] = mpdcm_fmri_mle(y, u, theta, ptheta)
+function [mu, ny, dfdx] = mpdcm_fmri_map(y, u, theta, ptheta, mleflag)
 %% Minimizes map estimate assuming fixed noise.
 %
 % Input:
@@ -7,6 +7,8 @@ function [mu, ny, dfdx] = mpdcm_fmri_mle(y, u, theta, ptheta)
 % u -- Cell array of experimental design.
 % theta -- Cell array of initialization model parameters.
 % ptheta -- Structure of the hyperparameters.
+% mleflag -- If true, computes only the maximum likelihood estimator. Defaults
+%   to 0;
 %
 % Output:
 %
@@ -21,9 +23,20 @@ function [mu, ny, dfdx] = mpdcm_fmri_mle(y, u, theta, ptheta)
 % copyright (C) 2014
 %
 
+if nargin < 5 
+    mleflag = 0;
+end
+
 % Tolereance to deviation
 tol = 1e-3;
 dt = 1e-4;
+
+% Multiplies the gradient with respect to the priors
+vdpdx = 1;
+
+if mleflag
+    vdpdx = 0;
+end
 
 assert(size(theta, 1) == 1, 'mpdcm:fmri:mle:input', ...
     'theta second dimension should be one, instead %d', size(theta, 2));
@@ -95,7 +108,7 @@ for j = 1:100
     end
 
     for k = 1:numel(u)
-        tdfdx = cat(1, dfdx{k}, zeros(numel(op{k})));
+        tdfdx = cat(1, dfdx{k}, vdpdx * eye(numel(op{k})));
         np{k} = op{k} + (tdfdx'*bsxfun(@times, tdfdx, nQ{k}) + ...
             lambda(k) * eye(numel(op{k})))\(tdfdx'*(nQ{k}.*e{k}));
     end
