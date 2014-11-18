@@ -22,7 +22,7 @@ q = theta{1}.q;
 
 % Optimize the posterior
 for i = 1:10
-    theta{1}.lambda = log(q.lambda.a) - log(q.lambda.b);
+    theta{1}.lambda = full(log(q.lambda.a) - log(q.lambda.b));
     [mu, ny, dfdx] = mpdcm_fmri_map(y, u, theta, ptheta);
 
     theta = mpdcm_fmri_set_parameters(mu, theta, ptheta);
@@ -52,8 +52,8 @@ for i = 1:10
         h = dfdx{1}(:, k, :);
         h = squeeze(h);
         h = 0.5*h'*h; 
-        q.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + trace(q.theta.pi\h) + ...
-            ptheta.p.lambda.b(k);
+        q.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + ...trace(q.theta.pi\h) + ...
+            0*ptheta.p.lambda.b(k);
     end
 end
 

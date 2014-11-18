@@ -33,8 +33,8 @@ m2 = exp(2*e_lambda + 0.5*c_lambda*4);
 % mean and that the variance is equal to the second momment minus the first 
 % moment to the power of 2
 
-nptheta.p.lambda.b = (m2./m1) - m1;
-nptheta.p.lambda.a = m1./nptheta.p.lambda.b;
+nptheta.p.lambda.b = 1./((m2./m1) - m1);
+nptheta.p.lambda.a = m1.*nptheta.p.lambda.b;
 
 ntheta.q.lambda.a = nptheta.p.lambda.a;
 ntheta.q.lambda.b = nptheta.p.lambda.b;
