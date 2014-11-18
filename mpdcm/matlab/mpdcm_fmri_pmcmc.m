@@ -1,4 +1,4 @@
-function [ps, fe] = mpdcm_fmri_ps(dcm, pars)
+function [ps, fe] = mpdcm_fmri_pmcmc(dcm, pars)
 %% Estimates the posterior probability of the parameters using MCMC combined
 % with path sampling.
 % dcm -- DCM to be estimated
@@ -15,6 +15,10 @@ function [ps, fe] = mpdcm_fmri_ps(dcm, pars)
 % copyright (C) 2014
 %
 
+if ~isfield(pars, 'verbose')
+    pars.verbose = 1;
+end
+
 DIAGN = 50;
 
 T = pars.T;
@@ -29,17 +33,25 @@ htheta = mpdcm_fmri_htheta(ptheta);
 u = {u0};
 y = {y0};
 theta = {theta0};
+otheta = {theta0};
 
+[q, otheta] = mpdcm_fmri_gmodel(y, u, otheta, ptheta);
+[ollh, ny] = mpdcm_fmri_llh(y, u, otheta, ptheta);
+fprintf(1, 'Starting llh: %0.5d\n', ollh);
 
-% Initilize in the mle estimator of the parameters and noise avoiding problems
+[op] = mpdcm_fmri_get_parameters(otheta, ptheta);
 
-[op, olambda] = mpdcm_fmri_mle(y, u, {theta0}, ptheta);
+%[op, ~, ~] = mpdcm_fmri_map(y, u, otheta, ptheta);
+%otheta = mpdcm_fmri_set_parameters(op, {theta0}, ptheta);
+
+%[ollh, ny] = mpdcm_fmri_llh(y, u, otheta, ptheta);
+%display(ollh);
 
 % This is purely heuristics. There is an interpolation between the prior and
 % the mle estimator such that not all chains are forced into high llh regions.
 % Moreover, at low temperatures the chains are started in more sensible regime
 
-op(end-numel(olambda)+1:end) = log(olambda);
+op = op{1};
 np = [(linspace(0, 1, nt)').^5 (1-linspace(0, 1, nt)).^5'] * ...
     [op ptheta.mtheta]';
 np = mat2cell(np', numel(op), ones(1, nt));
@@ -75,24 +87,24 @@ ellh = zeros(nt, niter);
 diagnostics = zeros(1, nt);
 % Optimized kernel
 kt = ones(1, nt);
-
+tic
 for i = 1:nburnin+niter
-
-    %if mod(i, 80) == 0
-    %    fprintf(1, 'Iteration: %d; llh: %0.5f\n', i, ollh(end));
-    %end
 
     if mod(i, DIAGN) == 0
         diagnostics = diagnostics/DIAGN;
-        fprintf(1, 'Iter %d, diagnostics:  ', i);
-        fprintf(1, '%0.2f ', diagnostics);
-        fprintf(1, '\n');
-
+        if pars.verbose
+            fprintf(1, 'Iter %d, diagnostics:  ', i);
+            fprintf(1, '%0.2f ', diagnostics);
+            fprintf(1, '%0.2f ', ollh);
+            fprintf(1, '\n');
+        end
         if i < nburnin
             kt(diagnostics < 0.3) = kt(diagnostics < 0.3)/2;
             kt(diagnostics > 0.7) = kt(diagnostics > 0.7)*1.8;
         end
         diagnostics(:) = 0;
+    toc
+    tic
     end
 
     np = mpdcm_fmri_sample(op, ptheta, htheta, num2cell(kt));
@@ -122,32 +134,8 @@ for i = 1:nburnin+niter
 
     assert(all(-inf < ollh), 'mpdcm:fmri:ps', '-inf value in the likelihood');
 
-    % Apply an exchange operator
-
-    k = ceil(rand(nt, 1) * nt );
-    b = 2*round(rand(nt, 1))-1;
-    b(k == 1) = 1;
-    b(k == nt) = -1;
-    b = k + b; 
-    o = 1:nt;
-
-    for ik = 1:nt
-        tllh = ollh(k(ik)) - ollh(b(ik));
-        ev =  [tllh, -tllh] * T([k(ik) b(ik)])';
-        if exp(ev) > rand()
-            ollh([k(ik), b(ik)]) = ollh([b(ik) k(ik)]);
-            o([k(ik), b(ik)]) = o([b(ik) k(ik)]); 
-        end
-    end
-
-    op(:, o) = op;
 
 end
-
-clf('reset');
-hold on
-plot(y0'); 
-plot(ny{end});
 
 fe = trapz(T, mean(ellh, 2));
 
@@ -157,6 +145,4 @@ ps.y = mpdcm_fmri_int(u, ps.theta, ptheta);
 ps.theta = ps.theta{:};
 ps.y = ps.y{:};
 ps.F = fe;
-
-end
 

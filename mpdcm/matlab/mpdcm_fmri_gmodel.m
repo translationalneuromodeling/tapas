@@ -5,59 +5,63 @@ function [q, ntheta] = mpdcm_fmri_gmodel(y, u, theta, ptheta)
 % copyright (C) 2014
 %
 
-[y, u, theta, ptheta] = mpdcm_fmri_qinput(y{1}, u{1}, theta{1}, ptheta);
+assert(size(y{1}, 2) > 1, 'mpdcm:fmri:gmodel:input', ...
+    'Single region models are not implemented');
 
-y = {y};
-u = {u};
-theta = {theta};
+[y, u, theta, ptheta] = mpdcm_fmri_qinput(y, u, theta, ptheta);
 
 ns = size(y{1}, 2);
 nr = size(y{1}, 1);
 np = numel(ptheta.mtheta);
+nt = numel(theta);
 
-assert(nr > 1, 'mpdcm:fmri:gmodel:input', ...
-    'Single region models are not implemented');
+q = cell(nt, 1);
 
-q = theta{1}.q;
+for j = 1:nt
+    q{j} = theta{j}.q;
+end
 
 % Optimize the posterior
-for i = 1:10
-    theta{1}.lambda = full(log(q.lambda.a) - log(q.lambda.b));
+for i = 1:3
+    for j = 1:nt
+        theta{j}.lambda = full(log(q{j}.lambda.a) - log(q{j}.lambda.b));
+    end
     [mu, ny, dfdx] = mpdcm_fmri_map(y, u, theta, ptheta);
 
     theta = mpdcm_fmri_set_parameters(mu, theta, ptheta);
 
-    q.theta.mu = mu;
-    % Approximate hessian
+    for j = 1:nt
+        q{j}.theta.mu = mu{j};
+        % Approximate hessian
+        % Weight the hessian by the precisions
+        dfdx{j} = dfdx{j}(:,:,1:np-nr);
 
-    % Weight the hessian by the precisions
+        h1 = bsxfun(@times, dfdx{j}, reshape(exp(theta{j}.lambda), 1, nr, 1));
+        h1 = reshape(h1, ns*nr, 1, np-nr);
+        h1 = squeeze(h1);
 
-    dfdx{1} = dfdx{1}(:,:,1:np-nr);
+        h2 = reshape(dfdx{1}, ns*nr, 1, np-nr);
+        h2 = squeeze(h2);
 
-    h1 = bsxfun(@times, dfdx{1}, reshape(exp(theta{1}.lambda), 1, nr, 1));
-    h1 = reshape(h1, ns*nr, 1, np-nr);
-    h1 = squeeze(h1);
+        q{j}.theta.pi = 0.5*h1'*h2; 
+        
+        % Estimate the noise
 
-    h2 = reshape(dfdx{1}, ns*nr, 1, np-nr);
-    h2 = squeeze(h2);
+        q{j}.lambda.a(:) = 0.5*ns + ptheta.p.lambda.a - 1;
 
-    q.theta.pi = 0.5*h1'*h2; 
-    
-    % Estimate the noise
-
-    q.lambda.a(:) = 0.5*ns + ptheta.p.lambda.a - 1;
-
-    e = ny{1} - y{1}';
-    for k = 1:nr
-        h = dfdx{1}(:, k, :);
-        h = squeeze(h);
-        h = 0.5*h'*h; 
-        q.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + ...trace(q.theta.pi\h) + ...
-            0*ptheta.p.lambda.b(k);
+        e = ny{j} - y{j}';
+        for k = 1:nr
+            h = dfdx{1}(:, k, :);
+            h = squeeze(h);
+            h = 0.5*h'*h; 
+            q{j}.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + ...trace(q.theta.pi\h) + ...
+                0*ptheta.p.lambda.b(k);
+        end
     end
 end
 
-theta{1}.lambda = log(q.lambda.a) - log(q.lambda.b);
-
+for j = 1:nt 
+    theta{j}.lambda = log(q{j}.lambda.a) - log(q{j}.lambda.b);
+end
 ntheta = theta;
 end

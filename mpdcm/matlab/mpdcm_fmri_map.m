@@ -23,6 +23,16 @@ function [mu, ny, dfdx] = mpdcm_fmri_map(y, u, theta, ptheta, mleflag)
 % copyright (C) 2014
 %
 
+assert(size(theta, 2) == 1, 'mpdcm:fmri:mle:input', ...
+    'theta second dimension should be one, instead %d', size(theta, 2));
+
+% Need to change this
+
+if ~isfield(ptheta, 'T')
+    ptheta.T = ones(numel(y), 1);
+end
+
+
 if nargin < 5 
     mleflag = 0;
 end
@@ -37,9 +47,6 @@ vdpdx = 1;
 if mleflag
     vdpdx = 0;
 end
-
-assert(size(theta, 1) == 1, 'mpdcm:fmri:mle:input', ...
-    'theta second dimension should be one, instead %d', size(theta, 2));
 
 mpdcm_fmri_int_check_input(u, theta, ptheta);
 
@@ -62,8 +69,9 @@ for i = 1:numel(u)
     for k = 1:numel(ptheta.dQ.Q)
         tQ = tQ + tlambda(k)*ptheta.dQ.Q{k};
     end
-    
-    nQ{i} = [tQ(:); nctheta];
+   
+    % Weight data by temperature
+    nQ{i} = [ptheta.T(i) * tQ(:); nctheta];
 end
 
 % Regularization parameter
@@ -81,8 +89,9 @@ nrs = zeros(su);
 % Error array
 
 e = cell(su);
+dp = zeros(su);
 
-for j = 1:100
+for j = 1:10
 
     if mod(j, 10) == 0
         fprintf(1, 'Iteration: %d, RSE: ', j);
@@ -93,8 +102,8 @@ for j = 1:100
     [dfdx, ny] = mpdcm_fmri_gradient(op, u, theta, ptheta, 1);
 
     for k = 1:numel(u)
-        ny = ny{k};
-        e{k} = y{k}' - ny;
+        ty = ny{k};
+        e{k} = y{k}' - ty;
         e{k} = [e{k}(:); ptheta.mtheta - op{k}];
     end
 
@@ -115,16 +124,18 @@ for j = 1:100
 
     ntheta = mpdcm_fmri_set_parameters(np, theta, ptheta);
 
-    ny = mpdcm_fmri_int(u, ntheta, ptheta);
+    ny = mpdcm_fmri_int(u, ntheta, ptheta); 
 
     % Verify the residuals
     for k = 1:numel(u)
         e{k} = y{k}' - ny{k};
         e{k} = e{k}(:);
         nrs(k) = e{k}'*e{k};
+        dp(k) = max(abs(np{k} - op{k}));
     end
 
-    if all(abs(nrs - ors) < tol)
+
+    if all(dp < tol)
         op(nrs < ors) = np(nrs < ors);
         break;
     end

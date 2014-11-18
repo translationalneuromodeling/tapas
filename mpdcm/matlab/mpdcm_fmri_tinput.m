@@ -186,4 +186,3 @@ u = dcm.U.u';
 ptheta.dyu = 2.0*size(y, 2)/size(u, 2);
 
 end
-

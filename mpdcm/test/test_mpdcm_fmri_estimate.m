@@ -17,7 +17,8 @@ try
     pars = struct();
     pars.T = linspace(1e-1, 1, 100).^5;
     pars.nburnin = 100;
-    pars.niter = 100;
+    pars.niter = 200;
+    pars.mc3 = 1;
     dcm = mpdcm_fmri_estimate(nd, pars);   
     display('    Passed')
 catch err
@@ -27,22 +28,21 @@ catch err
 end
 
 % Make a more intensive test of the function
-for i = 1:5
+for i = 1:10
     try
         pars = struct();
         pars.T = linspace(1e-1, 1, 100).^5;
         pars.nburnin = 50;
-        pars.niter = 50;
-
+        pars.niter = 100;
+        pars.mc3 = 1;
         tic
-        dcm = mpdcm_fmri_estimate(d{1}, pars);
+        dcm = mpdcm_fmri_estimate(d{i}, pars);
         toc
-
         fprintf('fe: %0.5f\n', dcm.F);
         display('    Passed')
     catch err
         d = dbstack();
-        fprintf('   Not passed at line %d\n', d(i).line)
+        fprintf('   Not passed at line %d\n', d(1).line)
         disp(getReport(err, 'extended'));
     end
 end

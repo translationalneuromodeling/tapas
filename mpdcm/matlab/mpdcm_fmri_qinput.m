@@ -5,18 +5,18 @@ function [ny, nu, ntheta, nptheta] = mpdcm_fmri_qinput(y, u, theta, ptheta)
 % copyright (C) 2014
 %
 
+% Check input
+
+assert(size(y{1}, 1) > 1, 'mpdcm:fmri:gmodel:input', ...
+    'Single region models are not implemented');
+mpdcm_fmri_int_check_input(u, theta, ptheta);
+
 ny = y;
 nu = u;
 ntheta = theta;
 nptheta = ptheta;
 
-ntheta.q.theta.mu = [];
-ntheta.q.theta.pi_theta = [];
-
-% Use the moment generating function to approximate the prior with a Gamma 
-% distribution up to its two first moments.
-
-nr = theta.dim_x;
+nr = theta{1}.dim_x;
 
 e_lambda = ptheta.mtheta(end-nr+1:end);
 c_lambda = diag(ptheta.ctheta);
@@ -29,15 +29,25 @@ c_lambda = c_lambda(:);
 m1 = exp(e_lambda + 0.5*c_lambda);
 m2 = exp(2*e_lambda + 0.5*c_lambda*4);
 
-% Use the fact that the scale parameter is equal to variance divided by the 
-% mean and that the variance is equal to the second momment minus the first 
-% moment to the power of 2
-
 nptheta.p.lambda.b = 1./((m2./m1) - m1);
 nptheta.p.lambda.a = m1.*nptheta.p.lambda.b;
 
-ntheta.q.lambda.a = nptheta.p.lambda.a;
-ntheta.q.lambda.b = nptheta.p.lambda.b;
+for i = 1:numel(u)
+
+    ntheta{i}.q.theta.mu = [];
+    ntheta{i}.q.theta.pi_theta = [];
+
+    % Use the moment generating function to approximate the prior with a Gamma 
+    % distribution up to its two first moments.
+
+    % Use the fact that the scale parameter is equal to variance divided by the 
+    % mean and that the variance is equal to the second momment minus the first 
+    % moment to the power of 2
+
+
+    ntheta{i}.q.lambda.a = nptheta.p.lambda.a;
+    ntheta{i}.q.lambda.b = nptheta.p.lambda.b;
+end
 
 end
 
