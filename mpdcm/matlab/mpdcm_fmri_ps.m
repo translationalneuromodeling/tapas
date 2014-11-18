@@ -143,6 +143,6 @@ theta = theta';
 [ollh, ~] = mpdcm_fmri_llh(y0, u0, theta, ptheta);
 fprintf(1, 'Starting llh: ');
 fprintf(1, '%0.5d, ', ollh);
-fpritnf(1, '\n');
+fprintf(1, '\n');
 
 end
