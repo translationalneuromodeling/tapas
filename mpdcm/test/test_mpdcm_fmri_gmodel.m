@@ -20,17 +20,17 @@ fprintf(fp, '================\n Test %s\n================\n', fname);
 
 d = test_mpdcm_fmri_load_td();
 
+for i = 1:numel(d)
+    [y0, u0, theta0, ptheta] = mpdcm_fmri_tinput(d{i});
 
-% Test whether there is any clear bug
-try
-
-    [q, otheta] = mpdcm_fmri_gmodel(y, u, {theta0}, ptheta);
-
-    fprintf(fp, '       Passed\n');
-catch err
-    fprintf(fp, '   Not passed at line %d\n', err.stack(end).line);
+    % Test whether there is any clear bug
+    try
+        [q, otheta] = mpdcm_fmri_gmodel({y0}, {u0}, {theta0}, ptheta);
+        fprintf(fp, '       Passed\n');
+    catch err
+        fprintf(fp, '   Not passed at line %d\n', err.stack(1).line);
+    end
 end
-
 
 end
 

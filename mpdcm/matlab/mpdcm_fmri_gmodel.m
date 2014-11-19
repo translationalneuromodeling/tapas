@@ -22,7 +22,7 @@ for j = 1:nt
 end
 
 % Optimize the posterior
-for i = 1:3
+for i = 1:5
     for j = 1:nt
         theta{j}.lambda = full(log(q{j}.lambda.a) - log(q{j}.lambda.b));
     end
@@ -54,8 +54,8 @@ for i = 1:3
             h = dfdx{1}(:, k, :);
             h = squeeze(h);
             h = 0.5*h'*h; 
-            q{j}.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + ...trace(q.theta.pi\h) + ...
-                0*ptheta.p.lambda.b(k);
+            q{j}.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + trace(q{j}.theta.pi\h) + ...
+                ptheta.p.lambda.b(k);
         end
     end
 end
