@@ -19,27 +19,23 @@ if ~isfield(pars, 'verbose')
     pars.verbose = 1;
 end
 
-DIAGN = 50;
+DIAGN = 200;
 
 T = pars.T;
 nburnin = pars.nburnin;
 niter = pars.niter;
 
-nt = numel(T);
-
 [y0, u0, theta0, ptheta] = mpdcm_fmri_tinput(dcm);
+
 htheta = mpdcm_fmri_htheta(ptheta);
+
+nt = numel(T);
 
 y = {y0};
 u = {u0};
-otheta = {theta0};
 
-[q, otheta, ollh] = init_estimate(y, u, otheta, ptheta, T);
-[op] = mpdcm_fmri_get_parameters(otheta, ptheta);
-
-olpp = mpdcm_fmri_lpp(y, u, otheta, ptheta);
-
-% Posterior
+[q, otheta, ollh, olpp] = init_estimate(y0, u0, theta0, ptheta, T);
+op = mpdcm_fmri_get_parameters(otheta, ptheta);
 
 ps_theta = zeros(numel(op{end}), niter);
 ellh = zeros(nt, niter);
@@ -59,11 +55,8 @@ for i = 1:nburnin+niter
             fprintf(1, '\n');
         end
         if i < nburnin
-            kt(diagnostics < 0.4) = kt(diagnostics < 0.4)/2;
-            kt(diagnostics > 0.55) = kt(diagnostics > 0.55)*1.8;
-        else
-            fe = trapz(T, mean(ellh(:,1:i-nburnin), 2));
-            fprintf(1, 'Estimated fe: %0.5d', fe);
+            kt(diagnostics < 0.3) = kt(diagnostics < 0.3)/2;
+            kt(diagnostics > 0.7) = kt(diagnostics > 0.7)*1.8;
         end
         diagnostics(:) = 0;
     toc
@@ -97,18 +90,6 @@ for i = 1:nburnin+niter
 
     assert(all(-inf < ollh), 'mpdcm:fmri:ps', '-inf value in the likelihood');
 
-    if pars.mc3
-        % Choose a random pair
-        k = ceil((numel(T)-1)*rand);
-        tt = (ollh(k+1)*T(k) + ollh(k)*T(k+1)) -...
-            (ollh(k)*T(k) + ollh(k+1)*T(k+1));
-        if rand > min(1, exp(tt))
-            op(:,[k, k+1]) = op(:, [k+1, k]);
-            ollh(:,[k, k+1]) = ollh(:, [k+1, k]);
-            olpp(:,[k, k+1]) = olpp(:, [k+1, k]);
-        end
-    end
-
 end
 
 fe = trapz(T, mean(ellh, 2));
@@ -119,30 +100,54 @@ ps.y = mpdcm_fmri_int(u, ps.theta, ptheta);
 ps.theta = ps.theta{:};
 ps.y = ps.y{:};
 ps.F = fe;
+
 end
 
-function [q, theta, ollh] = init_estimate(y0, u0, theta0, ptheta, T)
+function [q, otheta, ollh, olpp] = init_estimate(y0, u0, theta0, ptheta, T)
 % Create an initial estimate to reduce burn in phase by computing the 
 % posterior distribution of the power posteriors
 
+u = {u0};
+y = {y0};
+
 nt = numel(T);
 
-y = cell(nt, 1);
-y(:) = y0;
-u = cell(nt, 1);
-u(:) = u0;
-theta = cell(nt, 1);
-theta(:) = theta0;
+[q, otheta] = mpdcm_fmri_gmodel(y, u, {theta0}, ptheta);
+[ollh, ny] = mpdcm_fmri_llh(y, u, otheta, ptheta);
+fprintf(1, 'Starting llh: %0.5d\n', ollh);
 
-ptheta.T = T;
+[op] = mpdcm_fmri_get_parameters(otheta, ptheta);
 
-[q, theta] = mpdcm_fmri_gmodel(y, u, theta, ptheta);
-q = q';
-theta = theta';
+% This is purely heuristics. There is an interpolation between the prior and
+% the mle estimator such that not all chains are forced into high llh regions.
+% Moreover, at low temperatures the chains are started in more sensible regime
 
-[ollh, ~] = mpdcm_fmri_llh(y0, u0, theta, ptheta);
-fprintf(1, 'Starting llh: ');
-fprintf(1, '%0.5d, ', ollh);
-fprintf(1, '\n');
+op = op{1};
+np = [(linspace(0, 1, nt)').^5 (1-linspace(0, 1, nt)).^5'] * ...
+    [op ptheta.mtheta]';
+np = mat2cell(np', numel(op), ones(1, nt));
+
+% Samples from posterior
+
+theta = cell(1, nt);
+theta(:) = otheta;
+op = np;
+
+% Fully initilize
+
+otheta = mpdcm_fmri_set_parameters(op, theta, ptheta);
+
+[ollh, ~] = mpdcm_fmri_llh(y, u, otheta, ptheta);
+olpp = mpdcm_fmri_lpp(y, u, otheta, ptheta);
+
+% Eliminate weird cases
+
+[~, l] = min(abs(bsxfun(@minus, find(isnan(ollh)), find(~isnan(ollh))')));
+tl = find(~isnan(ollh));
+l = tl(l);
+
+olpp(isnan(ollh)) = olpp(l);
+op(:, isnan(ollh)) = op(:, l);
+ollh(isnan(ollh)) = ollh(l);
 
 end
