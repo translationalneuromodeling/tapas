@@ -1,4 +1,4 @@
-function [d] = test_dcm_fmri_load_td()
+function [d] = test_dcm_fmri_load_td(fp)
 %% Loads test data into a cell array.
 %
 % aponteeduardo@gmail.com

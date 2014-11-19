@@ -1,10 +1,21 @@
-function test_mpdcm_fmri_int_check_input()
-% Test the functionalities of cuda dcm
+function test_mpdcm_fmri_int_check_input(fp)
+%% Test 
+%
+% fp -- Pointer to a file for the test output, defaults to 1
+%
+% aponteeduardo@gmail.com
+% copyright (C) 2014
+%
 
-display('===========================')
-display('Testing mpdcm_fmri_int_check_input')
+if nargin < 1
+    fp = 1;
+end
 
-display('===========================')
+fname = mfilename();
+fname = regexprep(fname, 'test_', '');
+
+
+fprintf(fp, '================\n Test %s\n================\n', fname);
 
 [u0, theta0, ptheta] = standard_values(8, 8);
 u = {u0};

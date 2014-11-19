@@ -1,5 +1,21 @@
-function test_mpdcm_fmri_int()
-% Test the functionalities of cuda dcm
+function test_mpdcm_fmri_int(fp)
+%% Test 
+%
+% fp -- Pointer to a file for the test output, defaults to 1
+%
+% aponteeduardo@gmail.com
+% copyright (C) 2014
+%
+
+if nargin < 1
+    fp = 1;
+end
+
+fname = mfilename();
+fname = regexprep(fname, 'test_', '');
+
+
+fprintf(fp, '================\n Test %s\n================\n', fname);
 
 test_mpdcm_fmri_int_memory()
 test_mpdcm_fmri_int_correctness();
@@ -9,10 +25,6 @@ end
 
 function test_mpdcm_fmri_int_memory()
 %% Checks whether there is any segmentation error in a kamikaze way
-
-display('===========================')
-display('Testing mpdcm_fmri_int_memory')
-display('===========================')
 
 [u0, theta0, ptheta] = standard_values(8, 8);
 

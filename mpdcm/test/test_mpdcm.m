@@ -1,0 +1,47 @@
+function test_mpdcm(fp)
+%% Test the whole package 
+%
+% fp -- Pointer to a file for the test output, defaults to 1
+%
+% aponteeduardo@gmail.com
+% copyright (C) 2014
+%
+
+if nargin < 1
+    fp = 1;
+end
+
+fname = mfilename();
+fname = regexprep(fname, 'test_', '');
+
+
+fprintf(fp, '================\n Test %s\n================\n', fname);
+
+
+tdir = mfilename('fullpath');
+[tdir, fname, ~] = fileparts(tdir);
+
+tests = dir(tdir);
+
+for i = 1:numel(tests)
+    % Avoid recursion
+
+    [~, atest, aext] = fileparts(tests(i).name);
+
+    if strcmp(atest, fname)
+        continue;
+    end
+
+    if strcmp(aext, '.m')
+        try
+            fh = str2func(sprintf('@(x)%s(x)', atest));
+            fh(fp);
+        catch err
+            display(getReport(err, 'extended'));
+        end
+    end
+
+end
+
+end
+

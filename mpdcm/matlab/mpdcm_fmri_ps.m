@@ -16,7 +16,7 @@ function [ps, fe] = mpdcm_fmri_ps(dcm, pars)
 %
 
 if ~isfield(pars, 'verbose')
-    pars.verbose = 1;
+    pars.verbose = 0;
 end
 
 DIAGN = 200;
@@ -43,7 +43,7 @@ ellh = zeros(nt, niter);
 diagnostics = zeros(1, nt);
 % Optimized kernel
 kt = ones(1, nt);
-tic
+
 for i = 1:nburnin+niter
 
     if mod(i, DIAGN) == 0
@@ -59,8 +59,6 @@ for i = 1:nburnin+niter
             kt(diagnostics > 0.7) = kt(diagnostics > 0.7)*1.8;
         end
         diagnostics(:) = 0;
-    toc
-    tic
     end
 
     np = mpdcm_fmri_sample(op, ptheta, htheta, num2cell(kt));

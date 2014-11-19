@@ -1,26 +1,21 @@
-function test_mpdcm_fmri_tinput()
-%% Test of dcm_fmri_tinput.
+function test_mpdcm_fmri_tinput(fp)
+%% Test 
+%
+% fp -- Pointer to a file for the test output, defaults to 1
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2014
 %
 
-display('===========================')
-display('Testing mpdcm_fmri_tinput')
-display('===========================')
-
-d =  test_mpdcm_fmri_load_td();
-
-[y, u, theta, ptheta] = mpdcm_fmri_tinput(d{1});
-
-try
-    mpdcm_fmri_int_check_input({u}, {theta}, ptheta);
-    [ny] = mpdcm_fmri_int({u}, {theta}, ptheta);
-    ny{1}' - y;
-    display('   Passed')
-catch err
-    display(getReport(err, 'extended'));
-    d = dbstack();
-    fprintf('   Not passed at line %d\n', d(1).line)
+if nargin < 1
+    fp = 1;
 end
 
+fname = mfilename();
+fname = regexprep(fname, 'test_', '');
+
+
+fprintf(fp, '================\n Test %s\n================\n', fname);
+
+
+end
