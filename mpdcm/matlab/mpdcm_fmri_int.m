@@ -1,7 +1,19 @@
 function [y] = mpdcm_fmri_int(u, theta, ptheta, sloppy)
-%% 
-% sloppy -- Don't check the input
-% tflag -- Test flag, this is done 
+%% Integrates the system of differential equations specified by the input.
+%
+% Input:
+% u -- Cell array of experimental input
+% theta -- Cell array of model parameteres
+% ptheta -- Model priors or constants
+% sloppy -- If true don't check the input. 
+%
+% Ouput:
+% y -- Cell array of predicted signals.
+%
+% If the input is not compliant, it's very likely that a segmentation fault
+% happens and that matlab closes. It should only be used once the input has
+% been check at least once and changes to them are done via well tested
+% functions.
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2014

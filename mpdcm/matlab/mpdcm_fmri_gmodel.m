@@ -1,5 +1,17 @@
 function [q, ntheta] = mpdcm_fmri_gmodel(y, u, theta, ptheta) 
 %% Estimate the model using an approximate variational Bayes method
+% 
+% Input:
+%
+% y -- Cell array of experimental observations.
+% u -- Cell array of experimental input.
+% theta -- Cell array of initial states of the parameters
+% ptheta -- Priors and constants
+%
+% Output:
+%
+% q -- Sufficient statistics of the approximate marginal posteriors.
+% ntheta -- MAP estimator of the model
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2014

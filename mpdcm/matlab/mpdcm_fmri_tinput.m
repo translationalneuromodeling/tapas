@@ -26,13 +26,12 @@ Y = dcm.Y;
 scale   = max(max((Y.y))) - min(min((Y.y)));
 scale   = 4/max(scale,4);
 Y.y     = Y.y*scale;
-Y.scale = scale;
 
 y = Y.y';
 
 % Priors
 
-ptheta = struct('dt', 1.0, 'dyu', []);
+ptheta = struct('dt', 1.0, 'dyu', [], 'rescale', scale);
 
 [pE, pC, x] = spm_dcm_fmri_priors(dcm.a, dcm.b, dcm.c);
 
