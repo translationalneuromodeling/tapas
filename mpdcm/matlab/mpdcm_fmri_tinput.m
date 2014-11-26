@@ -1,4 +1,4 @@
-function [y, u, theta, ptheta] = dcm_fmri_tinput(dcm)
+function [y, u, theta, ptheta] = mpdcm_fmri_tinput(dcm)
 %% Transforms input that follows the SPM API into valid mpdcm input.
 %
 % Input:
@@ -16,29 +16,42 @@ function [y, u, theta, ptheta] = dcm_fmri_tinput(dcm)
 % copyright (C) 2014
 %
 
-ns = size(dcm.Y.y, 1);
-nr = size(dcm.Y.y, 2);
+nm = numel(dcm);
+ns = size(dcm{1}.Y.y, 1);
+nr = size(dcm{1}.Y.y, 2);
 
-% Data
+y = cell(nm, 1);
+u = cell(nm, 1);
+theta = cell(nm, 1);
 
-Y = dcm.Y;
+scale = zeros(nm, 1);
+dyu = zeros(nm, 1);
 
-scale   = max(max((Y.y))) - min(min((Y.y)));
-scale   = 4/max(scale,4);
-Y.y     = Y.y*scale;
+for i = 1:nm
+    [y{i} scale(i)] = tinput_y(dcm{i});
+    [u{i} dyu(i)] = tinput_u(dcm{i});
+    theta{i} = tinput_theta(dcm{i});
+end
 
-y = Y.y';
+assert(all(dyu == dyu(1)), 'mpdcm:fmri:tinput:dyu', ...
+    'Ratio of sampling rate between y and u are not equal across data sets');
 
 % Priors
 
 ptheta = struct('dt', 1.0, 'dyu', [], 'rescale', scale);
 
-[pE, pC, x] = spm_dcm_fmri_priors(dcm.a, dcm.b, dcm.c);
+Q = dcm{1}.Y.Q;
+M = dcm{1}.M;
+a = dcm{1}.a;
+b = dcm{1}.b;
+c = dcm{1}.c;
+
+[pE, pC, x] = spm_dcm_fmri_priors(a, b, c);
 
 % hyperpriors - Basis matrixes
 
 try
-    ptheta.Q = dcm.Y.Q;
+    ptheta.Q = Q;
 catch err
     if strcmp(err.identifier, 'MATLAB:nonExistentField');
         ptheta.Q = spm_Ce(ns*ones(1, nr));
@@ -71,7 +84,7 @@ end
 
 % Hyperprios expected value
 try
-    hE = dcm.M.hE(:);
+    hE = M.hE(:);
 catch err
     if strcmp(err.identifier, 'MATLAB:nonExistentField');
         hE = sparse(nh,1);
@@ -80,7 +93,7 @@ end
 
 
 try
-    hC = dcm.M.hC;
+    hC = M.hC;
 catch err
     if strcmp(err.identifier, 'MATLAB:nonExistentField');
         hC = speye(nh,nh);
@@ -88,100 +101,147 @@ catch err
 end
 
 
-v = [ logical(dcm.a(:)); logical(dcm.b(:)); logical(dcm.c(:)); ...
+v = [ logical(a(:)); logical(b(:)); logical(c(:)); 
     ones(nr + nr + 1 + nh, 1)];
 v = logical(v);
 
-ptheta.mtheta = [pE.A(:); pE.B(:); ...
+mtheta = [pE.A(:); pE.B(:); ...
     pE.C(:); pE.transit(:); pE.decay(:); ...
     pE.epsilon(:); hE(:)];
 
-ptheta.mtheta = ptheta.mtheta(v);
+ctheta = sparse(blkdiag(pC, hC));
+ctheta = ctheta(v, v);
 
-ptheta.ctheta = sparse(blkdiag(pC, hC));
-ptheta.ctheta = ptheta.ctheta(v, v);
-ptheta.ictheta = inv(ptheta.ctheta);
-ptheta.chol_ictheta = chol(ptheta.ictheta);
+ptheta.p.theta.mu = mtheta(v);
+ptheta.p.theta.pi = inv(ctheta);
+ptheta.p.theta.chol_pi = chol(ptheta.p.theta.pi);
+ptheta.p.theta.sigma = ctheta;
 
-ptheta.a = dcm.a;
-ptheta.b = dcm.b;
-ptheta.c = dcm.c;
+ptheta.a = a;
+ptheta.b = b;
+ptheta.c = c;
 
+ptheta.dyu = dyu(1);
 
-% Parametrization from spm8
-
-theta = struct('A', [], 'B', [], 'C', [], 'epsilon', [], 'K', [], ...
-    'tau',  [], 'V0', [], 'E0', [], 'k1', [], 'k2', [], 'k3', [], ...
-    'alpha', [], 'gamma', [], 'dim_x', [], 'dim_u', [], ...
-    'fA', 1, 'fB', 1, 'fC', 1 );
-
-decay = 0;
-transit = 0;
-
-gamma   = 0.32;
-alpha   = 0.32;
-E0      = 0.32;
-V0      = 4.0;
-
-ep = exp(full(pE.epsilon));
-
-tau     = 2*exp(transit);
-kappa   = 0.64*exp(decay);
-
-theta.dim_x = size(dcm.a, 1);
-theta.dim_u = size(dcm.c, 2);
-
-theta.A = full(pE.A);
-if any(dcm.a(:))
-    theta.fA = 1;
-else
-    theta.fA = 0;
 end
 
-theta.B = cell(theta.dim_u, 1);
+%% ===========================================================================
 
-for j = 1:theta.dim_u
-    theta.B{j} = full(pE.B(:,:,j));
+
+function [u, dyu] = tinput_u(dcm)
+%% Prepare U
+
+    y = dcm.Y.y;
+
+    dyu = dcm.U.dt;
+
+    u = dcm.U.u';
+
+    % Sampling frequency
+
+    dyu = 2.0*size(y, 1)/size(u, 2);
+
 end
 
-if any(dcm.b(:))
-    theta.fB = 1;
-else
-    theta.fB = 0;
+
+function [y, scale] = tinput_y(dcm)
+% Prepare y
+
+    ns = size(dcm.Y.y, 1);
+    nr = size(dcm.Y.y, 2);
+
+    % Data
+
+    Y = dcm.Y;
+
+    scale   = max(max((Y.y))) - min(min((Y.y)));
+    scale   = 4/max(scale,4);
+    Y.y     = Y.y*scale;
+
+    y = Y.y';
+
 end
 
-theta.C = full(pE.C);
+%% ===========================================================================
 
-if any(dcm.c(:))
-    theta.fC = 1;
-else
-    theta.fC = 0;
-end
+function [theta] = tinput_theta(dcm)
+    % A single theta set of parameters
 
-theta.epsilon = ep;
-theta.K = kappa.*ones(theta.dim_x, 1);
-theta.tau = tau.*ones(theta.dim_x, 1);
-theta.E0 = E0;
-theta.V0 = V0;
-theta.alpha = alpha;
-theta.gamma = gamma;
+    [pE, pC, x] = spm_dcm_fmri_priors(dcm.a, dcm.b, dcm.c);
 
-[k1, k2, k3] = mpdcm_fmri_k(theta, ptheta);
+    theta = struct('A', [], 'B', [], 'C', [], 'epsilon', [], 'K', [], ...
+        'tau',  [], 'V0', [], 'E0', [], 'k1', [], 'k2', [], 'k3', [], ...
+        'alpha', [], 'gamma', [], 'dim_x', [], 'dim_u', [], ...
+        'fA', 1, 'fB', 1, 'fC', 1 );
 
-theta.k1 = k1;
-theta.k2 = k2;
-theta.k3 = k3;
+    decay = 0;
+    transit = 0;
 
-% Noise
+    gamma   = 0.32;
+    alpha   = 0.32;
+    E0      = 0.32;
+    V0      = 4.0;
 
-theta.lambda = hE;
+    ep = exp(full(pE.epsilon));
 
-dyu = dcm.U.dt;
+    tau     = 2*exp(transit);
+    kappa   = 0.64*exp(decay);
 
-u = dcm.U.u';
+    theta.dim_x = size(dcm.a, 1);
+    theta.dim_u = size(dcm.c, 2);
 
-% Sampling frequency
+    theta.A = full(pE.A);
+    if any(dcm.a(:))
+        theta.fA = 1;
+    else
+        theta.fA = 0;
+    end
 
-ptheta.dyu = 2.0*size(y, 2)/size(u, 2);
+    theta.B = cell(theta.dim_u, 1);
+
+    for j = 1:theta.dim_u
+        theta.B{j} = full(pE.B(:,:,j));
+    end
+
+    if any(dcm.b(:))
+        theta.fB = 1;
+    else
+        theta.fB = 0;
+    end
+
+    theta.C = full(pE.C);
+
+    if any(dcm.c(:))
+        theta.fC = 1;
+    else
+        theta.fC = 0;
+    end
+
+    theta.epsilon = ep;
+    theta.K = kappa.*ones(theta.dim_x, 1);
+    theta.tau = tau.*ones(theta.dim_x, 1);
+    theta.E0 = E0;
+    theta.V0 = V0;
+    theta.alpha = alpha;
+    theta.gamma = gamma;
+
+    [k1, k2, k3] = mpdcm_fmri_k(theta);
+
+    theta.k1 = k1;
+    theta.k2 = k2;
+    theta.k3 = k3;
+    
+    nh = numel(dcm.Y.Q);
+
+    % Hyperprios expected value
+    try
+        hE = dcm.M.hE(:);
+    catch err
+        if strcmp(err.identifier, 'MATLAB:nonExistentField');
+            hE = sparse(nh,1);
+        end
+    end
+
+    theta.lambda = hE;
 
 end

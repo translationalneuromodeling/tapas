@@ -1,4 +1,4 @@
-function [k1, k2, k3] = mpdcm_fmri_k(theta0, ptheta)
+function [k1, k2, k3] = mpdcm_fmri_k(theta)
 %% Computes the values of k 
 %
 % aponteeduardo@gmail.com
@@ -11,8 +11,8 @@ TE      = 0.04;
 
 
 k1      = 4.3*nu0*0.4*TE;
-k2      = theta0.epsilon*r0*0.4*TE;
-k3      = 1 - theta0.epsilon;
+k2      = theta.epsilon*r0*0.4*TE;
+k3      = 1 - theta.epsilon;
 
 
 end

@@ -25,16 +25,14 @@ T = pars.T;
 nburnin = pars.nburnin;
 niter = pars.niter;
 
-[y0, u0, theta0, ptheta] = mpdcm_fmri_tinput(dcm);
+[y, u, theta, ptheta] = mpdcm_fmri_tinput(dcm);
 
 htheta = mpdcm_fmri_htheta(ptheta);
 
 nt = numel(T);
 
-y = {y0};
-u = {u0};
+[q, otheta, ollh, olpp] = init_estimate(y, u, theta, ptheta, T);
 
-[q, otheta, ollh, olpp] = init_estimate(y0, u0, theta0, ptheta, T);
 op = mpdcm_fmri_get_parameters(otheta, ptheta);
 
 ps_theta = zeros(numel(op{end}), niter);
@@ -53,10 +51,14 @@ for i = 1:nburnin+niter
             fprintf(1, '%0.2f ', diagnostics);
             fprintf(1, '%0.2f ', ollh);
             fprintf(1, '\n');
+            if i > nburnin
+                fe = trapz(T, mean(ellh(:,1:i-nburnin), 2));
+                fprintf(1, 'Fe: %0.05f\n', fe);
+            end
         end
         if i < nburnin
-            kt(diagnostics < 0.3) = kt(diagnostics < 0.3)/2;
-            kt(diagnostics > 0.7) = kt(diagnostics > 0.7)*1.8;
+            kt(diagnostics < 0.2) = kt(diagnostics < 0.2)/2;
+            kt(diagnostics > 0.3) = kt(diagnostics > 0.3)*1.8;
         end
         diagnostics(:) = 0;
     end
@@ -88,12 +90,23 @@ for i = 1:nburnin+niter
 
     assert(all(-inf < ollh), 'mpdcm:fmri:ps', '-inf value in the likelihood');
 
+    if pars.mc3
+        v = ceil(rand()*(nt-1));
+        p = min(1, exp(ollh(v) * T(v+1) + ollh(v+1) * T(v) ...
+            - ollh(v) * T(v) - ollh(v+1) * T(v+1)));
+        if rand() < p
+            ollh([v v+1]) = ollh([v+1 v]);
+            olpp([v v+1]) = olpp([v+1 v]);
+            op(:, [v v+1]) = op(:, [v+1 v]);       
+        end
+    end
+
 end
 
 fe = trapz(T, mean(ellh, 2));
 
 ps.pE = mean(op{end} , 2);
-ps.theta = mpdcm_fmri_set_parameters(op(:), {theta0}, ptheta);
+ps.theta = mpdcm_fmri_set_parameters(op(:), theta, ptheta);
 ps.y = mpdcm_fmri_int(u, ps.theta, ptheta);
 ps.theta = ps.theta{:};
 ps.y = ps.y{:};
@@ -101,16 +114,13 @@ ps.F = fe;
 
 end
 
-function [q, otheta, ollh, olpp] = init_estimate(y0, u0, theta0, ptheta, T)
+function [q, otheta, ollh, olpp] = init_estimate(y, u, theta, ptheta, T)
 % Create an initial estimate to reduce burn in phase by computing the 
 % posterior distribution of the power posteriors
 
-u = {u0};
-y = {y0};
-
 nt = numel(T);
 
-[q, otheta] = mpdcm_fmri_gmodel(y, u, {theta0}, ptheta);
+[q, otheta] = mpdcm_fmri_gmodel(y, u, theta, ptheta);
 [ollh, ny] = mpdcm_fmri_llh(y, u, otheta, ptheta);
 fprintf(1, 'Starting llh: %0.5d\n', ollh);
 
@@ -122,7 +132,7 @@ fprintf(1, 'Starting llh: %0.5d\n', ollh);
 
 op = op{1};
 np = [(linspace(0, 1, nt)').^5 (1-linspace(0, 1, nt)).^5'] * ...
-    [op ptheta.mtheta]';
+    [op ptheta.p.theta.mu]';
 np = mat2cell(np', numel(op), ones(1, nt));
 
 % Samples from posterior

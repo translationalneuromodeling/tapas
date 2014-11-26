@@ -24,7 +24,7 @@ theta = {theta0};
 try
     mpdcm_fmri_int_check_input(u, theta, ptheta);
     display('   Passed');   
-catch
+catch err
     d = dbstack();
     fprintf('   Not passed at line %d\n', d(1).line)
 end

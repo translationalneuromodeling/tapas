@@ -13,12 +13,18 @@ nt = numel(theta);
 
 p = mpdcm_fmri_get_parameters(theta, ptheta);
 
-c = -0.5*numel(ptheta.mtheta)*log(2*pi) + sum(log(diag(ptheta.chol_ictheta)));
+if ~isfield(ptheta.p.theta, 'chol_pi')
+    chol_pi = chol(ptheta.p.theta.pi);
+    c = -0.5*numel(ptheta.p.theta.mu)*log(2*pi) + sum(log(diag(chol_pi)));
+else
+    c = -0.5*numel(ptheta.p.theta.mu)*log(2*pi) ...
+        + sum(log(diag(ptheta.p.theta.chol_pi)));
+end
 
 for i = 1:nt
     pt = p{i};
-    et = pt - ptheta.mtheta;
-    lpp(i) =  c + -0.5 * et' * ptheta.ictheta * et;
+    et = pt - ptheta.p.theta.mu;
+    lpp(i) =  c + -0.5 * et' * ptheta.p.theta.pi * et;
 end
 
 end

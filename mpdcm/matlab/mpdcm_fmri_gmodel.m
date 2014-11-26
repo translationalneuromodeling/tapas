@@ -24,7 +24,7 @@ assert(size(y{1}, 2) > 1, 'mpdcm:fmri:gmodel:input', ...
 
 ns = size(y{1}, 2);
 nr = size(y{1}, 1);
-np = numel(ptheta.mtheta);
+np = numel(ptheta.p.theta.mu);
 nt = numel(theta);
 
 q = cell(nt, 1);

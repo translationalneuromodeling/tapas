@@ -60,7 +60,7 @@ su = size(u);
 
 nQ = cell(su);
 
-nctheta = 1./diag(ptheta.ctheta);
+nctheta = diag(ptheta.p.theta.pi);
 nctheta(end-size(ptheta.a, 1):end) = 0;
 
 for i = 1:numel(u)
@@ -104,7 +104,7 @@ for j = 1:10
     for k = 1:numel(u)
         ty = ny{k};
         e{k} = y{k}' - ty;
-        e{k} = [e{k}(:); ptheta.mtheta - op{k}];
+        e{k} = [e{k}(:); ptheta.p.theta.mu - op{k}];
     end
 
     lambda = lambda0.*v.^reg;

@@ -18,8 +18,8 @@ nptheta = ptheta;
 
 nr = theta{1}.dim_x;
 
-e_lambda = ptheta.mtheta(end-nr+1:end);
-c_lambda = diag(ptheta.ctheta);
+e_lambda = ptheta.p.theta.mu(end-nr+1:end);
+c_lambda = diag(ptheta.p.theta.sigma);
 c_lambda = c_lambda(end-nr+1:end);
 c_lambda = c_lambda(:);
 

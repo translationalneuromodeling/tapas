@@ -20,24 +20,10 @@ Y = dcm.Y;
 n = dcm.n;
 v = dcm.v;
 
-% detrend outputs (and inputs)
-
-%Y.y = spm_detrend(Y.y);
-%if dcm.options.centre
-%    U.u = spm_detrend(U.u);
-%end
-
-% check scaling of Y (enforcing a maximum change of 4%
-
-%scale = max(max((Y.y))) - min(min((Y.y)));
-%scale = 4/max(scale,4);
-%Y.y = Y.y*scale;
-%Y.scale = scale;
-
 dcm.U = U;
 dcm.Y = Y;
 
-[ps, fe] = mpdcm_fmri_ps(dcm, pars);
+[ps, fe] = mpdcm_fmri_ps({dcm}, pars);
 
 
 % Unpack dcm

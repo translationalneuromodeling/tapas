@@ -17,13 +17,13 @@ fname = regexprep(fname, 'test_', '');
 
 fprintf(fp, '================\n Test %s\n================\n', fname);
 
-test_mpdcm_fmri_int_memory()
-test_mpdcm_fmri_int_correctness();
+test_mpdcm_fmri_int_memory(fp)
+test_mpdcm_fmri_int_correctness(fp);
 
 end
 
 
-function test_mpdcm_fmri_int_memory()
+function test_mpdcm_fmri_int_memory(fp)
 %% Checks whether there is any segmentation error in a kamikaze way
 
 [u0, theta0, ptheta] = standard_values(8, 8);
@@ -35,10 +35,10 @@ theta = {theta0};
 % while preparing the data.
 try
     y = mpdcm_fmri_int(u, theta, ptheta);
-    display('    Passed')
+    fprintf(fp, '    Passed\n')
 catch err
     d = dbstack();
-    fprintf('   Not passed at line %d\n', d(1).line)
+    fprintf(fp, '   Not passed at line %d\n', d(1).line)
 end
 
 try
@@ -47,10 +47,10 @@ try
     theta = cell(2, 1);
     theta(:) = {theta0};
     y = mpdcm_fmri_int(u, theta, ptheta);
-    display('    Passed')
+    fprintf(fp, '    Passed\n')
 catch err
     d = dbstack();
-    fprintf('   Not passed at line %d\n', d(1).line)
+    fprintf(fp, '   Not passed at line %d\n', d(1).line)
 end
 
 try
@@ -59,10 +59,10 @@ try
     theta = cell(2, 8);
     theta(:) = {theta0};
     y = mpdcm_fmri_int(u, theta, ptheta);
-    display('    Passed')
+    fprintf(fp, '    Passed\n')
 catch err
     d = dbstack();
-    fprintf('   Not passed at line %d\n', d(1).line)
+    fprintf(fp, '   Not passed at line %d\n', d(1).line)
 end
 
 try
@@ -71,10 +71,10 @@ try
     theta = cell(2, 1);
     theta(:) = {theta0};
     y = mpdcm_fmri_int(u, theta, ptheta);
-    display('    Passed')
+    fprintf(fp, '    Passed\n')
 catch err
     d = dbstack();
-    fprintf('   Not passed at line %d\n', d(1).line)
+    fprintf(fp, '   Not passed at line %d\n', d(1).line)
 end
 
 % Test the flags
@@ -86,11 +86,11 @@ try
     theta0.fC = 0;
     theta(:) = {theta0};
     y = mpdcm_fmri_int(u, theta, ptheta);
-    display('    Passed')
+    fprintf(fp, '    Passed\n')
     theta0.fC = 1;
 catch err
     d = dbstack();
-    fprintf('   Not passed at line %d\n', d(1).line)
+    fprintf(fp, '   Not passed at line %d\n', d(1).line)
 end
 
 % Test different dimensionality for u!
@@ -103,10 +103,10 @@ try
     theta = cell(2, 1);
     theta(:) = {theta0};
     y = mpdcm_fmri_int(u, theta, ptheta);
-    display('    Passed')
+    fprintf(fp, '    Passed\n')
 catch err
     d = dbstack();
-    fprintf('   Not passed at line %d\n', d(1).line)
+    fprintf(fp, '   Not passed at line %d\n', d(1).line)
 end
 
 dim_u = 8;
@@ -180,15 +180,15 @@ try
     theta = cell(2, 1);
     theta(:) = {theta0};
     y = mpdcm_fmri_int(u, theta, ptheta);
-    display('    Passed')
+    fprintf(fp, '    Passed\n')
 catch err
     d = dbstack();
-    fprintf('   Not passed at line %d\n', d(1).line)
+    fprintf(fp, '   Not passed at line %d\n', d(1).line)
 end
 
 end
 
-function test_mpdcm_fmri_int_correctness()
+function test_mpdcm_fmri_int_correctness(fp)
 %% Test the correctness of the implementation against spm
 
 theta0 = struct('A', [], 'B', [], 'C', [], ...
@@ -265,43 +265,24 @@ ptheta.dyu = 2.0*size(y, 2) / size(u0, 2);
 ptheta1.dyu = 2.0*size(y, 2) / size(u0, 2);
 ptheta1.dt = 0.05;
 
-theta1 = cell(1, 800);
-u1 = cell(1, 1);
-
-theta1(:) = {theta0};
-u1(:) = {u0};
-
-tic
-y0 = mpdcm_fmri_int(u1, theta1, ptheta);
-toc
-
-tic
-y0 = mpdcm_fmri_int(u, theta, ptheta);
-toc
-tic
-y1 = mpdcm_fmri_int(u, theta, ptheta1);
-toc 
 
 for i = 1:5
     dcm = d{i};
-    [y, u, theta, ptheta] = mpdcm_fmri_tinput(dcm);
-    theta.A = dcm.A;
-    theta.B = cell(1, size(dcm.B,3));
+    [y, u, theta, ptheta] = mpdcm_fmri_tinput({dcm});
+    theta{1}.A = dcm.A;
+    theta{1}.B = cell(1, size(dcm.B,3));
     for j = 1:size(dcm.B, 3)
-        theta.B{j} = dcm.B(:, :, j);
+        theta{1}.B{j} = dcm.B(:, :, j);
     end
-    theta.C = dcm.C;
-    theta.K(:) = 0;
-    theta.tau(:) = 0;
-    tic
-    ny = mpdcm_fmri_int({u}, {theta}, ptheta);
-    toc
-
-    if all(abs(d{i}.y - ny{1}) < 1e-2)
-        display('    Passed')
+    theta{1}.C = dcm.C;
+    theta{1}.K(:) = 0;
+    theta{1}.tau(:) = 0;
+    ny = mpdcm_fmri_int(u, theta, ptheta);
+    if all(abs(d{i}.y - ny{1}) < 0.2)
+        fprintf(fp, '    Passed\n')
     else
         td = dbstack();
-        fprintf('   Not passed at line %d\n', td(1).line)
+        fprintf(fp, '   Not passed at line %d\n', td(1).line)
     end
 
 end
@@ -323,7 +304,7 @@ u(:, 450) = 20;
 u(:, 540) = 20;
 
 theta = struct('A', [], 'B', [], 'C', [], 'epsilon', [], ...
-    'K', [], 'tau',  [], 'V0', 1.0, 'E0', 1.0, 'k1', 1.0, 'k2', 1.0, ...
+    'K', [], 'tau',  [], 'V0', 1.0, 'E0', 0.7, 'k1', 1.0, 'k2', 1.0, ...
     'fA', 1, 'fB', 1, 'fC', 1, ...
     'k3', 1.0, 'alpha', 1.0, 'gamma', 1.0, 'dim_x', dim_x, 'dim_u', dim_u);
 
