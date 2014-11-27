@@ -19,8 +19,14 @@ fprintf(fp, '================\n Test %s\n================\n', fname);
 
 
 dcm = cell(10, 1);
-tdcm = test_mpdcm_fmri_load_td();
-dcm(:) = tdcm(1);
+%dcm = test_mpdcm_fmri_load_td();
+dcm = mvapp_load_dcms();
+dcm(:) = dcm(6);
+
+%rng(1987)
+for i = 1:10
+    dcm{i}.Y.y = dcm{i}.Y.y + 3.0 * randn(size(dcm{i}.Y.y));
+end
 
 
 % Test whether there is any clear bug

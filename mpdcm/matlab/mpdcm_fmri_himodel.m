@@ -1,4 +1,4 @@
-function [theta, htheta] = mpdcm_fmri_himodel(dcm, pars)
+function [q] = mpdcm_fmri_himodel(dcm, pars)
 %% Model inversion of a hierarchical model 
 % 
 % Input:
@@ -6,8 +6,7 @@ function [theta, htheta] = mpdcm_fmri_himodel(dcm, pars)
 % pars -- Parameters for the inversion.
 %
 % Output:
-% theta -- Sufficient statistics of the individual record distributions.
-% htheta -- Sufficient statistics of the hyper parameters.
+% q -- Sufficient statistics of the variational energies.
 %
 % Defaults
 % pars.niter -- Number of iterations of the algorithm. Defaults to 5.
@@ -27,96 +26,126 @@ function [theta, htheta] = mpdcm_fmri_himodel(dcm, pars)
 
     for i = 1:pars.niter
         [q] = update_first_level(q, y, u, theta, ptheta);
-        [q] = update_q_h_theta(q, y, u, theta, ptheta);
-        [q] = update_q_h_theta(q, y, u, theta, ptheta);
+        [q] = update_q_eta(q, y, u, theta, ptheta);
+        [q] = update_q_rho(q, y, u, theta, ptheta);
     end
 
 end
 
-
-function [ q ] = update_first_level(p, q, y, u, theta, ptheta)
+function [ q ] = update_first_level(q, y, u, theta, ptheta)
 % Update theta
 
     nt = numel(theta);
-    np = numel(ptheta.p.theta.mu);
+    np = numel(ptheta.p.eta.mu);
     nr = theta{1}.dim_x;
     ns = numel(y{1})/nr;
 
     % Use E[p(y | theta_i, lambda_i)]_q(\lambda_i)
 
+    mu = cell(nt, 1);
     for j = 1:nt
-        theta{j}.lambda = full(log(q.lambda(i).a) - log(q.lambda(i).b));
+        tlambda = full(log(q.lambda(j).a) - log(q.lambda(j).b));
+        mu{j} = [q.theta(j).mu; tlambda];
     end
 
-    %% Use E[p(theta_i|mu, Lambda)]_{q(mu) (Lambda)} for the conditional 
+    theta = mpdcm_fmri_set_parameters(mu, theta, ptheta);
+
+    %% Use E[p(theta_i|eta, rho)]_{q(rho) q(eta)} for the conditional 
     % distribution
 
     tptheta = ptheta;
+    tptheta.p.theta = struct('mu', [], 'pi', []);
     tptheta.p.theta.mu = q.eta.mu;
-    tptheta.p.theta.pi = q.rho.a/q.rho.b * eye(size(ptheta.p.theta.pi));
+
+    % Non spheric covariance matrix
+
+    tptheta.p.theta.pi = ...
+        blkdiag(...
+        q.rho.a(1)/q.rho.b(1)*ptheta.h.theta.pi(1:end-nr*2-1,1:end-nr*2-1),...
+        q.rho.a(2)/q.rho.b(2)*ptheta.h.theta.pi(end-nr*2:end,end-nr*2:end));
 
     %% Conditional MAP estimator
 
+    tptheta.p.theta.mu = cat(1, tptheta.p.theta.mu, zeros(nr, 1));
+    tptheta.p.theta.pi = blkdiag(tptheta.p.theta.pi, eye(nr));
+
     [mu, ny, dfdx] = mpdcm_fmri_map(y, u, theta, tptheta);
-    theta = mpdcm_fmri_set_parameters(mu, theta, ptheta);
+    theta = mpdcm_fmri_set_parameters(mu, theta, tptheta);
 
     %% Compute the update of q(lambda_i)
 
     for j = 1:nt
 
-        q.theta(j).mu = mu{j};
+        q.theta(j).mu = mu{j}(1:np);
 
         % Approximate hessian
         % Weight the hessian by the precisions
-        dfdx{j} = dfdx{j}(:,:,1:np-nr);
+        dfdx{j} = dfdx{j}(:,:,1:np);
 
         h1 = bsxfun(@times, dfdx{j}, reshape(exp(theta{j}.lambda), 1, nr, 1));
-        h1 = reshape(h1, ns*nr, 1, np-nr);
+        h1 = reshape(h1, ns*nr, 1, np);
         h1 = squeeze(h1);
 
-        h2 = reshape(dfdx{1}, ns*nr, 1, np-nr);
+        h2 = reshape(dfdx{1}, ns*nr, 1, np);
         h2 = squeeze(h2);
 
-        q.theta(j).pi = 0.5*h1'*h2;
+        q.theta(j).pi = h1'*h2;
 
-        q.lambda(j).a = 0.5*ns + ptheta.p.lambda.a - 1;
+        q.lambda(j).a = 0.5*ns + ptheta.p.lambda(j).a - 1;
 
         e = ny{j} - y{j}';
+
         % Region specific lambda_i
         for k = 1:nr
             h = dfdx{1}(:, k, :);
             h = squeeze(h);
-            h = 0.5*h'*h;
+            %h = 0.5*h'*h;
+            %nh = norm(h);
+            %h = h/nh;
+            % COmpute the trace in a solid way
             q.lambda(j).b(k) = 0.5*e(:,k)'*e(:,k) + ...
-                trace(q.theta(j).pi\h) + ptheta.p.lambda.b(k);
-        end
+               0.5*trace(q.theta(j).pi\(h'*h)) + ptheta.p.lambda(j).b(k);                end
     end
-
 end
 
-function [q] = update_q_rho(q, y, u, theta, htheta, ptheta)
+function [q] = update_q_rho(q, y, u, theta, ptheta)
 
-    nt = numel(nt);
-    np = numel(ptheta.p.theta.mu);
+    nt = numel(theta);
+    nr = numel(theta{1}.dim_x);
+    np = numel(ptheta.p.eta.mu);
 
-    q.rho.a = 0.5*nt*np + ptheta.p.rho.a;
+    rho1 = np-(nr*2+1);
+    rho2 = nr*2+1;
+
+    q.rho.a = 0.5 * nt * [rho1; rho2] + ptheta.p.rho.a - 1;
     q.rho.b = ptheta.p.rho.b; 
 
+    p1 = ptheta.h.theta.pi(1:rho1, 1:rho1); 
+    p2 = ptheta.h.theta.pi(rho1+1:end, rho1+1:end);
+
     for i = 1:nt
-        e = q.theta(i).mu - q.eta.mu;  
-        q.rho.b = q.rho.b + 0.5 * (e'*e + trace(inv(q.theta(i).pi)));
+        e = q.theta(i).mu - q.eta.mu;
+        e1 = e(1:rho1);
+        e2 = e(rho1+1:end);
+        q.rho.b = q.rho.b + 0.5 * [e1'*p1*e1; e2'*p2*e2];
+        tm = q.theta(i).pi\ptheta.h.theta.pi;
+        q.rho.b(1) + q.rho.b(1) + 0.5 * sum(diag(tm(1:rho1, 1:rho1)));
+        q.rho.b(2) + q.rho.b(2) + 0.5 * sum(diag(tm(rho1+1:end, rho1+1:end)));
     end
 
     % The expectation of q(eta) enters as uncertainty in the trace of its
     % variance
-    q.rho.b = q.rho.b + 0.5*nt*trace(inv(q.mu.pi));
+    tm = q.eta.pi\ptheta.h.theta.pi;
+    tm = [sum(diag(tm(1:rho1, 1:rho1))); sum(diag(tm(rho1+1:end, rho1+1:end)))];
+    q.rho.b = q.rho.b + 0.5*nt*tm; 
 
 end
 
 
-function [q] = update_q_eta(q, y, u, theta, htheta, ptheta)
+function [q] = update_q_eta(q, y, u, theta, ptheta)
 
-    nt = numel(nt);
+    nt = numel(theta);
+    nr = theta{1}.dim_x;
 
     q.eta.mu = 0*q.eta.mu;
 
@@ -129,10 +158,14 @@ function [q] = update_q_eta(q, y, u, theta, htheta, ptheta)
     q.eta.mu = q.eta.mu/nt;
 
     % Weight by the expected uncertainty
-    erho = nt*q.rho.a/q.rho.b;
+    erho = nt*blkdiag(...
+        q.rho.a(1)/q.rho.b(1)*ptheta.h.theta.pi(1:end-nr*2-1,1:end-nr*2-1),...
+        q.rho.a(2)/q.rho.b(2)*ptheta.h.theta.pi(end-nr*2:end, end-nr*2:end));
+         
+    %erho = nt*q.rho.a/q.rho.b * ptheta.h.theta.pi;
 
-    q.eta.mu = q.eta.mu * erho + ptheta.p.eta.pi * ptheta.p.eta.mu;
-    q.eta.pi = q.eta.mu * eye(size(ptheta.p.eta.pi)) + ptheta.p.eta.pi;
+    q.eta.mu = erho * q.eta.mu + ptheta.p.eta.pi * ptheta.p.eta.mu;
+    q.eta.pi = erho + ptheta.p.eta.pi;
 
     q.eta.mu = q.eta.pi\q.eta.mu;
 
@@ -143,6 +176,8 @@ function [q, theta, ptheta] = initilize_parameters(theta, ptheta)
 
 
     nt = numel(theta);
+    nr = theta{1}.dim_x;
+    np = numel(ptheta.p.theta.mu);
 
     p = struct('lambda', [], 'theta', [], 'rho', [],'eta', []);
     p.lambda = struct('a', cell(nt, 1), 'b', []);
@@ -150,21 +185,19 @@ function [q, theta, ptheta] = initilize_parameters(theta, ptheta)
     p.rho = struct('a', [], 'b', []);
     p.eta = struct('mu', [], 'pi', [], 'chol_pi', [], 'sigma', []);
 
-    p.rho.a = 2;
-    p.rho.b = 2;
+    p.rho.a = 2*ones(2, 1);
+    p.rho.b = 2*ones(2, 1);
 
-    p.eta.mu = ptheta.p.theta.mu;
-    p.eta.pi = ptheta.p.theta.pi;
+    p.eta.mu = ptheta.p.theta.mu(1:end-nr);
+    p.eta.pi = ptheta.p.theta.pi(1:end-nr, 1:end-nr);
     p.eta.chol_pi = ptheta.p.theta.chol_pi;
     p.eta.sigma = ptheta.p.theta.sigma;
 
     % Moment generating function of a gaussian, equivalent to the mean and the
     % second moment of a log normal
 
-    nr = theta{1}.dim_x;
-
-    e_lambda = htheta.p.theta.mu(end-nr+1:end);
-    c_lambda = diag(htheta.p.theta.sigma);
+    e_lambda = ptheta.p.theta.mu(end-nr+1:end);
+    c_lambda = diag(ptheta.p.theta.sigma);
     c_lambda = c_lambda(end-nr+1:end);
     c_lambda = c_lambda(:);
 
@@ -183,16 +216,27 @@ function [q, theta, ptheta] = initilize_parameters(theta, ptheta)
 
     q = p;
 
+    q.rho.a = nt*ones(2, 1);
+    q.rho.b = nt*ones(2, 1);
+
     for i = 1:nt
         q.theta(i).mu = p.eta.mu;
         q.theta(i).pi = p.eta.pi;
-        q.theta(i).chol_pi = p.eta.mu.chol_pi;
+        q.theta(i).chol_pi = p.eta.chol_pi;
         q.theta(i).sigma = p.eta.sigma;
     end
 
     % Update the priors
 
+    % Prior covariance of the parameters theta. Parameters are not close to 
+    % spheric. Because the derivatives seem to have a difference of 10^1, and
+    % the Hessian is approximated with the J'J the difference should be 
+    % something like 10^2 
+
+    h.theta = struct('pi', []);
+    h.theta.pi = p.eta.pi;eye(np-nr);diag([ones(np-nr*3-1, 1) ; 1e-3*ones(2*nr, 1) ; 1]); 
     ptheta.p = p;
+    ptheta.h = h;
 
 end
 
@@ -200,7 +244,7 @@ function [pars] = config_pars(pars)
 %% Default values
 
     if ~isfield(pars, 'niter')
-        pars.niter = 5;
+        pars.niter = 10;
     end
 
 end

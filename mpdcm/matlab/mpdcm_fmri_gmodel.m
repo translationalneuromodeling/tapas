@@ -55,7 +55,7 @@ for i = 1:5
         h2 = reshape(dfdx{1}, ns*nr, 1, np-nr);
         h2 = squeeze(h2);
 
-        q{j}.theta.pi = 0.5*h1'*h2; 
+        q{j}.theta.pi = h1'*h2; 
         
         % Estimate the noise
 
@@ -65,8 +65,8 @@ for i = 1:5
         for k = 1:nr
             h = dfdx{1}(:, k, :);
             h = squeeze(h);
-            h = 0.5*h'*h; 
-            q{j}.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + trace(q{j}.theta.pi\h) + ...
+            h = h'*h; 
+            q{j}.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + 0.5*trace(q{j}.theta.pi\h) + ...
                 ptheta.p.lambda.b(k);
         end
     end

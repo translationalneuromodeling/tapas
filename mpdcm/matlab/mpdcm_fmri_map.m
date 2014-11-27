@@ -61,7 +61,7 @@ su = size(u);
 nQ = cell(su);
 
 nctheta = diag(ptheta.p.theta.pi);
-nctheta(end-size(ptheta.a, 1):end) = 0;
+nctheta(end-size(ptheta.a, 1)+1:end) = 0;
 
 for i = 1:numel(u)
     tlambda = exp(theta{i}.lambda);
