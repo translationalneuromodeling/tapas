@@ -22,9 +22,9 @@ void mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, double *dtheta)
     ctheta->E0 = *mxGetPr(mxGetField(theta, 0, "E0"));
     ctheta->ln1_E0 = log(1 - ctheta->E0);
     ctheta->lnE0 = log(ctheta->E0);
-    ctheta->k1 = *mxGetPr(mxGetField(theta, 0, "k1"));
-    ctheta->k2 = *mxGetPr(mxGetField(theta, 0, "k2"));
-    ctheta->k3 = *mxGetPr(mxGetField(theta, 0, "k3"));
+    ctheta->k1 = *mxGetPr(mxGetField(theta, 0, "k1")) * ctheta->V0;
+    ctheta->k2 = *mxGetPr(mxGetField(theta, 0, "k2")) * ctheta->V0;
+    ctheta->k3 = *mxGetPr(mxGetField(theta, 0, "k3")) * ctheta->V0;
 
     ctheta->alpha = *mxGetPr(mxGetField(theta, 0, "alpha"));
     ctheta->alpha = 1/ctheta->alpha - 1;
