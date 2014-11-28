@@ -214,13 +214,8 @@ __device__ void dcm_upx(dbuff ox, dbuff y, dbuff u, void *p_theta,
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
 
     int j = threadIdx.x%y.dim;
-    int ss;
-    double dt;
 
     // Make the values to be closer in range
-
-    ss = ceil(1.0/(ptheta->dt * ptheta->dyu));
-    dt = 1.0/((double ) ss);
  
     if ( isnan( *u.arr ) ){
         if ( threadIdx.y == 0 )
@@ -237,23 +232,23 @@ __device__ void dcm_upx(dbuff ox, dbuff y, dbuff u, void *p_theta,
     {
         case INDEX_X:
             nx.arr[INDEX_X * ox.dim + j] = ox.arr[ INDEX_X * ox.dim + j] + 
-                dt * dcm_dx(ox, y, u, p_theta, p_ptheta, j);
+                ptheta->de * dcm_dx(ox, y, u, p_theta, p_ptheta, j);
             break;
         case INDEX_F:
             nx.arr[ INDEX_F * ox.dim + j] = ox.arr[ INDEX_F * ox.dim + j] + 
-                dt * dcm_df(ox, y, u, p_theta, p_ptheta, j);
+                ptheta->de * dcm_df(ox, y, u, p_theta, p_ptheta, j);
             break;
         case INDEX_S:
             nx.arr[ INDEX_S * ox.dim + j] = ox.arr[ INDEX_S * ox.dim + j] + 
-                dt * dcm_ds(ox, y, u, p_theta, p_ptheta, j);
+                ptheta->de * dcm_ds(ox, y, u, p_theta, p_ptheta, j);
             break;
         case INDEX_V:
             nx.arr[ INDEX_V * ox.dim + j] = ox.arr[ INDEX_V * ox.dim + j] + 
-                dt * dcm_dv(ox, y, u, p_theta, p_ptheta, j);
+                ptheta->de * dcm_dv(ox, y, u, p_theta, p_ptheta, j);
             break;
         case INDEX_Q:
             nx.arr[ INDEX_Q * ox.dim + j] = ox.arr[ INDEX_Q * ox.dim + j] + 
-                dt * dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
+                ptheta->de * dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
             break;
     }
 
@@ -360,6 +355,7 @@ __global__ void kdcm_fmri(double *x, double *y, double *u,
 
     lptheta->dt = ptheta->dt;
     lptheta->dyu = ptheta->dyu;
+    lptheta->de = ptheta->de;
     lptheta->mode = ptheta->mode;
 
     tu.dim = nu;

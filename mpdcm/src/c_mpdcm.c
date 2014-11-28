@@ -67,6 +67,7 @@ void mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, double *dptheta)
     PThetaDCM *cptheta = (PThetaDCM *) vptheta;
     cptheta->dt = *mxGetPr(mxGetField(ptheta, 0, "dt"));
     cptheta->dyu = *mxGetPr(mxGetField(ptheta, 0, "dyu"));
+    cptheta->de = 1.0/((double ) ceil(1.0/(cptheta->dt * cptheta->dyu)));
     cptheta->mode = 'f';
 }
 

@@ -68,7 +68,8 @@ typedef struct
 typedef struct
 {
     double dt; /* Step size in the integration */
-    double dyu; /* Ratio of the sampling rate of y and u. */ 
+    double dyu; /* Ratio of the sampling rate of y and u. */
+    double de; 
     char mode; /* Either 'f' or 'c'. It's the type of array of the theta, i.e.
         fortran or c. */
 } PThetaDCM;
