@@ -168,17 +168,18 @@ __device__ double dcm_dv(dbuff x, dbuff y, dbuff u, void *p_theta,
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     //PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
 
-    dv = exp(x.arr[INDEX_F * x.dim + i] - x.arr[INDEX_V * x.dim + i]) -
-        exp(x.arr[INDEX_V * x.dim + i] * theta->alpha);
+    dv = exp(x.arr[INDEX_F * x.dim + i] - x.arr[INDEX_V * x.dim + i] - 
+            theta->tau[i]) -
+        exp(x.arr[INDEX_V * x.dim + i] * theta->alpha - theta->tau[i]);
 
-    return dv/exp(theta->tau[i]);
+    return dv;
 }
 
 __device__ double dcm_dq(dbuff x, dbuff y, dbuff u, void *p_theta, 
     void *p_ptheta, int i)
 {
     double dq = 0;
-    double f = exp(x.arr[INDEX_F * x.dim + i]);
+    double f = exp(-x.arr[INDEX_F * x.dim + i]);
     double v;
     double lnE0; 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
@@ -189,7 +190,7 @@ __device__ double dcm_dq(dbuff x, dbuff y, dbuff u, void *p_theta,
     //    PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
 
     dq = exp(x.arr[INDEX_F * x.dim + i] - x.arr[INDEX_Q * x.dim + i] - lnE0) -
-        (exp(x.arr[INDEX_F * x.dim + i] + theta->ln1_E0/f - 
+        (exp(x.arr[INDEX_F * x.dim + i] + theta->ln1_E0*f - 
             x.arr[INDEX_Q * x.dim + i] - lnE0))  -  v;
 
     return dq;
