@@ -191,6 +191,8 @@ end
 function test_mpdcm_fmri_int_correctness(fp)
 %% Test the correctness of the implementation against spm
 
+d =  test_mpdcm_fmri_load_td();
+
 theta0 = struct('A', [], 'B', [], 'C', [], ...
     'epsilon', [], 'K', [], 'tau',  [], ...
     'V0', [], 'E0', [], 'k1', [], 'k2', [], 'k3', [], ... 
@@ -221,7 +223,6 @@ k1 = 4.3*nu0*0.4*TE;
 k2 = ep*r0*0.4*TE;
 k3 = 1 - ep;
 
-d =  test_mpdcm_fmri_load_td();
 
 theta = cell(5, 1);
 u = cell(5, 1);
@@ -260,11 +261,6 @@ for i = 1:5
 
 end
 
-ptheta.dyu = 2.0*size(y, 2) / size(u0, 2);
-
-ptheta1.dyu = 2.0*size(y, 2) / size(u0, 2);
-ptheta1.dt = 0.05;
-
 
 for i = 1:5
     dcm = d{i};
@@ -286,6 +282,32 @@ for i = 1:5
     end
 
 end
+
+[y, u, theta, ptheta] = mpdcm_fmri_tinput(d);
+
+for i = 1:5
+    dcm = d{i};
+    theta{i}.A = dcm.A;
+    theta{i}.B = cell(1, size(dcm.B,3));
+    for j = 1:size(dcm.B, 3)
+        theta{i}.B{j} = dcm.B(:, :, j);
+    end
+    theta{i}.C = dcm.C;
+    theta{i}.K(:) = 0;
+    theta{i}.tau(:) = 0;
+end
+ny = mpdcm_fmri_int(u, theta, ptheta);
+
+for i = 1:5
+    if all(abs(d{i}.y - ny{i}) < 0.2)
+        fprintf(fp, '    Passed\n')
+    else
+        td = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', td(1).line)
+    end
+
+end
+
 
 
 end
