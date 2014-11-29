@@ -13,6 +13,7 @@
 #define INDEX_S 2
 #define INDEX_V 3
 #define INDEX_Q 4
+#define INDEX_Q1 5
 
 #define PRELOC_SIZE_X 2
 
@@ -51,84 +52,29 @@ __device__ double dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
     int o;
 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
-    PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
-
     o = INDEX_X * x.dim;
 
-
-    switch ( ptheta->mode )
+    // Very innefficient 
+    // A
+    for (j = 0; j < x.dim; j++)
     {
-        case ( 'f' ):
-            // Very innefficient 
-            // A
-            if ( theta->fA == MF_TRUE )
-            {
-                for (j = 0; j < x.dim; j++){
-                    dx += theta->A[i + x.dim*j] * x.arr[o + j];
-                }
-            }
-            // B
-            if ( theta->fB == MF_TRUE )
-            {
-                for (j = 0; j < u.dim; j++)
-                {
-                    if (u.arr[j] == 0)
-                        continue;
-                    bt = 0;
-                    k = x.dim*x.dim*j + i;
-                    for (p = 0; p < x.dim; p++){
-                        bt += theta->B[k + x.dim*p] * x.arr[o + p];
-                    }
-                    dx += bt*u.arr[j];
-                }
-            }
-            // C
-            if ( theta->fC == MF_TRUE )
-            {
-                for (j = 0; j < u.dim; j++)
-                {
-                    dx += theta->C[i + x.dim*j] * u.arr[j];
-                }
-            }         
-        break;
-        case ( 'c' ):
-
-            k = x.dim * i;
-            // A
-            if ( theta->fA == MF_TRUE )
-            {
-                for (j = 0; j < x.dim; j++)
-                {
-                    dx += theta->A[k + j] * x.arr[o + j];
-                }
-            }
-            // B
-            if (theta->fB == MF_TRUE )
-            {
-                for (j = 0; j < u.dim; j++)
-                {
-                    if (u.arr[j] == 0)
-                        continue;
-                    bt = 0;
-                    k = x.dim*x.dim*j + x.dim * i;
-                    for (p = 0; p < x.dim; p++){
-                        bt += theta->B[k + p] * x.arr[o + p];
-                    }
-                    dx += bt*u.arr[j];
-                }
-            }
-            // C
-            k = i*u.dim;
-            if ( theta->fC == MF_TRUE )
-            {
-                for (j = 0; j < u.dim; j++)
-                {
-                    dx += theta->C[k + j] * u.arr[j];
-                }
-            }            
-        break;
+        dx += theta->A[i + x.dim*j] * x.arr[o + j];
     }
 
+    for (j = 0; j < u.dim; j++)
+    {
+        if (  u.arr[j] == 0  )
+            continue;
+        // B
+        bt = 0;
+        k = x.dim*x.dim*j + i;
+        for (p = 0; p < x.dim; p++){
+            bt += theta->B[k + x.dim*p] * x.arr[o + p];
+        }
+        // C
+        dx += (theta->C[i + x.dim*j] + bt)*u.arr[j];
+    }
+    
     return dx;
 }
 
@@ -367,7 +313,7 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
                 if ( threadIdx.x < maxx )
                     dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
                 __syncthreads();
-                if ( threadIdx.y == 0 )
+                if ( threadIdx.x < maxx && threadIdx.y == 0 )
                     ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
                         ox.arr[ INDEX_LK2 * ox.dim + j] +
                         ox.arr[ INDEX_LK3 * ox.dim + j];
@@ -376,7 +322,6 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
             if ( i > 0 )
                 tu.arr += u.dim;
         }
-        __syncthreads();
         // Swap the pointers
         t = ox.arr;
         ox.arr = nx.arr;
