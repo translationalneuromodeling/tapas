@@ -7,15 +7,12 @@
 #define DIM_PTHETA 3
 #define DIM_DPTHETA 0
 
-#define DIM_X 8 
+#define DIM_X 5 
 #define INDEX_X 0
 #define INDEX_F 1
 #define INDEX_S 2
 #define INDEX_V 3
 #define INDEX_Q 4
-#define INDEX_B 5
-#define INDEX_C 6
-#define INDEX_Q1 7
 
 #define PRELOC_SIZE_X 2
 
@@ -29,12 +26,13 @@
 #define INDEX_ALPHA 5
 #define INDEX_GAMMA 6
 
-#define NUM_THREADS 64
 
 #define INDEX_LK1 0 
 #define INDEX_LK2 1 
 #define INDEX_LK3 2 
 
+
+#define NUM_THREADS 64
 
 typedef struct
 {
@@ -44,48 +42,6 @@ typedef struct
 
 __device__ double dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
      void *p_ptheta, int i)
-{
-    double dx=0;
-    int j;
-    int k;
-    int o;
-
-    ThetaDCM *theta = (ThetaDCM *) p_theta;
-    PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
-
-    o = INDEX_X * x.dim;
-
-    switch ( ptheta->mode )
-    {
-        case ( 'f' ):
-            // Very innefficient 
-            // A
-            if ( theta->fA == MF_TRUE )
-            {
-                for (j = 0; j < x.dim; j++){
-                    dx += theta->A[i + x.dim*j] * x.arr[o + j];
-                }
-            }
-        break;
-        case ( 'c' ):
-
-            k = x.dim * i;
-            // A
-            if ( theta->fA == MF_TRUE )
-            {
-                for (j = 0; j < x.dim; j++)
-                {
-                    dx += theta->A[k + j] * x.arr[o + j];
-                }
-            }
-        break;
-    }
-
-    return dx;
-}
-
-__device__ double dcm_db(dbuff x, dbuff y, dbuff u, void *p_theta,
-    void *p_ptheta, int i)
 {
     double dx=0;
     double bt=0;
@@ -99,9 +55,18 @@ __device__ double dcm_db(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     o = INDEX_X * x.dim;
 
+
     switch ( ptheta->mode )
     {
         case ( 'f' ):
+            // Very innefficient 
+            // A
+            if ( theta->fA == MF_TRUE )
+            {
+                for (j = 0; j < x.dim; j++){
+                    dx += theta->A[i + x.dim*j] * x.arr[o + j];
+                }
+            }
             // B
             if ( theta->fB == MF_TRUE )
             {
@@ -117,8 +82,26 @@ __device__ double dcm_db(dbuff x, dbuff y, dbuff u, void *p_theta,
                     dx += bt*u.arr[j];
                 }
             }
+            // C
+            if ( theta->fC == MF_TRUE )
+            {
+                for (j = 0; j < u.dim; j++)
+                {
+                    dx += theta->C[i + x.dim*j] * u.arr[j];
+                }
+            }         
         break;
         case ( 'c' ):
+
+            k = x.dim * i;
+            // A
+            if ( theta->fA == MF_TRUE )
+            {
+                for (j = 0; j < x.dim; j++)
+                {
+                    dx += theta->A[k + j] * x.arr[o + j];
+                }
+            }
             // B
             if (theta->fB == MF_TRUE )
             {
@@ -134,36 +117,7 @@ __device__ double dcm_db(dbuff x, dbuff y, dbuff u, void *p_theta,
                     dx += bt*u.arr[j];
                 }
             }
-        break;
-    }
-    return dx;
-}
-
-__device__ double dcm_dc(dbuff x, dbuff y, dbuff u, void *p_theta,
-     void *p_ptheta, int i)
-{
-    double dx=0;
-    int j;
-    int k;
-
-
-    ThetaDCM *theta = (ThetaDCM *) p_theta;
-    PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
-
-
-    switch ( ptheta->mode )
-    {
-        case ( 'f' ):
             // C
-            if ( theta->fC == MF_TRUE )
-            {
-                for (j = 0; j < u.dim; j++)
-                {
-                    dx += theta->C[i + x.dim*j] * u.arr[j];
-                }
-            }         
-        break;
-        case ( 'c' ):
             k = i*u.dim;
             if ( theta->fC == MF_TRUE )
             {
@@ -177,6 +131,7 @@ __device__ double dcm_dc(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     return dx;
 }
+
 __device__ double dcm_ds(dbuff x, dbuff y, dbuff u, void *p_theta,
     void *p_ptheta, int i)
 {
@@ -213,48 +168,35 @@ __device__ double dcm_dv(dbuff x, dbuff y, dbuff u, void *p_theta,
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     //PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
 
-    dv = exp(x.arr[INDEX_F * x.dim + i] - x.arr[INDEX_V * x.dim + i] - 
-            theta->tau[i]) -
-        exp(x.arr[INDEX_V * x.dim + i] * theta->alpha - theta->tau[i]);
+    dv = exp(x.arr[INDEX_F * x.dim + i] - x.arr[INDEX_V * x.dim + i]) -
+        exp(x.arr[INDEX_V * x.dim + i] * theta->alpha);
 
-    return dv;
+    return dv/exp(theta->tau[i]);
 }
 
 __device__ double dcm_dq(dbuff x, dbuff y, dbuff u, void *p_theta, 
     void *p_ptheta, int i)
 {
     double dq = 0;
-    double df = exp(-x.arr[INDEX_F * x.dim + i]);
-
-    ThetaDCM *theta = (ThetaDCM *) p_theta;
-    
-    dq = - exp(x.arr[INDEX_F * x.dim + i] + theta->ln1_E0*df -
-            x.arr[INDEX_Q * x.dim + i] - theta->lnE0);
-
-    return dq;
-}
-
-__device__ double dcm_dq1(dbuff x, dbuff y, dbuff u, void *p_theta, 
-    void *p_ptheta, int i)
-{
-    double dq;
+    double f = exp(x.arr[INDEX_F * x.dim + i]);
+    double v;
     double lnE0; 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
-
+    
+    v = exp(x.arr[INDEX_V * x.dim + i] * theta->alpha);
     lnE0 = theta->lnE0;
 
     //    PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
 
     dq = exp(x.arr[INDEX_F * x.dim + i] - x.arr[INDEX_Q * x.dim + i] - lnE0) -
-        exp(x.arr[INDEX_V * x.dim + i] * theta->alpha);
+        (exp(x.arr[INDEX_F * x.dim + i] + theta->ln1_E0/f - 
+            x.arr[INDEX_Q * x.dim + i] - lnE0))  -  v;
 
     return dq;
 }
 
-
-
-__device__ double dcm_lk1(dbuff x, dbuff y, dbuff u, void *p_theta, 
-    void *p_ptheta, int i)
+__device__ double dcm_lk1(dbuff x, dbuff y, dbuff u, void *p_theta,
+            void *p_ptheta, int i)
 {
     double l;
     double q = exp(x.arr[INDEX_Q * x.dim + i]);
@@ -267,8 +209,9 @@ __device__ double dcm_lk1(dbuff x, dbuff y, dbuff u, void *p_theta,
     return l;
 }
 
-__device__ double dcm_lk2(dbuff x, dbuff y, dbuff u, void *p_theta, 
-    void *p_ptheta, int i)
+
+__device__ double dcm_lk2(dbuff x, dbuff y, dbuff u, void *p_theta,
+            void *p_ptheta, int i)
 {
     double l;
     double qv = exp(x.arr[INDEX_Q * x.dim + i] - x.arr[INDEX_V *x.dim + i]);
@@ -277,12 +220,12 @@ __device__ double dcm_lk2(dbuff x, dbuff y, dbuff u, void *p_theta,
     //PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
 
     l = theta->k2 * ( 1 - qv);
-    
+
     return l;
 }
 
-__device__ double dcm_lk3(dbuff x, dbuff y, dbuff u, void *p_theta, 
-    void *p_ptheta, int i)
+__device__ double dcm_lk3(dbuff x, dbuff y, dbuff u, void *p_theta,
+            void *p_ptheta, int i)
 {
     double l;
 
@@ -291,9 +234,34 @@ __device__ double dcm_lk3(dbuff x, dbuff y, dbuff u, void *p_theta,
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     //PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
 
-    l = theta->k3 * ( 1 - v); 
+    l = theta->k3 * ( 1 - v);
     return l;
 }
+
+__device__ void dcm_upy(dbuff ox, dbuff y, dbuff u, void *theta,
+    void *ptheta, dbuff nx)
+{
+    // Network node
+    int j = threadIdx.x%y.dim;
+
+    switch( threadIdx.y )
+    {
+        case INDEX_LK1 :
+            nx.arr[ INDEX_LK1 * nx.dim + j] =
+                dcm_lk1(ox, y, u, theta, ptheta, j);
+            break;
+        case INDEX_LK2:
+            nx.arr[ INDEX_LK2 * nx.dim + j] =
+                dcm_lk2(ox, y, u, theta, ptheta, j);
+            break;
+        case INDEX_LK3 :
+            nx.arr[ INDEX_LK3 * nx.dim + j] =
+                dcm_lk3(ox, y, u, theta, ptheta, j);
+            break;
+    }
+
+}
+
 
 
 __device__ void dcm_upx(dbuff ox, dbuff y, dbuff u, void *p_theta,
@@ -340,42 +308,6 @@ __device__ void dcm_upx(dbuff ox, dbuff y, dbuff u, void *p_theta,
             nx.arr[ INDEX_Q * ox.dim + j] = ox.arr[ INDEX_Q * ox.dim + j] + 
                 ptheta->de * dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
             break;
-        case INDEX_B:
-            nx.arr[ INDEX_B * ox.dim + j] =  
-                ptheta->de * dcm_db(ox, y, u, p_theta, p_ptheta, j); 
-            break;
-        case INDEX_C:
-            nx.arr[ INDEX_C * ox.dim + j] =  
-                ptheta->de * dcm_dc(ox, y, u, p_theta, p_ptheta, j); 
-            break;
-        case INDEX_Q1:
-            ox.arr[ INDEX_B * ox.dim + j] = ptheta->de * 
-                dcm_dq1(ox, y, u, p_theta, p_ptheta, j); 
-            break;
-    }
-
-}
-
-__device__ void dcm_upy(dbuff ox, dbuff y, dbuff u, void *theta,
-     void *ptheta, dbuff nx)
-{
-    // Network node
-    int j = threadIdx.x%y.dim;
-
-    switch( threadIdx.y )
-    {
-        case INDEX_LK1 :
-            nx.arr[ INDEX_LK1 * nx.dim + j] = 
-                dcm_lk1(ox, y, u, theta, ptheta, j);
-            break;
-        case INDEX_LK2:
-            nx.arr[ INDEX_LK2 * nx.dim + j] =  
-                dcm_lk2(ox, y, u, theta, ptheta, j);
-            break;
-        case INDEX_LK3 :
-            nx.arr[ INDEX_LK3 * nx.dim + j] = 
-                dcm_lk3(ox, y, u, theta, ptheta, j);
-            break;
     }
 
 }
@@ -385,7 +317,6 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
 {
     int i;
     int j = threadIdx.x%y.dim;
-
     double *t;
     // Number of integration steps done between each data point
     int ss, dy;
@@ -399,6 +330,7 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
     dbuff ty;
     dbuff tu;
 
+
     ox.dim = y.dim;
     nx.dim = y.dim;
 
@@ -410,6 +342,7 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
     //if ( threadIdx.x < maxx )
     //    ox.arr[threadIdx.y + DIM_X * threadIdx.x%y.dim] = 0;
 
+    __syncthreads();
     ty.dim = y.dim;
     tu.dim = u.dim;
 
@@ -422,41 +355,27 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     for (i=0; i < dp*ss; i++)
     {
-
         if ( threadIdx.x < maxx )
             dcm_upx(ox, ty, tu, p_theta, p_ptheta, nx);
         __syncthreads();
-        if ( threadIdx.y == 0 )
-            nx.arr[INDEX_X * ox.dim + j] += nx.arr[ INDEX_B * ox.dim + j];
-        if ( threadIdx.y == 1 )
-            nx.arr[INDEX_Q * ox.dim + j] += ox.arr[ INDEX_B * ox.dim + j];
-        __syncthreads();
-        if ( threadIdx.y == 0 )
-            nx.arr[INDEX_X * ox.dim + j] += nx.arr[ INDEX_C * ox.dim + j];
-        __syncthreads();
-
-
         // Only sample every 1/ptheta->dt times
         if ( i%ss == 0 )
         {
             if ( i%dy == 0 ) 
-            {
+           {
                 if ( threadIdx.x < maxx )
-                {
-                    dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);
-                }
+                    dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
                 __syncthreads();
                 if ( threadIdx.y == 0 )
                     ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
                         ox.arr[ INDEX_LK2 * ox.dim + j] +
                         ox.arr[ INDEX_LK3 * ox.dim + j];
-                __syncthreads();
-
                 ty.arr += y.dim; 
             }
             if ( i > 0 )
                 tu.arr += u.dim;
         }
+        __syncthreads();
         // Swap the pointers
         t = ox.arr;
         ox.arr = nx.arr;
@@ -541,7 +460,7 @@ __host__ void ldcm_fmri(double *x, double *y, double *u,
 {
 
     dim3 gthreads(NUM_THREADS, DIM_X);
-    dim3 gblocks(4, 1);
+    dim3 gblocks(8, 1);
 
     kdcm_fmri<<<gblocks, gthreads>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
