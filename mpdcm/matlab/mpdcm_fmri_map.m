@@ -104,7 +104,8 @@ for j = 1:10
     for k = 1:numel(u)
         ty = ny{k};
         e{k} = y{k}' - ty;
-        e{k} = [e{k}(:); ptheta.p.theta.mu - op{k}];
+        % There might be subject dependent priors
+        e{k} = [e{k}(:); ptheta.p.theta.mu(:, min(k, size(mu, 2))) - op{k}];
     end
 
     lambda = lambda0.*v.^reg;

@@ -55,18 +55,18 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
 
     tptheta = ptheta;
     tptheta.p.theta = struct('mu', [], 'pi', []);
-    tptheta.p.theta.mu = q.eta.mu;
+    tptheta.p.theta.mu = (ptheta.p.x * q.eta.mu')';
 
     % Non spheric covariance matrix
 
     tptheta.p.theta.pi = ...
         blkdiag(...
-        q.rho.a(1)/q.rho.b(1)*ptheta.h.theta.pi(1:end-nr*2-1,1:end-nr*2-1),...
-        q.rho.a(2)/q.rho.b(2)*ptheta.h.theta.pi(end-nr*2:end,end-nr*2:end));
+        q.rho.b(1)/q.rho.a(1)*ptheta.h.theta.pi(1:end-nr*2-1,1:end-nr*2-1),...
+        q.rho.b(2)/q.rho.a(2)*ptheta.h.theta.pi(end-nr*2:end,end-nr*2:end));
 
     %% Conditional MAP estimator
 
-    tptheta.p.theta.mu = cat(1, tptheta.p.theta.mu, zeros(nr, 1));
+    tptheta.p.theta.mu = cat(1, tptheta.p.theta.mu, zeros(nr, nt));
     tptheta.p.theta.pi = blkdiag(tptheta.p.theta.pi, eye(nr));
 
     [mu, ny, dfdx] = mpdcm_fmri_map(y, u, theta, tptheta);
@@ -108,66 +108,56 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
     end
 end
 
-function [q] = update_q_rho(q, y, u, theta, ptheta)
+
+function [q] = update_q_eta_rho(q, y, u, theta, ptheta)
+
 
     nt = numel(theta);
     nr = numel(theta{1}.dim_x);
     np = numel(ptheta.p.eta.mu);
 
-    rho1 = np-(nr*2+1);
-    rho2 = nr*2+1;
+    n = np-(nr*2+1);
+    m = nr*2+1;
 
-    q.rho.a = 0.5 * nt * [rho1; rho2] + ptheta.p.rho.a - 1;
-    q.rho.b = ptheta.p.rho.b; 
+    p = ptheta.p;
 
-    p1 = ptheta.h.theta.pi(1:rho1, 1:rho1); 
-    p2 = ptheta.h.theta.pi(rho1+1:end, rho1+1:end);
+    % Big theta
+    btheta = cell2mat({q.theta.mu})';
+
+    % MLE
+    eta = (p.kx)\p.x'T*btheta;
+    % MAP
+    eta = (p.eta.pi + p.kx)\(p.eta.pi*p.eta.mu + p.kx*eta);
+
+    q.eta.mu = eta;
+    q.eta.d = (p.eta.pi + p.kx);
+
+    q.rho.a = 0.5 * nt * [n; m] + p.rho.a - 1;
+ 
+    p1 = ptheta.h.theta.pi(1:n, 1:n);
+    p2 = ptheta.h.theta.pi(n+1:end, n+1:end);
+
+    q.rho.b = p.rho.b;
+
+    phi = btheta^T * btheta - (eta' * p.kx * eta)';
 
     for i = 1:nt
-        e = q.theta(i).mu - q.eta.mu;
-        e1 = e(1:rho1);
-        e2 = e(rho1+1:end);
-        q.rho.b = q.rho.b + 0.5 * [e1'*p1*e1; e2'*p2*e2];
-        tm = q.theta(i).pi\ptheta.h.theta.pi;
-        q.rho.b(1) + q.rho.b(1) + 0.5 * sum(diag(tm(1:rho1, 1:rho1)));
-        q.rho.b(2) + q.rho.b(2) + 0.5 * sum(diag(tm(rho1+1:end, rho1+1:end)));
+       phi = phi + inv(q.theta(i).pi);
     end
+    phi = ptheta.h.theta.pi * phi;
+    phi = diag(phi);
 
-    % The expectation of q(eta) enters as uncertainty in the trace of its
-    % variance
-    tm = q.eta.pi\ptheta.h.theta.pi;
-    tm = [sum(diag(tm(1:rho1, 1:rho1))); sum(diag(tm(rho1+1:end, rho1+1:end)))];
-    q.rho.b = q.rho.b + 0.5*nt*tm; 
+    q.rho.b = p.rho.b + 0.5 [sum(phi(1:n)); sum(phi(n+1:end))];
+end
+
+% The expectation of q(eta) enters as uncertainty in the trace of its
+% variance
+tm = q.eta.pi\ptheta.h.theta.pi;
+tm = [sum(diag(tm(1:rho1, 1:rho1))); sum(diag(tm(rho1+1:end, rho1+1:end)))];
+q.rho.b = q.rho.b + 0.5*nt*tm;
 
 end
 
-
-function [q] = update_q_eta(q, y, u, theta, ptheta)
-
-    nt = numel(theta);
-    nr = theta{1}.dim_x;
-
-    q.eta.mu = 0*q.eta.mu;
-
-    % Use E[p(theta_i|mu)]_{q(theta_i)}
-
-    for i = 1:nt
-        q.eta.mu = q.eta.mu + q.theta(i).mu;
-    end
-
-    q.eta.mu = q.eta.mu/nt;
-
-    % Weight by the expected uncertainty
-    erho = nt*blkdiag(...
-        q.rho.a(1)/q.rho.b(1)*ptheta.h.theta.pi(1:end-nr*2-1,1:end-nr*2-1),...
-        q.rho.a(2)/q.rho.b(2)*ptheta.h.theta.pi(end-nr*2:end, end-nr*2:end));
-         
-    %erho = nt*q.rho.a/q.rho.b * ptheta.h.theta.pi;
-
-    q.eta.mu = erho * q.eta.mu + ptheta.p.eta.pi * ptheta.p.eta.mu;
-    q.eta.pi = erho + ptheta.p.eta.pi;
-
-    q.eta.mu = q.eta.pi\q.eta.mu;
 
 end
 
@@ -234,7 +224,8 @@ function [q, theta, ptheta] = initilize_parameters(theta, ptheta)
     % something like 10^2 
 
     h.theta = struct('pi', []);
-    h.theta.pi = p.eta.pi;eye(np-nr);diag([ones(np-nr*3-1, 1) ; 1e-3*ones(2*nr, 1) ; 1]); 
+    h.theta.pi = p.eta.pi;
+
     ptheta.p = p;
     ptheta.h = h;
 
