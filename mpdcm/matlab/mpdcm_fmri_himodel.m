@@ -1,4 +1,4 @@
-function [q] = mpdcm_fmri_himodel(dcm, pars)
+function [q] = mpdcm_fmri_himodel(dcm, optheta, pars)
 %% Model inversion of a hierarchical model 
 % 
 % Input:
@@ -15,19 +15,18 @@ function [q] = mpdcm_fmri_himodel(dcm, pars)
 % copyright (C) 2014
 %
 
-    if nargin < 2
+    if nargin < 3
         pars = struct();
     end
 
     pars = config_pars(pars);
 
     [y, u, theta, ptheta] = mpdcm_fmri_tinput(dcm);
-    [q, theta, ptheta] = initilize_parameters(theta, ptheta);
+    [q, theta, ptheta] = initilize_parameters(u, theta, ptheta, optheta);
 
     for i = 1:pars.niter
         [q] = update_first_level(q, y, u, theta, ptheta);
-        [q] = update_q_eta(q, y, u, theta, ptheta);
-        [q] = update_q_rho(q, y, u, theta, ptheta);
+        [q] = update_second_level(q, y, u, theta, ptheta);
     end
 
 end
@@ -36,7 +35,7 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
 % Update theta
 
     nt = numel(theta);
-    np = numel(ptheta.p.eta.mu);
+    np = size(ptheta.p.eta.mu, 1);
     nr = theta{1}.dim_x;
     ns = numel(y{1})/nr;
 
@@ -61,8 +60,8 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
 
     tptheta.p.theta.pi = ...
         blkdiag(...
-        q.rho.b(1)/q.rho.a(1)*ptheta.h.theta.pi(1:end-nr*2-1,1:end-nr*2-1),...
-        q.rho.b(2)/q.rho.a(2)*ptheta.h.theta.pi(end-nr*2:end,end-nr*2:end));
+        (q.rho.a(1)/q.rho.b(1))*ptheta.h.theta.pi(1:end-nr*2-1,1:end-nr*2-1),...
+        (q.rho.a(2)/q.rho.b(2))*ptheta.h.theta.pi(end-nr*2:end,end-nr*2:end));
 
     %% Conditional MAP estimator
 
@@ -99,22 +98,17 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
         for k = 1:nr
             h = dfdx{1}(:, k, :);
             h = squeeze(h);
-            %h = 0.5*h'*h;
-            %nh = norm(h);
-            %h = h/nh;
-            % COmpute the trace in a solid way
             q.lambda(j).b(k) = 0.5*e(:,k)'*e(:,k) + ...
                0.5*trace(q.theta(j).pi\(h'*h)) + ptheta.p.lambda(j).b(k);                end
     end
 end
 
 
-function [q] = update_q_eta_rho(q, y, u, theta, ptheta)
-
+function [q] = update_second_level(q, y, u, theta, ptheta)
 
     nt = numel(theta);
-    nr = numel(theta{1}.dim_x);
-    np = numel(ptheta.p.eta.mu);
+    nr = theta{1}.dim_x;
+    np = size(ptheta.p.eta.mu, 1);
 
     n = np-(nr*2+1);
     m = nr*2+1;
@@ -124,13 +118,14 @@ function [q] = update_q_eta_rho(q, y, u, theta, ptheta)
     % Big theta
     btheta = cell2mat({q.theta.mu})';
 
-    % MLE
-    eta = (p.kx)\p.x'T*btheta;
+    % MLE 
+    % We don't need to solve any linear system here
+    eta = p.x'*btheta; % p.kx\(p.x'*btheta)
     % MAP
-    eta = (p.eta.pi + p.kx)\(p.eta.pi*p.eta.mu + p.kx*eta);
+    eta = (p.eta.d + p.kx)\(p.eta.d*p.eta.mu' + eta);
 
-    q.eta.mu = eta;
-    q.eta.d = (p.eta.pi + p.kx);
+    q.eta.mu = eta';
+    q.eta.d = (p.eta.d + p.kx);
 
     q.rho.a = 0.5 * nt * [n; m] + p.rho.a - 1;
  
@@ -139,35 +134,26 @@ function [q] = update_q_eta_rho(q, y, u, theta, ptheta)
 
     q.rho.b = p.rho.b;
 
-    phi = btheta^T * btheta - (eta' * p.kx * eta)';
+    phi = btheta' * btheta - (eta' * p.kx * eta)';
 
     for i = 1:nt
-       phi = phi + inv(q.theta(i).pi);
+        phi = phi + inv(q.theta(i).pi);
     end
     phi = ptheta.h.theta.pi * phi;
     phi = diag(phi);
 
-    q.rho.b = p.rho.b + 0.5 [sum(phi(1:n)); sum(phi(n+1:end))];
-end
-
-% The expectation of q(eta) enters as uncertainty in the trace of its
-% variance
-tm = q.eta.pi\ptheta.h.theta.pi;
-tm = [sum(diag(tm(1:rho1, 1:rho1))); sum(diag(tm(rho1+1:end, rho1+1:end)))];
-q.rho.b = q.rho.b + 0.5*nt*tm;
+    q.rho.b = p.rho.b + 0.5 * [sum(phi(1:n)); sum(phi(n+1:end))];
 
 end
 
-
-end
-
-function [q, theta, ptheta] = initilize_parameters(theta, ptheta)
+function [q, theta, ptheta] = initilize_parameters(u, theta, ptheta, optheta)
 %% Initilizes the parameters with the required fields
 
-
+    nu = size(u{1}, 2);
     nt = numel(theta);
     nr = theta{1}.dim_x;
     np = numel(ptheta.p.theta.mu);
+    nx = size(optheta.x, 2);
 
     p = struct('lambda', [], 'theta', [], 'rho', [],'eta', []);
     p.lambda = struct('a', cell(nt, 1), 'b', []);
@@ -175,13 +161,19 @@ function [q, theta, ptheta] = initilize_parameters(theta, ptheta)
     p.rho = struct('a', [], 'b', []);
     p.eta = struct('mu', [], 'pi', [], 'chol_pi', [], 'sigma', []);
 
-    p.rho.a = 2*ones(2, 1);
+    p.rho.a = nr*np*nu/3*ones(2, 1);
     p.rho.b = 2*ones(2, 1);
 
-    p.eta.mu = ptheta.p.theta.mu(1:end-nr);
+    p.eta.mu = [ptheta.p.theta.mu(1:end-nr) zeros(np-nr, nx-1)];
+    p.eta.d = eye(nx);
     p.eta.pi = ptheta.p.theta.pi(1:end-nr, 1:end-nr);
     p.eta.chol_pi = ptheta.p.theta.chol_pi;
     p.eta.sigma = ptheta.p.theta.sigma;
+   
+    % Set regressor matrix
+
+    p.x = optheta.x;
+    p.kx = p.x'*p.x;
 
     % Moment generating function of a gaussian, equivalent to the mean and the
     % second moment of a log normal
@@ -209,8 +201,10 @@ function [q, theta, ptheta] = initilize_parameters(theta, ptheta)
     q.rho.a = nt*ones(2, 1);
     q.rho.b = nt*ones(2, 1);
 
+    pmu = p.eta.mu * p.x';
+
     for i = 1:nt
-        q.theta(i).mu = p.eta.mu;
+        q.theta(i).mu = pmu(:, i); 
         q.theta(i).pi = p.eta.pi;
         q.theta(i).chol_pi = p.eta.chol_pi;
         q.theta(i).sigma = p.eta.sigma;
@@ -225,6 +219,8 @@ function [q, theta, ptheta] = initilize_parameters(theta, ptheta)
 
     h.theta = struct('pi', []);
     h.theta.pi = p.eta.pi;
+
+    % Set the regressor matrix
 
     ptheta.p = p;
     ptheta.h = h;

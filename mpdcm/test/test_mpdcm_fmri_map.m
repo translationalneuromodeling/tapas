@@ -32,5 +32,15 @@ for i = 1:5
     end
 end
 
+try
+    [y, u, theta, ptheta] = mpdcm_fmri_tinput(d);
+    mpdcm_fmri_map(y, u, theta, ptheta);
+    fprintf(fp, '       Passed\n');
+catch err
+    fprintf(fp, '   Not passed at line %d\n', err.stack(end).line);
+    display(getReport(err, 'extended'));
+end
+
+
 end
 
