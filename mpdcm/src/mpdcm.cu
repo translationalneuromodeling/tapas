@@ -308,7 +308,7 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     for (i=0; i < dp*ss; i++)
     {
-        //if ( threadIdx.x < maxx )
+        if ( threadIdx.x < maxx )
             dcm_upx_euler(ox, ty, tu, p_theta, p_ptheta, nx);
         __syncthreads();
         // Only sample every 1/ptheta->dt times
