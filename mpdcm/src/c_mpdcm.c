@@ -193,7 +193,7 @@ void c_mpdcm_fmri_euler(mxArray **y, const mxArray **u,
     void **ctheta, **cptheta;
  
     c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
-        &mpdcm_fmri_kr4);
+        &mpdcm_fmri_euler);
 }
 
 void c_mpdcm_fmri_kr4(mxArray **y, const mxArray **u,

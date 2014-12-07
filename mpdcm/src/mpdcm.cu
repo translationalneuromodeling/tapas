@@ -40,7 +40,7 @@
 #define KRW3 0.33333333333
 #define KRW4 0.16666666666
 
-__device__ void dcm_upx_kutta4(dbuff ox, dbuff y, dbuff u, void *p_theta,
+__device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
      void *p_ptheta, dbuff nx);
 
 
@@ -265,8 +265,8 @@ __device__ void dcm_upx_euler(dbuff ox, dbuff y, dbuff u, void *p_theta,
 
 }
 
-__device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
-    void *p_ptheta, int dp, fupx upx)
+__device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
+    void *p_ptheta, int dp)
 {
     int i;
     int j = threadIdx.x%y.dim;
@@ -309,7 +309,7 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
     for (i=0; i < dp*ss; i++)
     {
         //if ( threadIdx.x < maxx )
-            upx(ox, ty, tu, p_theta, p_ptheta, nx);
+            dcm_upx_euler(ox, ty, tu, p_theta, p_ptheta, nx);
         __syncthreads();
         // Only sample every 1/ptheta->dt times
         if ( i%ss == 0 )
@@ -335,6 +335,75 @@ __device__ void dcm_int(dbuff x, dbuff y, dbuff u, void *p_theta,
     }
 }
 
+__device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
+    void *p_ptheta, int dp)
+{
+    int i;
+    int j = threadIdx.x%y.dim;
+    double *t;
+    // Number of integration steps done between each data point
+    int ss, dy;
+    // Point where threads are not synchronized to anything
+    int maxx = y.dim * (blockDim.x/y.dim);
+
+    PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
+    dbuff ox;
+    dbuff nx;
+
+    dbuff ty;
+    dbuff tu;
+
+
+    ox.dim = y.dim;
+    nx.dim = y.dim;
+
+    ox.arr = x.arr; 
+    nx.arr = ox.arr + nx.dim * DIM_X;
+
+    if ( threadIdx.x < maxx )
+        memset(x.arr, 0, nx.dim * DIM_X * sizeof(double));
+    //if ( threadIdx.x < maxx )
+    //    ox.arr[threadIdx.y + DIM_X * threadIdx.x%y.dim] = 0;
+
+    __syncthreads();
+    ty.dim = y.dim;
+    tu.dim = u.dim;
+
+    // How many samples are gonna be taken
+    ss = ceil(1.0/ptheta->dt);
+    dy = ceil(1.0/(ptheta->dt * ptheta->dyu));
+
+    ty.arr = y.arr; 
+    tu.arr = u.arr;
+
+    for (i=0; i < dp*ss; i++)
+    {
+        //if ( threadIdx.x < maxx )
+            dcm_upx_kr4(ox, ty, tu, p_theta, p_ptheta, nx);
+        __syncthreads();
+        // Only sample every 1/ptheta->dt times
+        if ( i%ss == 0 )
+        {
+            if ( i%dy == 0 ) 
+           {
+                if ( threadIdx.x < maxx )
+                    dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
+                __syncthreads();
+                if ( threadIdx.x < maxx && threadIdx.y == 0 )
+                    ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
+                        ox.arr[ INDEX_LK2 * ox.dim + j] +
+                        ox.arr[ INDEX_LK3 * ox.dim + j];
+                ty.arr += y.dim; 
+            }
+            if ( i > 0 )
+                tu.arr += u.dim;
+        }
+        // Swap the pointers
+        t = ox.arr;
+        ox.arr = nx.arr;
+        nx.arr = t;
+    }
+}
 
 // ==========================================================================
 // Kernel code
@@ -407,8 +476,7 @@ __global__ void kdcm_fmri_euler(double *x, double *y, double *u,
         tx.arr = sx + PRELOC_SIZE_X_EULER * DIM_X * nx * (threadIdx.x/nx);
 
         ty.arr = y + i * nx * ny;
-        dcm_int(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp, 
-                &dcm_upx_euler);
+        dcm_int_euler(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp);
         i += gridDim.x * (blockDim.x / nx );        
     }
 }
@@ -480,8 +548,7 @@ __global__ void kdcm_fmri_kr4(double *x, double *y, double *u,
         tx.arr = sx + PRELOC_SIZE_X_KR4 * DIM_X * nx * (threadIdx.x/nx);
 
         ty.arr = y + i * nx * ny;
-        dcm_int(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp, 
-            &dcm_upx_kutta4);
+        dcm_int_kr4(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp);
         i += gridDim.x * (blockDim.x / nx );        
     }
 }
@@ -674,7 +741,7 @@ int mpdcm_fmri_kr4( double *x, double *y, double *u,
 // =======================================================================
 
 
-__device__ void dcm_upx_kutta4(dbuff ox, dbuff y, dbuff u, void *p_theta,
+__device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
      void *p_ptheta, dbuff nx)
 {
 
