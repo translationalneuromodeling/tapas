@@ -32,6 +32,12 @@
 
 typedef enum { MF_TRUE, MF_FALSE } MatFlag;
 
+typedef struct
+{
+    int dim;
+    double *arr;
+} dbuff;
+
 /*  Degrees of freedom */
 typedef struct
 {
@@ -75,12 +81,70 @@ typedef struct
 } PThetaDCM;
 
 
+/* Type def for the integrators. */
+typedef int (*integrator)(double *, double *, double *, void *, double *,
+            void *, double *, int, int, int, int, int, int);
+
+/* Kernel launchers */
+
+typedef void (*klauncher)(double *, double *, double *, void *, double *, 
+    void *, double *, int, int, int, int, int, int);
+
+/* Update of x */
+
+typedef void (*fupx)(dbuff, dbuff, dbuff, void *, void *, dbuff);
+
+//BDDM_EXTERN
+//int mpdcm_fmri( double *x, double *y, double *u, 
+//    void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
+//    int nx, int ny, int nu, int dp, int nt, int nb, klauncher lch);
+    /* 
+    Integrate DCM using a parallel architecture. 
+    x -- States. Will not be used explicitely.
+    y -- Observables. Output will be stored here.
+    u -- Input. Input to the process.
+    theta -- Parameters
+    d_theta -- Data of the parameters of variable size
+    ptheta -- Priors and fixed values
+    d_ptheta -- Data of the prior of variable size
+    nx -- Dimensions of x
+    nu -- Dimensions of u
+    ny -- Dimensions of y
+    dp -- Number of data points
+    nt -- Size of theta second dimension
+    nb -- Size of theta first dimension 
+    */
+
 BDDM_EXTERN
-int mpdcm_fmri( double *x, double *y, double *u, 
+int mpdcm_fmri_euler( double *x, double *y, double *u, 
     void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb);
     /* 
-    Integrate DCM using a parallel architecture. 
+    Integrate DCM using a parallel architecture with the euler method.
+
+    x -- States. Will not be used explicitely.
+    y -- Observables. Output will be stored here.
+    u -- Input. Input to the process.
+    theta -- Parameters
+    d_theta -- Data of the parameters of variable size
+    ptheta -- Priors and fixed values
+    d_ptheta -- Data of the prior of variable size
+    nx -- Dimensions of x
+    nu -- Dimensions of u
+    ny -- Dimensions of y
+    dp -- Number of data points
+    nt -- Size of theta second dimension
+    nb -- Size of theta first dimension 
+    */
+
+BDDM_EXTERN
+int mpdcm_fmri_kr4( double *x, double *y, double *u, 
+    void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
+    int nx, int ny, int nu, int dp, int nt, int nb);
+    /* 
+    Integrate DCM using a parallel architecture, with a kutta runga of 4th 
+    order. 
+
     x -- States. Will not be used explicitely.
     y -- Observables. Output will be stored here.
     u -- Input. Input to the process.

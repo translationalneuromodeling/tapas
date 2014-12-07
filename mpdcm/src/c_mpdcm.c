@@ -6,7 +6,8 @@
 
 #define DIM_X 5
 
-void mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, double *dtheta)
+void c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, 
+    double *dtheta)
 {
 
     int o=0, i, j;
@@ -61,7 +62,8 @@ void mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, double *dtheta)
 
 }
 
-void mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, double *dptheta)
+void c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, 
+    double *dptheta)
 {
 
     PThetaDCM *cptheta = (PThetaDCM *) vptheta;
@@ -71,7 +73,7 @@ void mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, double *dptheta)
     cptheta->mode = 'f';
 }
 
-void mpdcm_prepare_u(const mxArray *u, double *cu)
+void c_mpdcm_prepare_u(const mxArray *u, double *cu)
 {
     const mwSize *su = mxGetDimensions( u );
 
@@ -79,9 +81,9 @@ void mpdcm_prepare_u(const mxArray *u, double *cu)
 
 }
 
-void mpdcm_prepare_input(
+void c_mpdcm_prepare_input(
     mxArray **y, const mxArray *u, const mxArray *theta, const mxArray *ptheta,
-    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
+    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb, integrator integ)
     /* Prepares the data in the format necessary to interface with the
     cuda library. */
 {
@@ -146,20 +148,20 @@ void mpdcm_prepare_input(
     {
         if ( i/nt[0] < 1 )
         {
-            mpdcm_prepare_u(mxGetCell(u, i), cu + i * nu[0] * dp[0]);
+            c_mpdcm_prepare_u(mxGetCell(u, i), cu + i * nu[0] * dp[0]);
         }
 
-        mpdcm_prepare_theta(mxGetCell(theta, i), ctheta + i, dtheta + i*o);
+        c_mpdcm_prepare_theta(mxGetCell(theta, i), ctheta + i, dtheta + i*o);
     }
 
-    mpdcm_prepare_ptheta(ptheta, cptheta, dptheta);
+    c_mpdcm_prepare_ptheta(ptheta, cptheta, dptheta);
 
     /* run the function */
 
     /*printf("nx: %d, ny:%d, nu:%d, dp:%d, nt:%d, nb:%d", 
             *nx, *ny, *nu, *dp, *nt, *nb);*/
 
-    mpdcm_fmri(cx, cy, cu, ctheta, dtheta, cptheta, dptheta,
+    (*integ)(cx, cy, cu, ctheta, dtheta, cptheta, dptheta,
         *nx, *ny, *nu, *dp, *nt, *nb);
 
     *y = mxCreateCellMatrix(*nt, *nb);
@@ -182,15 +184,26 @@ void mpdcm_prepare_input(
 
 }
 
-void mpdcm_fmri_int(mxArray **y, const mxArray **u,
+void c_mpdcm_fmri_euler(mxArray **y, const mxArray **u,
     const mxArray **theta, const mxArray **ptheta,
     int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
 {
     int i;
     double **cu, **dtheta, **dptheta;
     void **ctheta, **cptheta;
+ 
+    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
+        &mpdcm_fmri_kr4);
+}
 
-    
-    mpdcm_prepare_input(y, *u, *theta, *ptheta,
-        nx, ny, nu, dp, nt, nb);
+void c_mpdcm_fmri_kr4(mxArray **y, const mxArray **u,
+    const mxArray **theta, const mxArray **ptheta,
+    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
+{
+    int i;
+    double **cu, **dtheta, **dptheta;
+    void **ctheta, **cptheta;
+ 
+    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
+        &mpdcm_fmri_kr4);
 }

@@ -17,16 +17,20 @@ fname = regexprep(fname, 'test_', '');
 
 fprintf(fp, '================\n Test %s\n================\n', fname);
 
-test_mpdcm_fmri_int_memory(fp)
-test_mpdcm_fmri_int_correctness(fp);
+test_mpdcm_fmri_int_memory(fp, 'euler')
+test_mpdcm_fmri_int_correctness(fp, 'euler');
+
+test_mpdcm_fmri_int_memory(fp, 'kr4');
+test_mpdcm_fmri_int_correctness(fp, 'kr4');
 
 end
 
-
-function test_mpdcm_fmri_int_memory(fp)
+function test_mpdcm_fmri_int_memory(fp, integ)
 %% Checks whether there is any segmentation error in a kamikaze way
 
 [u0, theta0, ptheta] = standard_values(8, 8);
+
+ptheta.integ = integ;
 
 u = {u0};
 theta = {theta0};
@@ -96,6 +100,8 @@ end
 % Test different dimensionality for u!
 
 [u0, theta0, ptheta] = standard_values(8, 3);
+
+ptheta.integ = integ;
 
 try
     u = cell(2, 1);
@@ -172,7 +178,7 @@ theta0.k3 = 1 - epsilon;
 
 theta = {theta0};
 
-ptheta = struct('dt', 1.0, 'dyu', 0.125);
+ptheta = struct('dt', 1.0, 'dyu', 0.125, 'integ', integ);
 
 try
     u = cell(2, 1);
@@ -188,8 +194,10 @@ end
 
 end
 
-function test_mpdcm_fmri_int_correctness(fp)
+function test_mpdcm_fmri_int_correctness(fp, integ)
 %% Test the correctness of the implementation against spm
+
+tol = 2e-1;
 
 d =  test_mpdcm_fmri_load_td();
 
@@ -199,7 +207,7 @@ theta0 = struct('A', [], 'B', [], 'C', [], ...
     'alpha', [], 'gamma', [], 'dim_x', [], 'dim_u', [], ...
     'fA', 1, 'fB', 1, 'fC', 1 );
 
-ptheta = struct('dt', 1.0, 'dyu', []);
+ptheta = struct('dt', 1.0, 'dyu', [], 'integ', integ);
 
 % Parametrization from spm8
 
@@ -265,6 +273,7 @@ end
 for i = 1:5
     dcm = d{i};
     [y, u, theta, ptheta] = mpdcm_fmri_tinput({dcm});
+    ptheta.integ = integ;
     theta{1}.A = dcm.A;
     theta{1}.B = cell(1, size(dcm.B,3));
     for j = 1:size(dcm.B, 3)
@@ -274,7 +283,7 @@ for i = 1:5
     theta{1}.K(:) = 0;
     theta{1}.tau(:) = 0;
     ny = mpdcm_fmri_int(u, theta, ptheta);
-    if all(abs(d{i}.y - ny{1}) < 0.2)
+    if all(abs(d{i}.y - ny{1}) < tol)
         fprintf(fp, '    Passed\n')
     else
         td = dbstack();
@@ -284,6 +293,8 @@ for i = 1:5
 end
 
 [y, u, theta, ptheta] = mpdcm_fmri_tinput(d);
+
+ptheta.integ = integ;
 
 for i = 1:5
     dcm = d{i};
@@ -299,7 +310,7 @@ end
 ny = mpdcm_fmri_int(u, theta, ptheta);
 
 for i = 1:5
-    if all(abs(d{i}.y - ny{i}) < 0.2)
+    if all(abs(d{i}.y - ny{i}) < tol)
         fprintf(fp, '    Passed\n')
     else
         td = dbstack();
@@ -307,8 +318,6 @@ for i = 1:5
     end
 
 end
-
-
 
 end
 

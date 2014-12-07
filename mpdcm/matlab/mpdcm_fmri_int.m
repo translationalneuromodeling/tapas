@@ -30,6 +30,20 @@ if ~sloppy
     mpdcm_fmri_int_check_input(u, theta, ptheta);  
 end
 
+if isfield(ptheta, 'integ')
+    switch ptheta.integ
+    case 'euler'
+        integ = @(u, theta, ptheta) c_mpdcm_fmri_euler(u, theta, ptheta);
+    case 'kr4'
+        integ = @(u, theta, ptheta) c_mpdcm_fmri_kr4(u, theta, ptheta);
+    otherwise 
+        error('mpdcm:fmri:int:input', ... 
+            'Unknown method for ptheta.int');
+    end
+else
+    integ = @(u, theta, ptheta) c_mpdcm_fmri_euler(u, theta, ptheta); 
+end
+
 for i = 1:numel(theta)
     theta{i}.C = theta{i}.C/16;
     [k1, k2, k3] = mpdcm_fmri_k(theta{i});
@@ -38,7 +52,7 @@ for i = 1:numel(theta)
     theta{i}.k3 = k3;
 end
 
-y = c_mpdcm_fmri_int(u, theta, ptheta);
+y = integ(u, theta, ptheta);
 
 % Downsample
 

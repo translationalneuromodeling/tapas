@@ -52,7 +52,7 @@ LOP1 = -Wl,-rpath-link,/usr/local/MATLAB/R2012b/bin/glnxa64 -L$(BDDM_MATLAB)/bin
 # Compilation 
 # ===========================================================================
 
-all: directories c_mpdcm_fmri_int.mexa64 c_mpdcm_num_devices.mexa64 c_mpdcm_set_device.mexa64 c_mpdcm_get_device.mexa64
+all: directories c_mpdcm_fmri_euler.mexa64 c_mpdcm_fmri_kr4.mexa64 c_mpdcm_num_devices.mexa64 c_mpdcm_set_device.mexa64 c_mpdcm_get_device.mexa64
 
 # directories
 
@@ -63,15 +63,18 @@ $(OUTDIR):
 
 # Link
 
-c_mpdcm_fmri_int.mexa64 : c_mpdcm.o libmpdcm.so c_mpdcm_fmri_int.o 
+c_mpdcm_fmri_euler.mexa64 : c_mpdcm.o libmpdcm.so c_mpdcm_fmri_euler.o 
+c_mpdcm_fmri_kr4.mexa64 : c_mpdcm.o libmpdcm.so c_mpdcm_fmri_kr4.o 
 c_mpdcm_num_devices.mexa64 : c_mpdcm_num_devices.o
 c_mpdcm_get_device.mexa64 : c_mpdcm_get_device.o
 c_mpdcm_set_device.mexa64 : c_mpdcm_set_device.o
 
-
 # Compile mex
 
-c_mpdcm_fmri_int.o : c_mpdcm_fmri_int.c
+c_mpdcm_fmri_euler.o : c_mpdcm_fmri_euler.c
+	$(MATCC) -c $(MATFLAGS) -o $@ $^
+
+c_mpdcm_fmri_kr4.o : c_mpdcm_fmri_kr4.c
 	$(MATCC) -c $(MATFLAGS) -o $@ $^
 
 c_mpdcm_num_devices.o : c_mpdcm_num_devices.c
