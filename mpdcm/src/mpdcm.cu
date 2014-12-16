@@ -76,7 +76,7 @@ __device__ double dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
         // C
         dx += (theta->C[i + x.dim*j] + bt)*u.arr[j];
     }
-    
+
     return dx;
 }
 
@@ -89,7 +89,7 @@ __device__ double dcm_ds(dbuff x, dbuff y, dbuff u, void *p_theta,
     //PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
 
     ds = x.arr[INDEX_X * x.dim + i] - 
-        exp(theta->K[i]) * x.arr[INDEX_S * x.dim + i] -
+        theta->K[i] * x.arr[INDEX_S * x.dim + i] -
         theta->gamma * (exp(x.arr[INDEX_F * x.dim + i]) - 1);
 
     return ds;
@@ -184,6 +184,7 @@ __device__ double dcm_lk3(dbuff x, dbuff y, dbuff u, void *p_theta,
     //PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
 
     l = theta->k3 * ( 1 - v);
+
     return l;
 }
 
@@ -292,8 +293,6 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     if ( threadIdx.x < maxx )
         memset(x.arr, 0, nx.dim * DIM_X * sizeof(double));
-    //if ( threadIdx.x < maxx )
-    //    ox.arr[threadIdx.y + DIM_X * threadIdx.x%y.dim] = 0;
 
     __syncthreads();
     ty.dim = y.dim;
@@ -314,7 +313,7 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
         // Only sample every 1/ptheta->dt times
         if ( i%ss == 0 )
         {
-            if ( i%dy == 0 ) 
+            if ( i%dy == (dy-2) ) 
            {
                 if ( threadIdx.x < maxx )
                     dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
@@ -323,6 +322,8 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
                     ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
                         ox.arr[ INDEX_LK2 * ox.dim + j] +
                         ox.arr[ INDEX_LK3 * ox.dim + j];
+                __syncthreads();
+
                 ty.arr += y.dim; 
             }
             if ( i > 0 )
@@ -362,8 +363,6 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     if ( threadIdx.x < maxx )
         memset(x.arr, 0, nx.dim * DIM_X * sizeof(double));
-    //if ( threadIdx.x < maxx )
-    //    ox.arr[threadIdx.y + DIM_X * threadIdx.x%y.dim] = 0;
 
     __syncthreads();
     ty.dim = y.dim;
@@ -384,8 +383,8 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
         // Only sample every 1/ptheta->dt times
         if ( i%ss == 0 )
         {
-            if ( i%dy == 0 ) 
-           {
+            if ( i%dy == (dy-2) ) 
+            {
                 if ( threadIdx.x < maxx )
                     dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
                 __syncthreads();
@@ -393,7 +392,9 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
                     ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
                         ox.arr[ INDEX_LK2 * ox.dim + j] +
                         ox.arr[ INDEX_LK3 * ox.dim + j];
-                ty.arr += y.dim; 
+                if ( i > 0 )
+                    ty.arr += y.dim;
+               __syncthreads(); 
             }
             if ( i > 0 )
                 tu.arr += u.dim;

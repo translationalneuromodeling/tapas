@@ -51,8 +51,7 @@ void c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta,
     o += i;
 
     i = ctheta->dim_x;
-    memcpy(dtheta + o, mxGetPr(mxGetField(theta, 0, "K")),
-        i * sizeof(double));
+    memcpy(dtheta + o, mxGetPr(mxGetField(theta, 0, "K")), i * sizeof(double));
     o += i;
 
     i = ctheta->dim_x;
