@@ -178,6 +178,9 @@ for i = 1:numel(theta)
     check_matrix(theta, [dx, 1], 'K', i);
     check_matrix(theta, [dx, 1], 'tau', i);
 
+    assert(all(theta{i}.tau > 0), 'mpdcm:fmri:int:input:theta:cell:tau', ...
+        'tau should be strictely possitive');
+
     check_matrix(theta, [1, 1], 'V0', i);
     check_matrix(theta, [1, 1], 'E0', i);
 

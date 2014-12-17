@@ -50,6 +50,7 @@ for i = 1:numel(theta)
     theta{i}.k1 = k1;
     theta{i}.k2 = k2;
     theta{i}.k3 = k3;
+    theta{i}.tau = real(log(theta{i}.tau));
 end
 
 % Integrate
