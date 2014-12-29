@@ -137,10 +137,6 @@ __device__ double dcm_dq(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     //    PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
 
-    //dq = exp(x.arr[INDEX_F * x.dim + i] - x.arr[INDEX_Q * x.dim + i] - lnE0) -
-    //    (exp(x.arr[INDEX_F * x.dim + i] + theta->ln1_E0*f - 
-    //        x.arr[INDEX_Q * x.dim + i] - lnE0))  -  v;
-
     dq = (1 - exp(f * theta->ln1_E0))*exp(x.arr[INDEX_F * x.dim + i] -
         lnE0 - theta->tau[i] -  x.arr[INDEX_Q * x.dim + i]) - v;
 

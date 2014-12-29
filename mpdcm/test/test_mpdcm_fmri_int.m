@@ -215,7 +215,7 @@ P.decay = 0;
 P.transit = 0;
 ep = 1;
 
-kappa = 0.64*exp(P.decay);
+kappa = 0.64;
 gamma = 0.32;
 alpha = 0.32;
 tau = 2*exp(P.transit);
@@ -230,7 +230,6 @@ TE = 0.04;
 k1 = 4.3*nu0*0.4*TE;
 k2 = ep*r0*0.4*TE;
 k3 = 1 - ep;
-
 
 theta = cell(5, 1);
 u = cell(5, 1);
@@ -269,6 +268,12 @@ for i = 1:5
 
 end
 
+dcm = cell(5, 1);
+for i = 1:5
+    dcm{i} = mpdcm_spm_dcm_generate(d{i});
+end
+
+d = dcm;
 
 for i = 1:5
     dcm = d{i};
@@ -280,10 +285,8 @@ for i = 1:5
         theta{1}.B{j} = dcm.B(:, :, j);
     end
     theta{1}.C = dcm.C;
-    theta{1}.K(:) = 0;
-    theta{1}.tau(:) = 0;
     ny = mpdcm_fmri_int(u, theta, ptheta);
-    if all(abs(d{i}.y - ny{1}) < tol)
+    if all(abs(dcm.y - ny{1}) < tol)
         fprintf(fp, '    Passed\n')
     else
         td = dbstack();
@@ -304,8 +307,6 @@ for i = 1:5
         theta{i}.B{j} = dcm.B(:, :, j);
     end
     theta{i}.C = dcm.C;
-    theta{i}.K(:) = 0;
-    theta{i}.tau(:) = 0;
 end
 ny = mpdcm_fmri_int(u, theta, ptheta);
 
@@ -347,9 +348,9 @@ theta.B = B;
 
 theta.C = zeros(dim_x, dim_u);
 
-theta.epsilon = zeros(dim_x, 1);
-theta.K = zeros(dim_x, 1);
-theta.tau = zeros(dim_x, 1);
+theta.epsilon = ones(dim_x, 1);
+theta.K = ones(dim_x, 1);
+theta.tau = ones(dim_x, 1);
 
 ptheta = struct('dt', 1.0, 'dyu', 0.125);
 

@@ -1,6 +1,9 @@
 function [dcm] = mpdcm_fmri_estimate(dcm, pars)
 %% Estimates a fmri mimicking spm
 %
+% dcm -- DCM structure according to SPM
+% pars -- Parameters. Values are T, nburnin, niter, verbose, mc3
+%
 % aponteeduardo@gmail.com
 % copyright (C) 2014
 %
@@ -11,6 +14,7 @@ if nargin < 2
     pars.nburnin = 2000;
     pars.niter = 5000;
     pars.verbose = 0;
+    pars.mc3 = 1;
 end
 
 % unpack

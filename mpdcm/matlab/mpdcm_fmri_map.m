@@ -105,7 +105,12 @@ for j = 1:10
         ty = ny{k};
         e{k} = y{k}' - ty;
         % There might be subject dependent priors
-        e{k} = [e{k}(:); ptheta.p.theta.mu(:, min(k, numel(u))) - op{k}];
+        try
+            e{k} = [e{k}(:); ptheta.p.theta.mu(:, ...
+                min(k, size(ptheta.p.theta.mu, 2))) - op{k}];
+        catch
+            keyboard
+        end
     end
 
     lambda = lambda0.*v.^reg;

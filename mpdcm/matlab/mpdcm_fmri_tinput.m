@@ -177,15 +177,17 @@ function [theta] = tinput_theta(dcm)
     decay = 0;
     transit = 0;
 
-    gamma   = 0.32;
-    alpha   = 0.32;
-    E0      = 0.32;
-    V0      = 4.0;
+    hps = mpdcm_fmri_get_hempars();
+
+    gamma   = hps.gamma;
+    alpha   = hps.alpha;
+    E0      = hps.E0;
+    V0      = hps.V0;
 
     ep = exp(full(pE.epsilon));
 
-    tau     = 2*exp(transit);
-    kappa   = 0.64*exp(decay);
+    tau     = transit;
+    kappa   = decay;
 
     theta.dim_x = size(dcm.a, 1);
     theta.dim_u = size(dcm.c, 2);

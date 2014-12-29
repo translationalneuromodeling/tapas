@@ -36,8 +36,8 @@ try
     dcm = mpdcm_fmri_estimate(nd, pars);   
     display('    Passed')
 catch err
-    d = dbstack();
-    fprintf('   Not passed at line %d\n', d(1).line)
+    db = dbstack();
+    fprintf('   Not passed at line %d\n', db(1).line)
     disp(getReport(err, 'extended'));
 end
 
@@ -56,8 +56,8 @@ for i = 1:5
         fprintf('fe: %0.5f\n', dcm.F);
         display('    Passed')
     catch err
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf('   Not passed at line %d\n', db(1).line)
         disp(getReport(err, 'extended'));
     end
 end

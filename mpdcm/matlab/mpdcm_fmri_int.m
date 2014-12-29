@@ -44,13 +44,17 @@ else
     integ = @(u, theta, ptheta) c_mpdcm_fmri_euler(u, theta, ptheta); 
 end
 
+hps = mpdcm_fmri_get_hempars();
+
 for i = 1:numel(theta)
     theta{i}.C = theta{i}.C/16;
     [k1, k2, k3] = mpdcm_fmri_k(theta{i});
     theta{i}.k1 = k1;
     theta{i}.k2 = k2;
     theta{i}.k3 = k3;
-    theta{i}.tau = real(log(theta{i}.tau));
+    % Change the parametrization
+    theta{i}.K = hps.K * exp(theta{i}.K);
+    theta{i}.tau = hps.tau + theta{i}.tau;
 end
 
 % Integrate
