@@ -42,9 +42,6 @@ LOP1 = -Wl,-rpath-link,/usr/local/MATLAB/R2012b/bin/glnxa64 -L$(BDDM_MATLAB)/bin
 
 # Rules
 
-%.mexa64 : %.o
-	gcc $(LOP0) -o $@ $^ $(LOP1)
-
 %.o : %.cu
 	$(NVCC) -c $(NVCCFLAGS) $< -o $@
 
@@ -54,7 +51,7 @@ LOP1 = -Wl,-rpath-link,/usr/local/MATLAB/R2012b/bin/glnxa64 -L$(BDDM_MATLAB)/bin
 
 all: directories c_mpdcm_fmri_euler.mexa64 c_mpdcm_fmri_kr4.mexa64 c_mpdcm_num_devices.mexa64 c_mpdcm_set_device.mexa64 c_mpdcm_get_device.mexa64
 
-# directories
+# Directories
 
 directories: $(OUTDIR)
 
@@ -69,23 +66,27 @@ c_mpdcm_num_devices.mexa64 : c_mpdcm_num_devices.o
 c_mpdcm_get_device.mexa64 : c_mpdcm_get_device.o
 c_mpdcm_set_device.mexa64 : c_mpdcm_set_device.o
 
+%.mexa64 : %.o
+	gcc $(LOP0) -o $@ $< $(LOP1)
+
 # Compile mex
 
 c_mpdcm_fmri_euler.o : c_mpdcm_fmri_euler.c
+c_mpdcm_fmri_kr4.o : c_mpdcm_fmri_kr4.c
+
+
+c_mpdcm_fmri_euler.o c_mpdcm_fmri_kr4.o :
 	$(MATCC) -c $(MATFLAGS) -o $@ $^
 
-c_mpdcm_fmri_kr4.o : c_mpdcm_fmri_kr4.c
-	$(MATCC) -c $(MATFLAGS) -o $@ $^
+
+# Device code
 
 c_mpdcm_num_devices.o : c_mpdcm_num_devices.c
-	$(MATCC) -c $(MATFLAGS) $(ICUDA) -o $@ $^
-
 c_mpdcm_get_device.o : c_mpdcm_get_device.c
-	$(MATCC) -c $(MATFLAGS) $(ICUDA) -o $@ $^
-
 c_mpdcm_set_device.o : c_mpdcm_set_device.c
-	$(MATCC) -c $(MATFLAGS) $(ICUDA) -o $@ $^
 
+c_mpdcm_num_devices.o c_mpdcm_get_device.o c_mpdcm_set_device.o :
+	$(MATCC) -c $(MATFLAGS) $(ICUDA) -o $@ $<
 
 # Compile c
 

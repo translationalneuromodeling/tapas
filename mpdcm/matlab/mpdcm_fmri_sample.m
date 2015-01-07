@@ -6,15 +6,18 @@ function [np] = mpdcm_fmri_sample(op, ptheta, htheta, v)
 %
 
 if nargin < 4
-    v = cell(size(op));
-    v(:) = {1};
+    s = cell(numel(op, 1));
+    s{:} = 1;
+    S = cell(numel(op, 1));
+    S{:} = eye(numel(op{1}));
+    v = struct('S', S, 's', s);
 end
 
 nt = numel(op);
 np = cell(size(op));
 
 for i = 1:nt
-    np{i} = full(op{i} + htheta.c_c * v{i} * randn(size(op{i})));
+    np{i} = full(op{i} + v(i).s * v(i).S *randn(size(op{i})));
 end
 
 end

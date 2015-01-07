@@ -39,6 +39,7 @@ ps_theta = zeros(numel(op{end}), niter);
 ellh = zeros(nt, niter);
 
 diagnostics = zeros(1, nt);
+
 % Optimized kernel
 kt = ones(1, nt);
 
@@ -113,6 +114,7 @@ ps.y = ps.y{:};
 ps.F = fe;
 
 end
+
 
 function [q, otheta, ollh, olpp] = init_estimate(y, u, theta, ptheta, T)
 % Create an initial estimate to reduce burn in phase by computing the 
