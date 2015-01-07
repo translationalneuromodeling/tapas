@@ -4,6 +4,8 @@
 #ifndef C_MPDCM
 #define C_MPDCM
 
+#include "mpdcm.hcu"
+
 #include <matrix.h>
 #include <mex.h>
 #include <string.h>

@@ -67,7 +67,7 @@ c_mpdcm_get_device.mexa64 : c_mpdcm_get_device.o
 c_mpdcm_set_device.mexa64 : c_mpdcm_set_device.o
 
 %.mexa64 : %.o
-	gcc $(LOP0) -o $@ $< $(LOP1)
+	gcc $(LOP0) -o $@ $^ $(LOP1)
 
 # Compile mex
 
@@ -77,7 +77,6 @@ c_mpdcm_fmri_kr4.o : c_mpdcm_fmri_kr4.c
 
 c_mpdcm_fmri_euler.o c_mpdcm_fmri_kr4.o :
 	$(MATCC) -c $(MATFLAGS) -o $@ $^
-
 
 # Device code
 

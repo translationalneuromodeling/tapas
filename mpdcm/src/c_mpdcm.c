@@ -1,7 +1,6 @@
 /* aponteeduardo@gmail.com */
 /* copyright (C) 2014 */
 
-#include "mpdcm.hcu"
 #include "c_mpdcm.h"
 
 #define DIM_X 5
