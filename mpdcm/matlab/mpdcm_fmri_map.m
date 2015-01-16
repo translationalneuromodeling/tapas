@@ -93,7 +93,7 @@ nrs = zeros(su);
 e = cell(su);
 dp = zeros(su);
 
-for j = 1:30
+for j = 1:50
 
     [dfdx, ny] = mpdcm_fmri_gradient(op, u, theta, ptheta, 1);
 

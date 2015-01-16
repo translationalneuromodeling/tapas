@@ -172,8 +172,8 @@ function [q, theta, ptheta] = initilize_parameters(u, theta, ptheta, optheta)
     p.rho = struct('a', [], 'b', []);
     p.eta = struct('mu', [], 'pi', [], 'chol_pi', [], 'sigma', []);
 
-    p.rho.a = 0.5*ones(np-nr, 1);
-    p.rho.b = 0.5*ones(np-nr, 1);
+    p.rho.a = 20.0*ones(np-nr, 1);
+    p.rho.b = 20.0*ones(np-nr, 1);
 
     p.eta.mu = [ptheta.p.theta.mu(1:end-nr) zeros(np-nr, nx-1)];
     p.eta.d = eye(nx);
