@@ -1,4 +1,4 @@
-function [mu, ny, dfdx] = mpdcm_fmri_map(y, u, theta, ptheta, mleflag)
+function [mu, ny, dfdx, nrs] = mpdcm_fmri_map(y, u, theta, ptheta, mleflag)
 %% Minimizes map estimate assuming fixed noise.
 %
 % Input:
@@ -15,6 +15,7 @@ function [mu, ny, dfdx] = mpdcm_fmri_map(y, u, theta, ptheta, mleflag)
 % mu -- Maximum of mu
 % ny -- Predicted signal at mu
 % dfdx -- Derivatives evaluated in dfdx
+% nrs -- Last value of the objective function for each data set.
 %
 % It uses weighted regularized Levenberg-Marquard Gaussian-Newton 
 % optimization.
@@ -65,6 +66,7 @@ nctheta(end-size(ptheta.a, 1)+1:end) = 0;
 
 for i = 1:numel(u)
     tlambda = exp(theta{i}.lambda);
+
     tQ = zeros(size(ptheta.dQ.Q{1}));
     for k = 1:numel(ptheta.dQ.Q)
         tQ = tQ + tlambda(k)*ptheta.dQ.Q{k};
@@ -78,7 +80,7 @@ end
 
 lambda0 = 0.5 * ones(su);
 lambda = 0.5 * ones(su);
-v = 1.3 * ones(su);
+v = 1.1 * ones(su);
 reg = 1 * ones(su);
 
 % Objective function
@@ -91,26 +93,17 @@ nrs = zeros(su);
 e = cell(su);
 dp = zeros(su);
 
-for j = 1:10
+for j = 1:30
 
-    if mod(j, 10) == 0
-        fprintf(1, 'Iteration: %d, RSE: ', j);
-        fprintf(1, '%0.5f ', nrs);
-        fprintf(1, '\n');
-    end
-    
     [dfdx, ny] = mpdcm_fmri_gradient(op, u, theta, ptheta, 1);
 
     for k = 1:numel(u)
         ty = ny{k};
         e{k} = y{k}' - ty;
         % There might be subject dependent priors
-        try
-            e{k} = [e{k}(:); ptheta.p.theta.mu(:, ...
-                min(k, size(ptheta.p.theta.mu, 2))) - op{k}];
-        catch
-            keyboard
-        end
+
+        e{k} = [e{k}(:); ptheta.p.theta.mu(:, ...
+            min(k, size(ptheta.p.theta.mu, 2))) - op{k}];
     end
 
     lambda = lambda0.*v.^reg;
@@ -126,11 +119,17 @@ for j = 1:10
         tdfdx = cat(1, dfdx{k}, vdpdx * eye(numel(op{k})));
         np{k} = op{k} + (tdfdx'*bsxfun(@times, tdfdx, nQ{k}) + ...
             lambda(k) * eye(numel(op{k})))\(tdfdx'*(nQ{k}.*e{k}));
+        assert(isreal(np{k}), 'Non real values');
+        try
+            assert(~all(isnan(np{k})), 'Undefined value');
+        catch
+            keyboard
+        end
     end
 
     ntheta = mpdcm_fmri_set_parameters(np, theta, ptheta);
 
-    ny = mpdcm_fmri_int(u, ntheta, ptheta); 
+    ny = mpdcm_fmri_int(u, ntheta, ptheta, 1); 
 
     % Verify the residuals
     for k = 1:numel(u)
@@ -140,13 +139,14 @@ for j = 1:10
         dp(k) = max(abs(np{k} - op{k}));
     end
 
+    nrs(isnan(nrs)) = inf;
+
 
     if all(dp < tol)
         op(nrs < ors) = np(nrs < ors);
         break;
     end
 
-    nrs(isnan(nrs)) = inf;
 
     reg(nrs >= ors) = reg(nrs >= ors) + 1;
     reg(nrs < ors) = reg(nrs < ors) - 1;
@@ -157,8 +157,13 @@ for j = 1:10
        'Optimization failed with no gradient being found.')
 
 end
+fprintf(1, 'MAP Iteration: %d, RSE: ', j);
+fprintf(1, '%0.1f ', nrs);
+fprintf(1, '\n');
 
 mu = op;
-[dfdx, ny] = mpdcm_fmri_gradient(op, u, theta, ptheta, 1);
+assert(isreal(cell2mat(mu)), 'Non real values');
+[dfdx, ny] = mpdcm_fmri_gradient(mu, u, theta, ptheta, 1);
 
 end
+

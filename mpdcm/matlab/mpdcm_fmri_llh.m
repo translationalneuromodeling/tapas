@@ -23,10 +23,12 @@ llh = zeros(size(theta));
 l2p = log(2*pi);
 
 for i = 1:s1
-    y0 = y{s1}';
+    y0 = y{i}';
     y0 = y0(:);
     for j = 1:s2
+
         theta0 = theta{i, j};
+
         % Check the eigen values
         %ev = eigs(theta0.A, 1);
 
@@ -52,7 +54,7 @@ for i = 1:s1
 
             sQ = chol(nQ);
 
-            llh((i-1)*s1+j) = -numel(e) * l2p  - 2*sum(log(diag(sQ))) ...
+            llh((i-1)*s1+j) = -0.5 * numel(e) * l2p  - 2*sum(log(diag(sQ)))...
                 - 0.5*e'*(nQ\e);
         else
             nQ = zeros(size(ptheta.dQ.Q{1}));

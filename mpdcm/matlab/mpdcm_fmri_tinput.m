@@ -154,10 +154,14 @@ function [y, scale] = tinput_y(dcm)
 
     Y = dcm.Y;
 
-    scale   = max(max((Y.y))) - min(min((Y.y)));
-    scale   = 4/max(scale,4);
-    Y.y     = Y.y*scale;
+    if isfield(Y, 'scale')
+        scale = Y.scale;
+    else
+        scale   = max(max((Y.y))) - min(min((Y.y)));
+        scale   = 4/max(scale,4);
+    end
 
+    Y.y     = Y.y*scale;
     y = Y.y';
 
 end

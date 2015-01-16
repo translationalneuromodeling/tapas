@@ -25,6 +25,7 @@ function [q] = mpdcm_fmri_himodel(dcm, optheta, pars)
     [q, theta, ptheta] = initilize_parameters(u, theta, ptheta, optheta);
 
     for i = 1:pars.niter
+        fprintf(1, 'VB iteration %d\n', i);
         [q] = update_first_level(q, y, u, theta, ptheta);
         [q] = update_second_level(q, y, u, theta, ptheta);
     end
@@ -44,7 +45,8 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
     mu = cell(nt, 1);
     for j = 1:nt
         tlambda = full(log(q.lambda(j).a) - log(q.lambda(j).b));
-        mu{j} = [q.theta(j).mu; tlambda];
+        mu{j} = [0.0*q.theta(j).mu; tlambda];
+        assert(isreal(mu{j}), 'Non real values');
     end
 
     theta = mpdcm_fmri_set_parameters(mu, theta, ptheta);
@@ -58,17 +60,20 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
 
     % Non spheric covariance matrix
 
-    tptheta.p.theta.pi = ...
-        blkdiag(...
-        (q.rho.a(1)/q.rho.b(1))*ptheta.h.theta.pi(1:end-nr*2-1,1:end-nr*2-1),...
-        (q.rho.a(2)/q.rho.b(2))*ptheta.h.theta.pi(end-nr*2:end,end-nr*2:end));
+    tptheta.p.theta.pi = diag(q.rho.a./q.rho.b.*diag(ptheta.h.theta.pi));
 
     %% Conditional MAP estimator
 
     tptheta.p.theta.mu = cat(1, tptheta.p.theta.mu, zeros(nr, nt));
     tptheta.p.theta.pi = blkdiag(tptheta.p.theta.pi, eye(nr));
 
-    [mu, ny, dfdx] = mpdcm_fmri_map(y, u, theta, tptheta);
+    [mu, ny, dfdx, nrs] = mpdcm_fmri_map(y, u, theta, tptheta);
+
+    % Store the optimal values of the objective function
+    q.nrs = nrs;
+
+    fprintf(1, 'No. infs %d\n', sum(nrs==inf));
+
     theta = mpdcm_fmri_set_parameters(mu, theta, tptheta);
 
     %% Compute the update of q(lambda_i)
@@ -76,7 +81,7 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
     for j = 1:nt
 
         q.theta(j).mu = mu{j}(1:np);
-
+        assert(isreal(q.theta(j).mu), 'Non real values');
         % Approximate hessian
         % Weight the hessian by the precisions
         dfdx{j} = dfdx{j}(:,:,1:np);
@@ -85,10 +90,11 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
         h1 = reshape(h1, ns*nr, 1, np);
         h1 = squeeze(h1);
 
-        h2 = reshape(dfdx{1}, ns*nr, 1, np);
+        h2 = reshape(dfdx{j}, ns*nr, 1, np);
         h2 = squeeze(h2);
 
-        q.theta(j).pi = h1'*h2;
+        % Hessian and regularization
+        q.theta(j).pi = h1'*h2 + tptheta.p.theta.pi(1:np, 1:np);
 
         q.lambda(j).a = 0.5*ns + ptheta.p.lambda(j).a - 1;
 
@@ -96,10 +102,12 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
 
         % Region specific lambda_i
         for k = 1:nr
-            h = dfdx{1}(:, k, :);
+            h = dfdx{j}(:, k, :);
             h = squeeze(h);
             q.lambda(j).b(k) = 0.5*e(:,k)'*e(:,k) + ...
-               0.5*trace(q.theta(j).pi\(h'*h)) + ptheta.p.lambda(j).b(k);                end
+               0.5*trace(q.theta(j).pi\(h'*h)) + ...
+               ptheta.p.lambda(j).b(k);
+        end
     end
 end
 
@@ -124,25 +132,28 @@ function [q] = update_second_level(q, y, u, theta, ptheta)
     % MAP
     eta = (p.eta.d + p.kx)\(p.eta.d*p.eta.mu' + eta);
 
+    assert(isreal(eta), 'q.eta.mu should be real')
+
     q.eta.mu = eta';
     q.eta.d = (p.eta.d + p.kx);
 
-    q.rho.a = 0.5 * nt * [n; m] + p.rho.a - 1;
+    q.rho.a = 0.5 * nt * ones(np, 1) + p.rho.a - 1;
  
     p1 = ptheta.h.theta.pi(1:n, 1:n);
     p2 = ptheta.h.theta.pi(n+1:end, n+1:end);
 
-    q.rho.b = p.rho.b;
-
     phi = btheta' * btheta - (eta' * p.kx * eta)';
 
     for i = 1:nt
-        phi = phi + inv(q.theta(i).pi);
+        [u, s, v] = svd(q.theta(i).pi);
+        phi = phi + v*diag(1./diag(s))*u';
     end
-    phi = ptheta.h.theta.pi * phi;
+   % phi = ptheta.h.theta.pi * phi;
     phi = diag(phi);
 
-    q.rho.b = p.rho.b + 0.5 * [sum(phi(1:n)); sum(phi(n+1:end))];
+    q.rho.b = p.rho.b + 0.5 * phi;
+
+    assert(all(q.rho.b > 0), 'q.rho.b should be always positive');
 
 end
 
@@ -161,8 +172,8 @@ function [q, theta, ptheta] = initilize_parameters(u, theta, ptheta, optheta)
     p.rho = struct('a', [], 'b', []);
     p.eta = struct('mu', [], 'pi', [], 'chol_pi', [], 'sigma', []);
 
-    p.rho.a = nr*np*nu/3*ones(2, 1);
-    p.rho.b = 2*ones(2, 1);
+    p.rho.a = 0.5*ones(np-nr, 1);
+    p.rho.b = 0.5*ones(np-nr, 1);
 
     p.eta.mu = [ptheta.p.theta.mu(1:end-nr) zeros(np-nr, nx-1)];
     p.eta.d = eye(nx);
@@ -198,8 +209,10 @@ function [q, theta, ptheta] = initilize_parameters(u, theta, ptheta, optheta)
 
     q = p;
 
-    q.rho.a = nt*ones(2, 1);
-    q.rho.b = nt*ones(2, 1);
+    q.nrs = zeros(nt, 1);
+
+    q.rho.a = p.rho.a; 
+    q.rho.b = p.rho.b; 
 
     pmu = p.eta.mu * p.x';
 
