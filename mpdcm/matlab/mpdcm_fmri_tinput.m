@@ -188,7 +188,7 @@ function [theta] = tinput_theta(dcm)
     E0      = hps.E0;
     V0      = hps.V0;
 
-    ep = exp(full(pE.epsilon));
+    ep = full(pE.epsilon);
 
     tau     = transit;
     kappa   = decay;
