@@ -93,7 +93,7 @@ nrs = zeros(su);
 e = cell(su);
 dp = zeros(su);
 
-for j = 1:50
+for j = 1:30
 
     [dfdx, ny] = mpdcm_fmri_gradient(op, u, theta, ptheta, 1);
 
@@ -120,11 +120,7 @@ for j = 1:50
         np{k} = op{k} + (tdfdx'*bsxfun(@times, tdfdx, nQ{k}) + ...
             lambda(k) * eye(numel(op{k})))\(tdfdx'*(nQ{k}.*e{k}));
         assert(isreal(np{k}), 'Non real values');
-        try
-            assert(~all(isnan(np{k})), 'Undefined value');
-        catch
-            keyboard
-        end
+        assert(~all(isnan(np{k})), 'Undefined value');
     end
 
     ntheta = mpdcm_fmri_set_parameters(np, theta, ptheta);

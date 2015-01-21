@@ -45,7 +45,7 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
     mu = cell(nt, 1);
     for j = 1:nt
         tlambda = full(log(q.lambda(j).a) - log(q.lambda(j).b));
-        mu{j} = [0.0*q.theta(j).mu; tlambda];
+        mu{j} = [q.theta(j).mu; tlambda];
         assert(isreal(mu{j}), 'Non real values');
     end
 
@@ -148,7 +148,7 @@ function [q] = update_second_level(q, y, u, theta, ptheta)
         [u, s, v] = svd(q.theta(i).pi);
         phi = phi + v*diag(1./diag(s))*u';
     end
-   % phi = ptheta.h.theta.pi * phi;
+
     phi = diag(phi);
 
     q.rho.b = p.rho.b + 0.5 * phi;
@@ -172,8 +172,8 @@ function [q, theta, ptheta] = initilize_parameters(u, theta, ptheta, optheta)
     p.rho = struct('a', [], 'b', []);
     p.eta = struct('mu', [], 'pi', [], 'chol_pi', [], 'sigma', []);
 
-    p.rho.a = 20.0*ones(np-nr, 1);
-    p.rho.b = 20.0*ones(np-nr, 1);
+    p.rho.a = 2.0*ones(np-nr, 1);
+    p.rho.b = 40.0*ones(np-nr, 1);
 
     p.eta.mu = [ptheta.p.theta.mu(1:end-nr) zeros(np-nr, nx-1)];
     p.eta.d = eye(nx);
