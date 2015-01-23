@@ -65,6 +65,9 @@ y = integ(u, theta, ptheta);
 
 for i = 1:numel(y)
     y{i} = y{i}(:, 2:2:end)';
+    if isfield(theta{i}, 'ny')
+        y{i} = y{i}(1:theta{i}.ny, :);
+    end
 end
 
 

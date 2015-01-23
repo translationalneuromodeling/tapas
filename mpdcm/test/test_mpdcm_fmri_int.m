@@ -41,8 +41,8 @@ try
     y = mpdcm_fmri_int(u, theta, ptheta);
     fprintf(fp, '    Passed\n')
 catch err
-    d = dbstack();
-    fprintf(fp, '   Not passed at line %d\n', d(1).line)
+    fprintf(fp, '   Not passed at line %d\n', err.stack(end).line);
+    fprintf(fp, getReport(err, 'extended'));
 end
 
 try
@@ -53,8 +53,8 @@ try
     y = mpdcm_fmri_int(u, theta, ptheta);
     fprintf(fp, '    Passed\n')
 catch err
-    d = dbstack();
-    fprintf(fp, '   Not passed at line %d\n', d(1).line)
+    fprintf(fp, '   Not passed at line %d\n', err.stack(end).line);
+    fprintf(fp, getReport(err, 'extended'));
 end
 
 try
@@ -65,8 +65,8 @@ try
     y = mpdcm_fmri_int(u, theta, ptheta);
     fprintf(fp, '    Passed\n')
 catch err
-    d = dbstack();
-    fprintf(fp, '   Not passed at line %d\n', d(1).line)
+    fprintf(fp, '   Not passed at line %d\n', err.stack(end).line);
+    fprintf(fp, getReport(err, 'extended'));
 end
 
 try

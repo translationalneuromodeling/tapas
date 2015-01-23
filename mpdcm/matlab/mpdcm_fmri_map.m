@@ -98,10 +98,8 @@ for j = 1:30
     [dfdx, ny] = mpdcm_fmri_gradient(op, u, theta, ptheta, 1);
 
     for k = 1:numel(u)
-        ty = ny{k};
-        e{k} = y{k}' - ty;
+        e{k} = y{k}' - ny{k};
         % There might be subject dependent priors
-
         e{k} = [e{k}(:); ptheta.p.theta.mu(:, ...
             min(k, size(ptheta.p.theta.mu, 2))) - op{k}];
     end
@@ -117,10 +115,14 @@ for j = 1:30
 
     for k = 1:numel(u)
         tdfdx = cat(1, dfdx{k}, vdpdx * eye(numel(op{k})));
+        try
         np{k} = op{k} + (tdfdx'*bsxfun(@times, tdfdx, nQ{k}) + ...
             lambda(k) * eye(numel(op{k})))\(tdfdx'*(nQ{k}.*e{k}));
         assert(isreal(np{k}), 'Non real values');
         assert(~all(isnan(np{k})), 'Undefined value');
+        catch err
+            keyboard
+        end
     end
 
     ntheta = mpdcm_fmri_set_parameters(np, theta, ptheta);

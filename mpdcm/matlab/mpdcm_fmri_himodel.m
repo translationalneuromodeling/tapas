@@ -38,7 +38,6 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
     nt = numel(theta);
     np = size(ptheta.p.eta.mu, 1);
     nr = theta{1}.dim_x;
-    ns = numel(y{1})/nr;
 
     % Use E[p(y | theta_i, lambda_i)]_q(\lambda_i)
 
@@ -80,6 +79,7 @@ function [ q ] = update_first_level(q, y, u, theta, ptheta)
 
     for j = 1:nt
 
+        ns = theta{j}.ny;
         q.theta(j).mu = mu{j}(1:np);
         assert(isreal(q.theta(j).mu), 'Non real values');
         % Approximate hessian

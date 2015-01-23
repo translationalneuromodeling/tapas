@@ -17,135 +17,158 @@ function [y, u, theta, ptheta] = mpdcm_fmri_tinput(dcm)
 %
 
 nm = numel(dcm);
-ns = size(dcm{1}.Y.y, 1);
-nr = size(dcm{1}.Y.y, 2);
 
 y = cell(nm, 1);
 u = cell(nm, 1);
 theta = cell(nm, 1);
 
+[ys, us] = max_size(dcm);
+
 scale = zeros(nm, 1);
 dyu = zeros(nm, 1);
 
 for i = 1:nm
-    [y{i} scale(i)] = tinput_y(dcm{i});
-    [u{i} dyu(i)] = tinput_u(dcm{i});
+    [y{i} scale(i)] = tinput_y(dcm{i}, max(ys));
+    [u{i} dyu(i)] = tinput_u(dcm{i}, max(us));
     theta{i} = tinput_theta(dcm{i});
 end
 
 assert(all(dyu == dyu(1)), 'mpdcm:fmri:tinput:dyu', ...
     'Ratio of sampling rate between y and u are not equal across data sets');
 
-% Priors
-
-ptheta = struct('dt', 1.0, 'dyu', [], 'rescale', scale);
-
-Q = dcm{1}.Y.Q;
-M = dcm{1}.M;
-a = dcm{1}.a;
-b = dcm{1}.b;
-c = dcm{1}.c;
-
-[pE, pC, x] = spm_dcm_fmri_priors(a, b, c);
-
-% hyperpriors - Basis matrixes
-
-try
-    ptheta.Q = Q;
-catch err
-    if strcmp(err.identifier, 'MATLAB:nonExistentField');
-        ptheta.Q = spm_Ce(ns*ones(1, nr));
-    end
-end
-
-nh = numel(ptheta.Q);
-
-nd = size(ptheta.Q{1}, 1);
-
-tQ = speye(nd);
-for i = 1:nh
-    tQ = tQ + sparse(ptheta.Q{i});
-end
-
-dm = all(find(tQ)' == (nd*(0:nd-1) + (1:nd)));
-
-% Basis of the covariances
-
-if dm
-    ptheta.dQ.dm = 1;
-    ptheta.dQ.Q = cell(1, nh);
-    for i = 1:nh
-        ptheta.dQ.Q{i} = diag(ptheta.Q{i});
-    end
-else
-    ptheta.dQ.dm = 0;
-    ptheta.dQ.Q = {};
-end
-
-% Hyperprios expected value
-try
-    hE = M.hE(:);
-catch err
-    if strcmp(err.identifier, 'MATLAB:nonExistentField');
-        hE = sparse(nh,1);
-    end
-end
-
-
-try
-    hC = M.hC;
-catch err
-    if strcmp(err.identifier, 'MATLAB:nonExistentField');
-        hC = speye(nh,nh);
-    end
-end
-
-
-v = [ logical(a(:)); logical(b(:)); logical(c(:)); 
-    ones(nr + nr + 1 + nh, 1)];
-v = logical(v);
-
-mtheta = [pE.A(:); pE.B(:); ...
-    pE.C(:); pE.transit(:); pE.decay(:); ...
-    pE.epsilon(:); hE(:)];
-
-ctheta = sparse(blkdiag(pC, hC));
-ctheta = ctheta(v, v);
-
-ptheta.p.theta.mu = mtheta(v);
-ptheta.p.theta.pi = inv(ctheta);
-ptheta.p.theta.chol_pi = chol(ptheta.p.theta.pi);
-ptheta.p.theta.sigma = ctheta;
-
-ptheta.a = a;
-ptheta.b = b;
-ptheta.c = c;
-
-ptheta.dyu = dyu(1);
+ptheta = tinput_ptheta(dcm, scale, dyu, ys, us);
 
 end
 
 %% ===========================================================================
 
+function [ys, us] = max_size(dcm)
+    % Obtain the max lenght of the arrays
 
-function [u, dyu] = tinput_u(dcm)
-%% Prepare U
+    ys = zeros(numel(dcm), 1);
+    us = zeros(numel(dcm), 1);
 
-    y = dcm.Y.y;
-
-    dyu = dcm.U.dt;
-
-    u = dcm.U.u';
-
-    % Sampling frequency
-
-    dyu = 2.0*size(y, 1)/size(u, 2);
+    for i = 1:numel(dcm)
+        ys(i) = size(dcm{i}.Y.y, 1);
+        us(i) = size(dcm{i}.U.u, 1);
+    end
 
 end
 
+%% ===========================================================================
 
-function [y, scale] = tinput_y(dcm)
-% Prepare y
+function [ptheta] = tinput_ptheta(dcm, scale, dyu, ys, us)
+    % Priors
+
+    nr = size(dcm{1}.Y.y, 2);
+
+    ptheta = struct('dt', 1.0, 'dyu', [], 'rescale', scale, 'ys', ys, ...
+        'us', us);
+
+    Q = dcm{1}.Y.Q;
+    M = dcm{1}.M;
+    a = dcm{1}.a;
+    b = dcm{1}.b;
+    c = dcm{1}.c;
+
+    [pE, pC, x] = spm_dcm_fmri_priors(a, b, c);
+
+    % hyperpriors - Basis matrixes
+
+    try
+        ptheta.Q = Q;
+    catch err
+        if strcmp(err.identifier, 'MATLAB:nonExistentField');
+            ptheta.Q = spm_Ce(ns*ones(1, nr));
+        end
+    end
+
+    nh = numel(ptheta.Q);
+
+    nd = size(ptheta.Q{1}, 1);
+
+    tQ = speye(nd);
+    for i = 1:nh
+        tQ = tQ + sparse(ptheta.Q{i});
+    end
+
+    dm = all(find(tQ)' == (nd*(0:nd-1) + (1:nd)));
+
+    % Basis of the covariances
+
+    if dm
+        ptheta.dQ.dm = 1;
+        ptheta.dQ.Q = cell(1, nh);
+        for i = 1:nh
+            ptheta.dQ.Q{i} = diag(ptheta.Q{i});
+        end
+    else
+        ptheta.dQ.dm = 0;
+        ptheta.dQ.Q = {};
+    end
+
+    % Hyperprios expected value
+    try
+        hE = M.hE(:);
+    catch err
+        if strcmp(err.identifier, 'MATLAB:nonExistentField');
+            hE = sparse(nh,1);
+        end
+    end
+
+
+    try
+        hC = M.hC;
+    catch err
+        if strcmp(err.identifier, 'MATLAB:nonExistentField');
+            hC = speye(nh,nh);
+        end
+    end
+
+
+    v = [ logical(a(:)); logical(b(:)); logical(c(:)); 
+        ones(nr + nr + 1 + nh, 1)];
+    v = logical(v);
+
+    mtheta = [pE.A(:); pE.B(:); ...
+        pE.C(:); pE.transit(:); pE.decay(:); ...
+        pE.epsilon(:); hE(:)];
+
+    ctheta = sparse(blkdiag(pC, hC));
+    ctheta = ctheta(v, v);
+
+    ptheta.p.theta.mu = mtheta(v);
+    ptheta.p.theta.pi = inv(ctheta);
+    ptheta.p.theta.chol_pi = chol(ptheta.p.theta.pi);
+    ptheta.p.theta.sigma = ctheta;
+
+    ptheta.a = a;
+    ptheta.b = b;
+    ptheta.c = c;
+
+    ptheta.dyu = dyu(1);
+
+end
+
+%% ===========================================================================
+
+function [u, dyu] = tinput_u(dcm, us)
+%% Prepare U
+
+    % Sampling frequency
+    dyu = 2.0*size(dcm.Y.y, 1)/size(dcm.U.u, 1);
+
+    u = nan(us, size(dcm.U.u, 2));
+    u(1:size(dcm.U.u, 1), :) = dcm.U.u;
+    u = u';
+
+
+end
+
+%% ===========================================================================
+
+function [y, scale] = tinput_y(dcm, ys)
+    % Prepare y
 
     ns = size(dcm.Y.y, 1);
     nr = size(dcm.Y.y, 2);
@@ -161,8 +184,8 @@ function [y, scale] = tinput_y(dcm)
         scale   = 4/max(scale,4);
     end
 
-    Y.y     = Y.y*scale;
-    y = Y.y';
+    Y.y = Y.y*scale;
+    y   = Y.y';
 
 end
 
@@ -175,7 +198,7 @@ function [theta] = tinput_theta(dcm)
 
     theta = struct('A', [], 'B', [], 'C', [], 'epsilon', [], 'K', [], ...
         'tau',  [], 'V0', [], 'E0', [], 'k1', [], 'k2', [], 'k3', [], ...
-        'alpha', [], 'gamma', [], 'dim_x', [], 'dim_u', [], ...
+        'alpha', [], 'gamma', [], 'dim_x', [], 'dim_u', [], 'ny', [], ...
         'fA', 1, 'fB', 1, 'fC', 1 );
 
     decay = 0;
@@ -195,6 +218,8 @@ function [theta] = tinput_theta(dcm)
 
     theta.dim_x = size(dcm.a, 1);
     theta.dim_u = size(dcm.c, 2);
+
+    theta.ny = size(dcm.Y.y, 1);
 
     theta.A = full(pE.A);
     if any(dcm.a(:))
