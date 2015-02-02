@@ -44,7 +44,7 @@ function [ons_secs, sqpar] = tapas_physio_crop_scanphysevents_to_acq_window(ons_
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_crop_scanphysevents_to_acq_window.m 423 2014-02-15 14:22:53Z kasperla $
+% $Id: tapas_physio_crop_scanphysevents_to_acq_window.m 664 2015-01-30 10:59:26Z kasperla $
 
 %% parameter settings
     Nscans          = sqpar.Nscans;
@@ -59,6 +59,7 @@ function [ons_secs, sqpar] = tapas_physio_crop_scanphysevents_to_acq_window(ons_
     r               = ons_secs.r;
     t               = ons_secs.t;
     ons_secs.raw    = ons_secs;
+    
 %% cut after end of paradigm window    
 maxscan = Nscans + Ndummies;
 tmax    = ons_secs.spulse_per_vol{maxscan}(end);
@@ -106,7 +107,9 @@ formatstr = ['    maxscan (incl. dummies) = %d \n    ', ...
     'tmin (1st scan start (after dummies))= %6.2f s\n    ', ...
     'tmax = %6.2f s \n    ', ...
     'mean TR = %6.2f s\n'];
-fprintf(1,formatstr, sqpar.maxscan, spulse(1), spulse(1+Ndummies*Nslices), tmax, sqpar.meanTR);
+
+fprintf(1,formatstr, sqpar.maxscan, spulse(1), ...
+    spulse(1+Ndummies*Nslices), tmax, sqpar.meanTR);
 
 
 %% prepare output variable

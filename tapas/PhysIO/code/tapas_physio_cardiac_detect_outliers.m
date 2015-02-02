@@ -32,13 +32,16 @@ function [outliersHigh,outliersLow,fh] = ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_cardiac_detect_outliers.m 524 2014-08-13 16:21:56Z kasperla $
+% $Id: tapas_physio_cardiac_detect_outliers.m 619 2014-12-17 14:54:42Z kasperla $
 
 dt = diff(tCardiac);
 
+if nargin < 5
+    isVerbose = 1;
+end
 
 if isVerbose
-    if nargin < 5
+    if nargin < 6
         fh = tapas_physio_get_default_fig_params();
         set(fh, 'Name','Diagnostics raw phys time series');
     else

@@ -1,7 +1,7 @@
-TAPAS PhysIO Toolbox Version 2014
+TAPAS PhysIO Toolbox Version 2015
 
 ************************************************************************
-Copyright (C) 2012-2014 Lars Kasper <kasper@biomed.ee.ethz.ch>
+Copyright (C) 2012-2015 Lars Kasper <kasper@biomed.ee.ethz.ch>
 Translational Neuromodeling Unit (TNU)
 Institute for Biomedical Engineering
 University of Zurich and ETH Zurich
@@ -103,9 +103,13 @@ COMPATIBILITY & SUPPORT
 - Input: 
     - Fully integrated to work with physiological logfiles for Philips MR systems (SCANPHYSLOG)
     - tested for General Electric (GE) log-files
-    - preliminary implementation for Siemens log-files
-    - also: interface for 'Custom', i.e. general heart-beat time stamps & breathing volume time courses from other log formats
-- Output: Nuisance regressors for mass-univariate statistical analysis with SPM5,8,12
+    - implementation for Siemens log-files
+    - also: interface for 'Custom', i.e. general heart-beat time stamps 
+      & breathing volume time courses from other log formats
+- Output: 
+    - Nuisance regressors for mass-univariate statistical analysis with SPM5,8,12
+      or as text file for export to any other package
+    - raw and processed physiological logfile data
 - Part of the TNU Software Edition: long term support and ongoing development
 
  
@@ -113,14 +117,24 @@ DOWNLOADS & RELEASE INFORMATION
 
 - Current Release: 
 
-PhysIO_Toolbox_14 (Code | Examples)
-August 25th, 2014
+PhysIO_Toolbox_15 (Code | Examples)
+January 30th, 2015
 
-revision: $Revision: 497 $
+revision: $Rev: 667 $
+
+Minor Release Notes (r666):
+- Compatibility tested for SPM12, small bugfixes Batch Dependencies
+- Cleaner Batch Interface with grouped sub-menus (cfg_choice)
+- new model: 'none' to just read out physiological raw data and preprocess,
+  without noise modelling 
+- Philips: Scan-timing via gradient log now automatized (gradient_log_auto)
+- Siemens: Tics-Logfile read-in (proprietary, needs Siemens-agreement)
+- All peak detections (cardiac/respiratory) now via auto_matched algorithm
+- Adapt plots/saving for Matlab R2014b
 
 Major Release Notes (r534):
 - Read-in of Siemens plain text log files; new example dataset for Siemens
-- Speed up and debugging of ‘auto’-detection method for noisy cardiac data => new method thresh.cardiac.initial_cpulse_select.method = ‘auto_matched’
+- Speed up and debugging of auto-detection method for noisy cardiac data => new method thresh.cardiac.initial_cpulse_select.method = ???auto_matched???
 - Error handling for temporary breathing belt failures (Eduardo Aponte, TNU Zurich)
 - slice-wise regressors can be created by setting sqpar.onset_slice to a index vector of slices
 
@@ -156,7 +170,7 @@ NOTE: Your main_ECG/PPU.m etc. scripts from previous versions (<=r159) will not 
 Lead Programmer: Lars Kasper, TNU & MR-Technology Group, IBT, University & ETH Zurich
 
 Contributors: 
-Steffen Bollmann, Kinderspital Zurich & ETH Zurich
+Steffen Bollmann, Children's Hospital Zurich & ETH Zurich
 Jakob Heinzle, TNU Zurich
 Eduardo Aponte, TNU Zurich
 
@@ -185,4 +199,4 @@ Kasper, Lars, Sarah Marti, S. Johanna Vannesjo, Chloe Hutton, Ray Dolan, Nikolau
 
 
 VERSION OF THIS FILE
-$Id: README.txt 534 2014-08-28 18:05:58Z kasperla $
+$Id: README.txt 667 2015-01-31 11:45:17Z kasperla $

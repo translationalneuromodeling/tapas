@@ -1,8 +1,14 @@
-function [rpulset, pulset] = tapas_physio_filter_respiratory(rpulset,rsampint)
+function [rpulset, pulset] = tapas_physio_filter_respiratory(...
+    rpulset, rsampint, doNormalize)
 % band-pass filters respiratory data (0.1...5 Hz)
 %
 %   rpulset = tapas_physio_filter_respiratory(pulset,rsampint)
 %
+% IN
+%   rpulset
+%   rsamping
+%   doNormalize     default:false
+%                   Optionally, data is normalized to be in -1...+1 range
 %
 % Author: Lars Kasper, 2011; heavily based on an earlier implementation of
 % Chloe Hutton (FIL, UCL London)
@@ -14,10 +20,14 @@ function [rpulset, pulset] = tapas_physio_filter_respiratory(rpulset,rsampint)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_filter_respiratory.m 408 2014-01-20 00:25:56Z kasperla $
+% $Id: tapas_physio_filter_respiratory.m 645 2015-01-15 20:41:00Z kasperla $
 if isempty(rpulset)
     rpulset = [];
     return;
+end
+
+if nargin < 3
+    doNormalize = true;
 end
 
 rpulset=rpulset-rpulset(1);
@@ -30,6 +40,10 @@ forder = 2;
 [b,a] = butter(forder,2*[cutofflow, cutoffhigh]/sampfreq);
 
 rpulset=filter(b,a,rpulset);
+
+if doNormalize
+    rpulset = rpulset/max(abs(rpulset));
+end
 
 % Now do a check for any outliers (> 3std)
 mpulse=mean(rpulset);

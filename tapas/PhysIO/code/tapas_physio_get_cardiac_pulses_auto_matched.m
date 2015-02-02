@@ -1,5 +1,6 @@
 function [cpulse, verbose] = tapas_physio_get_cardiac_pulses_auto_matched(...
-    c, t, thresh_min, dt120, verbose)
+    c, t, thresh_min, minPulseDistanceSamples, verbose, ...
+    methodPeakDetection)
 % Automated, iterative pulse detection from cardiac (ECG/OXY) data
 % (1) Creates a template of representative heartbeats automatically (as
 %     *_auto-function)
@@ -7,11 +8,20 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses_auto_matched(...
 %     with determined filter (as *_manual_template-function)
 %
 %   [cpulse, verbose] = tapas_physio_get_cardiac_pulses_auto(...
-%    c, t, thresh_min, dt120, verbose)
+%    c, t, thresh_min, minPulseDistanceSamples, verbose)
 %
 % IN
+%   methodPeakDetection 'correlation' or 'matched'
+%                       default: 'correlation' (by Steffen Bollmann),
+%                                maximises cross-correlation between
+%                                template pulse wave and time course to
+%                                detect peak
+%                       'matched' experimental, uses template as matched
+%                                filter to determine maxima
 %
 % OUT
+%   cpulse              [nPulses,1] vector of time points (in seconds) that
+%                       peak was detected (e.g. QRS-wave R-peaks of ECG)
 %
 % EXAMPLE
 %   tapas_physio_get_cardiac_pulses_auto_matched
@@ -27,21 +37,26 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses_auto_matched(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_pulses_auto_matched.m 524 2014-08-13 16:21:56Z kasperla $
+% $Id: tapas_physio_get_cardiac_pulses_auto_matched.m 636 2015-01-10 23:41:56Z kasperla $
 if nargin < 5
     verbose.level = 0;
     verbose.fig_handles = [];
 end
 
+if nargin < 6
+    methodPeakDetection = 'correlation'; %'matched_filter' or 'correlation'
+end
+
 c = c-mean(c); c = c./std(c); % normalize time series
 
-%% Determine template for QRS-wave (or pulse 
+%% Determine template for QRS-wave (or pulse) 
 [pulseCleanedTemplate, cpulseSecondGuess, averageHeartRateInSamples] = ...
-    tapas_physio_get_cardiac_pulse_template(t, c, thresh_min, ...
-    dt120, verbose);
+    tapas_physio_get_cardiac_pulse_template(t, c, verbose, ...
+    'thresh_min', thresh_min, ...
+    'minCycleSamples', minPulseDistanceSamples, ...
+    'shortenTemplateFactor', 0.5);
 
 %% Perform peak detection with specific method
-methodPeakDetection = 'correlation'; %'matched_filter' or 'correlation'
 
 switch methodPeakDetection
    

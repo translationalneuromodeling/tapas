@@ -1,6 +1,6 @@
 function [cpulse, verbose] = tapas_physio_findpeaks_template_correlation(...
     c, pulseCleanedTemplate, cpulseSecondGuess, averageHeartRateInSamples, ...
-    verbose)
+    verbose, varargin)
 % Finds peaks of a time series via pre-determined template via maxima of
 % correlations via going backward from search starting point in time
 % series, and afterwards forward again
@@ -9,6 +9,13 @@ function [cpulse, verbose] = tapas_physio_findpeaks_template_correlation(...
 %       c, pulseCleanedTemplate, cpulseSecondGuess, averageHeartRateInSamples, verbose)
 %
 % IN
+%   varargin    property name/value pairs for additional options
+%
+%   'idxStartPeakSearch' [1,2] indices of cpulseSecondGuess 
+%                       giving start and end point of search range for
+%                       detection of representative starting cycle, from
+%                       which both cycles before and after will be
+%                       determined via the pulseCleanedTemplate
 %
 % OUT
 %
@@ -26,14 +33,19 @@ function [cpulse, verbose] = tapas_physio_findpeaks_template_correlation(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_findpeaks_template_correlation.m 530 2014-08-14 15:58:18Z kasperla $
+% $Id: tapas_physio_findpeaks_template_correlation.m 640 2015-01-11 22:03:32Z kasperla $
 
 % Determine starting peak for the search:
-%   search for a representative R-peak in the first 20 peaks
+%   search for a representative R-peak a range of peaks
 
 % TODO: maybe replace via convolution with template? "matched
 % filter theorem"?
 debug = verbose.level >= 4;
+
+defaults.idxStartPeakSearch = [0 20];
+
+args = tapas_physio_propval(varargin, defaults);
+tapas_physio_strip_fields(args);
 
 halfTemplateWidthInSamples = floor(numel(pulseCleanedTemplate)/2);
 
@@ -41,14 +53,22 @@ halfTemplateWidthInSamples = floor(numel(pulseCleanedTemplate)/2);
     pulseCleanedTemplate);
 isZTransformed = [0 1];
 
+% start and end point of search for representative start cycle
 centreSampleStart = round(2*halfTemplateWidthInSamples+1);
-centreSampleEnd = cpulseSecondGuess(20);
+
+if idxStartPeakSearch(1) > 0
+    centreSampleStart = centreSampleStart + ...
+        cpulseSecondGuess(idxStartPeakSearch(1));
+end
+centreSampleEnd = cpulseSecondGuess(idxStartPeakSearch(2));
+
+similarityToTemplate = zeros(1, ceil(centreSampleEnd));
 for n=centreSampleStart:centreSampleEnd
     startSignalIndex=n-halfTemplateWidthInSamples;
     endSignalIndex=n+halfTemplateWidthInSamples;
     
     signalPart = c(startSignalIndex:endSignalIndex);
-    correlation = tapas_physio_corrcoef12(signalPart,zTransformedTemplate, ...
+    similarityToTemplate(n) = tapas_physio_corrcoef12(signalPart,zTransformedTemplate, ...
         isZTransformed);
     
     %Debug
@@ -60,30 +80,31 @@ for n=centreSampleStart:centreSampleEnd
     end
     % Debug
     
-    similarityToTemplate(n) = correlation;
 end
 
-[C_bestMatch,I_bestMatch] = max(similarityToTemplate);
+[C_bestMatch, I_bestMatch] = max(similarityToTemplate);
 clear similarityToTemplate
+
+
 
 %% now compute backwards to the beginning:
 % go average heartbeat by heartbeat back and look (with
 % decreasing weighting for higher distance) for highest
 % correlation with template heartbeat
 
-n=I_bestMatch;
+n = I_bestMatch;
 bestPosition = n; % to capture case where 1st R-peak is best
 
 peakNumber = 1;
-similarityToTemplate=zeros(size(c,1),1);
+similarityToTemplate = zeros(size(c,1),1);
 
-searchStepsTotal=round(0.5*averageHeartRateInSamples);
+searchStepsTotal = round(0.5*averageHeartRateInSamples);
 while n > 1+searchStepsTotal+halfTemplateWidthInSamples
-    for searchPosition=-searchStepsTotal:1:searchStepsTotal
-        startSignalIndex=n-halfTemplateWidthInSamples+searchPosition;
-        endSignalIndex=n+halfTemplateWidthInSamples+searchPosition;
+    for searchPosition = -searchStepsTotal:1:searchStepsTotal
+        startSignalIndex    = n-halfTemplateWidthInSamples+searchPosition;
+        endSignalIndex      = n+halfTemplateWidthInSamples+searchPosition;
         
-        signalPart = c(startSignalIndex:endSignalIndex);
+        signalPart          = c(startSignalIndex:endSignalIndex);
         correlation = tapas_physio_corrcoef12(signalPart,zTransformedTemplate, ...
             isZTransformed);
         
@@ -138,17 +159,19 @@ while n > 1+searchStepsTotal+halfTemplateWidthInSamples
 end % END: going backwards to beginning of time course
 
 %% Now go forward through the whole time series
-n=bestPosition; % 1st R-peak
-peakNumber=1;
+n           = bestPosition; % 1st R-peak
+peakNumber  = 1;
 clear cpulse;
-%now correlate template with PPU signal at the positions
-%where we would expect a peak based on the average heartrate and
-%search in the neighborhood for the best peak, but weight the peaks
-%deviating from the initial starting point by a gaussian
-searchStepsTotal=round(0.5*averageHeartRateInSamples);
 
-gaussianWindow = gausswin(2*searchStepsTotal+1); % for weighted searching of max correlation
-     
+% Now correlate template with PPU signal at the positions
+% where we would expect a peak based on the average heartrate and
+% search in the neighborhood for the best peak, but weight the peaks
+% deviating from the initial starting point by a gaussian
+searchStepsTotal = round(0.5*averageHeartRateInSamples);
+
+% for weighted searching of max correlation
+gaussianWindow = gausswin(2*searchStepsTotal+1);
+
 if n < searchStepsTotal+halfTemplateWidthInSamples+1
     n=searchStepsTotal+halfTemplateWidthInSamples+1;
 end

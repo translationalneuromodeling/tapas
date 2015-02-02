@@ -1,4 +1,4 @@
-function [c, r, t, cpulse] = tapas_physio_read_physlogfiles_philips(log_files, cardiac_modality)
+function [c, r, t, cpulse, acq_codes] = tapas_physio_read_physlogfiles_philips(log_files, cardiac_modality)
 % reads out physiological time series and timing vector depending on the
 % MR scanner vendor and the modality of peripheral cardiac monitoring (ECG
 % or pulse oximetry)
@@ -21,6 +21,8 @@ function [c, r, t, cpulse] = tapas_physio_read_physlogfiles_philips(log_files, c
 %   r                   respiratory time series
 %   t                   vector of time points (in seconds)
 %   cpulse              time events of R-wave peak in cardiac time series (seconds)
+%   acq_codes           slice/volume start events marked by number <> 0
+%                       for time points in t
 %
 % EXAMPLE
 %   [ons_secs.cpulse, ons_secs.rpulse, ons_secs.t, ons_secs.c] =
@@ -37,11 +39,11 @@ function [c, r, t, cpulse] = tapas_physio_read_physlogfiles_philips(log_files, c
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_read_physlogfiles_philips.m 516 2014-07-17 21:54:50Z kasperla $
+% $Id: tapas_physio_read_physlogfiles_philips.m 640 2015-01-11 22:03:32Z kasperla $
 
 %% read out values
-hasCardiac = ~isempty(log_files.cardiac);
-hasResp = ~isempty(log_files.respiration);
+hasCardiac  = ~isempty(log_files.cardiac);
+hasResp     = ~isempty(log_files.respiration);
 
 if hasCardiac
     logfile = log_files.cardiac;
@@ -49,15 +51,16 @@ else
     logfile = log_files.respiration;
 end
 
-[z{1:10}]=textread(logfile,'%d %d %d %d %d %d %d %d %d %d','commentstyle', 'shell');
-y = cell2mat(z);
+y = tapas_physio_read_physlogfiles_philips_matrix(logfile);
 
-Nsamples=size(y,1);
+acq_codes   = y(:,10);
 
-dt = log_files.sampling_interval;
+Nsamples    = size(y,1);
+
+dt          = log_files.sampling_interval;
 
 %default: 500 Hz sampling frequency
-isWifi = regexpi(cardiac_modality, '_wifi');
+isWifi      = regexpi(cardiac_modality, '_wifi');
 
 if isWifi
     cardiac_modality = regexprep(cardiac_modality, '_wifi', '', 'ignorecase');
@@ -79,7 +82,7 @@ t= -log_files.relative_start_acquisition + ((0:(Nsamples-1))*dt)';
 % 10 = scanner signal: 10/20 = scan start/end; 1 = ECG pulse; 2 = OXY max; 8 = scan event TODO: what is 3 and 9???
 % columns 7,8,9: Grad-strengh x,y,z
 
-cpulse = find(z{10}==1);
+cpulse = find(acq_codes==1);
 if ~isempty(cpulse)
     cpulse = t(cpulse);
 end;

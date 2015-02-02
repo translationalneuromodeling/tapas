@@ -33,7 +33,7 @@ function [c, r, t, cpulse] = tapas_physio_read_physlogfiles_custom(log_files, ..
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_read_physlogfiles_custom.m 516 2014-07-17 21:54:50Z kasperla $
+% $Id: tapas_physio_read_physlogfiles_custom.m 538 2014-09-22 14:45:23Z kasperla $
 
 %% read out values
 DEBUG = verbose.level >=3;
@@ -120,8 +120,8 @@ function fh = plot_interpolation(tOrig, yOrig, tInterp, yInterp, ...
 fh = tapas_physio_get_default_fig_params;
 stringTitle = sprintf('Interpolation of %s signal', stringOrigInterp{1});
 set(fh, 'Name', stringTitle);
-plot(tInterp, yInterp,'g+--'); hold all;
-plot(tOrig, yOrig, 'r.'); 
+plot(tOrig, yOrig, 'go--');  hold all;
+plot(tInterp, yInterp,'r.');
 xlabel('t (seconds');
 legend({
     sprintf('after interpolation to %s timing', ...

@@ -25,14 +25,22 @@ function physio = tapas_physio_prepend_absolute_paths(physio)
 
 save_dir = physio.save_dir;
 
-physio.verbose.fig_output_file = fullfile(save_dir, ...
-    physio.verbose.fig_output_file);
+if ~isequal(save_dir, fileparts(physio.verbose.fig_output_file))
+    physio.verbose.fig_output_file = fullfile(save_dir, ...
+        physio.verbose.fig_output_file);
+end
 
-physio.model.output_multiple_regressors = fullfile(save_dir, ...
-    physio.model.output_multiple_regressors);
+if ~isequal(save_dir, fileparts(physio.model.output_multiple_regressors))
+    physio.model.output_multiple_regressors = fullfile(save_dir, ...
+        physio.model.output_multiple_regressors);
+end
 
-physio.thresh.cardiac.initial_cpulse_select.file = fullfile(save_dir, ...
-    physio.thresh.cardiac.initial_cpulse_select.file);
+if ~isequal(save_dir, fileparts(physio.thresh.cardiac.initial_cpulse_select.file))
+    physio.thresh.cardiac.initial_cpulse_select.file = fullfile(save_dir, ...
+        physio.thresh.cardiac.initial_cpulse_select.file);
+end
 
-physio.thresh.cardiac.posthoc_cpulse_select.file = fullfile(save_dir, ...
-    physio.thresh.cardiac.posthoc_cpulse_select.file);
+if ~isequal(save_dir, fileparts(physio.thresh.cardiac.posthoc_cpulse_select.file))
+    physio.thresh.cardiac.posthoc_cpulse_select.file = fullfile(save_dir, ...
+        physio.thresh.cardiac.posthoc_cpulse_select.file);
+end

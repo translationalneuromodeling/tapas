@@ -1,23 +1,39 @@
 function [tableVolSliPhase, indVolPerPhaseSlice, imgCardiacPhasesMeanVols, ...
     imgCardiacPhasesFirstVol, fh] = ...
-    tapas_physio_sort_images_by_cardiac_phase(ons_secs, sqpar, nCardiacPhases, ...
+    tapas_physio_sort_images_by_cardiac_phase(ons_secs_or_c_phase, sqpar, nCardiacPhases, ...
     fnTimeSeries, verbose, dirOut)
 %performs retrospective cardiac gating of image time series using phys logfile
 %
 % [tableVolSliPhase, indVolPerPhaseSlice, imgCardiacPhasesMeanVols, ...
 %    imgCardiacPhasesFirstVol] = ...
-%   tapas_physio_sort_images_by_cardiac_phase(ons_secs, sqpar, nCardiacPhases, ...
+%   tapas_physio_sort_images_by_cardiac_phase(ons_secs_or_c_phase, sqpar, nCardiacPhases, ...
 %    fnTimeSeries, verbose);
 %
 % Given cardiac phases after running tapas_physio_main_create_regressors,
-% this function sorts all slices of all volumes according to the cardiac phase 
+% this function sorts all slices of all volumes according to the cardiac phase
 % they were acquired in, giving an averaged (and 1st pass) movie of
 % cardiac-cycle related brain movement, similar to a gated cine-imaging
 % technique.
 %
 % IN
-%   ons_secs        physio.ons_secs, structure of onsets in seconds, see also tapas_physio_new
+%   ons_secs        physio.ons_secs, structure of onsets in seconds,
+%                   see also tapas_physio_new
+%
+%                   needed: .spulse     time (in seconds) of slice scan
+%                                       events
+%                           .svolpulse  time (in seconds ) of volume scan
+%                                       events
+%                           .cpulse     time (in seconds) of heartbeat
+%                                       R-peaks
+%                   If this is given, c_phase will be computed from the
+%                   ons_secs data
+%                   OR
+%   c_phase         [nSlices*nVolumes,1] vector of cardiac phases
+%                   ([0...2pi]) for all slices and volumes acquired
+%
 %   sqpar           physio.sqpar, structure of sequence parameters, see also tapas_physio_new
+%                   needed: .Nslices
+%                           .Nscans
 %   nCardiacPhases  number of cardiac phases (i.e. cine movie frames) to
 %                   bin-sort into
 %   fnTimeSeries    file name of (nifti-) time series to re-sort according
@@ -33,7 +49,7 @@ function [tableVolSliPhase, indVolPerPhaseSlice, imgCardiacPhasesMeanVols, ...
 %                   - cell array where entry {iPhase, iSlice} holds
 %                   vector of volumes where iSlice was acquired in cardiac
 %                   phase iPhase
-%   
+%
 %   cPhaseMeanVols_<fnTimeSeries>.nii  time series of cardiac phase volumes,
 %                  with same slices of the same cardiac phase averaged over
 %                  all corresponding volumes
@@ -62,17 +78,26 @@ end
 
 hasDirOut = nargin >=6;
 
-cpulse = ons_secs.cpulse;
-spulse = ons_secs.spulse;
-svolpulse = ons_secs.svolpulse;
-
-c_phase    = tapas_physio_get_cardiac_phase(cpulse, spulse, 1, svolpulse);
-
-hasPreps = ~isempty(sqpar.Nprep);
-if hasPreps
-    c_phase    = c_phase(((sqpar.Ndummies+sqpar.Nprep)*sqpar.Nslices+1):end);
+if ~isstruct(ons_secs_or_c_phase)
+    %% cardiac phase already given, move to next step
+    ons_secs    = [];
+    c_phase     = ons_secs_or_c_phase;
 else
-    c_phase    = c_phase((sqpar.Ndummies*sqpar.Nslices+1):end);
+    %% Re-Compute cardiac phases from cardiac pulse events and slice/volume scan events
+    ons_secs = ons_secs_or_c_phase;
+    c_phase = [];
+    cpulse = ons_secs.cpulse;
+    spulse = ons_secs.spulse;
+    svolpulse = ons_secs.svolpulse;
+    
+    c_phase    = tapas_physio_get_cardiac_phase(cpulse, spulse, 1, svolpulse);
+    
+    hasPreps = ~isempty(sqpar.Nprep);
+    if hasPreps
+        c_phase    = c_phase(((sqpar.Ndummies+sqpar.Nprep)*sqpar.Nslices+1):end);
+    else
+        c_phase    = c_phase((sqpar.Ndummies*sqpar.Nslices+1):end);
+    end
 end
 
 %% Histogram and bin the phases ...
@@ -80,12 +105,22 @@ end
 nSlices = sqpar.Nslices;
 nVols = sqpar.Nscans;
 
+% if too short c_phase, count volumes from back
+hascroppedCphase = numel(c_phase)/nSlices < nVols;
+if hascroppedCphase
+    nVols = numel(c_phase)/nSlices;
+    iOffset = sqpar.Nscans -nVols + 1;
+end
+
 % cardiacPhaseArray = linspace(0,2*pi,nCardiacPhases);
 [h, cardiacPhaseArray] = hist(c_phase, nCardiacPhases);
 
 if verbose
+    stringTitle = 'Number of slice/volume occurences of each cardiac phase';
     fh(1) = tapas_physio_get_default_fig_params();
+    set(gcf, 'Name', stringTitle);
     bar(cardiacPhaseArray,h); xlabel('cardiac phase'); ylabel('counts');
+    title(stringTitle);
 end
 
 widthBin = mean(diff(cardiacPhaseArray));
@@ -120,16 +155,23 @@ end
 
 %% Plot cardiac phase per slice and volume
 if verbose
+    stringTitle = 'Cardiac phase per slice and volume';
     fh(2) = tapas_physio_get_default_fig_params();
+    set(gcf, 'Name', stringTitle);
     imagesc(iPhaseVolSliceArray);
     xlabel('Volumes'); ylabel('slice');
-    title('Cardiac phase per slice and volume');
+    title(stringTitle);
     colorbar;
 end
+
 
 %% load image file
 
 [~, img4D] = spm_img_load(fnTimeSeries);
+
+if hascroppedCphase
+    img4D = img4D(:,:,:,iOffset:end);
+end
 
 %% Find for all phases and slices corresponding volumes
 indVolPerPhaseSlice = cell(nCardiacPhases,nSlices);
@@ -139,7 +181,7 @@ for iPhase = 1:nCardiacPhases
         indTmp = find(tableVolSliPhase(:,3) == iPhase & ...
             tableVolSliPhase(:,2) == iSlice);
         indVolPerPhaseSlice{iPhase,iSlice} = tableVolSliPhase(indTmp,1);
-         nVolPerPhaseSlice(iPhase, iSlice) = numel(indTmp);
+        nVolPerPhaseSlice(iPhase, iSlice) = numel(indTmp);
     end
 end
 
@@ -151,11 +193,11 @@ if verbose
     xlabel('cardiac phase');
     ylabel('slice number');
     title(stringTitle);
-    colorbar;
-    
+    colorbar; 
 end
 
-%% re-sort time series according to cardiac phase, take mean and first ..
+
+%% Re-sort time series according to cardiac phase, take mean and first ..
 % occurences of each phase to get movie
 nX = size(img4D,1);
 nY = size(img4D,2);
@@ -177,7 +219,8 @@ for iPhase = 1:nCardiacPhases
     end
 end
 
-%% save images
+
+%% Save images
 iVolArray = 1:nCardiacPhases;
 fnIn = fnTimeSeries;
 
@@ -188,11 +231,11 @@ else
 end
 
 fnOut = fullfile(dirOut, ['cPhaseMeanVols_' fn, ext]);
-delete(fnOut);
+if exist(fnOut, 'file'), delete(fnOut); end
 reuse_nifti_hdr(fnIn, fnOut, imgCardiacPhasesMeanVols, iVolArray);
 
 fnOut = fullfile(dirOut, ['cPhaseFirstVol_' fn, ext]);
-delete(fnOut);
+if exist(fnOut, 'file'), delete(fnOut); end
 
 reuse_nifti_hdr(fnIn, fnOut, imgCardiacPhasesFirstVol, iVolArray);
 
@@ -227,11 +270,11 @@ if nargin < 2
 end
 
 V = spm_vol(fn);
-try 
-Y = spm_read_vols(V);
-% maybe only header misalignment of volumes is the problem for nifti
-%...rename temporarily for loading
-catch err 
+try
+    Y = spm_read_vols(V);
+    % maybe only header misalignment of volumes is the problem for nifti
+    %...rename temporarily for loading
+catch err
     fnHdr = regexprep(fn, '\.nii','\.mat');
     fnTmp = regexprep(fn, '\.nii','\.tmp');
     if exist(fnHdr, 'file')
@@ -295,5 +338,5 @@ for iV = 1:nVols
     if nargin > 2
         if ~exist(fileparts(fnOut),'dir'), mkdir(fileparts(fnOut)); end
         spm_write_vol(V(iV), Y(:,:,:,iV));
-    end   
+    end
 end

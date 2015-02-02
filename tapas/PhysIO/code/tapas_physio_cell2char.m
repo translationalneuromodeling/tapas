@@ -26,6 +26,7 @@ function physio = tapas_physio_cell2char(physio)
 physio.save_dir = char(physio.save_dir);
 physio.log_files.cardiac = char(physio.log_files.cardiac);
 physio.log_files.respiration = char(physio.log_files.respiration);
+physio.log_files.scan_timing = char(physio.log_files.scan_timing);
 physio.model.input_other_multiple_regressors = char(...
     physio.model.input_other_multiple_regressors);
 physio.model.output_multiple_regressors = char(...

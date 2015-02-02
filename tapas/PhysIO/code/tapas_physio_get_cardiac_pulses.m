@@ -8,7 +8,7 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses(t, c, ...
 %   t                  vector of time series of log file (in seconds, corresponds to c)
 %   c                  raw time series of ECG or pulse oximeter
 %   thresh_cardiac      is a structure with the following elements
-%           .method - 'auto', 'manual_template', 'load_from_logfile',
+%           .method -  'auto_matched', 'manual_template', 'load_from_logfile',
 %                       'load_template'
 %                      Specifies how to determine QRS-wave from noisy input
 %                      data
@@ -61,7 +61,7 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses(t, c, ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_pulses.m 529 2014-08-14 10:55:16Z kasperla $
+% $Id: tapas_physio_get_cardiac_pulses.m 645 2015-01-15 20:41:00Z kasperla $
 
 %% detection of cardiac R-peaks
 
@@ -75,9 +75,6 @@ switch lower(cardiac_modality)
             dt120, verbose);
     case {'oxy','ppu', 'oxy_wifi', 'ppu_wifi','ecg', 'ecg_wifi'}
         switch thresh_cardiac.method
-            case {'auto', 'auto_template'}
-                [cpulse, verbose] = tapas_physio_get_cardiac_pulses_auto( ...
-                    c, t, thresh_cardiac.min, dt120, verbose);
             case 'load_from_logfile'
                 warning('How did you end up here? I better do nothing.');
                 cpulse = [];
@@ -85,7 +82,7 @@ switch lower(cardiac_modality)
                 [cpulse, verbose] = ...
                     tapas_physio_get_cardiac_pulses_manual_template(...
                     c, t, thresh_cardiac, verbose);
-            case 'auto_matched'
+            case {'auto', 'auto_template', 'auto_matched'}
                 [cpulse, verbose] = ...
                     tapas_physio_get_cardiac_pulses_auto_matched( ...
                     c, t, thresh_cardiac.min, dt120, verbose);

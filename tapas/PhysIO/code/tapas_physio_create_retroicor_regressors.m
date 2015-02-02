@@ -1,11 +1,11 @@
 function [cardiac_sess, respire_sess, mult_sess, ons_secs, verbose, ...
     c_sample_phase, r_sample_phase] ...
-    = tapas_physio_create_retroicor_regressors(ons_secs, sqpar, order, verbose) 
+    = tapas_physio_create_retroicor_regressors(ons_secs, sqpar, order, verbose)
 % calculation of regressors for physiological motion correction using RETROICOR (Glover, MRM, 2000)
 %
 % USAGE:
 %   [cardiac_sess, respire_sess, mult_sess, verbose, c_sample_phase, r_sample_phase] ...
-%        = tapas_physio_create_retroicor_regressors(ons_secs, sqpar, thresh, slicenum, order, verbose) 
+%        = tapas_physio_create_retroicor_regressors(ons_secs, sqpar, thresh, slicenum, order, verbose)
 %
 % INPUT:
 %   ons_secs    - onsets of all physlog events in seconds
@@ -22,8 +22,8 @@ function [cardiac_sess, respire_sess, mult_sess, ons_secs, verbose, ...
 %           .TR             - repetition time in seconds
 %           .Ndummies       - number of dummy volumes
 %           .Nscans         - number of full volumes saved (volumes in nifti file,
-%                             usually rows in your design matrix)   
-%            onset_slice    - slice whose scan onset determines the adjustment of the 
+%                             usually rows in your design matrix)
+%            onset_slice    - slice whose scan onset determines the adjustment of the
 %                             regressor timing to a particular slice for the whole volume
 %
 %
@@ -36,12 +36,13 @@ function [cardiac_sess, respire_sess, mult_sess, ons_secs, verbose, ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_retroicor_regressors.m 532 2014-08-14 19:05:48Z kasperla $
+% $Id: tapas_physio_create_retroicor_regressors.m 652 2015-01-24 10:15:28Z kasperla $
 
 %% variable renaming
 if ~exist('verbose', 'var')
     verbose.level = 1;
 end
+
 svolpulse       = ons_secs.svolpulse;
 cpulse          = ons_secs.cpulse;
 r               = ons_secs.r;
@@ -49,54 +50,82 @@ spulse          = ons_secs.spulse;
 t               = ons_secs.t;
 
 hasRespData = ~isempty(r);
-hasCardiacData = ~isempty(cpulse);
+hasPhaseData = isfield(ons_secs, 'c_sample_phase') && ~isempty(ons_secs.c_sample_phase);
+hasCardiacData = hasPhaseData || ~isempty(cpulse);
 
-% compute differently, i.e. separate regressors for multiple slice
-% generation
-nSampleSlices = numel(sqpar.onset_slice);
-hasMultipleSlices = nSampleSlices>1;
-
-%parameters for resampling
-rsampint    = t(2)-t(1);
-
-%% Get phase, downsample and Fourier-expand
-sample_points   = tapas_physio_get_sample_points(ons_secs, sqpar);
-
-if (order.c || order.cr) && hasCardiacData
-    if verbose.level >= 3
-    [c_phase, verbose.fig_handles(end+1)]    = ...
-        tapas_physio_get_cardiac_phase(cpulse, spulse, verbose.level, svolpulse);
+if ~hasPhaseData
+    % compute phases from pulse data
+    
+    % compute differently, i.e. separate regressors for multiple slice
+    % generation
+    nSampleSlices = numel(sqpar.onset_slice);
+    hasMultipleSlices = nSampleSlices>1;
+    
+    %parameters for resampling
+    rsampint    = t(2)-t(1);
+    
+    %% Get phase, downsample and Fourier-expand
+    sample_points   = tapas_physio_get_sample_points(ons_secs, sqpar);
+    
+    if (order.c || order.cr) && hasCardiacData
+        
+        
+        if verbose.level >= 3
+            [c_phase, verbose.fig_handles(end+1)]    = ...
+                tapas_physio_get_cardiac_phase(cpulse, spulse, verbose.level, svolpulse);
+        else
+            c_phase    = tapas_physio_get_cardiac_phase(cpulse, spulse, 0, svolpulse);
+        end
+        c_sample_phase  = tapas_physio_downsample_phase(spulse, c_phase, sample_points, rsampint);
+        cardiac_sess    = tapas_physio_get_fourier_expansion(c_sample_phase,order.c);
+        
+        cardiac_sess = tapas_physio_split_regressor_slices(cardiac_sess, ...
+            nSampleSlices);
+        
+        
+        
     else
-        c_phase    = tapas_physio_get_cardiac_phase(cpulse, spulse, 0, svolpulse);
+        cardiac_sess = [];
+        c_sample_phase = [];
     end
-    c_sample_phase  = tapas_physio_downsample_phase(spulse, c_phase, sample_points, rsampint);
-    cardiac_sess    = tapas_physio_get_fourier_expansion(c_sample_phase,order.c);
     
-    cardiac_sess = tapas_physio_split_regressor_slices(cardiac_sess, ...
-        nSampleSlices);
-else
-    cardiac_sess = [];
-    c_sample_phase = [];
-end
-
-if (order.r || order.cr) && hasRespData
-    fr = ons_secs.fr; 
-    
-    if verbose.level >=3
-        [r_phase, verbose.fig_handles(end+1)] = ...
-            tapas_physio_get_respiratory_phase( ...
+    if (order.r || order.cr) && hasRespData
+        
+        
+        fr = ons_secs.fr;
+        
+        if verbose.level >=3
+            [r_phase, verbose.fig_handles(end+1)] = ...
+                tapas_physio_get_respiratory_phase( ...
                 fr,rsampint, verbose.level);
+        else
+            r_phase = tapas_physio_get_respiratory_phase(fr,rsampint, 0);
+        end
+        r_sample_phase  = tapas_physio_downsample_phase(t, r_phase, sample_points, rsampint);
+        
+        respire_sess    = tapas_physio_get_fourier_expansion(r_sample_phase,order.r);
+        respire_sess = tapas_physio_split_regressor_slices(respire_sess, ...
+            nSampleSlices);
+        
     else
-        r_phase = tapas_physio_get_respiratory_phase(fr,rsampint, 0);
+        respire_sess = [];
+        r_sample_phase =[];
     end
-    r_sample_phase  = tapas_physio_downsample_phase(t, r_phase, sample_points, rsampint);
-    respire_sess    = tapas_physio_get_fourier_expansion(r_sample_phase,order.r);
-    respire_sess = tapas_physio_split_regressor_slices(respire_sess, ...
-        nSampleSlices);
-else
-    respire_sess = [];
-    r_sample_phase =[];
+    
+else % compute Fourier expansion directly from cardiac/respiratory phases
+    
+    if (order.c || order.cr)
+        cardiac_sess    = tapas_physio_get_fourier_expansion(...
+            ons_secs.c_sample_phase, order.c);
+        respire_sess    = tapas_physio_get_fourier_expansion(...
+            ons_secs.r_sample_phase, order.r);
+    else
+        cardiac_sess = [];
+        respire_sess = [];
+    end
+    
 end
+
 
 % Multiplicative terms as specified in Harvey et al., 2008
 if order.cr && hasRespData && hasCardiacData

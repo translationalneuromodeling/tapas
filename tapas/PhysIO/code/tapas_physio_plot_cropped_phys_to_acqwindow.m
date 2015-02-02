@@ -20,7 +20,7 @@ function fh = tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_plot_cropped_phys_to_acqwindow.m 423 2014-02-15 14:22:53Z kasperla $
+% $Id: tapas_physio_plot_cropped_phys_to_acqwindow.m 645 2015-01-15 20:41:00Z kasperla $
 [fh, MyColors] = tapas_physio_get_default_fig_params();
 set(fh,'Name','Cutout actual scans - all events and gradients');
 
@@ -42,18 +42,18 @@ hasRespData = ~isempty(r);
 maxValc = max(abs(c));
 maxValr = max(abs(r));
 if hasCardiacData && hasRespData
-    maxVal = max(maxValc, maxValr);
+    maxVal = maxValc; % max(maxValc, maxValr);
 elseif hasCardiacData
     maxVal = maxValc;
 else
     maxVal = maxValr;
 end
 
-ampsv = maxVal/2.25;
-amps = maxVal / 3;
-ampc = maxVal / 2;
+ampsv = maxVal*1;
+amps = maxVal*0.8; % maxVal / 3;
+ampc = maxVal*1.2; % maxVal / 2;
 
-y = [c, r];
+y = [r, c];
 x = y (1:sampling:end, :);
 stem(spulse(1:Ndummies*Nslices),amps*ones(Ndummies*Nslices,1),'r--');
 hold on;
@@ -68,57 +68,67 @@ plot(t(1:sampling:end), x, '--');
 
 %% 2. Plot cropped data
 
-t        = ons_secs.t;
+t           = ons_secs.t;
 cpulse      = ons_secs.cpulse;
-r           = ons_secs.r;
+r           = ons_secs.fr;
 c           = ons_secs.c;
 spulse      = ons_secs.spulse;
 svolpulse   = ons_secs.svolpulse;
 
 
+hs = zeros(1,0);
 
 %plot physiological time courses and scan events
-
-y = [c, r];
-x = y (1:sampling:end, :);
-hs(1) = stem(spulse(1:Ndummies*Nslices),amps*ones(Ndummies*Nslices,1),'r');
-hold on;
-hs(end+1) = stem(svolpulse(Ndummies+1:end),ampsv*ones(length(svolpulse)-Ndummies,1),'g', 'LineWidth',2);
-hs(end+1) = stem(spulse((Ndummies*Nslices+1):end), amps*ones(length(spulse)-Ndummies*Nslices,1), 'c') ;
-
-if hasCardiacData
-    hs(end+1) = stem(cpulse, ampc*ones(length(cpulse),1), 'm') ;
-end
-hs2 = plot(t(1:sampling:end), x, '-')';
-hs = [hs, hs2];
-
 if hasRespData
     hs(end+1) = plot(t,r,'ko');
 else
     hs(end+1) = plot(t,c,'ko');
 end
 
+y = [c, r];
+x = y (1:sampling:end, :);
+hs(end+1) = stem(spulse(1:Ndummies*Nslices),amps*ones(Ndummies*Nslices,1),'r');
+hold on;
+hs(end+1) = stem(svolpulse(Ndummies+1:end),ampsv*ones(length(svolpulse)-Ndummies,1),'g', 'LineWidth',2);
+hs(end+1) = stem(spulse((Ndummies*Nslices+1):end), amps*ones(length(spulse)-Ndummies*Nslices,1), 'c') ;
+
+
+
+if hasCardiacData
+    hs(end+1) = stem(cpulse, ampc*ones(length(cpulse),1), 'm') ;
+end
+
+hs2 = plot(t(1:sampling:end), x, '-')';
+hs = [hs, hs2];
+
+
 xlabel('t (s)'); ylabel('Amplitude (a. u.)');
 title('Cutout region for physiological regressors');
 
 if hasCardiacData && hasRespData
-
-legend( hs, {['dummy scan event marker (N = ' int2str(Ndummies*Nslices) ')'], ...
-    ['volume event marker (N = ' int2str(length(svolpulse)-Ndummies) '), without dummies'], ...
-    ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
-    ['cardiac pulse (heartbeat) marker (N = ' int2str(length(cpulse)) ')'], ...
-    'cardiac signal', 'respiratory signal', 'used respiratory signal'});
+    
+    legend( hs, {
+        'used respiratory signal', ...
+        ['dummy scan event marker (N = ' int2str(Ndummies*Nslices) ')'], ...
+        ['volume event marker (N = ' int2str(length(svolpulse)-Ndummies) '), without dummies'], ...
+        ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
+        ['cardiac pulse (heartbeat) marker (N = ' int2str(length(cpulse)) ')'], ...
+        'cardiac signal', 'respiratory signal'});
 elseif hasCardiacData
-    legend( hs, {['dummy scan event marker (N = ' int2str(Ndummies*Nslices) ')'], ...
-    ['volume event marker (N = ' int2str(length(svolpulse)-Ndummies) '), without dummies'], ...
-    ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
-    ['cardiac pulse (heartbeat) marker (N = ' int2str(length(cpulse)) ')'], ...
-    'cardiac signal', 'used cardiac signal'});
+    legend( hs, {
+        'used cardiac signal', ...
+        ['dummy scan event marker (N = ' int2str(Ndummies*Nslices) ')'], ...
+        ['volume event marker (N = ' int2str(length(svolpulse)-Ndummies) '), without dummies'], ...
+        ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
+        ['cardiac pulse (heartbeat) marker (N = ' int2str(length(cpulse)) ')'], ...
+        'cardiac signal'});
 else % only respData
-legend( hs, {['dummy scan event marker (N = ' int2str(Ndummies*Nslices) ')'], ...
-    ['volume event marker (N = ' int2str(length(svolpulse)-Ndummies) '), without dummies'], ...
-    ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
-    'respiratory signal', 'used respiratory signal'});
+    legend( hs, {
+        'used respiratory signal', ...
+        ['dummy scan event marker (N = ' int2str(Ndummies*Nslices) ')'], ...
+        ['volume event marker (N = ' int2str(length(svolpulse)-Ndummies) '), without dummies'], ...
+        ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
+        'respiratory signal'});
 end
 
-ylim(1.2*maxVal*[-1 1]);
+ylim(1.4*maxVal*[-1 1]);

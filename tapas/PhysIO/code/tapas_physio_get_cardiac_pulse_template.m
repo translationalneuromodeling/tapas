@@ -1,12 +1,12 @@
-function [pulseCleanedTemplate, cpulseSecondGuess, averageHeartRateInSamples] = ...
-    tapas_physio_get_cardiac_pulse_template(t, c, thresh_min, ...
-    dt120, verbose)
+function [pulseCleanedTemplate, cpulse2ndGuess, averageHeartRateInSamples] = ...
+    tapas_physio_get_cardiac_pulse_template(t, c, verbose, ...
+    varargin)
 % determines cardiac template by a 2-pass peak detection and averaging of
 % closest matches to mean and refinements
 %
-% [pulseCleanedTemplate, cpulseSecondGuess, averageHeartRateInSamples] = ...
-%     tapas_physio_get_cardiac_pulse_template(t, c, thresh_min, ...
-%    dt120)
+% [pulseCleanedTemplate, cpulse2ndGuess, averageHeartRateInSamples] = ...
+%     tapas_physio_get_cardiac_pulse_template(t, c, verbose, ...
+%     varargin)
 %
 % IN
 %
@@ -26,55 +26,104 @@ function [pulseCleanedTemplate, cpulseSecondGuess, averageHeartRateInSamples] = 
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_pulse_template.m 529 2014-08-14 10:55:16Z kasperla $
-% Guess peaks in two steps with updated avereage heartrate
-% First step
+% $Id: tapas_physio_get_cardiac_pulse_template.m 640 2015-01-11 22:03:32Z kasperla $
+
+
+% template should only be length of a fraction of average heartbeat length   
+defaults.shortenTemplateFactor = 0.5; 
+defaults.minCycleSamples = ceil(0.5/2e-3);
+defaults.thresh_min = 0.4;
+
+
+args = tapas_physio_propval(varargin, defaults);
+tapas_physio_strip_fields(args);
+
 
 debug = verbose.level >= 3;
 dt = t(2) - t(1);
 
-[tmp, cpulseFirstGuess] = tapas_physio_findpeaks( ...
-    c,'minpeakheight',thresh_min,'minpeakdistance', dt120);
+%% Guess peaks in two steps with updated avereage heartrate
+% First step
 
-hasFirstGuessPeaks = ~isempty(cpulseFirstGuess);
+[tmp, cpulse1stGuess] = tapas_physio_findpeaks( ...
+    c,'minpeakheight',thresh_min,'minpeakdistance', minCycleSamples);
+
+hasFirstGuessPeaks = ~isempty(cpulse1stGuess);
 
 
-% Second step, refined heart rate estimate
+%% Second step, refined heart rate estimate
+
+stringTitle = 'Iterative Template Creation Single Cycle';
+     
 if hasFirstGuessPeaks
     
-    averageHeartRateInSamples = round(mean(diff(cpulseFirstGuess)));
-    [tmp, cpulseSecondGuess] = tapas_physio_findpeaks(c,...
-        'minpeakheight',thresh_min,...
-        'minpeakdistance', round(0.5*averageHeartRateInSamples));
+    averageHeartRateInSamples = round(mean(diff(cpulse1stGuess)));
+    [tmp, cpulse2ndGuess] = tapas_physio_findpeaks(c,...
+        'minpeakheight', thresh_min,...
+        'minpeakdistance', round(shortenTemplateFactor*...
+        averageHeartRateInSamples));
     
     if debug
-        fh = tapas_physio_get_default_fig_params;
+        
+        nPulses1 = length(cpulse1stGuess);
+        nPulses2 = length(cpulse2ndGuess);
+        fh = tapas_physio_get_default_fig_params();
+        set(fh, 'Name', stringTitle);
+        verbose.fig_handles(end+1) = fh;
         subplot(3,1,1);
         hold off
-        hp(1) = stem(t(cpulseFirstGuess),4*ones(length(cpulseFirstGuess),1),'b');
-        hold all;
-        hp(2) = stem(t(cpulseSecondGuess),4*ones(length(cpulseSecondGuess),1),'r');
         hp(3) = plot(t, c, 'k');
-        legend(hp, ...
-            'first guess peaks', 'second guess peaks', 'raw time series');
-        title('Finding first peak (heartbeat/max inhale), backwards')
+        hold all;
+        hp(1) = stem(t(cpulse1stGuess), ...
+            4*ones(nPulses1,1),'b');
+        
+        hp(2) = stem(t(cpulse2ndGuess),...
+            4*ones(nPulses2,1),'r');
+     
+        stringLegend = {
+            sprintf('1st guess peaks (N =%d)', nPulses1), ...
+            sprintf('2nd guess peaks (N =%d)', nPulses2), ...
+            'raw time series'
+            };
+    
+        legend(hp, stringLegend);
+        title('Finding first peak (cycle start), backwards')
+        
+        
+        
+        %% Plot difference between detected events
+        subplot(3,1,2);
+        
+        meanLag1 = mean(diff(t(cpulse1stGuess)));
+        meanLag2 = mean(diff(t(cpulse2ndGuess)));
+        
+        plot(t(cpulse1stGuess(2:end)), diff(t(cpulse1stGuess)));
+        hold all
+        plot(t(cpulse2ndGuess(2:end)), diff(t(cpulse2ndGuess)));
+        title('Temporal lag between events')
+        
+         stringLegend = {
+            sprintf('1st Guess (Mean lag duration %3.1f s)', meanLag1), ...
+            sprintf('2nd Guess (Mean lag duration %3.1f s)', meanLag2) ...
+            };
+        
+        legend(stringLegend);
     end
 else
     if debug
         fh = tapas_physio_get_default_fig_params;
         subplot(3,1,1);
-        plot(t, c, 'k'); title('Finding first peak (heartbeat/max inhale), backwards')
+        plot(t, c, 'k'); title('Finding first peak of cycle, backwards')
     end
     
 end
+
 
 
 %% Build template based on the guessed peaks:
 % cut out all data around the detected (presumed) R-peaks
 %   => these are the representative "QRS"-waves
 
-% template should only be length of a fraction of average heartbeat length    shortenTemplateFactor = 0.5;
-shortenTemplateFactor = 0.5; % template should only be length of a fraction of average heartbeat length
 halfTemplateWidthInSamples = round(shortenTemplateFactor * ...
     (averageHeartRateInSamples / 2));
 
@@ -82,11 +131,12 @@ halfTemplateWidthInSamples = round(shortenTemplateFactor * ...
 % same norm & be mean-corrected
 doNormalizeTemplate = true;
 nSamplesTemplate = halfTemplateWidthInSamples * 2 + 1;
-nPulses = numel(cpulseSecondGuess);
+nPulses = numel(cpulse2ndGuess);
 template = zeros(nPulses-3,nSamplesTemplate);
+
 for n=2:nPulses-2
-    startTemplate = cpulseSecondGuess(n)-halfTemplateWidthInSamples;
-    endTemplate = cpulseSecondGuess(n)+halfTemplateWidthInSamples;
+    startTemplate = cpulse2ndGuess(n)-halfTemplateWidthInSamples;
+    endTemplate = cpulse2ndGuess(n)+halfTemplateWidthInSamples;
     
     template(n,:) = c(startTemplate:endTemplate);
     
@@ -109,14 +159,14 @@ pulseTemplate = mean(template);
 
 if debug
     figure(fh);
-    subplot(3,1,2);
+    subplot(3,1,3);
     tTemplate = dt*(0:2*halfTemplateWidthInSamples);
     plot(tTemplate, template');
     hold all;
     hp(1) = plot(tTemplate, pulseTemplate', '.--g', 'LineWidth', 3, 'Marker', ...
         'o');
     xlabel('t (seconds)');
-    title('Templates of physiology time courses per heart beat and mean template');
+    title('Templates of cycle time course and mean template');
 end
 
 % delete the peaks deviating from the mean too
@@ -138,7 +188,8 @@ thresholdHighQualityCorrelation = 0.95;
 % minimal number of high quality templates to be achieved, otherwise
 % enforced
 nMinHighQualityTemplates = ceil(0.1 * nPulses); 
-indHighQualityTemplates = find(similarityToTemplate > thresholdHighQualityCorrelation);
+indHighQualityTemplates = find(similarityToTemplate > ...
+    thresholdHighQualityCorrelation);
 
 % if threshold to restrictive, try with new one: 
 % best nMinHighQualityTemplates / nPulses of all found templates used for
@@ -146,7 +197,8 @@ indHighQualityTemplates = find(similarityToTemplate > thresholdHighQualityCorrel
 if numel(indHighQualityTemplates) < nMinHighQualityTemplates
     thresholdHighQualityCorrelation = tapas_physio_prctile(similarityToTemplate, ...
         1 - nMinHighQualityTemplates/nPulses);
-    indHighQualityTemplates = find(similarityToTemplate > thresholdHighQualityCorrelation);
+    indHighQualityTemplates = find(similarityToTemplate > ...
+        thresholdHighQualityCorrelation);
 end
 pulseCleanedTemplate = mean(template(indHighQualityTemplates, :));
 
@@ -154,4 +206,5 @@ if debug
     hp(2) = plot(tTemplate, pulseCleanedTemplate, '.-g', 'LineWidth', 4, ...
         'Marker', 'x');
     legend(hp, 'mean of templates', 'mean of most similar, chosen templates');
+    suptitle(stringTitle);
 end

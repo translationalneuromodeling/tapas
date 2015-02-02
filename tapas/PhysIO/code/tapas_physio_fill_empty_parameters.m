@@ -39,7 +39,11 @@ if isempty(physio.log_files.sampling_interval)
     switch lower(physio.log_files.vendor)
         case 'philips'
             physio.log_files.sampling_interval = 2e-3;
-        otherwise % e.g. GE
+        case 'siemens'
+            physio.log_files.sampling_interval = 1/400;
+        case 'ge'
+            physio.log_files.sampling_interval = 25e-3;
+        otherwise % e.g. custom
             physio.log_files.sampling_interval = 25e-3;
     end
 end

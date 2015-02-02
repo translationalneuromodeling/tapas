@@ -41,14 +41,14 @@ function [any_scanevent_repaired, ons, dur, index] ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_repair_scan_events_PHILIPS.m 354 2013-12-02 22:21:41Z kasperla $
+% $Id: tapas_physio_repair_scan_events_PHILIPS.m 664 2015-01-30 10:59:26Z kasperla $
 
 thrmin = 1.5; % gap between slices, if spacing >thrmin*min(slicegap)
 thrmax = 0.5; % gap is large, if gap > thrmax*max(slicegap)
 
 %% repair scan events: some scan event triggers were missed so we have to
 % fill up the holes
-ons.acq_slice = ons.acq_slice_all;
+ons.acq_slice = ons.acq_slice_all(:);
 dur.acq_slice = diff(ons.acq_slice);
 
 %% =======================================================================
@@ -66,7 +66,7 @@ end
 index.gaps                  = find(dur.acq_slice>thrmin*min(dur.acq_slice) ...
                                 & dur.acq_slice<(thrmin+1)*min(dur.acq_slice));
 ons.acq_slice_gaps          = floor((ons.acq_slice(index.gaps)+ons.acq_slice(index.gaps+1))/2);
-ons.acq_slice_filled_gaps   =  sort([ons.acq_slice; ons.acq_slice_gaps]);
+ons.acq_slice_filled_gaps   = sort([ons.acq_slice; ons.acq_slice_gaps]);
 
 %% =======================================================================
 %% gaps at beginning or end of Nslices-volume block still possible
@@ -131,7 +131,7 @@ end %repair_scan_events
 %% plot fixing procedure in scantrigger-time-difference view
 function fh = plot_fix_missing_scan_events(ons, dur, index)
 
-fh = tapas_physio_get_default_fig_params(0.5, 0.5);
+fh = tapas_physio_get_default_fig_params();
 set(fh,'Name','Time-difference view between events: Fix missing scan events');
 ax(1) = subplot(3,1,1);
 hold off;

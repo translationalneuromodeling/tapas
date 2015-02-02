@@ -20,10 +20,16 @@ function indC = tapas_physio_check_get_xcon_index(SPM, cname)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_check_get_xcon_index.m 415 2014-01-21 03:16:11Z kasperla $
+% $Id: tapas_physio_check_get_xcon_index.m 541 2014-10-11 16:40:49Z kasperla $
 for c = 1:length(SPM.xCon)
     cnames{c} = SPM.xCon(c).name;
 end
 indC = find(cell2mat(cellfun(@(x) ~isempty(x), strfind(cnames, cname), 'UniformOutput', false)));
-if isempty(indC), indC = 0; end
+
+if isempty(indC)
+    indC = 0;
+else
+    % if multiple regressors of same name found, take first one
+    indC = indC(1);
+end
 end
