@@ -11,7 +11,7 @@ disp('Loading mpdcm')
 
 mainfiles = fullfile(current, 'matlab');
 testfiles = fullfile(current, 'test');
-mexfiles = fullfile(current, 'src');
+mexfiles = fullfile(current, 'src/bin');
 
 assert(isdir(mainfiles), '% is not a directory', mainfiles);
 addpath(mainfiles);

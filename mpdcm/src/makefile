@@ -14,7 +14,9 @@ NAME := mpdcm
 .PHONY = directories
 
 MKDIR = mkdir -p
-OUTDIR = build
+BUILDDIR = build
+LIBDIR = lib
+BINDIR = bin
 
 # Other things
 
@@ -23,14 +25,14 @@ BDDM_MATLAB = $(shell matlab -nodisplay -r "fprintf(1, matlabroot); fprintf(1, '
 # nvcc flags
 
 NVCC = nvcc
-MATCC = gcc
+MATCC = gcc-4.8
 
 ICUDA = -I$(CUDA_PATH)/include
 
 LCUDA = -arch=sm_20 -L$(CUDA_PATH)/lib64 -lcuda -lcudart
 LNUM = -lm
 
-NVCCFLAGS = -arch=sm_20 --shared -Xcompiler -fPIC -c
+NVCCFLAGS = --compiler-bindir=/usr/bin/g++-4.8 -arch=sm_20 --shared -Xcompiler -fPIC -c
 
 # Mex Flags
 
@@ -42,64 +44,76 @@ LOP1 = -Wl,-rpath-link,/usr/local/MATLAB/R2012b/bin/glnxa64 -L$(BDDM_MATLAB)/bin
 
 # Rules
 
-%.o : %.cu
+$(BUILDDIR)/%.o : %.cu
 	$(NVCC) -c $(NVCCFLAGS) $< -o $@
 
 # ===========================================================================
 # Compilation 
 # ===========================================================================
 
-all: directories c_mpdcm_fmri_euler.mexa64 c_mpdcm_fmri_kr4.mexa64 c_mpdcm_num_devices.mexa64 c_mpdcm_set_device.mexa64 c_mpdcm_get_device.mexa64
+all: directories $(BINDIR)/c_mpdcm_fmri_euler.mexa64 \
+	$(BINDIR)/c_mpdcm_fmri_kr4.mexa64 $(BINDIR)/c_mpdcm_num_devices.mexa64 \
+	$(BINDIR)/c_mpdcm_set_device.mexa64 $(BINDIR)/c_mpdcm_get_device.mexa64
 
+# ===========================================================================
 # Directories
+# ===========================================================================
 
-directories: $(OUTDIR)
+directories: $(BUILDDIR) $(LIBDIR) $(BINDIR)
 
-$(OUTDIR): 
-	$(MKDIR) $(OUTDIR)
+$(BUILDDIR): 
+	$(MKDIR) $(BUILDDIR)
+$(LIBDIR):
+	$(MKDIR) $(LIBDIR)
+$(BINDIR):
+	$(MKDIR) $(BINDIR)
 
+# ===========================================================================
 # Link
+# ===========================================================================
 
-c_mpdcm_fmri_euler.mexa64 : c_mpdcm.o libmpdcm.so c_mpdcm_fmri_euler.o 
-c_mpdcm_fmri_kr4.mexa64 : c_mpdcm.o libmpdcm.so c_mpdcm_fmri_kr4.o 
-c_mpdcm_num_devices.mexa64 : c_mpdcm_num_devices.o
-c_mpdcm_get_device.mexa64 : c_mpdcm_get_device.o
-c_mpdcm_set_device.mexa64 : c_mpdcm_set_device.o
+$(BINDIR)/c_mpdcm_fmri_euler.mexa64 : $(BUILDDIR)/c_mpdcm.o \
+	$(LIBDIR)/libmpdcm.so $(BUILDDIR)/c_mpdcm_fmri_euler.o 
 
-%.mexa64 : %.o
-	gcc $(LOP0) -o $@ $^ $(LOP1)
+$(BINDIR)/c_mpdcm_fmri_kr4.mexa64 : $(BUILDDIR)/c_mpdcm.o \
+	$(LIBDIR)/libmpdcm.so $(BUILDDIR)/c_mpdcm_fmri_kr4.o 
 
-# Compile mex
+$(BINDIR)/c_mpdcm_num_devices.mexa64 : ${BUILDDIR}/c_mpdcm_num_devices.o
+$(BINDIR)/c_mpdcm_get_device.mexa64 : ${BUILDDIR}/c_mpdcm_get_device.o
+$(BINDIR)/c_mpdcm_set_device.mexa64 : ${BUILDDIR}/c_mpdcm_set_device.o
 
-c_mpdcm_fmri_euler.o : c_mpdcm_fmri_euler.c
-c_mpdcm_fmri_kr4.o : c_mpdcm_fmri_kr4.c
+$(BINDIR)/%.mexa64 : $(BUILDDIR)/%.o
+	$(MATCC) $(LOP0) -o $@ $^ $(LOP1)
 
-
-c_mpdcm_fmri_euler.o c_mpdcm_fmri_kr4.o :
+${BUILDDIR}/c_mpdcm_fmri_euler.o ${BUILDDIR}/c_mpdcm_fmri_kr4.o :
 	$(MATCC) -c $(MATFLAGS) -o $@ $^
+
+${BUILDDIR}/c_mpdcm_fmri_euler.o : c_mpdcm_fmri_euler.c
+${BUILDDIR}/c_mpdcm_fmri_kr4.o : c_mpdcm_fmri_kr4.c
 
 # Device code
 
-c_mpdcm_num_devices.o : c_mpdcm_num_devices.c
-c_mpdcm_get_device.o : c_mpdcm_get_device.c
-c_mpdcm_set_device.o : c_mpdcm_set_device.c
+${BUILDDIR}/c_mpdcm_num_devices.o : c_mpdcm_num_devices.c
+${BUILDDIR}/c_mpdcm_get_device.o : c_mpdcm_get_device.c
+${BUILDDIR}/c_mpdcm_set_device.o : c_mpdcm_set_device.c
 
-c_mpdcm_num_devices.o c_mpdcm_get_device.o c_mpdcm_set_device.o :
+${BUILDDIR}/c_mpdcm_num_devices.o ${BUILDDIR}/c_mpdcm_get_device.o \
+	${BUILDDIR}/c_mpdcm_set_device.o :
 	$(MATCC) -c $(MATFLAGS) $(ICUDA) -o $@ $<
 
 # Compile c
 
-c_mpdcm.o : c_mpdcm.c
+$(BUILDDIR)/c_mpdcm.o : c_mpdcm.c
 	$(MATCC) -c $(MATFLAGS) -o $@ $^
 
 # Compile cuda
 
-mpdcm.o : mpdcm.cu
+$(LIBDIR)/libmpdcm.so : $(BUILDDIR)/mpdcm.o
+	$(NVCC) --compiler-bindir=/usr/bin/g++-4.8 -shared -o $@ $^ $(LCUDA) 
 
-libmpdcm.so : mpdcm.o
-	$(NVCC) -shared -o $@ $^ $(LCUDA) 
-
+$(BUILDDIR)/mpdcm.o : mpdcm.cu
 
 clean :
 	$(RM) *.o *.so *.mexa64
-	$(RM) -r $(OUTDIR) 
+	$(RM) -r $(BUILDDIR)/*.o
+	$(RM) -r $(BUILDDIR)/*.so 
