@@ -15,7 +15,7 @@ NAME := mpdcm
 
 MKDIR = mkdir -p
 BUILDDIR = build
-LIBDIR = lib
+LIBDIR = /home/eaponte/projects/tapas/mpdcm/src/lib
 BINDIR = bin
 
 # Other things
