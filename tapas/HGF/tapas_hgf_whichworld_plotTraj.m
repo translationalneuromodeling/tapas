@@ -1,6 +1,6 @@
-function tapas_hgf_binary3l_plotTraj(r)
-% Plots trajectories estimated by tapas_fitModel for the hfg_binary3l perceptual model
-% Usage:  est = tapas_fitModel(responses, inputs); tapas_hgf_binary3l_plotTraj(est);
+function tapas_hgf_whichworld_plotTraj(r)
+% Plots trajectories estimated by fitModel for the hgf_whichworld perceptual model
+% Usage:  est = tapas_fitModel(responses, inputs); tapas_hgf_plotTraj(est);
 %
 % --------------------------------------------------------------------------------------------------
 % Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
@@ -10,6 +10,16 @@ function tapas_hgf_binary3l_plotTraj(r)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
+% Check whether we have a configuration structure
+if ~isfield(r,'c_prc')
+    error('tapas:hgf:ConfigRequired', 'Configuration required: before calling tapas_hgf_whichworld_plotTraj, tapas_hgf_whichworld_config has to be called.');
+end
+
+% Number of worlds
+nw = r.c_prc.nw;
+
+% Define colors
+colors = [1 0 0; 0.67 0 1; 0 0.67 1; 0.67 1 0];
 
 % Set up display
 scrsz = get(0,'screenSize');
@@ -50,46 +60,58 @@ ylabel('\mu_3');
 
 subplot(3,1,2);
 if plotsd2 == true
-    upper2prior = r.p_prc.mu2_0 +sqrt(r.p_prc.sa2_0);
-    lower2prior = r.p_prc.mu2_0 -sqrt(r.p_prc.sa2_0);
-    upper2 = [upper2prior; r.traj.mu(:,2)+sqrt(r.traj.sa(:,2))];
-    lower2 = [lower2prior; r.traj.mu(:,2)-sqrt(r.traj.sa(:,2))];
+    for j=1:nw
+    upper2prior = r.p_prc.mu2_0(j) +sqrt(r.p_prc.sa2_0(j));
+    lower2prior = r.p_prc.mu2_0(j) -sqrt(r.p_prc.sa2_0(j));
+    upper2 = [upper2prior; r.traj.mu(:,2,j)+sqrt(r.traj.sa(:,2,j))];
+    lower2 = [lower2prior; r.traj.mu(:,2,j)-sqrt(r.traj.sa(:,2,j))];
     
-    plot(0, upper2prior, 'or', 'LineWidth', 1);
+    plot(0, upper2prior, 'o', 'Color', colors(j,:), 'LineWidth', 1);
     hold all;
-    plot(0, lower2prior, 'or', 'LineWidth', 1);
+    plot(0, lower2prior, 'o', 'Color', colors(j,:), 'LineWidth', 1);
     fill([0:t, fliplr(0:t)], [(upper2)', fliplr((lower2)')], ...
-         'r', 'EdgeAlpha', 0, 'FaceAlpha', 0.15);
+         colors(j,:), 'EdgeAlpha', 0, 'FaceAlpha', 0.15);
+    end
 end
-plot(0:t, [r.p_prc.mu2_0; r.traj.mu(:,2)], 'r', 'LineWidth', 2);
-hold all;
-plot(0, r.p_prc.mu2_0, 'or', 'LineWidth', 2); % prior
+for j=1:nw
+    plot(0:t, [r.p_prc.mu2_0(j); r.traj.mu(:,2,j)], 'Color', colors(j,:), 'LineWidth', 2);
+    hold all;
+    plot(0, r.p_prc.mu2_0(j), 'o', 'Color', colors(j,:), 'LineWidth', 2); % prior
+end
 xlim([0 t]);
-title('Posterior expectation \mu_2 of tendency x_2', 'FontWeight', 'bold');
+title('Posterior expectations \mu_2 of tendencies x_2', 'FontWeight', 'bold');
 xlabel({'Trial number', ' '}); % A hack to get the relative subplot sizes right
 ylabel('\mu_2');
 hold off;
 
 subplot(3,1,3);
-plot(0:t, [tapas_sgm(r.p_prc.mu2_0, 1); tapas_sgm(r.traj.mu(:,2), 1)], 'r', 'LineWidth', 2);
-hold all;
-plot(0, tapas_sgm(r.p_prc.mu2_0, 1), 'or', 'LineWidth', 2); % prior
-plot(1:t, r.u(:,1), '.', 'Color', [0 0.6 0]); % inputs
+for j=1:nw
+    plot(0:t, [tapas_sgm(r.p_prc.mu2_0(j), 1); tapas_sgm(r.traj.mu(:,2,j), 1)], 'Color', colors(j,:), 'LineWidth', 2);
+    hold all;
+    plot(0, tapas_sgm(r.p_prc.mu2_0(j), 1), 'o', 'Color', colors(j,:), 'LineWidth', 2); % prior
+end
+plot(1:t, r.u(:,1), '.', 'Color', [0 0 0]); % inputs
 if ~isempty(find(strcmp(fieldnames(r),'y'))) && ~isempty(r.y)
-    y = r.y(:,1) -0.5; y = 1.16 *y; y = y +0.5; % stretch
+    y = r.y(:,1);
     if ~isempty(find(strcmp(fieldnames(r),'irr')))
         y(r.irr) = NaN; % weed out irregular responses
         plot(r.irr,  1.08.*ones([1 length(r.irr)]), 'x', 'Color', [1 0.7 0], 'Markersize', 11, 'LineWidth', 2); % irregular responses
-        plot(r.irr, -0.08.*ones([1 length(r.irr)]), 'x', 'Color', [1 0.7 0], 'Markersize', 11, 'LineWidth', 2); % irregular responses
     end
-    plot(1:t, y, '.', 'Color', [1 0.7 0]); % responses
-    title(['Response y (orange), input u (green), and posterior expectation of input s(\mu_2) (red) for \kappa=', ...
+    if ~any(y>1) && ~any(y<0)
+        plot(1:t, y, '.', 'Color', [1 0.7 0]); % responses
+    else
+        for j=1:nw
+            plot(find(y==j), 1.08*ones([1 length(find(y==j))]), '.', 'Color', colors(j,:)); % responses
+        end
+    end
+    title(['Response y, input u (black), and posterior probability of worlds s(\mu_2) for \kappa=', ...
            num2str(r.p_prc.ka), ', \omega=', num2str(r.p_prc.om), ', \vartheta=', num2str(r.p_prc.th)], ...
-      'FontWeight', 'bold');
+          'FontWeight', 'bold');
     ylabel('y, u, s(\mu_2)');
-    axis([0 t -0.15 1.15]);
+    axis([0 t -0.1 1.15]);
 else
-    title(['Input u (green) and posterior expectation of input s(\mu_2) (red) for \kappa=', ...
+    title(['Input u (black) and posterior probability of worlds s(\mu_2) for m_3=', ...
+           num2str(r.p_prc.m), ', \phi_3=', num2str(r.p_prc.phi), ', \kappa=', ...
            num2str(r.p_prc.ka), ', \omega=', num2str(r.p_prc.om), ', \vartheta=', num2str(r.p_prc.th)], ...
       'FontWeight', 'bold');
     ylabel('u, s(\mu_2)');

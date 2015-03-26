@@ -17,7 +17,7 @@ if size(mu,2) == 1
         % Apply the unit-square sigmoid to the inferred states
         prob = tapas_sgm(be.*(2.*mu-1),1);
     else
-        error('infStates incompatible with tapas_softmax_binary observation model.')
+        error('tapas:hgf:SoftMaxBinary:InfStatesIncompatible', 'infStates incompatible with tapas_softmax_binary observation model.')
     end
 else
     % Apply the unit-square sigmoid to the inferred states

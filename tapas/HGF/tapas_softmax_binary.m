@@ -18,7 +18,7 @@ logp = NaN(length(infStates(:,1,1)),1);
 
 % Check input format
 if size(r.u,2) ~= 1 && size(r.u,2) ~= 3
-    error('Inputs incompatible with tapas_softmax_binary observation model. See tapas_softmax_binary_config.m')
+    error('tapas:hgf:SoftMaxBinary:InputsIncompatible', 'Inputs incompatible with tapas_softmax_binary observation model. See tapas_softmax_binary_config.m.')
 end
 
 % Weed irregular trials out from inferred states, responses, and inputs

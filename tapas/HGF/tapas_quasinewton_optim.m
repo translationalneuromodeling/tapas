@@ -77,7 +77,7 @@ end
 if ~iscolumn(init)
     init = init';
     if ~iscolumn(init)
-        error('Initial point has to be a row vector.');
+        error('tapas:hgf:QuasinewtonOptim:InitPointNotRow', 'Initial point has to be a row vector.');
     end
 end
 

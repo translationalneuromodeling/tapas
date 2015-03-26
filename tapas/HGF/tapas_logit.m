@@ -8,7 +8,7 @@ function y = tapas_logit(x, a)
 % COPYING or <http://www.gnu.org/licenses/>.
 
 if any(x >= a) || any(x <= 0)
-    error('Argument out of range for function tapas_logit()');
+    error('tapas:hgf:logit:ArgOutOfRange', 'Argument out of range.');
 end
     
 y = log(x./(a-x));

@@ -1,5 +1,5 @@
 function c = tapas_hgf_ar1_mab_config
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Contains the configuration for the Hierarchical Gaussian Filter (HGF) for AR(1)
 % processes in multi-armed bandit situations. The template for such
@@ -14,6 +14,14 @@ function c = tapas_hgf_ar1_mab_config
 % for individual learning under uncertainty. Frontiers in Human Neuroscience, 5:39.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The recommended syntax for this model is
+%
+% >> est = tapas_fitModel(y, u, 'tapas_hgf_ar1_mabt_config', 'tapas_softmax_config');
+%
+% y here is the subject's choice (i.e., the number of the bandit chosen), u is an n-by-2 matrix
+% where n is the number of trials. The first column is the payout on that trial, and the second
+% column is again y. This has to appear in two places because the choice is relevant to the
+% perceptual model.
 %
 % The HGF configuration consists of the priors of parameters and initial values. All priors are
 % Gaussian in the space where the quantity they refer to is estimated. They are specified by their
@@ -22,11 +30,7 @@ function c = tapas_hgf_ar1_mab_config
 % Quantities are estimated in their native space if they are unbounded (e.g., the omegas). They are
 % estimated in log-space if they have a natural lower bound at zero (e.g., the sigmas).
 % 
-% The phis, kappas, and theta) are estimated in 'logit-space' because bounding them above (in
-% addition to their natural lower bound at zero) is an effective means of preventing the exploration
-% of parameter regions where the assumptions underlying the variational inversion (cf. Mathys et
-% al., 2011) no longer hold.
-% 
+% The phis are estimated in 'logit space' because they are confined to the interval from 0 to 1.
 % 'Logit-space' is a logistic sigmoid transformation of native space with a variable upper bound
 % a>0:
 % 
@@ -38,10 +42,6 @@ function c = tapas_hgf_ar1_mab_config
 % contain the representations mu_j and sigma_j. A choice of scale and origin is then implied by
 % fixing the initial value mu_j_0 of mu_j and either kappa_j-1 or omega_j-1.
 %
-% The kappas and theta can be fixed to an arbitrary value by setting the upper bound to twice that
-% value and the mean as well as the variance of the prior to zero (this follows immediately from
-% the logit transform above).
-% 
 % Fitted trajectories can be plotted by using the command
 %
 % >> tapas_hgf_ar1_plotTraj(est)
@@ -56,16 +56,21 @@ function c = tapas_hgf_ar1_mab_config
 %         est.p_prc.m          row vector of ms
 %         est.p_prc.ka         row vector of kappas (in ascending order of levels)
 %         est.p_prc.om         row vector of omegas (in ascending order of levels)
-%         est.p_prc.th         theta
 %         est.p_prc.al         alpha
 %
 %         est.traj.mu          mu (rows: trials, columns: levels)
 %         est.traj.sa          sigma (rows: trials, columns: levels)
 %         est.traj.muhat       prediction of mu (rows: trials, columns: levels)
 %         est.traj.sahat       precisions of predictions (rows: trials, columns: levels)
+%         est.traj.v           inferred variance of random walk (rows: trials, columns: levels)
 %         est.traj.w           weighting factors (rows: trials, columns: levels)
 %         est.traj.da          volatility prediction errors  (rows: trials, columns: levels)
 %         est.traj.dau         input prediction error
+%         est.traj.ud          updates with respect to prediction  (rows: trials, columns: levels)
+%         est.traj.psi         precision weights on prediction errors  (rows: trials, columns: levels)
+%         est.traj.epsi        precision-weighted prediction errors  (rows: trials, columns: levels)
+%         est.traj.wt          full weights on prediction errors (at the first level,
+%                                  this is the learning rate) (rows: trials, columns: levels)
 %
 % Tips:
 % - When analyzing a new dataset, take your inputs u and use
@@ -77,18 +82,18 @@ function c = tapas_hgf_ar1_mab_config
 %   then use the optimal parameters as your new prior means for the perceptual parameters.
 %
 % - If you get an error saying that the prior means are in a region where model assumptions are
-%   violated, or if you simply get implausible trajectories (e.g., huge jumps in any of the mus), try
-%   lowering the upper bound on theta.
+%   violated, lower the prior means of the omegas, starting with the highest level and proceeding
+%   downwards.
 %
-% - Alternatives are lowering the upper bounds on the kappas, if they are not fixed, or adjusting
+% - Alternatives are lowering the prior means of the kappas, if they are not fixed, or adjusting
 %   the values of the kappas or omegas, if any of them are fixed.
 %
-% - If the negative free energy F cannot be calculated because the Hessian poses problems, look at
+% - If the log-model evidence cannot be calculated because the Hessian poses problems, look at
 %   est.optim.H and fix the parameters that lead to NaNs.
 %
-% - Your guide to all these adjustments is the negative free energy F. Whenever F increases by at
-%   least 3 across datasets, the adjustment was a good idea and can be justified by just this: F
-%   increased, so you had a better model.
+% - Your guide to all these adjustments is the log-model evidence (LME). Whenever the LME increases
+%   by at least 3 across datasets, the adjustment was a good idea and can be justified by just this:
+%   the LME increased, so you had a better model.
 %
 % --------------------------------------------------------------------------------------------------
 % Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
@@ -103,7 +108,7 @@ function c = tapas_hgf_ar1_mab_config
 c = struct;
 
 % Model name
-c.model = 'tapas_hgf_ar1_mab';
+c.model = 'hgf_ar1_mab';
 
 % Number of bandits
 c.n_bandits = 3;
@@ -162,34 +167,17 @@ c.logitphisa = [            1,    0];
 c.mmu = [ 50, c.mu_0mu(2)];
 c.msa = [8^2,           0];
 
-% Upper bounds on kappas (lower bound is always zero)
-% Format: row vector of length n_levels-1
-c.kaub = [2];
-
 % Kappas
 % Format: row vector of length n_levels-1.
 % This should be fixed (preferably to 1) if the observation model
 % does not use mu_i+1 (kappa then determines the scaling of x_i+1).
-c.logitkamu = [0];
-c.logitkasa = [0];
+c.logkamu = [log(1)];
+c.logkasa = [     0];
 
 % Omegas
-% Format: row vector of length n_levels-1
-c.ommu = [  4];
-c.omsa = [4^2];
-
-% Upper bound on theta (lower bound is always zero)
-% Format: scalar
-% NOTE: If set to zero, this will be automatically
-% adjusted to the highest value (not greater than 2)
-% for which the assumptions underlying the variational
-% inversion of the HGF still hold.
-c.thub = 1;
-
-% Theta
-% Format: scalar
-c.logitthmu = 0;
-c.logitthsa = 10^2;
+% Format: row vector of length n_levels
+c.ommu = [  4,   -4];
+c.omsa = [4^2,  4^2];
 
 % Alpha
 % Format: scalar
@@ -204,9 +192,8 @@ c.priormus = [
     c.logsa_0mu,...
     c.logitphimu,...
     c.mmu,...
-    c.logitkamu,...
+    c.logkamu,...
     c.ommu,...
-    c.logitthmu,...
     c.logalmu,...
          ];
 
@@ -215,16 +202,15 @@ c.priorsas = [
     c.logsa_0sa,...
     c.logitphisa,...
     c.msa,...
-    c.logitkasa,...
+    c.logkasa,...
     c.omsa,...
-    c.logitthsa,...
     c.logalsa,...
          ];
 
 % Check whether we have the right number of priors
 expectedLength = 4*c.n_levels+2*(c.n_levels-1)+2;
 if length([c.priormus, c.priorsas]) ~= 2*expectedLength;
-    error('Prior definition does not match number of levels.')
+    error('tapas:hgf:PriorDefNotMatchingLevels', 'Prior definition does not match number of levels.')
 end
 
 % Model function handle

@@ -149,6 +149,14 @@ prc_namep_fun = str2func([prc_model, '_namep']);
 r.p_prc   = prc_namep_fun(prc_pvec);
 r.p_prc.p = prc_pvec;
 
+% Read configuration of perceptual model
+try
+    prc_config_fun = str2func([prc_model, '_config']);
+    r.c_prc = prc_config_fun();
+catch
+    r.c_prc = [];
+end
+
 % Get function handle to perceptual model
 prc_fun = str2func(r.c_sim.prc_model);
 
@@ -165,6 +173,14 @@ if nargin > 4
     obs_namep_fun = str2func([r.c_sim.obs_model, '_namep']);
     r.p_obs   = obs_namep_fun(obs_pvec);
     r.p_obs.p = obs_pvec;
+    
+    % Read configuration of observation model
+    try
+        obs_config_fun = str2func([obs_model, '_config']);
+        r.c_obs = obs_config_fun();
+    catch
+        r.c_obs = [];
+    end    
     
     % Get function handle to observation model
     obs_fun = str2func([r.c_sim.obs_model, '_sim']);

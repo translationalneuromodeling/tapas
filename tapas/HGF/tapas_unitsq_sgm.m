@@ -1,4 +1,4 @@
-function logp = tapas_unitsq_tapas_sgm(r, infStates, ptrans)
+function logp = tapas_unitsq_sgm(r, infStates, ptrans)
 % Calculates the log-probability of response y=1 under the unit-square sigmoid model
 %
 % --------------------------------------------------------------------------------------------------
@@ -22,7 +22,15 @@ x(r.irr) = [];
 y = r.y(:,1);
 y(r.irr) = [];
 
+% Avoid any numerical problems when taking logarithms close to 1
+logx = log(x);
+log1pxm1 = log1p(x-1);
+logx(1-x<1e-4) = log1pxm1(1-x<1e-4);
+log1mx = log(1-x);
+log1pmx = log1p(-x);
+log1mx(x<1e-4) = log1pmx(x<1e-4); 
+
 % Calculate log-probabilities for non-irregular trials
-logp(not(ismember(1:length(logp),r.irr))) = y.*ze.*log(x./(1-x)) +log((1-x).^ze ./((1-x).^ze +x.^ze));
+logp(not(ismember(1:length(logp),r.irr))) = y.*ze.*(logx -log1mx) +ze.*log1mx -log((1-x).^ze +x.^ze);
 
 return;

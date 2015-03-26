@@ -9,15 +9,21 @@ function logp = tapas_softmax(r, infStates, ptrans)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
+% Predictions or posteriors?
+pop = 1; % Default: predictions
+if r.c_obs.predorpost == 2
+    pop = 3; % Alternative: posteriors
+end
+
 % Transform beta to its native space
 be = exp(ptrans(1));
 
 % Initialize returned log-probabilities as NaNs so that NaN is
 % returned for all irregualar trials
-logp = NaN(length(infStates(:,1,1,1)),1);
+logp = NaN(size(infStates,1),1);
 
 % Weed irregular trials out from inferred states and responses
-states = squeeze(infStates(:,1,:,1));
+states = squeeze(infStates(:,1,:,pop));
 states(r.irr,:) = [];
 y = r.y(:,1);
 y(r.irr) = [];

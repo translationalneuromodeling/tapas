@@ -13,7 +13,7 @@ pstruct = struct;
 l = length(pvec)/6;
     
 if l ~= floor(l)
-    error('Cannot determine number of levels');
+    error('tapas:hgf:UndetNumLevels', 'Cannot determine number of levels');
 end
 
 pstruct.mu_0      = pvec(1:l);
@@ -21,8 +21,7 @@ pstruct.sa_0      = pvec(l+1:2*l);
 pstruct.phi       = pvec(2*l+1:3*l);
 pstruct.m         = pvec(3*l+1:4*l);
 pstruct.ka        = pvec(4*l+1:5*l-1);
-pstruct.om        = pvec(5*l:6*l-2);
-pstruct.th        = pvec(6*l-1);
+pstruct.om        = pvec(5*l:6*l-1);
 pstruct.al        = pvec(6*l);
 
 return;

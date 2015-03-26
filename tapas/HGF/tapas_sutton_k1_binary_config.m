@@ -42,9 +42,9 @@ function c = tapas_sutton_k1_binary_config
 %         est.traj.da        prediction error: delta
 %
 % Tips:
-% - Your guide to adjustments of the priors is the negative free energy F. Whenever F
-%   increases by at least 3, the adjustment was a good idea and can be justified by just this: F
-%   increased, so you had a better model.
+% - Your guide to all these adjustments is the log-model evidence (LME). Whenever the LME increases
+%   by at least 3 across datasets, the adjustment was a good idea and can be justified by just this:
+%   the LME increased, so you had a better model.
 %
 % --------------------------------------------------------------------------------------------------
 % Copyright (C) 2013 Christoph Mathys, TNU, UZH & ETHZ

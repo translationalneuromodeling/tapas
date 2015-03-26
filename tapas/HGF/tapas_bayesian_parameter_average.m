@@ -73,19 +73,19 @@ obs_priorsas = varargin{1}.c_obs.priorsas;
 % Check whether everything matches up
 for i = 2:n
     if ~strcmp(prc_model,varargin{i}.c_prc.model)
-        error('Perceptual models do not match.');
+        error('tapas:hgf:bpa:PrcModNoMatch', 'Perceptual models do not match.');
     end
 
     if ~strcmp(obs_model,varargin{i}.c_obs.model)
-        error('Observation models do not match.');
+        error('tapas:hgf:bpa:ObsModNoMatch', 'Observation models do not match.');
     end
 
     if ~isequalwithequalnans(prc_priormus,varargin{i}.c_prc.priormus) || ~isequalwithequalnans(prc_priorsas,varargin{i}.c_prc.priorsas)
-        error('Perceptual priors do not match.');
+        error('tapas:hgf:bpa:PrcPriorsNoMatch', 'Perceptual priors do not match.');
     end
 
     if ~isequalwithequalnans(obs_priormus,varargin{i}.c_obs.priormus) || ~isequalwithequalnans(obs_priorsas,varargin{i}.c_obs.priorsas)
-        error('Observation priors do not match.');
+        error('tapas:hgf:bpa:ObsPriorsNoMatch', 'Observation priors do not match.');
     end
 
     if ~isequalwithequalnans(u(:),varargin{i}.u(:))

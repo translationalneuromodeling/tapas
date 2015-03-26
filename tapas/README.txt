@@ -1,4 +1,4 @@
-Version 1.5.0.0
+Version 1.6.0.0
 ________________________________________________________________________
 
      T  A  P  A  S - TNU Algorithms for Psychiatry-Advancing Science.
@@ -51,11 +51,11 @@ For queries and discussions please join the mailing list at http://sympa.ethz.ch
 Bugs in the software can be emailed directly to: tapas-bugs@biomed.ee.ethz.ch
 
 
--------------------------------
-Global Changes in this version
--------------------------------
+------------------------
+Changes in this version
+------------------------
 
-There are no global changes in this version. Local changes are specific to the PhysIO toolbox. Please refer to the toolbox readme.txt file for more details.
+There are no global changes in this version. Local changes are specific to the HGF toolbox. Please refer to the toolbox Readme file for more details.
 
 
 -------

@@ -71,7 +71,7 @@ function [gradf, err] = tapas_riddersgradient(f, x, varargin)
     try
         f(x);
     catch err
-        error('Function cannot be evaluated at differentiation point');
+        error('tapas:hgf:ridders:CannotEvalFun', 'Function cannot be evaluated at differentiation point.');
     end
     
     % Loop through argument variables

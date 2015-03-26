@@ -15,6 +15,10 @@ ze = p;
 % Apply the unit-square sigmoid to the inferred states
 prob = mu1hat.^ze./(mu1hat.^ze+(1-mu1hat).^ze);
 
+% Initialize random number generator
+RandStream.setGlobalStream(RandStream('mt19937ar','Seed',rem(now,1)*1000000));
+
+% Simulate
 y = binornd(1, prob);
 
 return;

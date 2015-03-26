@@ -33,7 +33,7 @@ catch
     l = (length(p)+1)/5;
     
     if l ~= floor(l)
-        error('Cannot determine number of levels');
+        error('tapas:hgf:UndetNumLevels', 'Cannot determine number of levels');
     end
 end
 
@@ -43,7 +43,7 @@ sa_0 = p(l+1:2*l);
 rho  = p(2*l+1:3*l);
 ka   = p(3*l+1:4*l-1);
 om   = p(4*l:5*l-2);
-th   = p(5*l-1);
+th   = exp(p(5*l-1));
 
 % Add dummy "zeroth" trial
 u = [0; r.u(:,1)];
@@ -57,7 +57,7 @@ try
         if size(u,2) > 1
             t = [0; r.u(:,end)];
         else
-            error('Input matrix must contain more than one column if irregular_intervals is set to true.');
+            error('tapas:hgf:InputSingleColumn', 'Input matrix must contain more than one column if irregular_intervals is set to true.');
         end
     else
         t = ones(n,1);
@@ -79,6 +79,7 @@ pi = NaN(n,l);
 % Other quantities
 muhat = NaN(n,l);
 pihat = NaN(n,l);
+v     = NaN(n,l);
 w     = NaN(n,l-1);
 da    = NaN(n,l);
 
@@ -143,13 +144,14 @@ for k = 2:1:n
                 pihat(k,j) = 1/(1/pi(k-1,j) +t(k) *exp(ka(j) *mu(k-1,j+1) +om(j)));
 
                 % Weighting factor
-                w(k,j-1) = t(k) *exp(ka(j-1) *mu(k-1,j) +om(j-1)) *pihat(k,j-1);
+                v(k,j-1) = t(k) *exp(ka(j-1) *mu(k-1,j) +om(j-1));
+                w(k,j-1) = v(k,j-1) *pihat(k,j-1);
 
                 % Updates
                 pi(k,j) = pihat(k,j) +1/2 *ka(j-1)^2 *w(k,j-1) *(w(k,j-1) +(2 *w(k,j-1) -1) *da(k,j-1));
 
                 if pi(k,j) <= 0
-                    error('Negative posterior precision. Parameters are in a region where model assumptions are violated.');
+                    error('tapas:hgf:NegPostPrec', 'Negative posterior precision. Parameters are in a region where model assumptions are violated.');
                 end
 
                 mu(k,j) = muhat(k,j) +1/2 *1/pi(k,j) *ka(j-1) *w(k,j-1) *da(k,j-1);
@@ -168,13 +170,15 @@ for k = 2:1:n
         pihat(k,l) = 1/(1/pi(k-1,l) +t(k) *th);
 
         % Weighting factor
-        w(k,l-1) = t(k) *exp(ka(l-1) *mu(k-1,l) +om(l-1)) *pihat(k,l-1);
+        v(k,l)   = t(k) *th;
+        v(k,l-1) = t(k) *exp(ka(l-1) *mu(k-1,l) +om(l-1));
+        w(k,l-1) = v(k,l-1) *pihat(k,l-1);
         
         % Updates
         pi(k,l) = pihat(k,l) +1/2 *ka(l-1)^2 *w(k,l-1) *(w(k,l-1) +(2 *w(k,l-1) -1) *da(k,l-1));
  
         if pi(k,l) <= 0
-            error('Negative posterior precision. Parameters are in a region where model assumptions are violated.');
+            error('tapas:hgf:NegPostPrec', 'Negative posterior precision. Parameters are in a region where model assumptions are violated.');
         end
 
         mu(k,l) = muhat(k,l) +1/2 *1/pi(k,l) *ka(l-1) *w(k,l-1) *da(k,l-1);
@@ -189,11 +193,16 @@ for k = 2:1:n
         muhat(k,:) = muhat(k-1,:);
         pihat(k,:) = pihat(k-1,:);
         
+        v(k,:)  = v(k-1,:);
         w(k,:)  = w(k-1,:);
         da(k,:) = da(k-1,:);
         
     end
 end
+
+% Implied learning rate at the first level
+sgmmu2 = tapas_sgm(mu(:,2), 1);
+lr1    = diff(sgmmu2)./da(2:n,1); 
 
 % Remove representation priors
 mu(1,:)  = [];
@@ -201,12 +210,24 @@ pi(1,:)  = [];
 
 % Check validity of trajectories
 if any(isnan(mu(:))) || any(isnan(pi(:)))
-    error('Variational approximation invalid. Parameters are in a region where model assumptions are violated.');
+    error('tapas:hgf:VarApproxInvalid', 'Variational approximation invalid. Parameters are in a region where model assumptions are violated.');
+else
+    % Check for implausible jumps in trajectories
+    dmu = diff(mu(:,2:end));
+    dpi = diff(pi(:,2:end));
+    rmdmu = repmat(sqrt(mean(dmu.^2)),length(dmu),1);
+    rmdpi = repmat(sqrt(mean(dpi.^2)),length(dpi),1);
+
+    jumpTol = 16;
+    if any(abs(dmu(:)) > jumpTol*rmdmu(:)) || any(abs(dpi(:)) > jumpTol*rmdpi(:))
+        error('tapas:hgf:VarApproxInvalid', 'Variational approximation invalid. Parameters are in a region where model assumptions are violated.');
+    end
 end
 
 % Remove other dummy initial values
 muhat(1,:) = [];
 pihat(1,:) = [];
+v(1,:)     = [];
 w(1,:)     = [];
 da(1,:)    = [];
 
@@ -219,12 +240,36 @@ traj.sa     = 1./pi;
 traj.muhat  = muhat;
 traj.sahat  = 1./pihat;
 
+traj.v      = v;
 traj.w      = w;
 traj.da     = da;
 
-% Create matrices for use by observation model
-infStates = NaN(n-1,l,2);
+% Updates with respect to prediction
+traj.ud = muhat -mu;
+
+% Psi (precision weights on prediction errors)
+psi        = NaN(n-1,l);
+psi(:,2)   = 1./pi(:,2);
+psi(:,3:l) = pihat(:,2:l-1)./pi(:,3:l);
+traj.psi   = psi;
+
+% Epsilons (precision-weighted prediction errors)
+epsi        = NaN(n-1,l);
+epsi(:,2:l) = psi(:,2:l) .*da(:,1:l-1);
+traj.epsi   = epsi;
+
+% Full learning rate (full weights on prediction errors)
+wt        = NaN(n-1,l);
+wt(:,1)   = lr1;
+wt(:,2)   = psi(:,2);
+wt(:,3:l) = 1/2 *(v(:,2:l-1) *diag(ka(2:l-1))) .*psi(:,3:l);
+traj.wt   = wt;
+
+% Create matrices for use by the observation model
+infStates = NaN(n-1,l,4);
 infStates(:,:,1) = traj.muhat;
 infStates(:,:,2) = traj.sahat;
+infStates(:,:,3) = traj.mu;
+infStates(:,:,4) = traj.sa;
 
 return;
