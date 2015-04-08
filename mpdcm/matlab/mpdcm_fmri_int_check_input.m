@@ -72,10 +72,12 @@ end
 
 function check_matrix(theta, ns, field, element)
 %% Checks a matrix in theta.
-% theta is a cell array
-% ns is the expected size of the matrix
-% fields is string with the respetive field
-% Element is the index
+%
+% Input
+% theta -- Cell array
+% ns -- Expected size of the matrix
+% field -- String with the respetive field
+% Element -- Index
 
     assert(isfield(theta{element}, field), ...
         sprintf('mpdcm:fmri:int:input:theta:cell:%s:missing', field), ...

@@ -1,12 +1,13 @@
-function [q, ntheta] = mpdcm_fmri_gmodel(y, u, theta, ptheta) 
+function [q, ntheta] = mpdcm_fmri_gmodel(y, u, theta, ptheta, pars) 
 %% Estimate the model using an approximate variational Bayes method
 % 
 % Input:
 %
-% y -- Cell array of experimental observations.
-% u -- Cell array of experimental input.
-% theta -- Cell array of initial states of the parameters
-% ptheta -- Priors and constants
+% y         -- Cell array of experimental observations.
+% u         -- Cell array of experimental input.
+% theta     -- Cell array of initial states of the parameters
+% ptheta    -- Priors and constants
+% pars      -- Struct. Parameters for the optimization.
 %
 % Output:
 %
@@ -16,6 +17,20 @@ function [q, ntheta] = mpdcm_fmri_gmodel(y, u, theta, ptheta)
 % aponteeduardo@gmail.com
 % copyright (C) 2014
 %
+
+if nargin < 5
+    pars = struct();
+end
+
+if ~isfield(pars, 'verb')
+    pars.verb = 0;
+end
+
+if ~isfield(pars, 'maxi')
+    pars.maxi = 5;
+end
+
+
 
 assert(size(y{1}, 2) > 1, 'mpdcm:fmri:gmodel:input', ...
     'Single region models are not implemented');
@@ -34,11 +49,11 @@ for j = 1:nt
 end
 
 % Optimize the posterior
-for i = 1:5
+for i = 1:pars.maxi
     for j = 1:nt
         theta{j}.lambda = full(log(q{j}.lambda.a) - log(q{j}.lambda.b));
     end
-    [mu, ny, dfdx] = mpdcm_fmri_map(y, u, theta, ptheta);
+    [mu, ny, dfdx] = mpdcm_fmri_map(y, u, theta, ptheta, pars);
 
     theta = mpdcm_fmri_set_parameters(mu, theta, ptheta);
 
@@ -66,8 +81,8 @@ for i = 1:5
             h = dfdx{1}(:, k, :);
             h = squeeze(h);
             h = h'*h; 
-            q{j}.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + 0.5*trace(q{j}.theta.pi\h) + ...
-                ptheta.p.lambda.b(k);
+            q{j}.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + ...
+                0.5*trace(q{j}.theta.pi\h) + ptheta.p.lambda.b(k);
         end
     end
 end

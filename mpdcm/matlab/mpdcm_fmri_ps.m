@@ -1,8 +1,17 @@
 function [ps, fe] = mpdcm_fmri_ps(dcm, pars)
 %% Estimates the posterior probability of the parameters using MCMC combined
 % with path sampling.
-% dcm -- DCM to be estimated
-% pars -- Parameters for the mcmc
+%
+% Input:
+% dcm       -- Struct. DCM to be estimated
+% pars      -- Struct. Parameters for the mcmc. verb: Verbose option. Defs. 
+%           False. mc3i: Number of times that the exchange operator is applied.
+%           Defs. 20. diagi: Number of samples before recomputing the kernel 
+%           and producing verbose output.
+%
+% Output:
+% ps        -- Struct. Posterior distribution.
+% fe        -- Scalar. Estimated free energy.
 %
 % Uses a standard MCMC on a population and applies an exchange operator
 % to improve the mixing.
@@ -15,13 +24,19 @@ function [ps, fe] = mpdcm_fmri_ps(dcm, pars)
 % copyright (C) 2014
 %
 
-if ~isfield(pars, 'verbose')
-    pars.verbose = 0;
+if ~isfield(pars, 'verb')
+    pars.verb = 0;
 end
 
-DIAGN = 200;
+if ~isfield(pars, 'mc3i')
+    pars.mc3i = 20;
+end
 
-T = pars.T;
+if ~isfield(pars, 'diagi')
+    pars.diagi = 200;
+end
+
+T = sort(pars.T);
 nburnin = pars.nburnin;
 niter = pars.niter;
 
@@ -31,7 +46,7 @@ htheta = mpdcm_fmri_htheta(ptheta);
 
 nt = numel(T);
 
-[q, otheta, ollh, olpp] = init_estimate(y, u, theta, ptheta, T);
+[q, otheta, ollh, olpp] = init_estimate(y, u, theta, ptheta, T, pars);
 
 op = mpdcm_fmri_get_parameters(otheta, ptheta);
 
@@ -40,14 +55,17 @@ ellh = zeros(nt, niter);
 
 diagnostics = zeros(1, nt);
 
-% Optimized kernel
-kt = ones(1, nt);
+ok = init_kernel(op, y);
+os = zeros(numel(op{1}), nt, pars.diagi);
+
+t = 1;
 
 for i = 1:nburnin+niter
 
-    if mod(i, DIAGN) == 0
-        diagnostics = diagnostics/DIAGN;
-        if pars.verbose
+    % Diagnostics and kernel update
+    if i > 1 && mod(i-1, pars.diagi) == 0
+        diagnostics = diagnostics/pars.diagi;
+        if pars.verb
             fprintf(1, 'Iter %d, diagnostics:  ', i);
             fprintf(1, '%0.2f ', diagnostics);
             fprintf(1, '%0.2f ', ollh);
@@ -57,14 +75,13 @@ for i = 1:nburnin+niter
                 fprintf(1, 'Fe: %0.05f\n', fe);
             end
         end
-        if i < nburnin
-            kt(diagnostics < 0.2) = kt(diagnostics < 0.2)/2;
-            kt(diagnostics > 0.3) = kt(diagnostics > 0.3)*1.8;
-        end
+        ok = update_kernel(t, ok, os, diagnostics); 
         diagnostics(:) = 0;
+        t = t + 1;
     end
 
-    np = mpdcm_fmri_sample(op, ptheta, htheta, num2cell(kt));
+
+    np = mpdcm_fmri_sample(op, ptheta, htheta, ok);
     ntheta = mpdcm_fmri_set_parameters(np, otheta, ptheta);
 
     [nllh, ny] = mpdcm_fmri_llh(y, u, ntheta, ptheta, 1);
@@ -73,7 +90,7 @@ for i = 1:nburnin+niter
     nlpp = sum(mpdcm_fmri_lpp(y, u, ntheta, ptheta), 1);
 
     nllh(isnan(nllh)) = -inf;
-
+        
     v = nllh.*T + nlpp - (ollh.*T + olpp);
     tv = v;
     v = rand(size(v)) < exp(bsxfun(@min, v, 0));
@@ -82,16 +99,19 @@ for i = 1:nburnin+niter
     olpp(v) = nlpp(v);
     op(:, v) = np(:, v);
 
+    assert(all(-inf < ollh), 'mpdcm:fmri:ps', '-inf value in the likelihood');
+
     diagnostics(:) = diagnostics(:) + v(:);
 
     if i > nburnin
         ps_theta(:, i - nburnin) = op{end};
         ellh(:, i - nburnin) = ollh;
+    else
+        os(:, :, mod(i-1, pars.diagi) + 1) = cell2mat(op);
     end
 
-    assert(all(-inf < ollh), 'mpdcm:fmri:ps', '-inf value in the likelihood');
 
-    if pars.mc3
+    for l = 1:pars.mc3i
         v = ceil(rand()*(nt-1));
         p = min(1, exp(ollh(v) * T(v+1) + ollh(v+1) * T(v) ...
             - ollh(v) * T(v) - ollh(v+1) * T(v+1)));
@@ -112,11 +132,73 @@ ps.y = mpdcm_fmri_int(u, ps.theta, ptheta);
 ps.theta = ps.theta{:};
 ps.y = ps.y{:};
 ps.F = fe;
+% Prior posterior mean
+ps.ppm = 1/mean(exp(-ellh(end, :))); 
+% Prior arithmetic mean (or almost)
+ps.pam = mean(exp(ellh(1, :))); 
 
 end
 
+function [nk] = init_kernel(op, y)
+%% Initilize the kernel or covariance matrix of the proposal distribution.
+%
+% See Exploring an adaptative Metropolis Algorithm
+% 
 
-function [q, otheta, ollh, olpp] = init_estimate(y, u, theta, ptheta, T)
+np = size(op{1}, 1);
+nr = size(y{1}, 1);
+
+c = diag([ones(1, np - (3 * nr + 1)), 1e-2 * ones(1, 2 * nr +1), ones(1, nr)]);
+
+nk = cell(size(op, 2), 1);
+nk(:) = {c};
+
+nk = struct('S', nk, 's', 0.01);
+
+end
+
+function [nk] = update_kernel(t, ok, os, ar)
+%% Computes a new kernel or covariance for the proposal distribution.
+%
+% ok -- Old kernel
+% os -- Old samples
+% ar -- Acceptance rate
+%
+% See Exploring an adaptative Metropolis Algorithm
+% 
+
+
+c0 = 1.0;
+c1 = 0.8;
+
+gammaS = t^-c1;
+gammas = c0*gammaS; 
+
+ns = size(os, 3);
+nd = size(os, 1);
+nk = ok;
+
+% Optimal log rejection rate
+ropt = 0.234;
+
+for i = 1:numel(ok)
+    % From Cholesky form to covariance form
+    ok(i).S = ok(i).S * ok(i).S';
+    % Empirical variance
+    ts = squeeze(os(:, i, :));
+    ts = bsxfun(@minus, ts, mean(ts, 2));
+    ek = (ts * ts')./(ns-1);
+    % Set new kernel
+    nk(i).S = ok(i).S + gammaS * ( ek - ok(i).S);
+    % Compute the Cholesky decomposition 
+    nk(i).S = chol(nk(i).S + eye(nd) * 0.0001);
+    % Set new scaling
+    nk(i).s = exp(log(ok(i).s) + gammas * (ar(i) - ropt));
+end
+    
+end
+
+function [q, otheta, ollh, olpp] = init_estimate(y, u, theta, ptheta, T, pars)
 % Create an initial estimate to reduce burn in phase by computing the 
 % posterior distribution of the power posteriors
 
@@ -124,7 +206,9 @@ nt = numel(T);
 
 [q, otheta] = mpdcm_fmri_gmodel(y, u, theta, ptheta);
 [ollh, ny] = mpdcm_fmri_llh(y, u, otheta, ptheta);
-fprintf(1, 'Starting llh: %0.5d\n', ollh);
+if pars.verb
+    fprintf(1, 'Starting llh: %0.5d\n', ollh);
+end
 
 [op] = mpdcm_fmri_get_parameters(otheta, ptheta);
 

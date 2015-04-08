@@ -1,14 +1,14 @@
-function [mu, ny, dfdx, nrs] = mpdcm_fmri_map(y, u, theta, ptheta, mleflag)
+function [mu, ny, dfdx, nrs] = mpdcm_fmri_map(y, u, theta, ptheta, pars)
 %% Minimizes map estimate assuming fixed noise.
 %
 % Input:
 %
-% y -- Cell array of experimental observations.
-% u -- Cell array of experimental design.
-% theta -- Cell array of initialization model parameters.
-% ptheta -- Structure of the hyperparameters.
-% mleflag -- If true, computes only the maximum likelihood estimator. Defaults
-%   to 0;
+% y         -- Cell array of experimental observations.
+% u         -- Cell array of experimental design.
+% theta     -- Cell array of initialization model parameters.
+% ptheta    -- Struct. containing the hyperparameters.
+% pars      -- Struct. mleflag: If true, computes only the maximum likelihood 
+%               estimator. Defs. to 0. verb: Verbose output. Defs. 0.
 %
 % Output:
 %
@@ -27,15 +27,22 @@ function [mu, ny, dfdx, nrs] = mpdcm_fmri_map(y, u, theta, ptheta, mleflag)
 assert(size(theta, 2) == 1, 'mpdcm:fmri:mle:input', ...
     'theta second dimension should be one, instead %d', size(theta, 2));
 
-% Need to change this
+if nargin < 5
+    pars = struct();
+end
+
+if ~isfield(pars, 'mleflag')  
+    pars.mleflag = 0;
+end
+
+if ~isfield(pars, 'verb')  
+    pars.verb = 0;
+end
+
+% Defaults to no temperature parameter.
 
 if ~isfield(ptheta, 'T')
     ptheta.T = ones(numel(y), 1);
-end
-
-
-if nargin < 5 
-    mleflag = 0;
 end
 
 % Tolereance to deviation
@@ -45,7 +52,7 @@ dt = 1e-4;
 % Multiplies the gradient with respect to the priors
 vdpdx = 1;
 
-if mleflag
+if pars.mleflag
     vdpdx = 0;
 end
 
@@ -115,14 +122,10 @@ for j = 1:30
 
     for k = 1:numel(u)
         tdfdx = cat(1, dfdx{k}, vdpdx * eye(numel(op{k})));
-        try
         np{k} = op{k} + (tdfdx'*bsxfun(@times, tdfdx, nQ{k}) + ...
             lambda(k) * eye(numel(op{k})))\(tdfdx'*(nQ{k}.*e{k}));
         assert(isreal(np{k}), 'Non real values');
         assert(~all(isnan(np{k})), 'Undefined value');
-        catch err
-            keyboard
-        end
     end
 
     ntheta = mpdcm_fmri_set_parameters(np, theta, ptheta);
@@ -139,12 +142,10 @@ for j = 1:30
 
     nrs(isnan(nrs)) = inf;
 
-
     if all(dp < tol)
         op(nrs < ors) = np(nrs < ors);
         break;
     end
-
 
     reg(nrs >= ors) = reg(nrs >= ors) + 1;
     reg(nrs < ors) = reg(nrs < ors) - 1;
@@ -155,9 +156,12 @@ for j = 1:30
        'Optimization failed with no gradient being found.')
 
 end
-fprintf(1, 'MAP Iteration: %d, RSE: ', j);
-fprintf(1, '%0.1f ', nrs);
-fprintf(1, '\n');
+
+if pars.verb
+    fprintf(1, 'MAP Iteration: %d, RSE: ', j);
+    fprintf(1, '%0.1f ', nrs);
+    fprintf(1, '\n');
+end
 
 mu = op;
 assert(isreal(cell2mat(mu)), 'Non real values');
