@@ -1,24 +1,29 @@
 %% [ y ] = c_mpdcm_fmri_int(u, theta, ptheta)
 % Integrates several dcms with inputs u, parameters theta, and ptheta.
-% u -- Two dimensional cell array of inputs to the dynamic system. u should 
+%
+% Input:
+% u     -- Two dimensional cell array of inputs to the dynamic system. u should 
 %   Mx1 dimensions, where M is the total number of different DCM's to be 
 %   integrated. Each cell should be a double, non sparse, real matrix of
 %   dimensions NxD, where N is the number of regions and D is the number of 
 %   data points. All cells in u should have the same dimensions, and should
 %   be padded with nan if necessary.
+%
 % theta -- Two dimensional cell array of parameters to the dynamic system.
 %   theta should have MxN dimensions. Each cell should be a structure as 
 %   specified bellow. For a cell mxn, the system will be integrated with 
 %   inputs u{m, 1} and parameters theta{m, n}. 
+%
 % ptheta -- A structure array as specified bellow. All systems will be 
 %   integrated with the same values.
 %
-% y -- An MxN cell array containing double, non sparse matrices. Cell
+% Output:
+% y     -- An MxN cell array containing double, non sparse matrices. Cell
 %   y{m, n} corresponds to a DCM integrated with input u{m, 1}, parameters
 %   theta{m, n} and ptheta.
 %
-% This implementation is intended two allow for efficient implementation
-% of hierarchical inferece and computation of free energies using 
+% This implementation is intended two allow for efficient
+% hierarchical inferece and computation of free energies using 
 % thermodynamic integration. In the first case, different sets of inputs
 % with diffent parameters can be specified along the first dimension of u.
 % In the latter case, a collection of systems can be integrated with a 
@@ -29,9 +34,7 @@
 % with the API will most likely produce a segmentation error. In order to
 % check your input see:
 %
-%       cuda_dcm_check_u
-%       cuda_dcm_check_theta
-%       cuda_dcm_check_ptheta
+%       mpdcm_fmri_int_checkinput
 %
 % theta should be an structure containing the following fields:
 %
@@ -65,9 +68,9 @@
 %
 % For a working example of how to use this library see:
 %
-%      test_cuda_dcm.m
+%      test_mpdcm_fmri_int.m
 %
-% In the fuction test_cuda_dcm_int_fmri you will find an example.
+% In the fuction test_mpdcm_fmri_int you will find an example.
 %
 % copyrigh@2014
 % aponteeduardo@gmail.com

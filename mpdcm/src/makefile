@@ -14,6 +14,7 @@ NAME := mpdcm
 .PHONY = directories
 
 MKDIR = mkdir -p
+SRCDIR = src
 BUILDDIR = build
 LIBDIR = /home/eaponte/projects/tapas/mpdcm/src/lib
 BINDIR = bin
@@ -44,7 +45,7 @@ LOP1 = -Wl,-rpath-link,/usr/local/MATLAB/R2012b/bin/glnxa64 -L$(BDDM_MATLAB)/bin
 
 # Rules
 
-$(BUILDDIR)/%.o : %.cu
+$(BUILDDIR)/%.o : $(SRCDIR)/%.cu
 	$(NVCC) -c $(NVCCFLAGS) $< -o $@
 
 # ===========================================================================
@@ -78,32 +79,36 @@ $(BINDIR)/c_mpdcm_fmri_euler.mexa64 : $(BUILDDIR)/c_mpdcm.o \
 $(BINDIR)/c_mpdcm_fmri_kr4.mexa64 : $(BUILDDIR)/c_mpdcm.o \
 	$(LIBDIR)/libmpdcm.so $(BUILDDIR)/c_mpdcm_fmri_kr4.o 
 
-$(BINDIR)/c_mpdcm_num_devices.mexa64 : ${BUILDDIR}/c_mpdcm_num_devices.o
-$(BINDIR)/c_mpdcm_get_device.mexa64 : ${BUILDDIR}/c_mpdcm_get_device.o
-$(BINDIR)/c_mpdcm_set_device.mexa64 : ${BUILDDIR}/c_mpdcm_set_device.o
+$(BINDIR)/c_mpdcm_num_devices.mexa64 : $(BUILDDIR)/c_mpdcm_num_devices.o
+$(BINDIR)/c_mpdcm_get_device.mexa64 : $(BUILDDIR)/c_mpdcm_get_device.o
+$(BINDIR)/c_mpdcm_set_device.mexa64 : $(BUILDDIR)/c_mpdcm_set_device.o
 
 $(BINDIR)/%.mexa64 : $(BUILDDIR)/%.o
 	$(MATCC) $(LOP0) -o $@ $^ $(LOP1)
 
-${BUILDDIR}/c_mpdcm_fmri_euler.o ${BUILDDIR}/c_mpdcm_fmri_kr4.o :
+# ===========================================================================
+# Compile
+# ===========================================================================
+
+$(BUILDDIR)/c_mpdcm_fmri_euler.o $(BUILDDIR)/c_mpdcm_fmri_kr4.o :
 	$(MATCC) -c $(MATFLAGS) -o $@ $^
 
-${BUILDDIR}/c_mpdcm_fmri_euler.o : c_mpdcm_fmri_euler.c
-${BUILDDIR}/c_mpdcm_fmri_kr4.o : c_mpdcm_fmri_kr4.c
+$(BUILDDIR)/c_mpdcm_fmri_euler.o : $(SRCDIR)/c_mpdcm_fmri_euler.c
+$(BUILDDIR)/c_mpdcm_fmri_kr4.o : $(SRCDIR)/c_mpdcm_fmri_kr4.c
 
 # Device code
 
-${BUILDDIR}/c_mpdcm_num_devices.o : c_mpdcm_num_devices.c
-${BUILDDIR}/c_mpdcm_get_device.o : c_mpdcm_get_device.c
-${BUILDDIR}/c_mpdcm_set_device.o : c_mpdcm_set_device.c
+$(BUILDDIR)/c_mpdcm_num_devices.o : $(SRCDIR)/c_mpdcm_num_devices.c
+$(BUILDDIR)/c_mpdcm_get_device.o : $(SRCDIR)/c_mpdcm_get_device.c
+$(BUILDDIR)/c_mpdcm_set_device.o : $(SRCDIR)/c_mpdcm_set_device.c
 
-${BUILDDIR}/c_mpdcm_num_devices.o ${BUILDDIR}/c_mpdcm_get_device.o \
-	${BUILDDIR}/c_mpdcm_set_device.o :
+$(BUILDDIR)/c_mpdcm_num_devices.o $(BUILDDIR)/c_mpdcm_get_device.o \
+	$(BUILDDIR)/c_mpdcm_set_device.o :
 	$(MATCC) -c $(MATFLAGS) $(ICUDA) -o $@ $<
 
 # Compile c
 
-$(BUILDDIR)/c_mpdcm.o : c_mpdcm.c
+$(BUILDDIR)/c_mpdcm.o : $(SRCDIR)/c_mpdcm.c
 	$(MATCC) -c $(MATFLAGS) -o $@ $^
 
 # Compile cuda
@@ -111,9 +116,9 @@ $(BUILDDIR)/c_mpdcm.o : c_mpdcm.c
 $(LIBDIR)/libmpdcm.so : $(BUILDDIR)/mpdcm.o
 	$(NVCC) --compiler-bindir=/usr/bin/g++-4.8 -shared -o $@ $^ $(LCUDA) 
 
-$(BUILDDIR)/mpdcm.o : mpdcm.cu
+$(BUILDDIR)/mpdcm.o : $(SRCDIR)/mpdcm.cu
 
 clean :
-	$(RM) *.o *.so *.mexa64
+	$(RM) -r $(BINDIR)/*.mexa64
 	$(RM) -r $(BUILDDIR)/*.o
-	$(RM) -r $(BUILDDIR)/*.so 
+	$(RM) -r $(LIBDIR)/*.so 

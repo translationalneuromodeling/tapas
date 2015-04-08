@@ -47,6 +47,7 @@ end
 hps = mpdcm_fmri_get_hempars();
 
 for i = 1:numel(theta)
+    % TODO This is a horrible hack and should change in the future.
     theta{i}.C = theta{i}.C/16;
     [k1, k2, k3] = mpdcm_fmri_k(theta{i});
     theta{i}.k1 = k1;
