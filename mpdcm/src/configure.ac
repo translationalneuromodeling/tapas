@@ -1,0 +1,22 @@
+# aponteeduardo@gmail.com
+# copyright (c) 2015
+
+AC_INIT(mpdcm, version-0.1)
+AM_INIT_AUTOMAKE()
+
+AC_PROG_CC
+
+AC_CHECK_HEADERS(matrix.h)
+AC_CHECK_HEADERS(mex.h)
+AC_CHECK_HEADERS(math.h)
+AC_CHECK_HEADERS(curand_kernel.h)
+AC_CHECK_HEADERS(curand.h)
+AC_CHECK_HEADERS(math.h)
+
+
+matlabhome=$(matlab -nodisplay -r "fprintf(1, matlabroot); fprintf(1, '\n'); exit;"| tail -n 1)
+
+AC_SUBST(matlabhome)
+
+AC_OUTPUT(Makefile src/Makefile)
+

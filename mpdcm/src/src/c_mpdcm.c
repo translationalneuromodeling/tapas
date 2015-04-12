@@ -156,9 +156,6 @@ void c_mpdcm_prepare_input(
 
     /* run the function */
 
-    /*printf("nx: %d, ny:%d, nu:%d, dp:%d, nt:%d, nb:%d", 
-            *nx, *ny, *nu, *dp, *nt, *nb);*/
-
     (*integ)(cx, cy, cu, ctheta, dtheta, cptheta, dptheta,
         *nx, *ny, *nu, *dp, *nt, *nb);
 
