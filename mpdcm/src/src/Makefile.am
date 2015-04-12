@@ -1,12 +1,6 @@
 # aponteeduardo@gmail.com
 # copyright (C) 2014
 
-MAJOR := 0
-MINOR := 1
-VERSION := $(MAJOR).$(MINOR)
-
-NAME := mpdcm
-
 # ===========================================================================
 # Set up
 # ===========================================================================
@@ -14,15 +8,14 @@ NAME := mpdcm
 .PHONY = directories
 
 MKDIR = mkdir -p
-SRCDIR = src
-BUILDDIR = build
-LIBDIR = /cluster/home02/itet/aeduardo/projects/tapas/mpdcm/src/lib
-BINDIR = bin
+SRCDIR = ./
+BUILDDIR = ./../build
+LIBDIR = $(abs_top_builddir)/lib
+BINDIR = ./../bin
 
 # Other things
 
-BDDM_MATLAB = $(shell matlab -nodisplay -r "fprintf(1, matlabroot); fprintf(1, '\n'); exit;" | tail -n 2| head -n 1)
-
+BDDM_MATLAB = @matlabhome@
 # nvcc flags
 
 NVCC = nvcc
