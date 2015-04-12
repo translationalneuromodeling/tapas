@@ -1,5 +1,4 @@
-uster/home/infk/elomakin
- aponteeduardo@gmail.com
+# aponteeduardo@gmail.com
 # copyright (C) 2014
 
 MAJOR := 0
