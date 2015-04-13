@@ -7,7 +7,6 @@
 
 .PHONY = directories
 
-MKDIR = mkdir -p
 SRCDIR = ./
 BUILDDIR = ./../build
 LIBDIR = $(abs_top_builddir)/lib
@@ -20,7 +19,7 @@ BDDM_MATLAB = @matlabhome@
 
 NVCC = nvcc
 
-LCUDA = -arch=sm_20 -L$(CUDA_LDFLAGS)/lib64 -lcuda -lcudart
+LCUDA = -arch=sm_20 $(CUDA_LDFLAGS)/lib64 -lcuda -lcudart
 LNUM = -lm
 
 NVCCFLAGS = -arch=sm_20 --shared -Xcompiler -fPIC -c
@@ -31,7 +30,7 @@ MATFLAGS = -I$(BDDM_MATLAB)/extern/include -DMATLAB_MEX_FILE -std=c99 -D_GNU_SOU
 
 LOP0 =-O -pthread -shared -Wl,--version-script,$(BDDM_MATLAB)/extern/lib/glnxa64/mexFunction.map -Wl,--no-undefined
 
-LOP1 = -Wl,-rpath-link,/usr/local/MATLAB/R2012b/bin/glnxa64 -L$(BDDM_MATLAB)/bin/glnxa64 -lmx -lmex -lmat -lm -lstdc++ -L$(CUDA_LDFLAGS)/lib64 -lcudart 
+LOP1 = -Wl,-rpath-link,/usr/local/MATLAB/R2012b/bin/glnxa64 -L$(BDDM_MATLAB)/bin/glnxa64 -lmx -lmex -lmat -lm -lstdc++ $(CUDA_LDFLAGS)/lib64 -lcudart 
 
 # Rules
 
@@ -53,11 +52,11 @@ all: directories $(BINDIR)/c_mpdcm_fmri_euler.mexa64 \
 directories: $(BUILDDIR) $(LIBDIR) $(BINDIR)
 
 $(BUILDDIR): 
-	$(MKDIR) $(BUILDDIR)
+	$(MKDIR_P) $(BUILDDIR)
 $(LIBDIR):
-	$(MKDIR) $(LIBDIR)
+	$(MKDIR_P) $(LIBDIR)
 $(BINDIR):
-	$(MKDIR) $(BINDIR)
+	$(MKDIR_P) $(BINDIR)
 
 # ===========================================================================
 # Link
