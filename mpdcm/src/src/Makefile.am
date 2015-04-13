@@ -15,9 +15,6 @@ BINDIR = ./../bin
 # Other things
 
 BDDM_MATLAB = @matlabhome@
-# nvcc flags
-
-NVCC = nvcc
 
 LCUDA = -arch=sm_20 $(CUDA_LDFLAGS) -lcuda -lcudart
 LNUM = -lm

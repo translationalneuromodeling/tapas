@@ -626,8 +626,6 @@ matlabhome
 EGREP
 GREP
 CPP
-COMPILERDIR
-MATCC
 NVCC
 CUDA_LDFLAGS
 CUDA_CFLAGS
@@ -2706,7 +2704,6 @@ END
 fi
 
 
-
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -3914,16 +3911,10 @@ else
 fi
 
 
-# Setting the prefix to the default if only --with-cuda was given
-if test "$cuda_prefix" == "yes"; then
-	if test "$withval" == "yes"; then
-		cuda_prefix="/usr/local/cuda"
-	fi
-fi
 
 # Checking for nvcc
-# Extract the first word of "nvcc", so it can be a program name with args.
-set dummy nvcc; ac_word=$2
+# Extract the first word of "yes", so it can be a program name with args.
+set dummy yes; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
 if ${ac_cv_prog_NVCC_CHECK+:} false; then :
@@ -3939,7 +3930,7 @@ do
   test -z "$as_dir" && as_dir=.
     for ac_exec_ext in '' $ac_executable_extensions; do
   if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_prog_NVCC_CHECK="nvcc"
+    ac_cv_prog_NVCC_CHECK=""""
     $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
     break 2
   fi
@@ -3947,6 +3938,7 @@ done
   done
 IFS=$as_save_IFS
 
+  test -z "$ac_cv_prog_NVCC_CHECK" && ac_cv_prog_NVCC_CHECK=""$cuda_prefix/bin""
 fi
 fi
 NVCC_CHECK=$ac_cv_prog_NVCC_CHECK
@@ -3961,16 +3953,8 @@ fi
 
 
 if test x"$NVCC_CHECK" != x"yes" ; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
-$as_echo "found" >&6; }
-
-cat >>confdefs.h <<_ACEOF
-#define NVCC_PATH "$cuda_prefix/bin/nvcc"
-_ACEOF
-
+    NVCC="$cuda_prefix/bin/nvcc"
 else
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: not found!" >&5
-$as_echo "not found!" >&6; }
 	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "nvcc was not found in $cuda_prefix/bin
@@ -3984,13 +3968,6 @@ fi
 ax_save_CFLAGS="${CFLAGS}"
 ax_save_LDFLAGS="${LDFLAGS}"
 
-# Announcing the new variables
-
-
-
-
-
-
 CUDA_CFLAGS="-I$cuda_prefix/include"
 CFLAGS="$CUDA_CFLAGS $CFLAGS"
 CUDA_LDFLAGS="-L$cuda_prefix/lib64"
@@ -3998,7 +3975,7 @@ LDFLAGS="$CUDA_LDFLAGS $LDFLAGS"
 
 # Get the version of nvcc
 
-NVCC_VER=$(nvcc -V | tail -n 1 | sed 's%.*release %%' | sed 's%,.*$%%')
+NVCC_VER=$($NVCC -V | tail -n 1 | sed 's%.*release %%' | sed 's%,.*$%%')
 
 # And the header and the lib
 ac_fn_c_check_header_compile "$LINENO" "cuda.h" "ac_cv_header_cuda_h" "#include <cuda.h>
@@ -4127,6 +4104,10 @@ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "Couldn't find libcudart
 See \`config.log' for more details" "$LINENO" 5; }
 fi
+
+
+# Announcing the new variables
+
 
 
 
