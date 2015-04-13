@@ -127,9 +127,9 @@ end
 fe = trapz(T, mean(ellh, 2));
 
 ps.pE = mean(op{end} , 2);
-ps.theta = mpdcm_fmri_set_parameters(op(:), theta, ptheta);
+ps.theta = mpdcm_fmri_set_parameters({ps.pE}, theta{1}, ptheta);
 ps.y = mpdcm_fmri_int(u, ps.theta, ptheta);
-ps.theta = ps.theta{:};
+ps.theta = ps_theta;
 ps.y = ps.y{:};
 ps.F = fe;
 % Prior posterior mean

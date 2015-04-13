@@ -1,6 +1,16 @@
 function [np] = mpdcm_fmri_sample(op, ptheta, htheta, v)
 %% Draws a new sample from a Gaussian proposal distribution.
 %
+% Input
+%   op -- Old parameters
+%   ptheta -- Prior
+%   htheta -- Hyperpriors
+%   v -- Kernel. Two fields: s which is a scaling factor and S which is the     
+%       Cholosvky decomposition of the kernel.
+%
+% Ouput
+%   np -- New output 
+%
 % aponteeduardo@gmail.com
 % copyright (C) 2014
 %
