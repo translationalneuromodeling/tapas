@@ -3911,7 +3911,7 @@ else
 fi
 
 
-if test ! test -d "$cuda_prefix/"; then
+if $(test ! -d "$cuda_prefix"); then
    	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "cuda directory $cuda_prefix does not exist
