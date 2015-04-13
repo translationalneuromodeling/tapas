@@ -20,9 +20,7 @@ BDDM_MATLAB = @matlabhome@
 
 NVCC = nvcc
 
-ICUDA = -I$(CUDA_PATH)/include
-
-LCUDA = -arch=sm_20 -L$(CUDA_PATH)/lib64 -lcuda -lcudart
+LCUDA = -arch=sm_20 -L$(CUDA_LDFLAGS)/lib64 -lcuda -lcudart
 LNUM = -lm
 
 NVCCFLAGS = -arch=sm_20 --shared -Xcompiler -fPIC -c
@@ -33,7 +31,7 @@ MATFLAGS = -I$(BDDM_MATLAB)/extern/include -DMATLAB_MEX_FILE -std=c99 -D_GNU_SOU
 
 LOP0 =-O -pthread -shared -Wl,--version-script,$(BDDM_MATLAB)/extern/lib/glnxa64/mexFunction.map -Wl,--no-undefined
 
-LOP1 = -Wl,-rpath-link,/usr/local/MATLAB/R2012b/bin/glnxa64 -L$(BDDM_MATLAB)/bin/glnxa64 -lmx -lmex -lmat -lm -lstdc++ -L$(CUDA_PATH)/lib64 -lcudart 
+LOP1 = -Wl,-rpath-link,/usr/local/MATLAB/R2012b/bin/glnxa64 -L$(BDDM_MATLAB)/bin/glnxa64 -lmx -lmex -lmat -lm -lstdc++ -L$(CUDA_LDFLAGS)/lib64 -lcudart 
 
 # Rules
 
@@ -96,7 +94,7 @@ $(BUILDDIR)/c_mpdcm_set_device.o : $(SRCDIR)/c_mpdcm_set_device.c
 
 $(BUILDDIR)/c_mpdcm_num_devices.o $(BUILDDIR)/c_mpdcm_get_device.o \
 	$(BUILDDIR)/c_mpdcm_set_device.o :
-	$(CC) -c $(MATFLAGS) $(ICUDA) -o $@ $<
+	$(CC) -c $(MATFLAGS) $(CUDA_CFLAGS) -o $@ $<
 
 # Compile c
 
