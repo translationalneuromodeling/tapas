@@ -17,6 +17,24 @@ are documented below.
 Currently only LINUX is supported for compilation. We have compiled in a few
 different platforms successfully. Please refer to the doc/test.tx
 
+For compilation you require a matlab running environment, a cuda installation
+and the supported compiler. If your standard compiler is not compatible with
+your cuda installation, then, although it''s possible to compile, it might
+require some manual work. For compilation you should use
+
+ cd src
+ ./configure
+ make
+
+If your cuda installation happens to be in a non-standard location, or you
+would like to use a version of cuda installed in your computer but not the 
+standard one use
+
+ ./configure --with-cuda=<LOCATION OF YOUR CUDA INSTALLATION>
+
+For example
+
+ ./configure --with-cuda=/cluster/apps/cuda/4.2.9/
 
 ## Initilization
 
