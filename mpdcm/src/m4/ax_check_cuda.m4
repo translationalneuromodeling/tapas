@@ -71,7 +71,7 @@ AC_SUBST([COMPILERDIR])
 
 CUDA_CFLAGS="-I$cuda_prefix/include"
 CFLAGS="$CUDA_CFLAGS $CFLAGS"
-CUDA_LDFLAGS="-L$cuda_prefix/lib"
+CUDA_LDFLAGS="-L$cuda_prefix/lib64"
 LDFLAGS="$CUDA_LDFLAGS $LDFLAGS"
 
 # Get the version of nvcc 
