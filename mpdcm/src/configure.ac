@@ -2,8 +2,12 @@
 # copyright (c) 2015
 
 AC_INIT(mpdcm, version-0.1)
-AM_INIT_AUTOMAKE()
+AC_PREREQ(2.5)
+
+AM_INIT_AUTOMAKE(1.1)
 AC_CONFIG_MACRO_DIR(m4)
+
+
 
 AC_PROG_CC
 

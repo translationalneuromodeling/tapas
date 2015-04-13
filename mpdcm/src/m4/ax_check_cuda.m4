@@ -45,8 +45,9 @@ if test "$cuda_prefix" == "yes"; then
 fi
 
 # Checking for nvcc
-AC_MSG_CHECKING([nvcc in $cuda_prefix/bin])
-if test -x "$cuda_prefix/bin/nvcc"; then
+AC_CHECK_PROG(NVCC_CHECK, nvcc, nvcc)
+
+if test x"$NVCC_CHECK" != x"yes" ; then
 	AC_MSG_RESULT([found])
 	AC_DEFINE_UNQUOTED([NVCC_PATH], ["$cuda_prefix/bin/nvcc"], [Path to nvcc binary])
 else
