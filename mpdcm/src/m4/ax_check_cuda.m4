@@ -37,7 +37,7 @@ AC_DEFUN([AX_CHECK_CUDA], [
 # Provide your CUDA path with this		
 AC_ARG_WITH(cuda, [  --with-cuda=PREFIX      Prefix of your CUDA installation], [cuda_prefix=$withval], [cuda_prefix="/usr/local/cuda"])
 
-if test ! test -d $cuda_prefix; then
+if test ! test -d "$cuda_prefix/$1"; then
    	AC_MSG_FAILURE([cuda directory $cuda_prefix does not exist]) 
 fi
 
