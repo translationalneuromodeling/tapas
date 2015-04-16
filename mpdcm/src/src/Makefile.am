@@ -39,8 +39,9 @@ $(BUILDDIR)/%.o : $(SRCDIR)/%.cu
 # ===========================================================================
 
 all: directories $(BINDIR)/c_mpdcm_fmri_euler.mexa64 \
-	$(BINDIR)/c_mpdcm_fmri_kr4.mexa64 $(BINDIR)/c_mpdcm_num_devices.mexa64 \
-	$(BINDIR)/c_mpdcm_set_device.mexa64 $(BINDIR)/c_mpdcm_get_device.mexa64
+	$(BINDIR)/c_mpdcm_fmri_kr4.mexa64 $(BINDIR)/c_mpdcm_fmri_bs.mexa64 \
+	$(BINDIR)/c_mpdcm_num_devices.mexa64 $(BINDIR)/c_mpdcm_set_device.mexa64 \
+	$(BINDIR)/c_mpdcm_get_device.mexa64
 
 # ===========================================================================
 # Directories
@@ -65,6 +66,9 @@ $(BINDIR)/c_mpdcm_fmri_euler.mexa64 : $(BUILDDIR)/c_mpdcm.o \
 $(BINDIR)/c_mpdcm_fmri_kr4.mexa64 : $(BUILDDIR)/c_mpdcm.o \
 	$(LIBDIR)/libmpdcm.so $(BUILDDIR)/c_mpdcm_fmri_kr4.o 
 
+$(BINDIR)/c_mpdcm_fmri_bs.mexa64 : $(BUILDDIR)/c_mpdcm.o \
+	$(LIBDIR)/libmpdcm.so $(BUILDDIR)/c_mpdcm_fmri_bs.o 
+
 $(BINDIR)/c_mpdcm_num_devices.mexa64 : $(BUILDDIR)/c_mpdcm_num_devices.o
 $(BINDIR)/c_mpdcm_get_device.mexa64 : $(BUILDDIR)/c_mpdcm_get_device.o
 $(BINDIR)/c_mpdcm_set_device.mexa64 : $(BUILDDIR)/c_mpdcm_set_device.o
@@ -76,11 +80,13 @@ $(BINDIR)/%.mexa64 : $(BUILDDIR)/%.o
 # Compile
 # ===========================================================================
 
-$(BUILDDIR)/c_mpdcm_fmri_euler.o $(BUILDDIR)/c_mpdcm_fmri_kr4.o :
+$(BUILDDIR)/c_mpdcm_fmri_euler.o $(BUILDDIR)/c_mpdcm_fmri_kr4.o \
+	$(BUILDDIR)/c_mpdcm_fmri_bs.o :
 	$(CC) -c $(MATFLAGS) -o $@ $^
 
 $(BUILDDIR)/c_mpdcm_fmri_euler.o : $(SRCDIR)/c_mpdcm_fmri_euler.c
 $(BUILDDIR)/c_mpdcm_fmri_kr4.o : $(SRCDIR)/c_mpdcm_fmri_kr4.c
+$(BUILDDIR)/c_mpdcm_fmri_bs.o : $(SRCDIR)/c_mpdcm_fmri_bs.c
 
 # Device code
 

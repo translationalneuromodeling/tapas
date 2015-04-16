@@ -23,6 +23,9 @@ test_mpdcm_fmri_int_correctness(fp, 'euler');
 test_mpdcm_fmri_int_memory(fp, 'kr4');
 test_mpdcm_fmri_int_correctness(fp, 'kr4');
 
+test_mpdcm_fmri_int_memory(fp, 'bs');
+test_mpdcm_fmri_int_correctness(fp, 'bs');
+
 end
 
 function test_mpdcm_fmri_int_memory(fp, integ)

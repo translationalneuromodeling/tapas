@@ -36,6 +36,8 @@ if isfield(ptheta, 'integ')
         integ = @(u, theta, ptheta) c_mpdcm_fmri_euler(u, theta, ptheta);
     case 'kr4'
         integ = @(u, theta, ptheta) c_mpdcm_fmri_kr4(u, theta, ptheta);
+    case 'bs'
+        integ = @(u, theta, ptheta) c_mpdcm_fmri_bs(u, theta, ptheta);
     otherwise 
         error('mpdcm:fmri:int:input', ... 
             'Unknown method for ptheta.int');
@@ -60,11 +62,12 @@ end
 
 % Integrate
 
+ptheta.dyu = 2*ptheta.dyu;
 y = integ(u, theta, ptheta);
 
 % Downsample
-
 for i = 1:numel(y)
+    % Why?
     y{i} = y{i}(:, 2:2:end)';
     if isfield(theta{i}, 'ny')
         y{i} = y{i}(1:theta{i}.ny, :);

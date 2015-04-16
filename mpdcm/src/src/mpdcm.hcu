@@ -94,26 +94,6 @@ typedef void (*klauncher)(double *, double *, double *, void *, double *,
 
 typedef void (*fupx)(dbuff, dbuff, dbuff, void *, void *, dbuff);
 
-//BDDM_EXTERN
-//int mpdcm_fmri( double *x, double *y, double *u, 
-//    void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
-//    int nx, int ny, int nu, int dp, int nt, int nb, klauncher lch);
-    /* 
-    Integrate DCM using a parallel architecture. 
-    x -- States. Will not be used explicitely.
-    y -- Observables. Output will be stored here.
-    u -- Input. Input to the process.
-    theta -- Parameters
-    d_theta -- Data of the parameters of variable size
-    ptheta -- Priors and fixed values
-    d_ptheta -- Data of the prior of variable size
-    nx -- Dimensions of x
-    nu -- Dimensions of u
-    ny -- Dimensions of y
-    dp -- Number of data points
-    nt -- Size of theta second dimension
-    nb -- Size of theta first dimension 
-    */
 
 BDDM_EXTERN
 int mpdcm_fmri_euler( double *x, double *y, double *u, 
@@ -159,5 +139,88 @@ int mpdcm_fmri_kr4( double *x, double *y, double *u,
     nt -- Size of theta second dimension
     nb -- Size of theta first dimension 
     */
+
+BDDM_EXTERN
+int mpdcm_fmri_bs( double *x, double *y, double *u, 
+    void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
+    int nx, int ny, int nu, int dp, int nt, int nb);
+    /* 
+    Integrate DCM using a parallel architecture, with a kutta runga of 4th 
+    order. 
+
+    x -- States. Will not be used explicitely.
+    y -- Observables. Output will be stored here.
+    u -- Input. Input to the process.
+    theta -- Parameters
+    d_theta -- Data of the parameters of variable size
+    ptheta -- Priors and fixed values
+    d_ptheta -- Data of the prior of variable size
+    nx -- Dimensions of x
+    nu -- Dimensions of u
+    ny -- Dimensions of y
+    dp -- Number of data points
+    nt -- Size of theta second dimension
+    nb -- Size of theta first dimension 
+    */
+
+
+
+#define DIM_X 5 
+
+# ifdef __CUDACC__
+
+// Constants for the integrators
+
+
+#define DIM_PTHETA 3
+#define DIM_DPTHETA 0
+
+#define INDEX_X 0
+#define INDEX_F 1
+#define INDEX_S 2
+#define INDEX_V 3
+#define INDEX_Q 4
+
+#define PRELOC_SIZE_X_KR4 4
+#define PRELOC_SIZE_X_EULER 2
+#define PRELOC_SIZE_X_BS 5
+
+#define DIM_THETA 7
+
+#define INDEX_V0 0
+#define INDEX_E0 1
+#define INDEX_K1 2
+#define INDEX_K2 3
+#define INDEX_K3 4
+#define INDEX_ALPHA 5
+#define INDEX_GAMMA 6
+
+#define INDEX_LK1 0 
+#define INDEX_LK2 1 
+#define INDEX_LK3 2 
+
+#define NUM_BLOCKS 16
+#define NUM_THREADS 192
+
+#define KRW1 0.16666666666
+#define KRW2 0.33333333333
+#define KRW3 0.33333333333
+#define KRW4 0.16666666666
+
+#define BSA1 0.5
+#define BSA2 0.075
+
+#define BSB1 0.2222222222222222
+#define BSB2 0.3333333333333333
+#define BSB3 0.4444444444444444
+
+#define BSZ1 (-0.069444444444444)
+#define BSZ2 0.083333333333333
+#define BSZ3 0.111111111111111
+#define BSZ4 (-0.125)
+
+# endif
+
+// end cuda defines
 
 # endif

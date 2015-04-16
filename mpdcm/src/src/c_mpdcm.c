@@ -3,10 +3,8 @@
 
 #include "c_mpdcm.h"
 
-#define DIM_X 5
-
-void c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, 
-    double *dtheta)
+void 
+c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, double *dtheta)
 {
 
     int o=0, i, j;
@@ -20,6 +18,9 @@ void c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta,
 
     ctheta->V0 = *mxGetPr(mxGetField(theta, 0, "V0"));
     ctheta->E0 = *mxGetPr(mxGetField(theta, 0, "E0"));
+
+    // For efficiency reasons some values are prepared.
+
     ctheta->ln1_E0 = log(1 - ctheta->E0);
     ctheta->lnE0 = log(ctheta->E0);
     ctheta->k1 = *mxGetPr(mxGetField(theta, 0, "k1")) * ctheta->V0;
@@ -32,9 +33,7 @@ void c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta,
     
     i = ctheta->dim_x*ctheta->dim_x;
 
-    memcpy(dtheta,
-        mxGetPr(mxGetField(theta, 0, "A")),
-        i*sizeof(double) );
+    memcpy(dtheta, mxGetPr(mxGetField(theta, 0, "A")), i * sizeof( double ));
 
     o += i;
 
@@ -60,7 +59,8 @@ void c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta,
 
 }
 
-void c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, 
+void 
+c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, 
     double *dptheta)
 {
 
@@ -71,7 +71,8 @@ void c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta,
     cptheta->mode = 'f';
 }
 
-void c_mpdcm_prepare_u(const mxArray *u, double *cu)
+void 
+c_mpdcm_prepare_u(const mxArray *u, double *cu)
 {
     const mwSize *su = mxGetDimensions( u );
 
@@ -79,12 +80,13 @@ void c_mpdcm_prepare_u(const mxArray *u, double *cu)
 
 }
 
-void c_mpdcm_prepare_input(
+void 
+c_mpdcm_prepare_input(
     mxArray **y, const mxArray *u, const mxArray *theta, const mxArray *ptheta,
     int *nx, int *ny, int *nu, int *dp, int *nt, int *nb, integrator integ)
-    /* Prepares the data in the format necessary to interface with the
-    cuda library. */
 {
+    // Prepares the data in the format necessary to interface with the
+    // cuda library.
 
     const mwSize *su = mxGetDimensions( u );
     const mwSize *stheta = mxGetDimensions( theta );
@@ -142,6 +144,8 @@ void c_mpdcm_prepare_input(
                 "Memory error theta");	
     }
 
+    // Prepare u and theta
+
     for (i = 0; i < nt[0] * nb[0] ; i++ )
     {
         if ( i/nt[0] < 1 )
@@ -152,9 +156,11 @@ void c_mpdcm_prepare_input(
         c_mpdcm_prepare_theta(mxGetCell(theta, i), ctheta + i, dtheta + i*o);
     }
 
+    // Prepare ptheta
+
     c_mpdcm_prepare_ptheta(ptheta, cptheta, dptheta);
 
-    /* run the function */
+    // run the function
 
     (*integ)(cx, cy, cu, ctheta, dtheta, cptheta, dptheta,
         *nx, *ny, *nu, *dp, *nt, *nb);
@@ -175,11 +181,12 @@ void c_mpdcm_prepare_input(
     free(cptheta);
     free(dtheta);
 
-    /* free dptheta) */
-
 }
 
-void c_mpdcm_fmri_euler(mxArray **y, const mxArray **u,
+/* Wrappers */
+
+void 
+c_mpdcm_fmri_euler(mxArray **y, const mxArray **u,
     const mxArray **theta, const mxArray **ptheta,
     int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
 {
@@ -191,7 +198,8 @@ void c_mpdcm_fmri_euler(mxArray **y, const mxArray **u,
         &mpdcm_fmri_euler);
 }
 
-void c_mpdcm_fmri_kr4(mxArray **y, const mxArray **u,
+void 
+c_mpdcm_fmri_kr4(mxArray **y, const mxArray **u,
     const mxArray **theta, const mxArray **ptheta,
     int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
 {
@@ -201,4 +209,17 @@ void c_mpdcm_fmri_kr4(mxArray **y, const mxArray **u,
  
     c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
         &mpdcm_fmri_kr4);
+}
+
+void 
+c_mpdcm_fmri_bs(mxArray **y, const mxArray **u,
+    const mxArray **theta, const mxArray **ptheta,
+    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
+{
+    int i;
+    double **cu, **dtheta, **dptheta;
+    void **ctheta, **cptheta;
+ 
+    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
+        &mpdcm_fmri_bs);
 }

@@ -152,14 +152,29 @@ end
 
 %% ===========================================================================
 
+% detrend outputs (and inputs)  
+%--------------------------------------------------------------------------
+
+
+
 function [u, dyu] = tinput_u(dcm, us)
 %% Prepare U
 
-    % Sampling frequency
-    dyu = 2.0*size(dcm.Y.y, 1)/size(dcm.U.u, 1);
+    U = dcm.U;
 
-    u = nan(us, size(dcm.U.u, 2));
-    u(1:size(dcm.U.u, 1), :) = dcm.U.u;
+    if isfield(dcm, 'options')
+        if isfield(dcm.options, 'center')
+            if dcm.options.centre
+                U.u = spm_detrend(U.u);
+            end
+        end
+    end
+
+    % Sampling frequency
+    dyu = size(dcm.Y.y, 1)/size(U.u, 1);
+
+    u = nan(us, size(U.u, 2));
+    u(1:size(U.u, 1), :) = U.u;
     u = u';
 
 
@@ -176,6 +191,7 @@ function [y, scale] = tinput_y(dcm, ys)
     % Data
 
     Y = dcm.Y;
+    Y.y = spm_detrend(Y.y);
 
     if isfield(Y, 'scale')
         scale = Y.scale;
