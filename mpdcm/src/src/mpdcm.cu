@@ -25,6 +25,9 @@ __device__
 void 
 dcm_upx_bs0(dbuff ox, dbuff y, dbuff u, void *p_theta, void *p_ptheta, 
     dbuff nx);
+__device__
+void
+bs_maxz(dbuff z);
 
 
 // General functions
@@ -345,36 +348,39 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 #define MINDY 1
 #define MAXDY 16
 
+#define MINTOL 0.000001
+#define MAXTOL 0.00100
+
 // Bucacki Shampinee
 
 __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
     void *p_ptheta, int dp)
 {
-    int i;
-    int j = threadIdx.x%y.dim;
+    unsigned int i;
+    unsigned int j = threadIdx.x%y.dim;
     double *t;
     // Number of integration steps done between each data point
-    int ss, dy;
-    int maxx = y.dim * (blockDim.x/y.dim);
+    unsigned int ss, dy;
+    unsigned int maxx = y.dim * (blockDim.x/y.dim);
+    unsigned odt, ndt;
 
 
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     dbuff ox;
     dbuff nx;
     // Error estimates
-    //dbuff z;
+    dbuff z;
 
     dbuff ty;
     dbuff tu;
 
-
     ox.dim = y.dim;
     nx.dim = y.dim;
-    //z.dim = y.dim;
+    z.dim = y.dim;
 
     ox.arr = x.arr; 
     nx.arr = ox.arr + nx.dim * DIM_X;
-    //z.arr = ox.arr + nx.dim * DIM_X * 4;
+    z.arr = ox.arr + nx.dim * DIM_X * 4;
 
     memset(x.arr + threadIdx.x * DIM_X, 0, DIM_X * sizeof(double));
 
@@ -383,23 +389,57 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
     tu.dim = u.dim;
 
     // How many samples are gonna be taken
-    ss = ceil(1.0/ptheta->dt);
-    dy = ceil(1.0/(ptheta->dt * ptheta->dyu));
+    ss = MAXDY;
+    dy = MAXDY * ceil(1.0/ptheta->dyu);
 
     ty.arr = y.arr; 
     tu.arr = u.arr;
 
     // Initilize the algorithm
+
+    ptheta->dt = ss >> 1;
+
     dcm_upx_bs0(ox, ty, tu, p_theta, p_ptheta, nx);
     __syncthreads();
-
 
     i = 0;
 
     while ( i < dp * ss )
     {
         dcm_upx_bs(ox, ty, tu, p_theta, p_ptheta, nx);
+        
         __syncthreads();
+
+        // Find the maximum of the error and write it to the first element
+        bs_maxz(z);
+
+        odt = (int ) 1/ptheta->dt;
+
+        // Exceeded the error tolerance
+        if ( z.arr[0] > MAXTOL && odt < MAXDY )
+        {
+            if ( threadIdx.x == 0 && threadIdx.y == 0 )
+                odt <<= 1;
+            continue;
+        }
+        
+        // Below the error tolerance
+
+        if ( z.arr[0] < MINTOL && odt > MINDY )
+        {
+            if ( threadIdx.x == 0 && threadIdx.y == 0 )
+                odt >>= 1;
+        }
+
+        // Always sample at the right spot.
+        if ( i%MAXDY + odt > MAXDY )
+            ndt = MAXDY - i%MAXDY;
+        else 
+            ndt = odt;
+
+        if ( threadIdx.x == 0 && threadIdx.y == 0)
+            ptheta->dt = 1/(double ) ndt;
+
         // Only sample every 1/ptheta->dt times
         if ( i%ss == 0 )
         {
@@ -408,7 +448,6 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
                 if ( threadIdx.x < maxx )
                     dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
                 __syncthreads();
-                // Use a few cycles to get the maximum
 
                 if ( threadIdx.x < maxx && threadIdx.y == 0 )
                     ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
@@ -427,7 +466,7 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
         ox.arr = nx.arr;
         nx.arr = t;
 
-        i++;
+        i += ndt;
     }
 }
 
@@ -509,11 +548,6 @@ __global__ void kdcm_kr4(double *x, double *y, double *u,
     void *p_theta, double *d_theta, void *p_ptheta, double *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb)
 {
-    /* 
-    mem -- Prealocate shared memory. It depends on the slots that the 
-        integrator needs; two for euler and 4 for Kutta-Ruge.
-    fupx -- Function used to integrate the update the system. 
-    */
 
     int i;
     dbuff tx, ty, tu;
@@ -589,7 +623,7 @@ __global__ void kdcm_bs(double *x, double *y, double *u,
 
     int i;
     dbuff tx, ty, tu;
-    __shared__ double sx[NUM_THREADS * DIM_X * PRELOC_SIZE_X_BS];
+    extern __shared__ double sx[];
 
     // Assign pointers to theta
 
@@ -660,26 +694,17 @@ __host__ void ldcm_euler(double *x, double *y, double *u,
     int nx, int ny, int nu, int dp, int nt, int nb )
 {
 
-    int dev, sems, nth;
-    cudaDeviceProp devp;
+    int device;
+    cudaGetDevice(&device);
 
-    cudaGetDevice(&dev);
-    cudaGetDeviceProperties(&devp, dev);
-
-    nth = devp.sharedMemPerBlock/
-        ((DIM_X + 1) * PRELOC_SIZE_X_EULER * sizeof( double ));
-
-    nth = nth < devp.maxThreadsPerBlock? nth : devp.maxThreadsPerBlock;
-    nth = (DIM_X + 1) * (nth/(DIM_X + 1));
-
-   // dim3 gthreads(nth, DIM_X);
-   // dim3 gblocks(NUM_BLOCKS, 1);
-
-    sems =  NUM_THREADS * DIM_X * PRELOC_SIZE_X_EULER * sizeof( double );
+    struct cudaDeviceProp props;
+    cudaGetDeviceProperties(&props, device);
 
     dim3 gthreads(NUM_THREADS, DIM_X);
-    dim3 gblocks(NUM_BLOCKS/PRELOC_SIZE_X_EULER, 1);
+    dim3 gblocks(NUM_BLOCKS * props.multiProcessorCount, 1);
 
+    int sems;
+    sems =  NUM_THREADS * DIM_X * PRELOC_SIZE_X_EULER * sizeof( double );
 
 
     kdcm_euler<<<gblocks, gthreads, sems>>>(x, y, u, 
@@ -692,28 +717,18 @@ __host__ void ldcm_kr4(double *x, double *y, double *u,
     void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb )
 {
+    int device;
+    cudaGetDevice(&device);
 
-    int dev, smems, nth;
-    cudaDeviceProp devp;
-
-    cudaGetDevice(&dev);
-    cudaGetDeviceProperties(&devp, dev);
-
-    nth = devp.sharedMemPerBlock/
-        (DIM_X *PRELOC_SIZE_X_KR4 * sizeof( double ));
-
-    nth = nth < devp.maxThreadsPerBlock? 32*(nth/32) : 
-        devp.maxThreadsPerBlock;
-
-
-    smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_KR4 * sizeof( double );
+    struct cudaDeviceProp props;
+    cudaGetDeviceProperties(&props, device);
 
     dim3 gthreads(NUM_THREADS, DIM_X);
-    dim3 gblocks(NUM_BLOCKS/PRELOC_SIZE_X_KR4, 1);
-  
-    //dim3 gthreads(smems, DIM_X);
-    //dim3 gblocks(NUM_BLOCKS, 1);
+    dim3 gblocks(NUM_BLOCKS * props.multiProcessorCount, 1);
 
+    int smems;
+    smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_KR4 * sizeof( double );
+  
     kdcm_kr4<<<gblocks, gthreads, smems>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
         nx, ny, nu, dp, nt, nb ); 
@@ -724,10 +739,18 @@ __host__ void ldcm_bs(double *x, double *y, double *u,
     int nx, int ny, int nu, int dp, int nt, int nb )
 {
 
-    dim3 gthreads(128, DIM_X);
-    dim3 gblocks(NUM_BLOCKS/PRELOC_SIZE_X_KR4, 1);
+    int device;
+    cudaGetDevice(&device);
 
-    kdcm_bs<<<gblocks, gthreads>>>(x, y, u, 
+    struct cudaDeviceProp props;
+    cudaGetDeviceProperties(&props, device);
+
+    dim3 gthreads(NUM_THREADS, DIM_X);
+    dim3 gblocks(NUM_BLOCKS * props.multiProcessorCount, 1);
+
+    int smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_KR4 * sizeof( double );
+
+    kdcm_bs<<<gblocks, gthreads, smems>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
         nx, ny, nu, dp, nt, nb ); 
 }
@@ -915,6 +938,12 @@ mpdcm_fmri_bs( double *x, double *y, double *u,
 // =======================================================================
 // Integrators
 // =======================================================================
+
+// The memory layout is the following:
+
+// If it is a 4 region DCM if work the following way:
+// x_1, x_2, x_3, x_4, f_1, f_2, f_3, f_4, ....
+
 
 // Euler
 
@@ -1253,18 +1282,6 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
 
     __syncthreads();
 
-    j = threadIdx.x;
-    // If the block size is a power of two, divide by 2
-    s = blockDim.x >> 1; 
-    while ( s ){
-        if ( j < s )
-            // maximum value
-            z.arr[j] = max(z.arr[j], z.arr[j + s]);
-        __syncthreads();
-        // Divide by two
-        s >>= 1;
-    }
-
 }
 
 __device__ void dcm_upx_bs0(dbuff ox, dbuff y, dbuff u, void *p_theta,
@@ -1330,5 +1347,39 @@ __device__ void dcm_upx_bs0(dbuff ox, dbuff y, dbuff u, void *p_theta,
     }
 }
 
+__device__
+void
+bs_maxz(dbuff z)
+{
+    // Reduces to the maximum of z.
 
+    unsigned int j = threadIdx.x;
+    unsigned int k = threadIdx.y;
+    double *tz = z.arr + k * blockDim.x;
+    unsigned int i = blockDim.x >> 1;
 
+    if ( threadIdx.x > z.dim * ( blockDim.x / z.dim ) )
+        z.arr[threadIdx.x * z.dim + threadIdx.y] = 0;
+
+    __syncthreads();
+
+    while ( i > 0 )
+    {
+        if ( j < i )
+           tz[j] = tz[j] > tz[j + i] ? tz[j] : tz[j + i];
+        i >>= 1;
+        __syncthreads();
+    }
+    if ( k == 0 )
+       tz[0] = tz[0] > z.arr[blockDim.x * 4] ? tz[0] : z.arr[blockDim.x * 4];
+    if ( k == 1 )
+       tz[0] = tz[0] > z.arr[blockDim.x * 3] ? tz[0] : z.arr[blockDim.x * 3];
+    __syncthreads();
+    if ( k == 1 )
+       tz[0] = tz[0] > z.arr[blockDim.x * 2] ? tz[0] : z.arr[blockDim.x * 2];
+    __syncthreads();
+    if ( k == 0 )
+       tz[0] = tz[0] > z.arr[blockDim.x * 1] ? tz[0] : z.arr[blockDim.x * 1];
+
+    __syncthreads();
+}

@@ -36,11 +36,18 @@ if ~isfield(pars, 'diagi')
     pars.diagi = 200;
 end
 
+if ~isfield(pars, 'integ')
+    pars.integ = 'kr4';
+end
+
+
 T = sort(pars.T);
 nburnin = pars.nburnin;
 niter = pars.niter;
 
 [y, u, theta, ptheta] = mpdcm_fmri_tinput(dcm);
+
+ptheta.integ = pars.integ;
 
 htheta = mpdcm_fmri_htheta(ptheta);
 
@@ -126,8 +133,8 @@ end
 
 fe = trapz(T, mean(ellh, 2));
 
-ps.pE = mean(op{end} , 2);
-ps.theta = mpdcm_fmri_set_parameters({ps.pE}, theta{1}, ptheta);
+ps.pE = mean(ps_theta , 2);
+ps.theta = mpdcm_fmri_set_parameters({ps.pE}, theta(1), ptheta);
 ps.y = mpdcm_fmri_int(u, ps.theta, ptheta);
 ps.theta = ps_theta;
 ps.y = ps.y{:};
