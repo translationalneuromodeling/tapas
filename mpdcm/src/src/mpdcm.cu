@@ -204,7 +204,7 @@ __device__ void dcm_upy(dbuff ox, dbuff y, dbuff u, void *theta,
 // =======================================================================
 
 __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
-    void *p_ptheta, int dp)
+    void *p_ptheta, int dp, unsigned int *errcode)
 {
     int i;
     int j = threadIdx.x%y.dim;
@@ -221,6 +221,7 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
     dbuff ty;
     dbuff tu;
 
+    *errcode = 1;
 
     ox.dim = y.dim;
     nx.dim = y.dim;
@@ -250,7 +251,8 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
         // Only sample every 1/ptheta->dt times
         if ( i%ss == 0 )
         {
-            if ( i%dy == (dy-2) ) 
+//            if ( i%dy == (dy-2) ) 
+            if ( i%dy == 0 ) 
            {
                 if ( threadIdx.x < maxx )
                     dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
@@ -271,12 +273,14 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
         ox.arr = nx.arr;
         nx.arr = t;
     }
+
+    *errcode = 0;
 }
 
 // Runge Kutta
 
 __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
-    void *p_ptheta, int dp)
+    void *p_ptheta, int dp, unsigned int *errcode)
 {
     int i;
     int j = threadIdx.x%y.dim;
@@ -293,6 +297,7 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
     dbuff ty;
     dbuff tu;
 
+    *errcode = 0;
 
     ox.dim = y.dim;
     nx.dim = y.dim;
@@ -322,7 +327,8 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
         // Only sample every 1/ptheta->dt times
         if ( i%ss == 0 )
         {
-            if ( i%dy == (dy-2) ) 
+//            if ( i%dy == (dy-2) ) 
+            if ( i%dy == 0 ) 
             {
                 if ( threadIdx.x < maxx )
                     dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
@@ -346,7 +352,7 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 }
 
 #define MINDY 1
-#define MAXDY 1
+#define MAXDY 16
 
 #define MINTOL 0.000001
 #define MAXTOL 0.00100
@@ -355,7 +361,7 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 // Bucacki Shampinee
 
 __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
-    void *p_ptheta, int dp)
+    void *p_ptheta, int dp, unsigned int *errcode)
 {
     int i;
     int j = threadIdx.x%y.dim;
@@ -375,6 +381,8 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     dbuff ty;
     dbuff tu;
+
+    *errcode = 0;
 
     ox.dim = y.dim;
     nx.dim = y.dim;
@@ -455,7 +463,8 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
         // Only sample every 1/ptheta->dt times
         if ( i%ss == 0 )
         {
-            if ( i%dy == (dy-2) ) 
+//            if ( i%dy == (dy-2) ) 
+            if ( i%dy == 0 ) 
             {
                 if ( threadIdx.x < maxx )
                     dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
@@ -487,7 +496,7 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 
 __global__ void kdcm_euler(double *x, double *y, double *u, 
     void *p_theta, double *d_theta, void *p_ptheta, double *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb)
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
 {
 
     int i;
@@ -547,7 +556,8 @@ __global__ void kdcm_euler(double *x, double *y, double *u,
         tx.arr = sx + PRELOC_SIZE_X_EULER * DIM_X * nx * (threadIdx.x/nx);
 
         ty.arr = y + i * nx * ny;
-        dcm_int_euler(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp);
+        dcm_int_euler(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp, 
+            errcode);
 
         i += gridDim.x * (blockDim.x / nx );        
     }
@@ -555,7 +565,7 @@ __global__ void kdcm_euler(double *x, double *y, double *u,
 
 __global__ void kdcm_kr4(double *x, double *y, double *u, 
     void *p_theta, double *d_theta, void *p_ptheta, double *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb)
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
 {
 
     int i;
@@ -615,14 +625,14 @@ __global__ void kdcm_kr4(double *x, double *y, double *u,
         tx.arr = sx + PRELOC_SIZE_X_KR4 * DIM_X * nx * (threadIdx.x/nx);
 
         ty.arr = y + i * nx * ny;
-        dcm_int_kr4(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp);
+        dcm_int_kr4(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp, errcode);
         i += gridDim.x * (blockDim.x / nx );        
     }
 }
 
 __global__ void kdcm_bs(double *x, double *y, double *u, 
     void *p_theta, double *d_theta, void *p_ptheta, double *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb)
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int * errcode)
 {
     /* 
     mem -- Prealocate shared memory. It depends on the slots that the 
@@ -687,7 +697,7 @@ __global__ void kdcm_bs(double *x, double *y, double *u,
         tx.arr = sx + PRELOC_SIZE_X_BS * DIM_X * nx * (threadIdx.x/nx);
 
         ty.arr = y + i * nx * ny;
-        dcm_int_bs(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp);
+        dcm_int_bs(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp, errcode);
         i += gridDim.x * (blockDim.x / nx );        
     }
 }
@@ -698,9 +708,10 @@ __global__ void kdcm_bs(double *x, double *y, double *u,
 // ===========================================================================
 
 
-__host__ void ldcm_euler(double *x, double *y, double *u, 
+__host__ void ldcm_euler
+(double *x, double *y, double *u, 
     void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb )
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
 {
 
     int device;
@@ -718,13 +729,14 @@ __host__ void ldcm_euler(double *x, double *y, double *u,
 
     kdcm_euler<<<gblocks, gthreads, sems>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
-        nx, ny, nu, dp, nt, nb ); 
+        nx, ny, nu, dp, nt, nb, errcode); 
 }
 
 
-__host__ void ldcm_kr4(double *x, double *y, double *u, 
+__host__ void
+ldcm_kr4(double *x, double *y, double *u, 
     void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb )
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
 {
     int device;
     cudaGetDevice(&device);
@@ -740,12 +752,13 @@ __host__ void ldcm_kr4(double *x, double *y, double *u,
   
     kdcm_kr4<<<gblocks, gthreads, smems>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
-        nx, ny, nu, dp, nt, nb ); 
+        nx, ny, nu, dp, nt, nb, errcode); 
 }
 
-__host__ void ldcm_bs(double *x, double *y, double *u, 
+__host__ void 
+ldcm_bs(double *x, double *y, double *u, 
     void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb )
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
 {
 
     int device;
@@ -761,7 +774,7 @@ __host__ void ldcm_bs(double *x, double *y, double *u,
 
     kdcm_bs<<<gblocks, gthreads, smems>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
-        nx, ny, nu, dp, nt, nb ); 
+        nx, ny, nu, dp, nt, nb, errcode); 
 }
 
 
@@ -834,6 +847,7 @@ mpdcm_fmri( double *x, double *y, double *u,
     double *d_x, *d_y, *d_u;
     void *pd_theta, *pd_ptheta;
     double *dd_theta, *dd_ptheta;
+    unsigned int errcode[1], *d_errcode;
 
     // x
 
@@ -848,8 +862,15 @@ mpdcm_fmri( double *x, double *y, double *u,
 
     HANDLE_ERROR( cudaMalloc( (void**) &d_u,
         nt * nu * dp *  sizeof(double) ) );
+
     HANDLE_ERROR( cudaMemcpy( d_u, u, nt * nu * dp * sizeof(double),
         cudaMemcpyHostToDevice ) );
+
+    // Error code
+
+    HANDLE_ERROR( cudaMalloc( (void**) &d_errcode, 
+        sizeof( unsigned int ) ) );
+
 
     // Theta 
     dam_theta(
@@ -869,7 +890,7 @@ mpdcm_fmri( double *x, double *y, double *u,
         d_x, d_y, d_u, 
         pd_theta, dd_theta, 
         pd_ptheta, dd_ptheta,
-        nx, ny, nu, dp, nt, nb );
+        nx, ny, nu, dp, nt, nb, d_errcode);
 
     // Get y back
 
@@ -877,11 +898,17 @@ mpdcm_fmri( double *x, double *y, double *u,
         nx * ny * nt * nb * sizeof(double),
         cudaMemcpyDeviceToHost) );
 
+    HANDLE_ERROR( cudaMemcpy(errcode, d_errcode, sizeof( unsigned int ), 
+        cudaMemcpyDeviceToHost) );
+
+    if ( *errcode != 0 ) 
+        printf( "Error %d in %s at line %d\n", *errcode, __FILE__, __LINE__ );
 
     // free the memory allocated on the GPU
     //HANDLE_ERROR( cudaFree( d_x ) );
     HANDLE_ERROR( cudaFree( d_y ) );
     HANDLE_ERROR( cudaFree( d_u ) );
+    HANDLE_ERROR( cudaFree( d_errcode ) );
 
     HANDLE_ERROR( cudaFree( pd_theta ) );
     HANDLE_ERROR( cudaFree( dd_theta ) );

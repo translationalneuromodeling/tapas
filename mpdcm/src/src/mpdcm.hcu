@@ -88,12 +88,28 @@ typedef int (*integrator)(double *, double *, double *, void *, double *,
 /* Kernel launchers */
 
 typedef void (*klauncher)(double *, double *, double *, void *, double *, 
-    void *, double *, int, int, int, int, int, int);
+    void *, double *, int, int, int, int, int, int, unsigned int*);
 
 /* Update of x */
 
 typedef void (*fupx)(dbuff, dbuff, dbuff, void *, void *, dbuff);
 
+typedef struct {
+    double *x;
+    double *y;
+    double *u;
+    void *p_theta;
+    double *d_theta;
+    void *p_ptheta;
+    double *d_ptheta;
+    int nx;
+    int ny;
+    int nu;
+    int dp;
+    int nt;
+    int nb;
+    unsigned int * errcode;
+    } kernpars;
 
 BDDM_EXTERN
 int mpdcm_fmri_euler( double *x, double *y, double *u, 
