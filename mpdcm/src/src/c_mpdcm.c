@@ -67,7 +67,8 @@ c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta,
     PThetaDCM *cptheta = (PThetaDCM *) vptheta;
     cptheta->dt = *mxGetPr(mxGetField(ptheta, 0, "dt"));
     cptheta->dyu = *mxGetPr(mxGetField(ptheta, 0, "dyu"));
-    cptheta->de = 1.0/((double ) ceil(1.0/(cptheta->dt * cptheta->dyu)));
+    // Compensate for SPM
+    cptheta->de = 2*cptheta->dt*cptheta->dyu;
     cptheta->mode = 'f';
 }
 
@@ -118,31 +119,26 @@ c_mpdcm_prepare_input(
     /* Allocate memory */
 
     cy = (double *) malloc(nt[0] * nb[0] * nx[0] * ny[0] * sizeof(double));
-    cu = (double *) malloc(nt[0] * dp[0] * nu[0] * sizeof(double));
-    ctheta = (ThetaDCM *) malloc( nt[0] * nb[0] * sizeof(ThetaDCM) );
-    cptheta = (PThetaDCM *) malloc( sizeof(PThetaDCM) );
-    dtheta = (double *) malloc(nt[0] * nb[0] * o * sizeof(double));
+    if ( cy == NULL )
+        mexErrMsgIdAndTxt("mpdcm:fmri:int:y:memory", "Memory error y");	
 
-    if ( cy == NULL ){
-            mexErrMsgIdAndTxt("mpdcm:fmri:int:y:memory",
-                "Memory error y");	
-    }
-    if ( cu == NULL ){
-            mexErrMsgIdAndTxt("mpdcm:fmri:int:u:memory",
-                "Memory error u");	
-    }
-    if ( ctheta == NULL ){
-            mexErrMsgIdAndTxt("mpdcm:fmri:int:theta:memory",
-                "Memory error theta");
-    }
-    if ( cptheta == NULL ){
-            mexErrMsgIdAndTxt("mpdcm:fmri:int:ptheta:memory",
-                "Memory error ptheta");	
-    }
-    if ( dtheta == NULL ){
-            mexErrMsgIdAndTxt("mpdcm:fmri:int:theta:memory",
-                "Memory error theta");	
-    }
+    cu = (double *) malloc(nt[0] * dp[0] * nu[0] * sizeof(double));
+    if ( cu == NULL )
+        mexErrMsgIdAndTxt("mpdcm:fmri:int:u:memory", "Memory error u");	
+
+    ctheta = (ThetaDCM *) malloc( nt[0] * nb[0] * sizeof(ThetaDCM) );
+    if ( ctheta == NULL )
+        mexErrMsgIdAndTxt("mpdcm:fmri:int:theta:memory", "Memory error theta");	
+
+    cptheta = (PThetaDCM *) malloc( sizeof(PThetaDCM) );
+    if ( cptheta == NULL )
+        mexErrMsgIdAndTxt("mpdcm:fmri:int:ptheta:memory", 
+            "Memory error ptheta");	
+
+    dtheta = (double *) malloc(nt[0] * nb[0] * o * sizeof(double));
+    if ( dtheta == NULL )
+        mexErrMsgIdAndTxt("mpdcm:fmri:int:theta:memory",
+            "Memory error theta");	
 
     // Prepare u and theta
 
@@ -190,9 +186,6 @@ c_mpdcm_fmri_euler(mxArray **y, const mxArray **u,
     const mxArray **theta, const mxArray **ptheta,
     int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
 {
-    int i;
-    double **cu, **dtheta, **dptheta;
-    void **ctheta, **cptheta;
  
     c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
         &mpdcm_fmri_euler);
@@ -203,9 +196,6 @@ c_mpdcm_fmri_kr4(mxArray **y, const mxArray **u,
     const mxArray **theta, const mxArray **ptheta,
     int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
 {
-    int i;
-    double **cu, **dtheta, **dptheta;
-    void **ctheta, **cptheta;
  
     c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
         &mpdcm_fmri_kr4);
@@ -217,9 +207,7 @@ c_mpdcm_fmri_bs(mxArray **y, const mxArray **u,
     int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
 {
     int i;
-    double **cu, **dtheta, **dptheta;
-    void **ctheta, **cptheta;
- 
+
     c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
         &mpdcm_fmri_bs);
 }

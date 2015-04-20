@@ -238,7 +238,7 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     // How many samples are gonna be taken
     ss = ceil(1.0/ptheta->dt);
-    dy = ceil(1.0/(ptheta->dt * ptheta->dyu));
+    dy = ceil(1.0/(ptheta->dt*ptheta->dyu));
 
     ty.arr = y.arr; 
     tu.arr = u.arr;
@@ -251,8 +251,7 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
         // Only sample every 1/ptheta->dt times
         if ( i%ss == 0 )
         {
-//            if ( i%dy == (dy-2) ) 
-            if ( i%dy == 0 ) 
+           if ( i%dy == 0 ) 
            {
                 if ( threadIdx.x < maxx )
                     dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
@@ -314,7 +313,7 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     // How many samples are gonna be taken
     ss = ceil(1.0/ptheta->dt);
-    dy = ceil(1.0/(ptheta->dt * ptheta->dyu));
+    dy = ceil(1.0/(ptheta->dt*ptheta->dyu));
 
     ty.arr = y.arr; 
     tu.arr = u.arr;
@@ -327,7 +326,6 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
         // Only sample every 1/ptheta->dt times
         if ( i%ss == 0 )
         {
-//            if ( i%dy == (dy-2) ) 
             if ( i%dy == 0 ) 
             {
                 if ( threadIdx.x < maxx )
@@ -352,10 +350,10 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 }
 
 #define MINDY 1
-#define MAXDY 16
+#define MAXDY 64
 
-#define MINTOL 0.000001
-#define MAXTOL 0.00100
+#define MINTOL 0.00000001
+#define MAXTOL 0.0000100
 
 
 // Bucacki Shampinee
@@ -367,17 +365,18 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
     int j = threadIdx.x%y.dim;
     double *t;
     double z;
-    // Number of integration steps done between each data point
-    int ss, dy;
+    // Number of integration steps done between each output
+    int dy;
     // Point where threads are not synchronized to anything
     int maxx = y.dim * (blockDim.x/y.dim);
-    unsigned int ndt, odt;
+    unsigned int ndt, odt = MAXDY;
 
     __shared__ double zs[NUM_THREADS];
 
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     dbuff ox;
     dbuff nx;
+    dbuff ze;
 
     dbuff ty;
     dbuff tu;
@@ -386,9 +385,11 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     ox.dim = y.dim;
     nx.dim = y.dim;
+    ze.dim = y.dim;
 
     ox.arr = x.arr; 
     nx.arr = ox.arr + nx.dim * DIM_X;
+    ze.arr = ox.arr + nx.dim * DIM_X*4;
 
     if ( threadIdx.x < maxx )
         memset(x.arr, 0, nx.dim * DIM_X * sizeof(double));
@@ -405,29 +406,22 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     // How many samples are gonna be taken
 
-    ss = MINDY;
-    dy = ss * ceil(1.0/ptheta->dyu);
-
-    odt = ss;
-
-    ptheta->de = 1.0/((double ) ceil(1.0/ptheta->dyu));
-
-
+    dy = MAXDY * ceil(1 / ptheta->dyu);
+    ptheta->de = 2*ptheta->dyu;
     __syncthreads();
 
     dcm_upx_bs0(ox, ty, tu, p_theta, p_ptheta, nx);
     __syncthreads();
 
     i = 0;
-    ndt = 1;
 
-    while ( i < dp * ss ) 
+    while ( i < dp * MAXDY )
     {
         dcm_upx_bs(ox, ty, tu, p_theta, p_ptheta, nx, zs);
 
         __syncthreads();
 
-        z = zs[0]; 
+        z = ze.arr[0]; 
 
         __syncthreads();
 
@@ -436,17 +430,22 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
             zs[threadIdx.x] = 0;
 
         // Exceeded the error tolerance
-        if ( z > MAXTOL && odt < MAXDY )
+        if ( z > MAXTOL && odt > MINDY )
         {
-            odt <<= 1;
+            odt >>= 1;
+            if ( threadIdx.x == 0 && threadIdx.y == 0 )
+                ptheta->de = 2 * ptheta->dyu * (((float ) odt)/MAXDY);   
+        
+            __syncthreads();
+        
             continue;
         }
         
         // Below the error tolerance
 
-        if ( z < MINTOL && odt > MINDY )
+        if ( z < MINTOL && odt < MAXDY )
         {
-            odt >>= 1;
+            odt <<= 1;
         }
 
         // Always sample at the right spot.
@@ -456,14 +455,13 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
             ndt = odt;
 
         if ( threadIdx.x == 0 && threadIdx.y == 0 )
-            ptheta->de = 1.0/((double ) ceil(1.0/(ptheta->dyu)));
-
+            ptheta->de = 2*ptheta->dyu * (((float ) ndt)/MAXDY);
+       
         __syncthreads();
 
         // Only sample every 1/ptheta->dt times
-        if ( i%ss == 0 )
+        if ( i%MAXDY == 0 )
         {
-//            if ( i%dy == (dy-2) ) 
             if ( i%dy == 0 ) 
             {
                 if ( threadIdx.x < maxx )
@@ -473,6 +471,7 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
                     ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
                         ox.arr[ INDEX_LK2 * ox.dim + j] +
                         ox.arr[ INDEX_LK3 * ox.dim + j];
+                    //ty.arr[j] = ze.arr[INDEX_X * x.dim + threadIdx.x%ze.dim];
                 if ( i > 0 )
                     ty.arr += y.dim;
                __syncthreads(); 
@@ -1263,7 +1262,7 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
             break;
     }
     nx.arr[s] += ptheta->de * k1.arr[s] * BSB2;
-    z.arr[s] = k1.arr[s] * BSZ1;
+    z.arr[s] += k1.arr[s] * BSZ2;
 
     __syncthreads();
 
@@ -1349,6 +1348,7 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
 
     unsigned int k = NUM_THREADS >> 1;
 
+
     while ( k )
     {
         if ( threadIdx.y == 0 && threadIdx.x < k )
@@ -1357,6 +1357,9 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
         __syncthreads();
         k >>= 1;
     }
+
+    __syncthreads();
+
 
 }
 
