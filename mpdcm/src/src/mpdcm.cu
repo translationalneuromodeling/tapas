@@ -353,8 +353,8 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 #define MINDY 1
 #define MAXDY 64
 
-#define MINTOL 0.00000001
-#define MAXTOL 0.00100
+#define MINTOL 0.000001
+#define MAXTOL 0.00500
 
 
 // Bucacki Shampinee
@@ -1348,9 +1348,15 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
 
     __syncthreads();
 
-    if ( maxx < 0 && threadIdx.y == 0)
+    if ( maxx < 0 && threadIdx.y == 0) 
         zs[threadIdx.x] = z.arr[s];
+//    if ( tinfo.cs >= tinfo.ns && threadIdx.y == 0 )
+//        zs[threadIdx.x] = 0;
+    // This is a serious hack
+    if ( threadIdx.x >= z.dim && threadIdx.y == 0 )
+        zs[threadIdx.x] = 0;
 
+    __syncthreads();
     if ( threadIdx.x < 16 ) 
         zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 16] ? 
             zs[threadIdx.x] : zs[threadIdx.x + 16];
@@ -1359,7 +1365,7 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
         zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 8] ? 
             zs[threadIdx.x] : zs[threadIdx.x + 8];
     __syncthreads();
-    if ( threadIdx.x < 4 ) 
+   if ( threadIdx.x < 4 ) 
         zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 4] ? 
             zs[threadIdx.x] : zs[threadIdx.x + 4];
     __syncthreads();
