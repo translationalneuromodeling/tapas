@@ -459,13 +459,13 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
         {
             if ( i%dy == 0 ) 
             {
-                if ( maxx < 0 )
+               if ( maxx < 0 )
                     dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
                 __syncthreads();
-                if ( maxx < 0 && threadIdx.y == 0 )
-                    ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
-                        ox.arr[ INDEX_LK2 * ox.dim + j] +
-                        ox.arr[ INDEX_LK3 * ox.dim + j];
+               if ( maxx < 0 && threadIdx.y == 0 )
+                   ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
+                       ox.arr[ INDEX_LK2 * ox.dim + j] +
+                       ox.arr[ INDEX_LK3 * ox.dim + j];
                 if ( i > 0 )
                     ty.arr += y.dim;
                __syncthreads(); 
@@ -1345,54 +1345,34 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
         z.arr[s] *= ptheta->de;
         z.arr[s] = abs(z.arr[s]);
     }
-    
-   __syncthreads();
-
-    if ( threadIdx.y == 0 )
-        zs[threadIdx.x] = z.arr[s];
 
     __syncthreads();
-//   if ( maxx < 0 )
-//   {
-//       if ( threadIdx.y == 0 )
-//           z.arr[s] = z.arr[s] > z.arr[s + 4 * y.dim] ? z.arr[s] : 
-//               z.arr[s + 4 * y.dim];
-//       if ( threadIdx.y == 1 )
-//           z.arr[s] = z.arr[s] > z.arr[s + 2 * y.dim] ? z.arr[s] : 
-//               z.arr[s + 2 * y.dim];
-//   }
-//   __syncthreads();
-//   if ( maxx < 0 )
-//   {
-//       if ( threadIdx.y == 1 )
-//           z.arr[s] = z.arr[s] > z.arr[s + y.dim] ? z.arr[s] : z.arr[s + y.dim];
-//   }
-//   __syncthreads();
 
-//   if ( maxx < 0 && threadIdx.y == 0 )
-//   {
-//       z.arr[s] = z.arr[s] > z.arr[s + y.dim] ? z.arr[s] : z.arr[s + y.dim];
-//       zs[threadIdx.x] = z.arr[s]; 
-//   }
+    if ( maxx < 0 && threadIdx.y == 0)
+        zs[threadIdx.x] = z.arr[s];
 
-//    if ( threadIdx.y == 0 )
-//        zs[threadIdx.x] = 0;
-
-    // This not a real data set.
-//    if ( maxx < 0 && threadIdx.y == 0 &&  tinfo.cs < tinfo.ns )
-//        zs[threadIdx.x] = z.arr[s];
-//   while ( k )
-//   {
-//       if ( threadIdx.y == 0 && threadIdx.x < k )
-//           zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + k] ?
-//               zs[threadIdx.x] : zs[threadIdx.x + k];
-//       __syncthreads();
-//       k >>= 1;
-//   }
-//
-//    __syncthreads();
-
+    if ( threadIdx.x < 16 ) 
+        zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 16] ? 
+            zs[threadIdx.x] : zs[threadIdx.x + 16];
+    __syncthreads();
+    if ( threadIdx.x < 8 ) 
+        zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 8] ? 
+            zs[threadIdx.x] : zs[threadIdx.x + 8];
+    __syncthreads();
+    if ( threadIdx.x < 4 ) 
+        zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 4] ? 
+            zs[threadIdx.x] : zs[threadIdx.x + 4];
+    __syncthreads();
+    if ( threadIdx.x < 2 ) 
+        zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 2] ? 
+            zs[threadIdx.x] : zs[threadIdx.x + 2];
+    __syncthreads();
+    if ( threadIdx.x == 0 ) 
+        zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 1] ? 
+            zs[threadIdx.x] : zs[threadIdx.x + 1];
+    __syncthreads();
 }
+
 
 __device__ void dcm_upx_bs0(dbuff ox, dbuff y, dbuff u, void *p_theta,
      void *p_ptheta, dbuff nx)
