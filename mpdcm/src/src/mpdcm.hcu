@@ -111,6 +111,12 @@ typedef struct {
     unsigned int * errcode;
     } kernpars;
 
+// Thread info. Needed for the synchronization of the adapted step methods.
+typedef struct {
+    unsigned int ns; // Number of data sets
+    unsigned int cs; // Current data set.
+} thr_info;
+
 BDDM_EXTERN
 int mpdcm_fmri_euler( double *x, double *y, double *u, 
     void *theta, double *d_theta, void *ptheta, double *d_ptheta, 

@@ -19,7 +19,7 @@ dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta, void *p_ptheta,
 __device__
 void 
 dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta, void *p_ptheta, 
-    dbuff nx, double* zs);
+    dbuff nx, double* zs, thr_info tinfo);
 
 __device__
 void 
@@ -347,20 +347,20 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
         ox.arr = nx.arr;
         nx.arr = t;
     }
-    *errcode = 1;
+    *errcode = 0;
 }
 
 #define MINDY 1
 #define MAXDY 64
 
 #define MINTOL 0.00000001
-#define MAXTOL 0.0000100
+#define MAXTOL 0.00100
 
 
 // Bucacki Shampinee
 
 __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
-    void *p_ptheta, int dp, unsigned int *errcode)
+    void *p_ptheta, int dp, unsigned int *errcode, thr_info tinfo)
 {
     int i;
     int j = threadIdx.x%y.dim;
@@ -369,7 +369,7 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
     // Number of integration steps done between each output
     int dy;
     // Point where threads are not synchronized to anything
-    int maxx = y.dim * (blockDim.x/y.dim);
+    int maxx = threadIdx.x - y.dim * (blockDim.x/y.dim);
     unsigned int ndt = MAXDY, odt = MAXDY;
 
     __shared__ double zs[NUM_THREADS];
@@ -377,7 +377,6 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     dbuff ox;
     dbuff nx;
-    dbuff ze;
 
     dbuff ty;
     dbuff tu;
@@ -386,14 +385,13 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     ox.dim = y.dim;
     nx.dim = y.dim;
-    ze.dim = y.dim;
 
     ox.arr = x.arr; 
     nx.arr = ox.arr + nx.dim * DIM_X;
-    ze.arr = ox.arr + nx.dim * DIM_X*4;
 
-    if ( threadIdx.x < maxx )
+    if ( maxx < 0 )
         memset(x.arr, 0, nx.dim * DIM_X * sizeof(double));
+
     // Restart the errors
     if ( threadIdx.y == 0 )
         zs[threadIdx.x] = 0;
@@ -416,19 +414,15 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     i = 0;
 
-    while ( i < dp * MAXDY )
+    while ( i < dp * MAXDY + 1 )
     {
-        dcm_upx_bs(ox, ty, tu, p_theta, p_ptheta, nx, zs);
+        dcm_upx_bs(ox, ty, tu, p_theta, p_ptheta, nx, zs, tinfo);
 
         __syncthreads();
 
-        z = ze.arr[0]; 
+        z = zs[0];
 
         __syncthreads();
-
-        // Reboot the errors
-        if ( threadIdx.y == 0 )
-            zs[threadIdx.x] = 0;
 
         // Exceeded the error tolerance
         if ( z > MAXTOL && odt > MINDY )
@@ -465,10 +459,10 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
         {
             if ( i%dy == 0 ) 
             {
-                if ( threadIdx.x < maxx )
+                if ( maxx < 0 )
                     dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
                 __syncthreads();
-                if ( threadIdx.x < maxx && threadIdx.y == 0 )
+                if ( maxx < 0 && threadIdx.y == 0 )
                     ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
                         ox.arr[ INDEX_LK2 * ox.dim + j] +
                         ox.arr[ INDEX_LK3 * ox.dim + j];
@@ -486,7 +480,7 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 
         i += ndt;
     }
-    *errcode = 1;
+    *errcode = 0;
 
 }
 
@@ -571,7 +565,7 @@ __global__ void kdcm_kr4(double *x, double *y, double *u,
 
     int i;
     dbuff tx, ty, tu;
-    __shared__ double sx[NUM_THREADS * DIM_X * PRELOC_SIZE_X_KR4];
+    extern __shared__ double sx[];
 
     // Assign pointers to theta
 
@@ -647,12 +641,15 @@ __global__ void kdcm_bs(double *x, double *y, double *u,
 
     // Assign pointers to theta
 
-
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     ThetaDCM *ltheta;
 
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     __shared__ PThetaDCM lptheta[1];
+
+    thr_info tinfo[1];
+
+    tinfo->ns = nt * nb;
 
     lptheta->dt = ptheta->dt;
     lptheta->dyu = ptheta->dyu;
@@ -668,6 +665,8 @@ __global__ void kdcm_bs(double *x, double *y, double *u,
     while ( i < nb * nt )
     {
         double *o;
+
+        tinfo->cs = i;
 
         tu.arr = u + (i/nb) * nu * dp;
         // Get the new address
@@ -698,7 +697,8 @@ __global__ void kdcm_bs(double *x, double *y, double *u,
         tx.arr = sx + PRELOC_SIZE_X_BS * DIM_X * nx * (threadIdx.x/nx);
 
         ty.arr = y + i * nx * ny;
-        dcm_int_bs(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp, errcode);
+        dcm_int_bs(tx, ty, tu, (void *) ltheta, (void *) lptheta, dp, 
+            errcode, *tinfo);
         i += gridDim.x * (blockDim.x / nx );        
     }
 }
@@ -748,7 +748,9 @@ ldcm_kr4(double *x, double *y, double *u,
     dim3 gthreads(NUM_THREADS, DIM_X);
     dim3 gblocks(NUM_BLOCKS * props.multiProcessorCount, 1);
 
-    kdcm_kr4<<<gblocks, gthreads>>>(x, y, u, 
+    int smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_KR4 * sizeof( double );
+
+    kdcm_kr4<<<gblocks, gthreads, smems>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
         nx, ny, nu, dp, nt, nb, errcode); 
 }
@@ -990,11 +992,13 @@ __device__ void dcm_upx_euler(dbuff ox, dbuff y, dbuff u, void *p_theta,
 
     int j = threadIdx.x%y.dim;
     int s;
+    int maxx = threadIdx.x - y.dim * (blockDim.x/y.dim);
+
 
     // Make the values to be closer in range
  
     if ( isnan( *u.arr ) ){
-        if ( threadIdx.y == 0 )
+        if ( threadIdx.y == 0 && maxx < 0 )
         {
             nx.arr[ INDEX_X * ox.dim + j] = NAN;
             nx.arr[ INDEX_F * ox.dim + j] = NAN;
@@ -1003,36 +1007,37 @@ __device__ void dcm_upx_euler(dbuff ox, dbuff y, dbuff u, void *p_theta,
             nx.arr[ INDEX_Q * ox.dim + j] = NAN;
         }
     }
-
-    switch ( threadIdx.y )
+    if ( maxx < 0 )
     {
-        case INDEX_X:
-            s = INDEX_X * ox.dim + j;
-            nx.arr[s] = ox.arr[s] + 
-                ptheta->de * dcm_dx(ox, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_F:
-            s = INDEX_F * ox.dim + j;
-            nx.arr[s] = ox.arr[s] + 
-                ptheta->de * dcm_df(ox, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_S:
-            s = INDEX_S * ox.dim + j;
-            nx.arr[s] = ox.arr[s] + 
-                ptheta->de * dcm_ds(ox, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_V:
-            s = INDEX_V * ox.dim + j;
-            nx.arr[s] = ox.arr[s] + 
-                ptheta->de * dcm_dv(ox, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_Q:
-            s = INDEX_Q * ox.dim + j;
-            nx.arr[s] = ox.arr[s] + 
-                ptheta->de * dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
-            break;
+        switch ( threadIdx.y )
+        {
+            case INDEX_X:
+                s = INDEX_X * ox.dim + j;
+                nx.arr[s] = ox.arr[s] + 
+                    ptheta->de * dcm_dx(ox, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_F:
+                s = INDEX_F * ox.dim + j;
+                nx.arr[s] = ox.arr[s] + 
+                    ptheta->de * dcm_df(ox, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_S:
+                s = INDEX_S * ox.dim + j;
+                nx.arr[s] = ox.arr[s] + 
+                    ptheta->de * dcm_ds(ox, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_V:
+                s = INDEX_V * ox.dim + j;
+                nx.arr[s] = ox.arr[s] + 
+                    ptheta->de * dcm_dv(ox, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_Q:
+                s = INDEX_Q * ox.dim + j;
+                nx.arr[s] = ox.arr[s] + 
+                    ptheta->de * dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
+                break;
+        }
     }
-
 }
 
 // Runge Kutta
@@ -1061,7 +1066,7 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
     // Make the values to be closer in range
  
     if ( isnan( *u.arr ) ){
-        if ( threadIdx.y == 0 )
+        if ( threadIdx.y == 0 && maxx < 0 )
         {
             nx.arr[ INDEX_X * ox.dim + j] = NAN;
             nx.arr[ INDEX_F * ox.dim + j] = NAN;
@@ -1072,112 +1077,118 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
     }
     if ( maxx < 0 )
     {
-    switch ( threadIdx.y )
-    {
-        case INDEX_X:
-            s = INDEX_X * ox.dim + j;
-            k1.arr[s] = dcm_dx(ox, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_F:
-            s = INDEX_F * ox.dim + j;
-            k1.arr[s] = dcm_df(ox, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_S:
-            s = INDEX_S * ox.dim + j;
-            k1.arr[s] = dcm_ds(ox, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_V:
-            s = INDEX_V * ox.dim + j;
-            k1.arr[s] = dcm_dv(ox, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_Q:
-            s = INDEX_Q * ox.dim + j;
-            k1.arr[s] = dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
-            break;
-    } 
+        switch ( threadIdx.y )
+        {
+            case INDEX_X:
+                s = INDEX_X * ox.dim + j;
+                k1.arr[s] = dcm_dx(ox, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_F:
+                s = INDEX_F * ox.dim + j;
+                k1.arr[s] = dcm_df(ox, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_S:
+                s = INDEX_S * ox.dim + j;
+                k1.arr[s] = dcm_ds(ox, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_V:
+                s = INDEX_V * ox.dim + j;
+                k1.arr[s] = dcm_dv(ox, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_Q:
+                s = INDEX_Q * ox.dim + j;
+                k1.arr[s] = dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
+                break;
+        } 
         nx.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s] * KRW1;
         k2.arr[s] = ox.arr[s] + ptheta->de * 0.5 * k1.arr[s]; 
     }
     __syncthreads();
-    if ( maxx > 0 )
+
+    if ( maxx < 0 )
     {
-    switch ( threadIdx.y )
-    {
-        case INDEX_X:
-            k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_F:
-            k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_S:
-            k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_V:
-            k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_Q:
-            k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
-            break;
+        switch ( threadIdx.y )
+        {
+            case INDEX_X:
+                k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_F:
+                k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_S:
+                k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_V:
+                k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_Q:
+                k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
+                break;
+        }
+
+        nx.arr[s] += ptheta->de * k1.arr[s] * KRW2;
     }
 
-    nx.arr[s] += ptheta->de * k1.arr[s] * KRW2;
-    }
     __syncthreads();
-    if ( maxx > 0 )
+
+    if ( maxx < 0 )
         k2.arr[s] = ox.arr[s] + ptheta->de * 0.5 * k1.arr[s]; 
 
     __syncthreads();
 
-    if ( maxx > 0 )
+    if ( maxx < 0 )
     {
-    switch ( threadIdx.y )
-    {
-        case INDEX_X:
-            k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_F:
-            k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_S:
-            k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_V:
-            k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_Q:
-            k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
-            break;
+        switch ( threadIdx.y )
+        {
+            case INDEX_X:
+                k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_F:
+                k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_S:
+                k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_V:
+                k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_Q:
+                k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
+                break;
+        }
+
+        nx.arr[s] += ptheta->de * k1.arr[s]*KRW3;
+
     }
 
-    nx.arr[s] += ptheta->de * k1.arr[s]*KRW3;
-    }
     __syncthreads();
-    if ( maxx > 0 )
+
+    if ( maxx < 0 )
         k2.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s];
 
     __syncthreads();
     
-    if ( maxx > 0 )
+    if ( maxx < 0 )
     {
-    switch ( threadIdx.y )
-    {
-        case INDEX_X:
-            k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_F:
-            k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_S:
-            k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_V:
-            k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_Q:
-            k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
-            break;
-    }
-    nx.arr[s] += ptheta->de * k1.arr[s] * KRW4;
+        switch ( threadIdx.y )
+        {
+            case INDEX_X:
+                k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_F:
+                k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_S:
+                k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_V:
+                k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_Q:
+                k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
+                break;
+        }
+        nx.arr[s] += ptheta->de * k1.arr[s] * KRW4;
     }
 }
 
@@ -1185,7 +1196,7 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
 // Bogacki Shampine
 
 __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
-     void *p_ptheta, dbuff nx, double *zs)
+     void *p_ptheta, dbuff nx, double *zs, thr_info tinfo)
 {
 
     //ThetaDCM *theta = (ThetaDCM *) p_theta;
@@ -1193,7 +1204,7 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
 
     int j = threadIdx.x%y.dim;
     int s;
-    int maxx = threadIdx.x > ox.dim * ( blockDim.x / ox.dim);
+    int maxx = threadIdx.x - y.dim * ( blockDim.x / y.dim );
     // Buffers for the intermediate results. z is the estimated error.
     dbuff k1, k2, z;
 
@@ -1212,7 +1223,7 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
     // Make the values to be closer in range
  
     if ( isnan( *u.arr ) ){
-        if ( threadIdx.y == 0 )
+        if ( threadIdx.y == 0  && maxx < 0 )
         {
             nx.arr[ INDEX_X * ox.dim + j] = NAN;
             nx.arr[ INDEX_F * ox.dim + j] = NAN;
@@ -1223,148 +1234,163 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
     }
 
     // Memory 
-    switch ( threadIdx.y )
+    if ( maxx < 0 )
     {
-        case INDEX_X:
-            s = INDEX_X * ox.dim + j;
-            break;
-        case INDEX_F:
-            s = INDEX_F * ox.dim + j;
-            break;
-        case INDEX_S:
-            s = INDEX_S * ox.dim + j;
-            break;
-        case INDEX_V:
-            s = INDEX_V * ox.dim + j;
-            break;
-        case INDEX_Q:
-            s = INDEX_Q * ox.dim + j;
-            break;
-    }
+        switch ( threadIdx.y )
+        {
+            case INDEX_X:
+                s = INDEX_X * ox.dim + j;
+                break;
+            case INDEX_F:
+                s = INDEX_F * ox.dim + j;
+                break;
+            case INDEX_S:
+                s = INDEX_S * ox.dim + j;
+                break;
+            case INDEX_V:
+                s = INDEX_V * ox.dim + j;
+                break;
+            case INDEX_Q:
+                s = INDEX_Q * ox.dim + j;
+                break;
+        }
 
-    k2.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s] * BSA1;
-    nx.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s] * BSB1;
-    z.arr[s] = k1.arr[s] * BSZ1;
+        k2.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s] * BSA1;
+        nx.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s] * BSB1;
+        z.arr[s] = k1.arr[s] * BSZ1;
+    }
 
     __syncthreads();
-
-    switch ( threadIdx.y )
+    
+    if ( maxx < 0 )
     {
-        case INDEX_X:
-            k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_F:
-            k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_S:
-            k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_V:
-            k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_Q:
-            k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
-            break;
+        switch ( threadIdx.y )
+        {
+            case INDEX_X:
+                k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_F:
+                k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_S:
+                k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_V:
+                k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_Q:
+                k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
+                break;
+        }
+        nx.arr[s] += ptheta->de * k1.arr[s] * BSB2;
+        z.arr[s] += k1.arr[s] * BSZ2;
     }
-    nx.arr[s] += ptheta->de * k1.arr[s] * BSB2;
-    z.arr[s] += k1.arr[s] * BSZ2;
-
+    
     __syncthreads();
 
     // Synchronize memory
-    k2.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s] * BSA2; 
+    if ( maxx < 0 )
+        k2.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s] * BSA2; 
 
     __syncthreads();
 
-    switch ( threadIdx.y )
+    if ( maxx < 0 )
     {
-        case INDEX_X:
-            k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_F:
-            k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_S:
-            k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_V:
-            k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_Q:
-            k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
-            break;
-    }
-
-    nx.arr[s] += ptheta->de * k1.arr[s] * BSB3;
-    z.arr[s] += k1.arr[s] * BSZ3;
-
-    __syncthreads();
-
-    switch ( threadIdx.y )
-    {
-        case INDEX_X:
-            k1.arr[s] = dcm_dx(nx, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_F:
-            k1.arr[s] = dcm_df(nx, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_S:
-            k1.arr[s] = dcm_ds(nx, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_V:
-            k1.arr[s] = dcm_dv(nx, y, u, p_theta, p_ptheta, j);
-            break;
-        case INDEX_Q:
-            k1.arr[s] = dcm_dq(nx, y, u, p_theta, p_ptheta, j); 
-            break;
-    }
-    z.arr[s] += k1.arr[s] * BSZ4;
-    z.arr[s] *= ptheta->de;
-    z.arr[s] = abs(z.arr[s]);
-
-    __syncthreads();
-
-    if ( threadIdx.y < maxx )
-    {
-        if ( threadIdx.y == 0 )
-            z.arr[s] = z.arr[s] > z.arr[s + 4 * y.dim] ? z.arr[s] : 
-                z.arr[s + 4 * y.dim];
-        if ( threadIdx.y == 1 )
-            z.arr[s] = z.arr[s] > z.arr[s + 2 * y.dim] ? z.arr[s] : 
-                z.arr[s + 2 * y.dim];
-    }
-    __syncthreads();
-    if ( threadIdx.y < maxx )
-    {
-        if ( threadIdx.y == 1 )
-            z.arr[s] = z.arr[s] > z.arr[s + y.dim] ? z.arr[s] : z.arr[s + y.dim];
-    }
-    __syncthreads();
-
-    if ( threadIdx.y < maxx )
-    {
-        if ( threadIdx.y == 0 )
+        switch ( threadIdx.y )
         {
-            z.arr[s] = z.arr[s] > z.arr[s + y.dim] ? z.arr[s] : z.arr[s + y.dim];
-            zs[threadIdx.x] = z.arr[s];
+            case INDEX_X:
+                k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_F:
+                k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_S:
+                k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_V:
+                k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_Q:
+                k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
+                break;
         }
+
+        nx.arr[s] += ptheta->de * k1.arr[s] * BSB3;
+        z.arr[s] += k1.arr[s] * BSZ3;
     }
+    
     __syncthreads();
 
-    unsigned int k = NUM_THREADS >> 1;
-
-
-    while ( k )
+    if ( maxx < 0 )
     {
-        if ( threadIdx.y == 0 && threadIdx.x < k )
-            zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + k] ?
-                zs[threadIdx.x] : zs[threadIdx.x + k];
-        __syncthreads();
-        k >>= 1;
+        switch ( threadIdx.y )
+        {
+            case INDEX_X:
+                k1.arr[s] = dcm_dx(nx, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_F:
+                k1.arr[s] = dcm_df(nx, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_S:
+                k1.arr[s] = dcm_ds(nx, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_V:
+                k1.arr[s] = dcm_dv(nx, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_Q:
+                k1.arr[s] = dcm_dq(nx, y, u, p_theta, p_ptheta, j); 
+                break;
+        }
+        z.arr[s] += k1.arr[s] * BSZ4;
+        z.arr[s] *= ptheta->de;
+        z.arr[s] = abs(z.arr[s]);
     }
+    
+   __syncthreads();
+
+    if ( threadIdx.y == 0 )
+        zs[threadIdx.x] = z.arr[s];
 
     __syncthreads();
+//   if ( maxx < 0 )
+//   {
+//       if ( threadIdx.y == 0 )
+//           z.arr[s] = z.arr[s] > z.arr[s + 4 * y.dim] ? z.arr[s] : 
+//               z.arr[s + 4 * y.dim];
+//       if ( threadIdx.y == 1 )
+//           z.arr[s] = z.arr[s] > z.arr[s + 2 * y.dim] ? z.arr[s] : 
+//               z.arr[s + 2 * y.dim];
+//   }
+//   __syncthreads();
+//   if ( maxx < 0 )
+//   {
+//       if ( threadIdx.y == 1 )
+//           z.arr[s] = z.arr[s] > z.arr[s + y.dim] ? z.arr[s] : z.arr[s + y.dim];
+//   }
+//   __syncthreads();
 
+//   if ( maxx < 0 && threadIdx.y == 0 )
+//   {
+//       z.arr[s] = z.arr[s] > z.arr[s + y.dim] ? z.arr[s] : z.arr[s + y.dim];
+//       zs[threadIdx.x] = z.arr[s]; 
+//   }
+
+//    if ( threadIdx.y == 0 )
+//        zs[threadIdx.x] = 0;
+
+    // This not a real data set.
+//    if ( maxx < 0 && threadIdx.y == 0 &&  tinfo.cs < tinfo.ns )
+//        zs[threadIdx.x] = z.arr[s];
+//   while ( k )
+//   {
+//       if ( threadIdx.y == 0 && threadIdx.x < k )
+//           zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + k] ?
+//               zs[threadIdx.x] : zs[threadIdx.x + k];
+//       __syncthreads();
+//       k >>= 1;
+//   }
+//
+//    __syncthreads();
 
 }
 
@@ -1384,7 +1410,7 @@ __device__ void dcm_upx_bs0(dbuff ox, dbuff y, dbuff u, void *p_theta,
 
     dbuff k1;
 
-    int maxx = y.dim * (blockDim.x/y.dim);
+    int maxx = threadIdx.x - y.dim * (blockDim.x/y.dim);
 
     k1.arr = (ox.arr < nx.arr) ? ox.arr : nx.arr;
     k1.arr += ox.dim * DIM_X * 2;  
@@ -1393,7 +1419,7 @@ __device__ void dcm_upx_bs0(dbuff ox, dbuff y, dbuff u, void *p_theta,
     // Make the values to be closer in range
  
     if ( isnan( *u.arr ) ){
-        if ( threadIdx.y == 0 )
+        if ( threadIdx.y == 0  && maxx < 0 )
         {
             nx.arr[ INDEX_X * ox.dim + j] = NAN;
             nx.arr[ INDEX_F * ox.dim + j] = NAN;
@@ -1403,7 +1429,7 @@ __device__ void dcm_upx_bs0(dbuff ox, dbuff y, dbuff u, void *p_theta,
         }
     }
 
-    if ( threadIdx.x < maxx )
+    if ( maxx < 0 )
     {
         switch ( threadIdx.y )
         {
