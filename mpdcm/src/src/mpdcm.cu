@@ -767,8 +767,11 @@ ldcm_bs(double *x, double *y, double *u,
     struct cudaDeviceProp props;
     cudaGetDeviceProperties(&props, device);
 
+    int num_blocks = min((nx * nt * nb + NUM_THREADS - 1)/NUM_THREADS,
+        NUM_BLOCKS * props.multiProcessorCount);
+
     dim3 gthreads(NUM_THREADS, DIM_X);
-    dim3 gblocks(NUM_BLOCKS * props.multiProcessorCount, 1);
+    dim3 gblocks(num_blocks, 1);
 
     int smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_BS * sizeof( double );
 
