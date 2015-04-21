@@ -347,6 +347,7 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
         ox.arr = nx.arr;
         nx.arr = t;
     }
+    *errcode = 1;
 }
 
 #define MINDY 1
@@ -369,7 +370,7 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
     int dy;
     // Point where threads are not synchronized to anything
     int maxx = y.dim * (blockDim.x/y.dim);
-    unsigned int ndt, odt = MAXDY;
+    unsigned int ndt = MAXDY, odt = MAXDY;
 
     __shared__ double zs[NUM_THREADS];
 
@@ -471,7 +472,6 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
                     ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
                         ox.arr[ INDEX_LK2 * ox.dim + j] +
                         ox.arr[ INDEX_LK3 * ox.dim + j];
-                    //ty.arr[j] = ze.arr[INDEX_X * x.dim + threadIdx.x%ze.dim];
                 if ( i > 0 )
                     ty.arr += y.dim;
                __syncthreads(); 
@@ -486,6 +486,8 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 
         i += ndt;
     }
+    *errcode = 1;
+
 }
 
 
@@ -569,7 +571,7 @@ __global__ void kdcm_kr4(double *x, double *y, double *u,
 
     int i;
     dbuff tx, ty, tu;
-    extern __shared__ double sx[];
+    __shared__ double sx[NUM_THREADS * DIM_X * PRELOC_SIZE_X_KR4];
 
     // Assign pointers to theta
 
@@ -746,10 +748,7 @@ ldcm_kr4(double *x, double *y, double *u,
     dim3 gthreads(NUM_THREADS, DIM_X);
     dim3 gblocks(NUM_BLOCKS * props.multiProcessorCount, 1);
 
-    int smems;
-    smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_KR4 * sizeof( double );
-  
-    kdcm_kr4<<<gblocks, gthreads, smems>>>(x, y, u, 
+    kdcm_kr4<<<gblocks, gthreads>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
         nx, ny, nu, dp, nt, nb, errcode); 
 }
@@ -1047,6 +1046,7 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
 
     int j = threadIdx.x%y.dim;
     int s;
+    int maxx = threadIdx.x - y.dim * (blockDim.x / y.dim);
     // Buffers for the intermediate results. z is the estimated error.
     dbuff k1, k2;
 
@@ -1070,7 +1070,8 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
             nx.arr[ INDEX_Q * ox.dim + j] = NAN;
         }
     }
-
+    if ( maxx < 0 )
+    {
     switch ( threadIdx.y )
     {
         case INDEX_X:
@@ -1093,13 +1094,13 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
             s = INDEX_Q * ox.dim + j;
             k1.arr[s] = dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
             break;
+    } 
+        nx.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s] * KRW1;
+        k2.arr[s] = ox.arr[s] + ptheta->de * 0.5 * k1.arr[s]; 
     }
-
-    nx.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s] * KRW1;
-    k2.arr[s] = ox.arr[s] + ptheta->de * 0.5 * k1.arr[s]; 
-
     __syncthreads();
-
+    if ( maxx > 0 )
+    {
     switch ( threadIdx.y )
     {
         case INDEX_X:
@@ -1120,13 +1121,15 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
     }
 
     nx.arr[s] += ptheta->de * k1.arr[s] * KRW2;
+    }
+    __syncthreads();
+    if ( maxx > 0 )
+        k2.arr[s] = ox.arr[s] + ptheta->de * 0.5 * k1.arr[s]; 
 
     __syncthreads();
 
-    k2.arr[s] = ox.arr[s] + ptheta->de * 0.5 * k1.arr[s]; 
-
-    __syncthreads();
-
+    if ( maxx > 0 )
+    {
     switch ( threadIdx.y )
     {
         case INDEX_X:
@@ -1147,13 +1150,15 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
     }
 
     nx.arr[s] += ptheta->de * k1.arr[s]*KRW3;
-
+    }
     __syncthreads();
-
-    k2.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s];
+    if ( maxx > 0 )
+        k2.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s];
 
     __syncthreads();
     
+    if ( maxx > 0 )
+    {
     switch ( threadIdx.y )
     {
         case INDEX_X:
@@ -1173,7 +1178,7 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
             break;
     }
     nx.arr[s] += ptheta->de * k1.arr[s] * KRW4;
-
+    }
 }
 
 
@@ -1342,7 +1347,7 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
         {
             z.arr[s] = z.arr[s] > z.arr[s + y.dim] ? z.arr[s] : z.arr[s + y.dim];
             zs[threadIdx.x] = z.arr[s];
-    }
+        }
     }
     __syncthreads();
 
@@ -1353,7 +1358,7 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
     {
         if ( threadIdx.y == 0 && threadIdx.x < k )
             zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + k] ?
-                zs[threadIdx.y] : zs[threadIdx.y + k];
+                zs[threadIdx.x] : zs[threadIdx.x + k];
         __syncthreads();
         k >>= 1;
     }
