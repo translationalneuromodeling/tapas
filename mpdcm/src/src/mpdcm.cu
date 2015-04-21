@@ -354,7 +354,7 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 #define MAXDY 64
 
 #define MINTOL 0.000001
-#define MAXTOL 0.00500
+#define MAXTOL 0.001000
 
 
 // Bucacki Shampinee
