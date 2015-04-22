@@ -191,7 +191,7 @@ function [y, scale] = tinput_y(dcm, ys)
     % Data
 
     Y = dcm.Y;
-    Y.y = spm_detrend(Y.y);
+%    Y.y = spm_detrend(Y.y);
 
     if isfield(Y, 'scale')
         scale = Y.scale;

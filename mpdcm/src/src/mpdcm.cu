@@ -350,12 +350,6 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
     *errcode = 0;
 }
 
-#define MINDY 1
-#define MAXDY 64
-
-#define MINTOL 0.000001
-#define MAXTOL 0.001000
-
 
 // Bucacki Shampinee
 
@@ -721,8 +715,12 @@ __host__ void ldcm_euler
     struct cudaDeviceProp props;
     cudaGetDeviceProperties(&props, device);
 
+    int num_blocks = min((nx * nt * nb + NUM_THREADS - 1)/NUM_THREADS,
+        NUM_BLOCKS * props.multiProcessorCount);
+
+    
     dim3 gthreads(NUM_THREADS, DIM_X);
-    dim3 gblocks(NUM_BLOCKS * props.multiProcessorCount, 1);
+    dim3 gblocks(num_blocks, 1);
 
     int sems;
     sems =  NUM_THREADS * DIM_X * PRELOC_SIZE_X_EULER * sizeof( double );
@@ -745,8 +743,11 @@ ldcm_kr4(double *x, double *y, double *u,
     struct cudaDeviceProp props;
     cudaGetDeviceProperties(&props, device);
 
+    int num_blocks = min((nx * nt * nb + NUM_THREADS - 1)/NUM_THREADS,
+        NUM_BLOCKS * props.multiProcessorCount);
+    
     dim3 gthreads(NUM_THREADS, DIM_X);
-    dim3 gblocks(NUM_BLOCKS * props.multiProcessorCount, 1);
+    dim3 gblocks(num_blocks, 1);
 
     int smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_KR4 * sizeof( double );
 
@@ -1351,32 +1352,33 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
 
     __syncthreads();
 
+    if ( tinfo.cs >= tinfo.ns && threadIdx.y == 0 )
+        zs[threadIdx.x] = 0;
+    // This is a serious hack
+//    if ( threadIdx.x >= z.dim && threadIdx.y == 0 )
+//        zs[threadIdx.x] = 0;
+
     if ( maxx < 0 && threadIdx.y == 0) 
         zs[threadIdx.x] = z.arr[s];
-//    if ( tinfo.cs >= tinfo.ns && threadIdx.y == 0 )
-//        zs[threadIdx.x] = 0;
-    // This is a serious hack
-    if ( threadIdx.x >= z.dim && threadIdx.y == 0 )
-        zs[threadIdx.x] = 0;
 
     __syncthreads();
-    if ( threadIdx.x < 16 ) 
+    if ( threadIdx.x < 16 && threadIdx.y ==  0) 
         zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 16] ? 
             zs[threadIdx.x] : zs[threadIdx.x + 16];
     __syncthreads();
-    if ( threadIdx.x < 8 ) 
+    if ( threadIdx.x < 8 && threadIdx.y ==  0) 
         zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 8] ? 
             zs[threadIdx.x] : zs[threadIdx.x + 8];
     __syncthreads();
-   if ( threadIdx.x < 4 ) 
+   if ( threadIdx.x < 4  && threadIdx.y ==  0) 
         zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 4] ? 
             zs[threadIdx.x] : zs[threadIdx.x + 4];
     __syncthreads();
-    if ( threadIdx.x < 2 ) 
+    if ( threadIdx.x < 2 && threadIdx.y ==  0) 
         zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 2] ? 
             zs[threadIdx.x] : zs[threadIdx.x + 2];
     __syncthreads();
-    if ( threadIdx.x == 0 ) 
+    if ( threadIdx.x == 0 && threadIdx.y ==  0) 
         zs[threadIdx.x] = zs[threadIdx.x] > zs[threadIdx.x + 1] ? 
             zs[threadIdx.x] : zs[threadIdx.x + 1];
     __syncthreads();

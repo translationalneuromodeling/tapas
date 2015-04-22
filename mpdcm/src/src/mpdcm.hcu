@@ -241,6 +241,15 @@ int mpdcm_fmri_bs( double *x, double *y, double *u,
 #define BSZ3 0.111111111111111
 #define BSZ4 (-0.125)
 
+// Constat for the variable step model.
+
+#define MINDY 1
+#define MAXDY 64
+
+#define MINTOL 0.000001
+#define MAXTOL 0.001000
+
+
 # endif
 
 // end cuda defines

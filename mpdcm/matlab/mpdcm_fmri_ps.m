@@ -71,6 +71,7 @@ for i = 1:nburnin+niter
 
     % Diagnostics and kernel update
     if i > 1 && mod(i-1, pars.diagi) == 0
+        toc
         diagnostics = diagnostics/pars.diagi;
         if pars.verb
             fprintf(1, 'Iter %d, diagnostics:  ', i);
@@ -85,6 +86,7 @@ for i = 1:nburnin+niter
         ok = update_kernel(t, ok, os, diagnostics); 
         diagnostics(:) = 0;
         t = t + 1;
+        tic
     end
 
 
@@ -130,7 +132,7 @@ for i = 1:nburnin+niter
     end
 
 end
-
+toc
 fe = trapz(T, mean(ellh, 2));
 
 ps.pE = mean(ps_theta , 2);
