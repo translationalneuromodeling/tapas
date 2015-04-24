@@ -40,6 +40,9 @@ if ~isfield(pars, 'integ')
     pars.integ = 'kr4';
 end
 
+if ~isfield(pars, 'dt')
+    pars.dt = 1;
+end
 
 T = sort(pars.T);
 nburnin = pars.nburnin;
@@ -48,6 +51,7 @@ niter = pars.niter;
 [y, u, theta, ptheta] = mpdcm_fmri_tinput(dcm);
 
 ptheta.integ = pars.integ;
+ptheta.dt = pars.dt;
 
 htheta = mpdcm_fmri_htheta(ptheta);
 

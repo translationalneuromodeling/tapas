@@ -62,12 +62,13 @@ end
 
 % Integrate
 
+ptheta.dyu = 2 * ptheta.dyu;
 y = integ(u, theta, ptheta);
 
 % Downsample
 for i = 1:numel(y)
     if isfield(theta{i}, 'ny')
-        y{i} = y{i}(:, 1:theta{i}.ny, :)';
+        y{i} = y{i}(:, 2:2:end, :)';
     end
 end
 

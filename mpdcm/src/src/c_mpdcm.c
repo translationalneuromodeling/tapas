@@ -68,7 +68,7 @@ c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta,
     cptheta->dt = *mxGetPr(mxGetField(ptheta, 0, "dt"));
     cptheta->dyu = *mxGetPr(mxGetField(ptheta, 0, "dyu"));
     // Compensate for SPM
-    cptheta->de = 2*cptheta->dt*cptheta->dyu;
+    cptheta->de = cptheta->dt*cptheta->dyu;
     cptheta->mode = 'f';
 }
 

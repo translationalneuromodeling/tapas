@@ -249,24 +249,23 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
             dcm_upx_euler(ox, ty, tu, p_theta, p_ptheta, nx);
         __syncthreads();
         // Only sample every 1/ptheta->dt times
-        if ( i%ss == 0 )
+        if ( i%dy == dy >> 1  ) 
         {
-           if ( i%dy == 0 ) 
-           {
-                if ( threadIdx.x < maxx )
-                    dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
-                __syncthreads();
-                if ( threadIdx.x < maxx && threadIdx.y == 0 )
-                    ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
-                        ox.arr[ INDEX_LK2 * ox.dim + j] +
-                        ox.arr[ INDEX_LK3 * ox.dim + j];
-                __syncthreads();
+            if ( threadIdx.x < maxx )
+                dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
+            __syncthreads();
+            if ( threadIdx.x < maxx && threadIdx.y == 0 )
+                ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
+                    ox.arr[ INDEX_LK2 * ox.dim + j] +
+                    ox.arr[ INDEX_LK3 * ox.dim + j];
+            __syncthreads();
 
-                ty.arr += y.dim; 
-            }
-            if ( i > 0 )
-                tu.arr += u.dim;
-        }
+            ty.arr += y.dim; 
+         }
+        // Move one step forward
+        if ( i%ss == 0 && i > 0 )
+            tu.arr += u.dim;
+
         // Swap the pointers
         t = ox.arr;
         ox.arr = nx.arr;
@@ -320,28 +319,27 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     for (i=0; i < dp*ss; i++)
     {
-        //if ( threadIdx.x < maxx )
-            dcm_upx_kr4(ox, ty, tu, p_theta, p_ptheta, nx);
+        dcm_upx_kr4(ox, ty, tu, p_theta, p_ptheta, nx);
         __syncthreads();
-        // Only sample every 1/ptheta->dt times
-        if ( i%ss == 0 )
+
+        if ( i%dy == dy >> 1 ) 
         {
-            if ( i%dy == 0 ) 
-            {
-                if ( threadIdx.x < maxx )
-                    dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
-                __syncthreads();
-                if ( threadIdx.x < maxx && threadIdx.y == 0 )
-                    ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
-                        ox.arr[ INDEX_LK2 * ox.dim + j] +
-                        ox.arr[ INDEX_LK3 * ox.dim + j];
-                if ( i > 0 )
-                    ty.arr += y.dim;
-               __syncthreads(); 
-            }
+            if ( threadIdx.x < maxx )
+                dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
+            __syncthreads();
+            if ( threadIdx.x < maxx && threadIdx.y == 0 )
+                ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
+                    ox.arr[ INDEX_LK2 * ox.dim + j] +
+                    ox.arr[ INDEX_LK3 * ox.dim + j];
             if ( i > 0 )
-                tu.arr += u.dim;
+                ty.arr += y.dim;
+           __syncthreads(); 
         }
+
+        // Only sample every 1/ptheta->dt times
+        if ( i%ss == 0  && i > 0 )
+            tu.arr += u.dim;
+
         // Swap the pointers
         t = ox.arr;
         ox.arr = nx.arr;
@@ -365,6 +363,7 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
     // Point where threads are not synchronized to anything
     int maxx = threadIdx.x - y.dim * (blockDim.x/y.dim);
     unsigned int ndt = MAXDY, odt = MAXDY;
+    unsigned int dmin;
 
     __shared__ double zs[NUM_THREADS];
 
@@ -399,8 +398,11 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     // How many samples are gonna be taken
 
-    dy = MAXDY * ceil(1 / ptheta->dyu);
-    ptheta->de = 2*ptheta->dyu;
+    dy = ceil(MAXDY * 1 / ptheta->dyu);
+    dmin = min(dy, MAXDY);
+
+    // SPM hack
+    ptheta->de = ptheta->dyu;
     __syncthreads();
 
     dcm_upx_bs0(ox, ty, tu, p_theta, p_ptheta, nx);
@@ -408,7 +410,7 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     i = 0;
 
-    while ( i < dp * MAXDY + 1 )
+    while ( i <= dp * MAXDY )
     {
         dcm_upx_bs(ox, ty, tu, p_theta, p_ptheta, nx, zs, tinfo);
 
@@ -423,7 +425,8 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
         {
             odt >>= 1;
             if ( threadIdx.x == 0 && threadIdx.y == 0 )
-                ptheta->de = 2 * ptheta->dyu * (((float ) odt)/MAXDY);   
+                // SPM hack
+                ptheta->de = ptheta->dyu * (((float ) odt)/MAXDY);   
         
             __syncthreads();
         
@@ -437,33 +440,36 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
             odt <<= 1;
         }
 
+        // I might need to adapt this to spm
+
         // Always sample at the right spot.
-        if ( i%MAXDY + odt > MAXDY )
-            ndt = MAXDY - i%MAXDY;
+        if ( i%dmin + odt > dmin )
+            ndt = dmin - i%dmin;
         else 
             ndt = odt;
 
         if ( threadIdx.x == 0 && threadIdx.y == 0 )
-            ptheta->de = 2*ptheta->dyu * (((float ) ndt)/MAXDY);
+            ptheta->de = ptheta->dyu * (((float ) ndt)/MAXDY);
        
         __syncthreads();
+
+        if ( i%dy == 0 ) 
+        {
+           if ( maxx < 0 )
+                dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
+            __syncthreads();
+           if ( maxx < 0 && threadIdx.y == 0 )
+               ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
+                   ox.arr[ INDEX_LK2 * ox.dim + j] +
+                   ox.arr[ INDEX_LK3 * ox.dim + j];
+            if ( i > 0 )
+                ty.arr += y.dim;
+           __syncthreads(); 
+        }
 
         // Only sample every 1/ptheta->dt times
         if ( i%MAXDY == 0 )
         {
-            if ( i%dy == 0 ) 
-            {
-               if ( maxx < 0 )
-                    dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
-                __syncthreads();
-               if ( maxx < 0 && threadIdx.y == 0 )
-                   ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
-                       ox.arr[ INDEX_LK2 * ox.dim + j] +
-                       ox.arr[ INDEX_LK3 * ox.dim + j];
-                if ( i > 0 )
-                    ty.arr += y.dim;
-               __syncthreads(); 
-            }
             if ( i > 0 )
                 tu.arr += u.dim;
         }

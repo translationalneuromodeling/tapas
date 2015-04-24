@@ -150,13 +150,6 @@ function [ptheta] = tinput_ptheta(dcm, scale, dyu, ys, us)
 
 end
 
-%% ===========================================================================
-
-% detrend outputs (and inputs)  
-%--------------------------------------------------------------------------
-
-
-
 function [u, dyu] = tinput_u(dcm, us)
 %% Prepare U
 
@@ -191,7 +184,7 @@ function [y, scale] = tinput_y(dcm, ys)
     % Data
 
     Y = dcm.Y;
-%    Y.y = spm_detrend(Y.y);
+    %Y.y = spm_detrend(Y.y);
 
     if isfield(Y, 'scale')
         scale = Y.scale;
