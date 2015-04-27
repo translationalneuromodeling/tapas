@@ -1354,6 +1354,11 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
         z.arr[s] += k1.arr[s] * BSZ4;
         z.arr[s] *= ptheta->de;
         z.arr[s] = abs(z.arr[s]);
+        // If there is a degeneracy don't increase the sampling rate and give
+        // up.
+        if ( isnan(z.arr[s]) || z.arr[s] == INFINITY )
+            z.arr[s] = 0;
+
     }
 
     __syncthreads();
