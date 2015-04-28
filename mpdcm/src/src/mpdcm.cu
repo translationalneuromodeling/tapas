@@ -275,8 +275,6 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
     *errcode = 0;
 }
 
-// Runge Kutta
-
 __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
     void *p_ptheta, int dp, unsigned int *errcode)
 {
@@ -295,7 +293,7 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
     dbuff ty;
     dbuff tu;
 
-    *errcode = 0;
+    *errcode = 1;
 
     ox.dim = y.dim;
     nx.dim = y.dim;
@@ -312,6 +310,7 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     // How many samples are gonna be taken
     ss = ceil(1.0/ptheta->dt);
+    // Doesn't work always
     dy = ceil(1.0/(ptheta->dt*ptheta->dyu));
 
     ty.arr = y.arr; 
@@ -319,10 +318,11 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     for (i=0; i < dp*ss; i++)
     {
-        dcm_upx_kr4(ox, ty, tu, p_theta, p_ptheta, nx);
+        if ( threadIdx.x < maxx )
+            dcm_upx_kr4(ox, ty, tu, p_theta, p_ptheta, nx);
         __syncthreads();
-
-        if ( i%dy == dy >> 1 ) 
+        // Only sample every 1/ptheta->dt times
+        if ( i%dy == dy >> 1  ) 
         {
             if ( threadIdx.x < maxx )
                 dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
@@ -331,13 +331,12 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
                 ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
                     ox.arr[ INDEX_LK2 * ox.dim + j] +
                     ox.arr[ INDEX_LK3 * ox.dim + j];
-            if ( i > 0 )
-                ty.arr += y.dim;
-           __syncthreads(); 
-        }
+            __syncthreads();
 
-        // Only sample every 1/ptheta->dt times
-        if ( i%ss == 0  && i > 0 )
+            ty.arr += y.dim; 
+         }
+        // Move one step forward
+        if ( i%ss == 0 && i > 0 )
             tu.arr += u.dim;
 
         // Swap the pointers
@@ -345,6 +344,7 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
         ox.arr = nx.arr;
         nx.arr = t;
     }
+
     *errcode = 0;
 }
 
@@ -1366,8 +1366,6 @@ __device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
     if ( tinfo.cs >= tinfo.ns && threadIdx.y == 0 )
         zs[threadIdx.x] = 0;
     // This is a serious hack
-//    if ( threadIdx.x >= z.dim && threadIdx.y == 0 )
-//        zs[threadIdx.x] = 0;
 
     if ( maxx < 0 && threadIdx.y == 0) 
         zs[threadIdx.x] = z.arr[s];
