@@ -19,7 +19,7 @@ dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta, void *p_ptheta,
 __device__
 void 
 dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta, void *p_ptheta, 
-    dbuff nx, double* zs, thr_info tinfo);
+    dbuff nx, MPFLOAT* zs, thr_info tinfo);
 
 __device__
 void 
@@ -32,11 +32,13 @@ bs_maxz(dbuff z);
 
 // General functions
 
-__device__ double dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
+__device__
+MPFLOAT
+dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
      void *p_ptheta, int i)
 {
-    double dx=0;
-    double bt=0;
+    MPFLOAT dx=0;
+    MPFLOAT bt=0;
     int j;
     int k;
     int p;
@@ -68,10 +70,12 @@ __device__ double dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
     return dx;
 }
 
-__device__ double dcm_ds(dbuff x, dbuff y, dbuff u, void *p_theta,
+__device__ 
+MPFLOAT 
+dcm_ds(dbuff x, dbuff y, dbuff u, void *p_theta,
     void *p_ptheta, int i)
 {
-    double ds;
+    MPFLOAT ds;
 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     //PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
@@ -83,10 +87,12 @@ __device__ double dcm_ds(dbuff x, dbuff y, dbuff u, void *p_theta,
     return ds;
 }
 
-__device__ double dcm_df(dbuff x, dbuff y, dbuff u, void *p_theta, 
+__device__
+MPFLOAT
+dcm_df(dbuff x, dbuff y, dbuff u, void *p_theta, 
     void *p_ptheta, int i)
 {
-    double df;
+    MPFLOAT df;
 
     //ThetaDCM *theta = (ThetaDCM *) p_theta;
     //PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
@@ -96,10 +102,12 @@ __device__ double dcm_df(dbuff x, dbuff y, dbuff u, void *p_theta,
     return df;
 }
 
-__device__ double dcm_dv(dbuff x, dbuff y, dbuff u, void *p_theta,
+__device__
+MPFLOAT 
+dcm_dv(dbuff x, dbuff y, dbuff u, void *p_theta,
     void *p_ptheta, int i)
 {
-    double dv;
+    MPFLOAT dv;
 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     //PThetaDCM *ptheta = (PThetaDCM  *) p_ptheta;
@@ -111,13 +119,15 @@ __device__ double dcm_dv(dbuff x, dbuff y, dbuff u, void *p_theta,
     return dv;
 }
 
-__device__ double dcm_dq(dbuff x, dbuff y, dbuff u, void *p_theta, 
+__device__
+MPFLOAT
+dcm_dq(dbuff x, dbuff y, dbuff u, void *p_theta, 
     void *p_ptheta, int i)
 {
-    double dq = 0;
-    double f = exp(-x.arr[INDEX_F * x.dim + i]);
-    double v;
-    double lnE0; 
+    MPFLOAT dq = 0;
+    MPFLOAT f = exp(-x.arr[INDEX_F * x.dim + i]);
+    MPFLOAT v;
+    MPFLOAT lnE0; 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     
     v = exp(x.arr[INDEX_V * x.dim + i] * theta->alpha - theta->tau[i]);
@@ -131,11 +141,13 @@ __device__ double dcm_dq(dbuff x, dbuff y, dbuff u, void *p_theta,
     return dq;
 }
 
-__device__ double dcm_lk1(dbuff x, dbuff y, dbuff u, void *p_theta,
+__device__ 
+MPFLOAT
+dcm_lk1(dbuff x, dbuff y, dbuff u, void *p_theta,
             void *p_ptheta, int i)
 {
-    double l;
-    double q = exp(x.arr[INDEX_Q * x.dim + i]);
+    MPFLOAT l;
+    MPFLOAT q = exp(x.arr[INDEX_Q * x.dim + i]);
 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     //PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
@@ -146,11 +158,13 @@ __device__ double dcm_lk1(dbuff x, dbuff y, dbuff u, void *p_theta,
 }
 
 
-__device__ double dcm_lk2(dbuff x, dbuff y, dbuff u, void *p_theta,
+__device__
+MPFLOAT
+dcm_lk2(dbuff x, dbuff y, dbuff u, void *p_theta,
             void *p_ptheta, int i)
 {
-    double l;
-    double qv = exp(x.arr[INDEX_Q * x.dim + i] - x.arr[INDEX_V *x.dim + i]);
+    MPFLOAT l;
+    MPFLOAT qv = exp(x.arr[INDEX_Q * x.dim + i] - x.arr[INDEX_V *x.dim + i]);
 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     //PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
@@ -160,12 +174,14 @@ __device__ double dcm_lk2(dbuff x, dbuff y, dbuff u, void *p_theta,
     return l;
 }
 
-__device__ double dcm_lk3(dbuff x, dbuff y, dbuff u, void *p_theta,
+__device__
+MPFLOAT
+dcm_lk3(dbuff x, dbuff y, dbuff u, void *p_theta,
             void *p_ptheta, int i)
 {
-    double l;
+    MPFLOAT l;
 
-    double v = exp(x.arr[INDEX_V * x.dim + i]);
+    MPFLOAT v = exp(x.arr[INDEX_V * x.dim + i]);
 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     //PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
@@ -175,7 +191,9 @@ __device__ double dcm_lk3(dbuff x, dbuff y, dbuff u, void *p_theta,
     return l;
 }
 
-__device__ void dcm_upy(dbuff ox, dbuff y, dbuff u, void *theta,
+__device__
+void
+dcm_upy(dbuff ox, dbuff y, dbuff u, void *theta,
     void *ptheta, dbuff nx)
 {
     // Network node
@@ -203,12 +221,14 @@ __device__ void dcm_upy(dbuff ox, dbuff y, dbuff u, void *theta,
 // Integrators 
 // =======================================================================
 
-__device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
+__device__ 
+void
+dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
     void *p_ptheta, int dp, unsigned int *errcode)
 {
     int i;
     int j = threadIdx.x%y.dim;
-    double *t;
+    MPFLOAT *t;
     // Number of integration steps done between each data point
     int ss, dy;
     // Point where threads are not synchronized to anything
@@ -230,7 +250,7 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
     nx.arr = ox.arr + nx.dim * DIM_X;
 
     if ( threadIdx.x < maxx )
-        memset(x.arr, 0, nx.dim * DIM_X * sizeof(double));
+        memset(x.arr, 0, nx.dim * DIM_X * sizeof(MPFLOAT));
 
     __syncthreads();
     ty.dim = y.dim;
@@ -275,12 +295,14 @@ __device__ void dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
     *errcode = 0;
 }
 
-__device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
+__device__
+void
+dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
     void *p_ptheta, int dp, unsigned int *errcode)
 {
     int i;
     int j = threadIdx.x%y.dim;
-    double *t;
+    MPFLOAT *t;
     // Number of integration steps done between each data point
     int ss, dy;
     // Point where threads are not synchronized to anything
@@ -302,7 +324,7 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
     nx.arr = ox.arr + nx.dim * DIM_X;
 
     if ( threadIdx.x < maxx )
-        memset(x.arr, 0, nx.dim * DIM_X * sizeof(double));
+        memset(x.arr, 0, nx.dim * DIM_X * sizeof(MPFLOAT));
 
     __syncthreads();
     ty.dim = y.dim;
@@ -351,13 +373,15 @@ __device__ void dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
 
 // Bucacki Shampinee
 
-__device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
+__device__
+void
+dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
     void *p_ptheta, int dp, unsigned int *errcode, thr_info tinfo)
 {
     int i;
     int j = threadIdx.x%y.dim;
-    double *t;
-    double z;
+    MPFLOAT *t;
+    MPFLOAT z;
     // Number of integration steps done between each output
     int dy;
     // Point where threads are not synchronized to anything
@@ -365,7 +389,7 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
     unsigned int ndt = MAXDY, odt = MAXDY;
     unsigned int dmin;
 
-    __shared__ double zs[NUM_THREADS];
+    __shared__ MPFLOAT zs[NUM_THREADS];
 
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     dbuff ox;
@@ -383,7 +407,7 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
     nx.arr = ox.arr + nx.dim * DIM_X;
 
     if ( maxx < 0 )
-        memset(x.arr, 0, nx.dim * DIM_X * sizeof(double));
+        memset(x.arr, 0, nx.dim * DIM_X * sizeof(MPFLOAT));
 
     // Restart the errors
     if ( threadIdx.y == 0 )
@@ -489,14 +513,16 @@ __device__ void dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 // Kernel code
 // ==========================================================================
 
-__global__ void kdcm_euler(double *x, double *y, double *u, 
-    void *p_theta, double *d_theta, void *p_ptheta, double *d_ptheta, 
+__global__
+void
+kdcm_euler(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
+    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
 {
 
     int i;
     dbuff tx, ty, tu;
-    extern __shared__ double sx[];
+    extern __shared__ MPFLOAT sx[];
 
     // Assign pointers to theta
 
@@ -520,7 +546,7 @@ __global__ void kdcm_euler(double *x, double *y, double *u,
     // Iterate in chuncks
     while ( i < nb * nt )
     {
-        double *o;
+        MPFLOAT *o;
 
         tu.arr = u + (i/nb) * nu * dp;
         // Get the new address
@@ -558,14 +584,16 @@ __global__ void kdcm_euler(double *x, double *y, double *u,
     }
 }
 
-__global__ void kdcm_kr4(double *x, double *y, double *u, 
-    void *p_theta, double *d_theta, void *p_ptheta, double *d_ptheta, 
+__global__
+void
+kdcm_kr4(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
+    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
 {
 
     int i;
     dbuff tx, ty, tu;
-    extern __shared__ double sx[];
+    extern __shared__ MPFLOAT sx[];
 
     // Assign pointers to theta
 
@@ -589,7 +617,7 @@ __global__ void kdcm_kr4(double *x, double *y, double *u,
     // Iterate in chuncks
     while ( i < nb * nt )
     {
-        double *o;
+        MPFLOAT *o;
 
         tu.arr = u + (i/nb) * nu * dp;
         // Get the new address
@@ -625,8 +653,10 @@ __global__ void kdcm_kr4(double *x, double *y, double *u,
     }
 }
 
-__global__ void kdcm_bs(double *x, double *y, double *u, 
-    void *p_theta, double *d_theta, void *p_ptheta, double *d_ptheta, 
+__global__
+void
+kdcm_bs(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
+    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb, unsigned int * errcode)
 {
     /* 
@@ -637,7 +667,7 @@ __global__ void kdcm_bs(double *x, double *y, double *u,
 
     int i;
     dbuff tx, ty, tu;
-    extern __shared__ double sx[];
+    extern __shared__ MPFLOAT sx[];
 
     // Assign pointers to theta
 
@@ -664,7 +694,7 @@ __global__ void kdcm_bs(double *x, double *y, double *u,
     // Iterate in chuncks
     while ( i < nb * nt )
     {
-        double *o;
+        MPFLOAT *o;
 
         tinfo->cs = i;
 
@@ -709,9 +739,11 @@ __global__ void kdcm_bs(double *x, double *y, double *u,
 // ===========================================================================
 
 
-__host__ void ldcm_euler
-(double *x, double *y, double *u, 
-    void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
+__host__
+void
+ldcm_euler
+(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
+    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
 {
 
@@ -729,7 +761,7 @@ __host__ void ldcm_euler
     dim3 gblocks(num_blocks, 1);
 
     int sems;
-    sems =  NUM_THREADS * DIM_X * PRELOC_SIZE_X_EULER * sizeof( double );
+    sems =  NUM_THREADS * DIM_X * PRELOC_SIZE_X_EULER * sizeof( MPFLOAT );
 
 
     kdcm_euler<<<gblocks, gthreads, sems>>>(x, y, u, 
@@ -738,9 +770,10 @@ __host__ void ldcm_euler
 }
 
 
-__host__ void
-ldcm_kr4(double *x, double *y, double *u, 
-    void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
+__host__
+void
+ldcm_kr4(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
+    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
 {
     int device;
@@ -755,16 +788,17 @@ ldcm_kr4(double *x, double *y, double *u,
     dim3 gthreads(NUM_THREADS, DIM_X);
     dim3 gblocks(num_blocks, 1);
 
-    int smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_KR4 * sizeof( double );
+    int smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_KR4 * sizeof( MPFLOAT );
 
     kdcm_kr4<<<gblocks, gthreads, smems>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
         nx, ny, nu, dp, nt, nb, errcode); 
 }
 
-__host__ void 
-ldcm_bs(double *x, double *y, double *u, 
-    void *theta, double *d_theta, void *ptheta, double *d_ptheta, 
+__host__
+void 
+ldcm_bs(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
+    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
 {
 
@@ -780,7 +814,7 @@ ldcm_bs(double *x, double *y, double *u,
     dim3 gthreads(NUM_THREADS, DIM_X);
     dim3 gblocks(num_blocks, 1);
 
-    int smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_BS * sizeof( double );
+    int smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_BS * sizeof( MPFLOAT );
 
     kdcm_bs<<<gblocks, gthreads, smems>>>(x, y, u, 
         theta, d_theta, ptheta, d_ptheta, 
@@ -796,8 +830,8 @@ ldcm_bs(double *x, double *y, double *u,
 __host__ 
 void
 dam_theta(
-    void **theta, double **d_theta,
-    void **pd_theta, double **dd_theta,
+    void **theta, MPFLOAT **d_theta,
+    void **pd_theta, MPFLOAT **dd_theta,
     int nx, int ny, int nu, int dp, int nt, int nb)
 {
 
@@ -820,9 +854,9 @@ dam_theta(
         nx + // kappa
         nx); // tau 
 
-    HANDLE_ERROR( cudaMalloc( dd_theta, tp * sizeof(double) ) );
+    HANDLE_ERROR( cudaMalloc( dd_theta, tp * sizeof(MPFLOAT) ) );
     HANDLE_ERROR( cudaMemcpy( (void *) *dd_theta, (void *) *d_theta, 
-        tp * sizeof(double), cudaMemcpyHostToDevice ) );
+        tp * sizeof(MPFLOAT), cudaMemcpyHostToDevice ) );
 
 }
 
@@ -830,8 +864,8 @@ dam_theta(
 __host__ 
 void 
 dam_ptheta(
-    void **ptheta, double **d_ptheta, 
-    void **pd_ptheta, double **dd_ptheta, 
+    void **ptheta, MPFLOAT **d_ptheta, 
+    void **pd_ptheta, MPFLOAT **dd_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb)
 {
 
@@ -847,16 +881,16 @@ dam_ptheta(
 
 extern "C"
 int 
-mpdcm_fmri( double *x, double *y, double *u,
-    void *theta, double *d_theta,
-    void *ptheta, double *d_ptheta, 
+mpdcm_fmri( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
+    void *theta, MPFLOAT *d_theta,
+    void *ptheta, MPFLOAT *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb,
     klauncher launcher)
 {
 
-    double *d_x, *d_y, *d_u;
+    MPFLOAT *d_x, *d_y, *d_u;
     void *pd_theta, *pd_ptheta;
-    double *dd_theta, *dd_ptheta;
+    MPFLOAT *dd_theta, *dd_ptheta;
     unsigned int errcode[1], *d_errcode;
 
     // x
@@ -866,14 +900,14 @@ mpdcm_fmri( double *x, double *y, double *u,
     // y
 
     HANDLE_ERROR( cudaMalloc( (void **) &d_y,
-        nx * ny * nt * nb * sizeof(double) ) );
+        nx * ny * nt * nb * sizeof(MPFLOAT) ) );
 
     // u
 
     HANDLE_ERROR( cudaMalloc( (void**) &d_u,
-        nt * nu * dp *  sizeof(double) ) );
+        nt * nu * dp *  sizeof(MPFLOAT) ) );
 
-    HANDLE_ERROR( cudaMemcpy( d_u, u, nt * nu * dp * sizeof(double),
+    HANDLE_ERROR( cudaMemcpy( d_u, u, nt * nu * dp * sizeof(MPFLOAT),
         cudaMemcpyHostToDevice ) );
 
     // Error code
@@ -905,7 +939,7 @@ mpdcm_fmri( double *x, double *y, double *u,
     // Get y back
 
     HANDLE_ERROR( cudaMemcpy(y, d_y,
-        nx * ny * nt * nb * sizeof(double),
+        nx * ny * nt * nb * sizeof(MPFLOAT),
         cudaMemcpyDeviceToHost) );
 
     HANDLE_ERROR( cudaMemcpy(errcode, d_errcode, sizeof( unsigned int ), 
@@ -935,9 +969,9 @@ mpdcm_fmri( double *x, double *y, double *u,
 
 extern "C"
 int
-mpdcm_fmri_euler( double *x, double *y, double *u,
-    void *theta, double *d_theta,
-    void *ptheta, double *d_ptheta, 
+mpdcm_fmri_euler( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
+    void *theta, MPFLOAT *d_theta,
+    void *ptheta, MPFLOAT *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb)
 {
    int r = mpdcm_fmri(x, y, u,
@@ -951,9 +985,9 @@ mpdcm_fmri_euler( double *x, double *y, double *u,
 
 extern "C"
 int
-mpdcm_fmri_kr4( double *x, double *y, double *u,
-    void *theta, double *d_theta,
-    void *ptheta, double *d_ptheta, 
+mpdcm_fmri_kr4( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
+    void *theta, MPFLOAT *d_theta,
+    void *ptheta, MPFLOAT *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb)
 {
     int r = mpdcm_fmri(x, y, u,
@@ -967,9 +1001,9 @@ mpdcm_fmri_kr4( double *x, double *y, double *u,
 
 extern "C"
 int
-mpdcm_fmri_bs( double *x, double *y, double *u,
-    void *theta, double *d_theta,
-    void *ptheta, double *d_ptheta, 
+mpdcm_fmri_bs( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
+    void *theta, MPFLOAT *d_theta,
+    void *ptheta, MPFLOAT *d_ptheta, 
     int nx, int ny, int nu, int dp, int nt, int nb)
 {
     int r = mpdcm_fmri(x, y, u,
@@ -993,7 +1027,9 @@ mpdcm_fmri_bs( double *x, double *y, double *u,
 
 // Euler
 
-__device__ void dcm_upx_euler(dbuff ox, dbuff y, dbuff u, void *p_theta,
+__device__
+void
+dcm_upx_euler(dbuff ox, dbuff y, dbuff u, void *p_theta,
      void *p_ptheta, dbuff nx)
 {
 
@@ -1052,7 +1088,9 @@ __device__ void dcm_upx_euler(dbuff ox, dbuff y, dbuff u, void *p_theta,
 
 // Runge Kutta
 
-__device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
+__device__
+void
+dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
      void *p_ptheta, dbuff nx)
 {
 
@@ -1063,15 +1101,12 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
     int s;
     int maxx = threadIdx.x - y.dim * (blockDim.x / y.dim);
     // Buffers for the intermediate results. z is the estimated error.
-    dbuff k1, k2;
+    dbuff k1;
 
     k1.arr = (ox.arr < nx.arr) ? ox.arr : nx.arr;
-    k2.arr = k1.arr;
     k1.arr += ox.dim * DIM_X * 2;  
-    k2.arr += ox.dim * DIM_X * 3;
-
     k1.dim = ox.dim;
-    k2.dim = ox.dim;
+
 
     // Make the values to be closer in range
  
@@ -1085,64 +1120,43 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
             nx.arr[ INDEX_Q * ox.dim + j] = NAN;
         }
     }
+
+    // Follow Blum
+
     if ( maxx < 0 )
     {
         switch ( threadIdx.y )
         {
             case INDEX_X:
                 s = INDEX_X * ox.dim + j;
-                k1.arr[s] = dcm_dx(ox, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de * dcm_dx(ox, y, u, p_theta, p_ptheta, j);
                 break;
             case INDEX_F:
                 s = INDEX_F * ox.dim + j;
-                k1.arr[s] = dcm_df(ox, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de * dcm_df(ox, y, u, p_theta, p_ptheta, j);
                 break;
             case INDEX_S:
                 s = INDEX_S * ox.dim + j;
-                k1.arr[s] = dcm_ds(ox, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de * dcm_ds(ox, y, u, p_theta, p_ptheta, j);
                 break;
             case INDEX_V:
                 s = INDEX_V * ox.dim + j;
-                k1.arr[s] = dcm_dv(ox, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de * dcm_dv(ox, y, u, p_theta, p_ptheta, j);
                 break;
             case INDEX_Q:
                 s = INDEX_Q * ox.dim + j;
-                k1.arr[s] = dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
+                k1.arr[s] = ptheta->de*dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
                 break;
-        } 
-        nx.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s] * KRW1;
-        k2.arr[s] = ox.arr[s] + ptheta->de * 0.5 * k1.arr[s]; 
+        }
+        nx.arr[s] = ox.arr[s]; 
     }
     __syncthreads();
 
     if ( maxx < 0 )
     {
-        switch ( threadIdx.y )
-        {
-            case INDEX_X:
-                k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
-                break;
-            case INDEX_F:
-                k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
-                break;
-            case INDEX_S:
-                k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
-                break;
-            case INDEX_V:
-                k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
-                break;
-            case INDEX_Q:
-                k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
-                break;
-        }
-
-        nx.arr[s] += ptheta->de * k1.arr[s] * KRW2;
+        nx.arr[s] += k1.arr[s]*0.5;
+        ox.arr[s] = k1.arr[s];
     }
-
-    __syncthreads();
-
-    if ( maxx < 0 )
-        k2.arr[s] = ox.arr[s] + ptheta->de * 0.5 * k1.arr[s]; 
 
     __syncthreads();
 
@@ -1151,62 +1165,111 @@ __device__ void dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
         switch ( threadIdx.y )
         {
             case INDEX_X:
-                k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de*dcm_dx(nx, y, u, p_theta, p_ptheta, j);
                 break;
             case INDEX_F:
-                k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de*dcm_df(nx, y, u, p_theta, p_ptheta, j);
                 break;
             case INDEX_S:
-                k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de*dcm_ds(nx, y, u, p_theta, p_ptheta, j);
                 break;
             case INDEX_V:
-                k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de*dcm_dv(nx, y, u, p_theta, p_ptheta, j);
                 break;
             case INDEX_Q:
-                k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
+                k1.arr[s] = ptheta->de*dcm_dq(nx, y, u, p_theta, p_ptheta, j); 
                 break;
         }
-
-        nx.arr[s] += ptheta->de * k1.arr[s]*KRW3;
-
     }
 
     __syncthreads();
 
     if ( maxx < 0 )
-        k2.arr[s] = ox.arr[s] + ptheta->de * k1.arr[s];
+    {
+        nx.arr[s] += 0.5 * (k1.arr[s] - ox.arr[s]);
+        ox.arr[s] *= 0.166666666666666666666;
+    }
 
     __syncthreads();
-    
+
     if ( maxx < 0 )
     {
         switch ( threadIdx.y )
         {
             case INDEX_X:
-                k1.arr[s] = dcm_dx(k2, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de*dcm_dx(nx, y, u, p_theta, p_ptheta, j) 
+                    - k1.arr[s] * 0.5;
                 break;
             case INDEX_F:
-                k1.arr[s] = dcm_df(k2, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de*dcm_df(nx, y, u, p_theta, p_ptheta, j)
+                    - k1.arr[s] * 0.5;
                 break;
             case INDEX_S:
-                k1.arr[s] = dcm_ds(k2, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de*dcm_ds(nx, y, u, p_theta, p_ptheta, j)
+                    - k1.arr[s] * 0.5;
                 break;
             case INDEX_V:
-                k1.arr[s] = dcm_dv(k2, y, u, p_theta, p_ptheta, j);
+                k1.arr[s] = ptheta->de*dcm_dv(nx, y, u, p_theta, p_ptheta, j)
+                    - k1.arr[s] * 0.5;
                 break;
             case INDEX_Q:
-                k1.arr[s] = dcm_dq(k2, y, u, p_theta, p_ptheta, j); 
+                k1.arr[s] = ptheta->de*dcm_dq(nx, y, u, p_theta, p_ptheta, j) 
+                    - k1.arr[s] * 0.5;
                 break;
         }
-        nx.arr[s] += ptheta->de * k1.arr[s] * KRW4;
     }
+
+    __syncthreads();
+
+    if ( maxx < 0 )
+    {
+        nx.arr[s] += k1.arr[s];
+        ox.arr[s] -= k1.arr[s];
+    }
+
+    __syncthreads();
+
+    if ( maxx < 0 )
+    {
+        switch ( threadIdx.y )
+        {
+            case INDEX_X:
+                k1.arr[s] = ptheta->de*dcm_dx(nx, y, u, p_theta, p_ptheta, j) 
+                    + k1.arr[s] * 2;
+                break;
+            case INDEX_F:
+                k1.arr[s] = ptheta->de*dcm_df(nx, y, u, p_theta, p_ptheta, j)
+                    + k1.arr[s] * 2;
+                break;
+            case INDEX_S:
+                k1.arr[s] = ptheta->de*dcm_ds(nx, y, u, p_theta, p_ptheta, j)
+                    + k1.arr[s] * 2;
+                break;
+            case INDEX_V:
+                k1.arr[s] = ptheta->de*dcm_dv(nx, y, u, p_theta, p_ptheta, j)
+                    + k1.arr[s] * 2;
+                break;
+            case INDEX_Q:
+                k1.arr[s] = ptheta->de*dcm_dq(nx, y, u, p_theta, p_ptheta, j) 
+                    + k1.arr[s] * 2;
+                break;
+        }
+    }
+
+    __syncthreads();
+
+    if ( maxx < 0 )
+        nx.arr[s] += ox.arr[s] + k1.arr[s]*0.1666666666666666;
+    __syncthreads();
 }
 
 
 // Bogacki Shampine
 
-__device__ void dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
-     void *p_ptheta, dbuff nx, double *zs, thr_info tinfo)
+__device__
+void
+dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta,
+     void *p_ptheta, dbuff nx, MPFLOAT *zs, thr_info tinfo)
 {
 
     //ThetaDCM *theta = (ThetaDCM *) p_theta;

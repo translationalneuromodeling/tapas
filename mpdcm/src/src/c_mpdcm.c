@@ -7,7 +7,7 @@ void
 c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, double *dtheta)
 {
 
-    int o=0, i, j;
+    unsigned int i, j;
     
     ctheta->dim_x = (int ) *mxGetPr(mxGetField(theta, 0, "dim_x"));
     ctheta->dim_u = (int ) *mxGetPr(mxGetField(theta, 0, "dim_u"));
@@ -35,27 +35,26 @@ c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, double *dtheta)
 
     memcpy(dtheta, mxGetPr(mxGetField(theta, 0, "A")), i * sizeof( double ));
 
-    o += i;
+    dtheta += i;
 
     for (j=0; j < ctheta->dim_u; j++)
     {
-        memcpy(dtheta + o, mxGetPr(mxGetCell(mxGetField(theta, 0, "B"), j)),
+        memcpy(dtheta, mxGetPr(mxGetCell(mxGetField(theta, 0, "B"), j)),
             i * sizeof(double) );
-        o += i;
+        dtheta += i;
     }
 
     i = ctheta->dim_x*ctheta->dim_u;
-    memcpy(dtheta + o, mxGetPr(mxGetField(theta, 0, "C")), i * sizeof(double));
-    o += i;
+    memcpy(dtheta, mxGetPr(mxGetField(theta, 0, "C")), i * sizeof(double));
+    dtheta += i;
 
     i = ctheta->dim_x;
-    memcpy(dtheta + o, mxGetPr(mxGetField(theta, 0, "K")), i * sizeof(double));
-    o += i;
+    memcpy(dtheta, mxGetPr(mxGetField(theta, 0, "K")), i * sizeof(double));
+    dtheta += i;
 
     i = ctheta->dim_x;
-    memcpy(dtheta + o, mxGetPr(mxGetField(theta, 0, "tau")),
+    memcpy(dtheta , mxGetPr(mxGetField(theta, 0, "tau")),
         i * sizeof(double));
-    o += i;
 
 }
 
