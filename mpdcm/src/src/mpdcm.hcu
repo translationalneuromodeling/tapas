@@ -30,14 +30,14 @@
 # define BDDM_EXTERN
 # endif
 
-# define MPDOUBLEFLAG 
-
 // Determines whether compile double or single precision
+
+# define MPDOUBLEFLAG
 
 # ifdef MPDOUBLEFLAG
 # define MPFLOAT double 
 # else
-# define MPFLOAT float
+# define MPFLOAT double
 # endif
 
 typedef enum { MF_TRUE, MF_FALSE } MatFlag;
