@@ -32,12 +32,12 @@
 
 // Determines whether compile double or single precision
 
-# define MPDOUBLEFLAG
+//# define MPDOUBLEFLAG
 
 # ifdef MPDOUBLEFLAG
 # define MPFLOAT double 
 # else
-# define MPFLOAT double
+# define MPFLOAT float
 # endif
 
 typedef enum { MF_TRUE, MF_FALSE } MatFlag;

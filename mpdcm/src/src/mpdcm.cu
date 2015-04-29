@@ -50,7 +50,7 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
     // A
     for (j = 0; j < x.dim; j++)
     {
-        dx += theta->A[i + x.dim*j] * x.arr[o + j];
+        dx = fma(theta->A[i + x.dim*j], x.arr[o + j], dx);
     }
 
     for (j = 0; j < u.dim; j++)
@@ -61,10 +61,10 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
         bt = 0;
         k = x.dim*x.dim*j + i;
         for (p = 0; p < x.dim; p++){
-            bt += theta->B[k + x.dim*p] * x.arr[o + p];
+            bt = fma(theta->B[k + x.dim*p], x.arr[o + p], bt);
         }
         // C
-        dx += (theta->C[i + x.dim*j] + bt)*u.arr[j];
+        dx = fma(theta->C[i + x.dim*j] + bt, u.arr[j], dx);
     }
 
     return dx;
