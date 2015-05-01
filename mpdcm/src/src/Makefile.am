@@ -19,7 +19,7 @@ BDDM_MATLAB = @matlabhome@
 LCUDA = -arch=sm_20 $(CUDA_LDFLAGS) -lcuda -lcudart
 LNUM = -lm
 
-NVCCFLAGS = -arch=sm_20 --shared -Xcompiler -fPIC -c
+NVCCFLAGS = -arch=sm_20 -rdc=true -Xcompiler -fPIC -c
 
 # Mex Flags
 
@@ -61,13 +61,13 @@ $(BINDIR):
 # ===========================================================================
 
 $(BINDIR)/c_mpdcm_fmri_euler.mexa64 : $(BUILDDIR)/c_mpdcm.o \
-	$(LIBDIR)/libmpdcm.so $(BUILDDIR)/c_mpdcm_fmri_euler.o 
+	$(LIBDIR)/libmpdcm.a $(BUILDDIR)/c_mpdcm_fmri_euler.o 
 
 $(BINDIR)/c_mpdcm_fmri_kr4.mexa64 : $(BUILDDIR)/c_mpdcm.o \
-	$(LIBDIR)/libmpdcm.so $(BUILDDIR)/c_mpdcm_fmri_kr4.o 
+	$(LIBDIR)/libmpdcm.a $(BUILDDIR)/c_mpdcm_fmri_kr4.o 
 
 $(BINDIR)/c_mpdcm_fmri_bs.mexa64 : $(BUILDDIR)/c_mpdcm.o \
-	$(LIBDIR)/libmpdcm.so $(BUILDDIR)/c_mpdcm_fmri_bs.o 
+	$(LIBDIR)/libmpdcm.a $(BUILDDIR)/c_mpdcm_fmri_bs.o 
 
 $(BINDIR)/c_mpdcm_num_devices.mexa64 : $(BUILDDIR)/c_mpdcm_num_devices.o
 $(BINDIR)/c_mpdcm_get_device.mexa64 : $(BUILDDIR)/c_mpdcm_get_device.o
@@ -105,8 +105,9 @@ $(BUILDDIR)/c_mpdcm.o : $(SRCDIR)/c_mpdcm.c
 
 # Compile cuda
 
-$(LIBDIR)/libmpdcm.so : $(BUILDDIR)/mpdcm.o
-	$(NVCC) -shared -o $@ $^ $(LCUDA) 
+$(LIBDIR)/libmpdcm.a : $(BUILDDIR)/mpdcm.o
+	ar r $@ $^
+	ranlib $@
 
 $(BUILDDIR)/mpdcm.o : $(SRCDIR)/mpdcm.cu
 
