@@ -19,7 +19,7 @@ BDDM_MATLAB = @matlabhome@
 LCUDA = -arch=sm_20 $(CUDA_LDFLAGS) -lcuda -lcudart
 LNUM = -lm
 
-NVCCFLAGS = -arch=sm_20 -rdc=true -Xcompiler -fPIC -c
+NVCCFLAGS = -arch=sm_20 -rdc=true -Xcompiler -fPIC
 
 # Mex Flags
 
@@ -105,11 +105,20 @@ $(BUILDDIR)/c_mpdcm.o : $(SRCDIR)/c_mpdcm.c
 
 # Compile cuda
 
-$(LIBDIR)/libmpdcm.a : $(BUILDDIR)/mpdcm.o
-	ar r $@ $^
-	ranlib $@
+$(BUILDDIR)/devlink.o : $(BUILDDIR)/mpdcm.o $(BUILDDIR)/kernels.o \
+	$(BUILDDIR)/dynamics.o $(BUILDDIR)/updates.o $(BUILDDIR)/integrators.o  
+	$(NVCC) --device-link $(NVCCFLAGS) $^ -o $@
+
+$(LIBDIR)/libmpdcm.a : $(BUILDDIR)/mpdcm.o $(BUILDDIR)/kernels.o \
+	$(BUILDDIR)/dynamics.o $(BUILDDIR)/updates.o $(BUILDDIR)/integrators.o \
+	$(BUILDDIR)/devlink.o
+	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
 
 $(BUILDDIR)/mpdcm.o : $(SRCDIR)/mpdcm.cu
+$(BUILDDIR)/kernels.o : $(SRCDIR)/kernels.cu
+$(BUILDDIR)/dynamics.o : $(SRCDIR)/dynamics.cu
+$(BUILDDIR)/updates.o : $(SRCDIR)/updates.cu
+$(BUILDDIR)/integrators.o : $(SRCDIR)/integrators.cu
 
 clean :
 	$(RM) -r $(BINDIR)/*.mexa64

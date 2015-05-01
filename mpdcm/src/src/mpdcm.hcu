@@ -260,6 +260,122 @@ int mpdcm_fmri_bs( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
 #define MAXTOL 0.001000
 
 
+// Function signatures
+
+__device__
+MPFLOAT
+dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+MPFLOAT
+dcm_ds(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+MPFLOAT
+dcm_df(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+MPFLOAT
+dcm_dv(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+MPFLOAT
+dcm_dq(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+MPFLOAT
+dcm_lk1(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+MPFLOAT
+dcm_lk2(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+MPFLOAT
+dcm_lk3(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+void
+dcm_upy(dbuff ox, dbuff y, dbuff u, void *theta, void *ptheta, dbuff nx);
+
+__device__
+void
+dcm_upx_euler(dbuff ox, dbuff y, dbuff u, void *p_theta, void *p_ptheta,
+    dbuff nx);
+
+__device__
+void
+dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta, void *p_ptheta,
+    dbuff nx);
+
+__device__
+void
+dcm_upx_bs(dbuff ox, dbuff y, dbuff u, void *p_theta, void *p_ptheta,
+    dbuff nx, MPFLOAT* zs, thr_info tinfo);
+
+__device__
+void
+dcm_upx_bs0(dbuff ox, dbuff y, dbuff u, void *p_theta, void *p_ptheta,
+   dbuff nx);
+__device__
+void
+bs_maxz(dbuff z);
+
+__device__
+void
+dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
+    void *p_ptheta, int dp, unsigned int *errcode);
+
+__device__
+void
+dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
+    void *p_ptheta, int dp, unsigned int *errcode);
+
+__device__
+void
+dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
+    void *p_ptheta, int dp, unsigned int *errcode, thr_info tinfo);
+
+__global__
+void
+kdcm_euler(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
+    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta,
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
+
+__global__
+void
+kdcm_kr4(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
+    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta,
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
+
+
+__global__
+void
+kdcm_bs(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
+    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta,
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
+
+__host__
+void
+ldcm_euler
+(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
+    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta,
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
+
+__host__
+void
+ldcm_kr4
+(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
+    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta,
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
+
+__host__
+void
+ldcm_bs
+(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
+    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta,
+    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
+
 # endif
 
 // end cuda defines
