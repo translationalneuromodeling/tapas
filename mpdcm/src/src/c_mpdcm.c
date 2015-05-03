@@ -89,20 +89,16 @@ c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta)
     // would need to be different
 
     i = ctheta->dim_x*ctheta->dim_x;
-
     ta = mxGetPr(mxGetField(theta, 0, "A"));
     for (k = 0; k < i; k++)
         dtheta[k] = (MPFLOAT ) ta[k];
-
     dtheta += i;
 
-    for (j=0; j < ctheta->dim_u; j++)
-    {
-        ta = mxGetPr(mxGetCell(mxGetField(theta, 0, "B"), j));
-        for (k = 0; k < i; k++)
-            dtheta[k] = (MPFLOAT) ta[k];
-        dtheta += i;
-    }
+    i = ctheta->dim_x * ctheta->dim_x * ctheta->dim_u;
+    ta = mxGetPr(mxGetField(theta, 0, "B"));
+    for (k = 0; k < i; k++)
+        dtheta[k] = (MPFLOAT ) ta[k];
+    dtheta += i;
 
     i = ctheta->dim_x*ctheta->dim_u;
     ta = mxGetPr(mxGetField(theta, 0, "C"));
