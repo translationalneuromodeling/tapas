@@ -23,6 +23,8 @@ NVCCFLAGS = -arch=sm_20 -rdc=true -Xcompiler -fPIC
 
 # Mex Flags
 
+MEXCC = $(BDDM_MATLAB)/bin/mex
+
 MATFLAGS = -I$(BDDM_MATLAB)/extern/include -DMATLAB_MEX_FILE -std=c99 -D_GNU_SOURCE  -fexceptions -fPIC -fno-omit-frame-pointer -pthread  -DMX_COMPAT_32 -O -DNDEBUG
 
 LOP0 =-O -pthread -shared -Wl,--version-script,$(BDDM_MATLAB)/extern/lib/glnxa64/mexFunction.map -Wl,--no-undefined
@@ -80,8 +82,10 @@ $(BINDIR)/%.mexa64 : $(BUILDDIR)/%.o
 # Compile
 # ===========================================================================
 
-$(BUILDDIR)/c_mpdcm_fmri_euler.o $(BUILDDIR)/c_mpdcm_fmri_kr4.o \
-	$(BUILDDIR)/c_mpdcm_fmri_bs.o :
+MEXWRAPPERS = $(BUILDDIR)/c_mpdcm_fmri_euler.o $(BUILDDIR)/c_mpdcm_fmri_kr4.o \
+	$(BUILDDIR)/c_mpdcm_fmri_bs.o  
+
+$(MEXWRAPPERS):
 	$(CC) -c $(MATFLAGS) -o $@ $^
 
 $(BUILDDIR)/c_mpdcm_fmri_euler.o : $(SRCDIR)/c_mpdcm_fmri_euler.c
@@ -105,20 +109,19 @@ $(BUILDDIR)/c_mpdcm.o : $(SRCDIR)/c_mpdcm.c
 
 # Compile cuda
 
-$(BUILDDIR)/devlink.o : $(BUILDDIR)/mpdcm.o $(BUILDDIR)/kernels.o \
-	$(BUILDDIR)/dynamics.o $(BUILDDIR)/updates.o $(BUILDDIR)/integrators.o  
+SRCCUDA = $(SRCDIR)/mpdcm.cu $(SRCDIR)/kernels.cu $(SRCDIR)/dynamics.cu \
+	$(SRCDIR)/updates.cu $(SRCDIR)/integrators.cu
+
+OBJCUDA = $(SRCCUDA:$(SRCDIR)/%.cu=$(BUILDDIR)/%.o)
+
+$(SRCDIR)/%.cu :$(BUILDDIR)/%.cu
+	$(NVCC) -c $(NVCCFLAGS) $< -o $@
+
+$(BUILDDIR)/devlink.o : $(OBJCUDA)  
 	$(NVCC) --device-link $(NVCCFLAGS) $^ -o $@
 
-$(LIBDIR)/libmpdcm.a : $(BUILDDIR)/mpdcm.o $(BUILDDIR)/kernels.o \
-	$(BUILDDIR)/dynamics.o $(BUILDDIR)/updates.o $(BUILDDIR)/integrators.o \
-	$(BUILDDIR)/devlink.o
+$(LIBDIR)/libmpdcm.a : $(OBJCUDA) $(BUILDDIR)/devlink.o
 	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
-
-$(BUILDDIR)/mpdcm.o : $(SRCDIR)/mpdcm.cu
-$(BUILDDIR)/kernels.o : $(SRCDIR)/kernels.cu
-$(BUILDDIR)/dynamics.o : $(SRCDIR)/dynamics.cu
-$(BUILDDIR)/updates.o : $(SRCDIR)/updates.cu
-$(BUILDDIR)/integrators.o : $(SRCDIR)/integrators.cu
 
 clean :
 	$(RM) -r $(BINDIR)/*.mexa64
