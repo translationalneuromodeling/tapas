@@ -205,10 +205,11 @@ function [theta] = tinput_theta(dcm)
 
     [pE, pC, x] = spm_dcm_fmri_priors(dcm.a, dcm.b, dcm.c);
 
-    theta = struct('A', [], 'B', [], 'C', [], 'epsilon', [], 'K', [], ...
+    theta = struct('A', [], 'B', [], 'C', [], 'D', [], ...
+        'epsilon', [], 'K', [], ...
         'tau',  [], 'V0', [], 'E0', [], 'k1', [], 'k2', [], 'k3', [], ...
         'alpha', [], 'gamma', [], 'dim_x', [], 'dim_u', [], 'ny', [], ...
-        'fA', 1, 'fB', 1, 'fC', 1 );
+        'fA', 1, 'fB', 1, 'fC', 1 , 'fD', 0);
 
     decay = 0;
     transit = 0;
@@ -237,11 +238,7 @@ function [theta] = tinput_theta(dcm)
         theta.fA = 0;
     end
 
-    theta.B = cell(theta.dim_u, 1);
-
-    for j = 1:theta.dim_u
-        theta.B{j} = full(pE.B(:,:,j));
-    end
+    theta.B = full(pE.B);
 
     if any(dcm.b(:))
         theta.fB = 1;
