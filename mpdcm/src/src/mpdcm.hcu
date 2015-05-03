@@ -59,6 +59,7 @@ typedef struct
     MatFlag fA;
     MatFlag fB;
     MatFlag fC;
+    MatFlag fD;
 
     MPFLOAT *A;
     MPFLOAT *B;

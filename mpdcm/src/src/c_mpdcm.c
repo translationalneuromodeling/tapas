@@ -69,6 +69,7 @@ c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta)
     ctheta->fA = *mxGetPr(mxGetField(theta, 0, "fA")) ? MF_TRUE : MF_FALSE;
     ctheta->fB = *mxGetPr(mxGetField(theta, 0, "fB")) ? MF_TRUE : MF_FALSE;
     ctheta->fC = *mxGetPr(mxGetField(theta, 0, "fC")) ? MF_TRUE : MF_FALSE;
+    ctheta->fD = *mxGetPr(mxGetField(theta, 0, "fD")) ? MF_TRUE : MF_FALSE;
 
     ctheta->V0 = (MPFLOAT ) *mxGetPr(mxGetField(theta, 0, "V0"));
     ctheta->E0 = (MPFLOAT ) *mxGetPr(mxGetField(theta, 0, "E0"));
