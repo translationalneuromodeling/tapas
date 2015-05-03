@@ -1,7 +1,7 @@
 # aponteeduardo@gmail.com
 # copyright (c) 2015
 
-AC_INIT(mpdcm, version-0.1)
+AC_INIT(mpdcm, version-1.0)
 AC_PREREQ(2.5)
 
 AM_INIT_AUTOMAKE(1.1)

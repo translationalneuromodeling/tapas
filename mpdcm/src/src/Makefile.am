@@ -29,7 +29,7 @@ MATFLAGS = -I$(BDDM_MATLAB)/extern/include -DMATLAB_MEX_FILE -std=c99 -D_GNU_SOU
 
 LOP0 =-O -pthread -shared -Wl,--version-script,$(BDDM_MATLAB)/extern/lib/glnxa64/mexFunction.map -Wl,--no-undefined
 
-LOP1 = -Wl,-rpath-link,/usr/local/MATLAB/R2012b/bin/glnxa64 -L$(BDDM_MATLAB)/bin/glnxa64 -lmx -lmex -lmat -lm -lstdc++ $(CUDA_LDFLAGS) -lcudart 
+LOP1 = $(CUDA_LDFLAGS) -lcudart 
 
 # Rules
 
@@ -62,6 +62,9 @@ $(BINDIR):
 # Link
 # ===========================================================================
 
+#$(BINDIR)/%.mexa64 : $(BUILDDIR)/%.o
+#	$(CC) $(LOP0) -o $@ $^ $(LOP1)
+
 $(BINDIR)/c_mpdcm_fmri_euler.mexa64 : $(BUILDDIR)/c_mpdcm.o \
 	$(LIBDIR)/libmpdcm.a $(BUILDDIR)/c_mpdcm_fmri_euler.o 
 
@@ -71,26 +74,31 @@ $(BINDIR)/c_mpdcm_fmri_kr4.mexa64 : $(BUILDDIR)/c_mpdcm.o \
 $(BINDIR)/c_mpdcm_fmri_bs.mexa64 : $(BUILDDIR)/c_mpdcm.o \
 	$(LIBDIR)/libmpdcm.a $(BUILDDIR)/c_mpdcm_fmri_bs.o 
 
+$(BINDIR)/%.mexa64 : $(BUILDDIR)/%.o
+	mex -v -n -outdir ./../bin/ -O $^ $(LOP1)
+
 $(BINDIR)/c_mpdcm_num_devices.mexa64 : $(BUILDDIR)/c_mpdcm_num_devices.o
 $(BINDIR)/c_mpdcm_get_device.mexa64 : $(BUILDDIR)/c_mpdcm_get_device.o
 $(BINDIR)/c_mpdcm_set_device.mexa64 : $(BUILDDIR)/c_mpdcm_set_device.o
 
 $(BINDIR)/%.mexa64 : $(BUILDDIR)/%.o
-	$(CC) $(LOP0) -o $@ $^ $(LOP1)
+	mex -outdir ./../bin/ -output $@ -O $^ $(LOP1)
+#	$(CC) $(LOP0) -o $@ $^ $(LOP1)
 
 # ===========================================================================
 # Compile
 # ===========================================================================
 
 MEXWRAPPERS = $(BUILDDIR)/c_mpdcm_fmri_euler.o $(BUILDDIR)/c_mpdcm_fmri_kr4.o \
-	$(BUILDDIR)/c_mpdcm_fmri_bs.o  
+	$(BUILDDIR)/c_mpdcm_fmri_bs.o $(BUILDDIR)/c_mpdcm.o 
 
 $(MEXWRAPPERS):
-	$(CC) -c $(MATFLAGS) -o $@ $^
+	$(MEXCC) -c -outdir $(BUILDDIR) $@ -O CFLAGS="\$$CFLAGS -std=c99" $^
 
 $(BUILDDIR)/c_mpdcm_fmri_euler.o : $(SRCDIR)/c_mpdcm_fmri_euler.c
 $(BUILDDIR)/c_mpdcm_fmri_kr4.o : $(SRCDIR)/c_mpdcm_fmri_kr4.c
 $(BUILDDIR)/c_mpdcm_fmri_bs.o : $(SRCDIR)/c_mpdcm_fmri_bs.c
+$(BUILDDIR)/c_mpdcm.o : $(SRCDIR)/c_mpdcm.c
 
 # Device code
 
@@ -100,12 +108,7 @@ $(BUILDDIR)/c_mpdcm_set_device.o : $(SRCDIR)/c_mpdcm_set_device.c
 
 $(BUILDDIR)/c_mpdcm_num_devices.o $(BUILDDIR)/c_mpdcm_get_device.o \
 	$(BUILDDIR)/c_mpdcm_set_device.o :
-	$(CC) -c $(MATFLAGS) $(CUDA_CFLAGS) -o $@ $<
-
-# Compile c
-
-$(BUILDDIR)/c_mpdcm.o : $(SRCDIR)/c_mpdcm.c
-	$(CC) -c $(MATFLAGS) -o $@ $^
+	$(MEXCC) -c -outdir $(BUILDDIR) $@ -O CFLAGS="\$$CFLAGS -std=c99 $(CUDA_CFLAGS)" $^
 
 # Compile cuda
 
@@ -114,8 +117,8 @@ SRCCUDA = $(SRCDIR)/mpdcm.cu $(SRCDIR)/kernels.cu $(SRCDIR)/dynamics.cu \
 
 OBJCUDA = $(SRCCUDA:$(SRCDIR)/%.cu=$(BUILDDIR)/%.o)
 
-$(SRCDIR)/%.cu :$(BUILDDIR)/%.cu
-	$(NVCC) -c $(NVCCFLAGS) $< -o $@
+$(SRCDIR)/%.o : $(BUILDDIR)/%.cu
+	$(NVCC) -c $(NVCCFLAGS) $^ -o $@
 
 $(BUILDDIR)/devlink.o : $(OBJCUDA)  
 	$(NVCC) --device-link $(NVCCFLAGS) $^ -o $@
