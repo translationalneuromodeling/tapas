@@ -65,6 +65,22 @@ typedef struct
     MPFLOAT *B;
     MPFLOAT *C;
 
+    /* Use a sparse representation of B and D */
+
+    // This is the absolute index to reconstruct the arrays in cuda 
+    unsigned int ga_B; 
+    unsigned int nnz_B;
+    unsigned int *ia_B;
+    unsigned int *ja_B;
+    //MPFLOAT *D;
+   
+    // This is the absolute index to reconstruct the arrays in cuda 
+    unsigned int ga_D; 
+    unsigned int nnz_D;
+    unsigned int *ia_D;
+    unsigned int *ja_D;
+    MPFLOAT *D;
+
     MPFLOAT *K; /* Kappa */
     MPFLOAT *tau;
 
@@ -127,6 +143,10 @@ typedef struct {
     unsigned int ns; // Number of data sets
     unsigned int cs; // Current data set.
 } thr_info;
+
+// ==========================================================================
+// Function signatures
+// ==========================================================================
 
 BDDM_EXTERN
 int mpdcm_fmri_euler( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
