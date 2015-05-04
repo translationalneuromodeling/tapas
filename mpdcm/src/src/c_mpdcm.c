@@ -25,33 +25,32 @@ c_mpdcm_transfer_y(mxArray **y, MPFLOAT *cy, int *nx, int *ny, int *nt,
 
 void 
 c_mpdcm_fmri_euler(mxArray **y, const mxArray **u,
-    const mxArray **theta, const mxArray **ptheta,
-    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
+    const mxArray **theta, const mxArray **ptheta)
 {
- 
-    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
+    int nx, ny, nu, dp, nt, nb;
+    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, &nx, &ny, &nu, &dp, &nt, &nb, 
         &mpdcm_fmri_euler);
 }
 
 void 
 c_mpdcm_fmri_kr4(mxArray **y, const mxArray **u,
-    const mxArray **theta, const mxArray **ptheta,
-    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
+    const mxArray **theta, const mxArray **ptheta)
 {
- 
-    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
+
+    int nx, ny, nu, dp, nt, nb;
+    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, &nx, &ny, &nu, &dp, &nt, &nb, 
         &mpdcm_fmri_kr4);
 }
 
 void 
 c_mpdcm_fmri_bs(mxArray **y, const mxArray **u,
-    const mxArray **theta, const mxArray **ptheta,
-    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
+    const mxArray **theta, const mxArray **ptheta)
 {
-    int i;
 
-    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
+    int nx, ny, nu, dp, nt, nb;
+    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, &nx, &ny, &nu, &dp, &nt, &nb, 
         &mpdcm_fmri_bs);
+
 }
 
 

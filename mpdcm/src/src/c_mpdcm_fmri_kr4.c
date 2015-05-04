@@ -23,8 +23,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     {
         int nx, ny, nu, dp, nt, nb;
  
-        c_mpdcm_fmri_kr4(plhs, prhs, prhs+1, prhs+2, 
-            &nx, &nu, &ny, &dp, &nt, &nb); 
+        c_mpdcm_fmri_kr4(plhs, prhs, prhs+1, prhs+2);
     }
 
 }
