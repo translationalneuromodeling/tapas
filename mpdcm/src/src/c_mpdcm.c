@@ -3,23 +3,6 @@
 
 #include "c_mpdcm.h"
 
-// Signatures
-
-void 
-c_mpdcm_prepare_input(
-    mxArray **y, const mxArray *u, const mxArray *theta, const mxArray *ptheta,
-    integrator integ);
-
-void 
-c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta);
-
-void
-c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, MPFLOAT *dptheta);
-
-void
-c_mpdcm_transfer_y(mxArray **y, MPFLOAT *cy, int nx, int ny, int nt, int nb);
-
-
 // Wrappers
 
 void 
