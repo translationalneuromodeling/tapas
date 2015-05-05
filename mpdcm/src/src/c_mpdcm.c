@@ -78,7 +78,14 @@ c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta)
     ctheta->alpha = (MPFLOAT ) *mxGetPr(mxGetField(theta, 0, "alpha"));
     ctheta->alpha = 1/ctheta->alpha - 1;
     ctheta->gamma = (MPFLOAT ) *mxGetPr(mxGetField(theta, 0, "gamma"));
-    
+
+    // Prepare theta 
+    if ( ctheta->fD )
+        // Assumes that the matrices are concatenated.
+        ctheta->nnz_D = mxGetNzmax( mxGetField(theta, 0, "D") );
+    else
+        ctheta->nnz_D = 0;
+
     // A memcpy would be faster but then the float and double implementation
     // would need to be different
 
@@ -138,6 +145,28 @@ c_mpdcm_prepare_u(const mxArray *u, MPFLOAT *cu)
 
 }
 
+
+/*
+
+void 
+c_mpdcm_prepare_D()
+{
+    int i;
+    int tx = 0
+    for (i = 0; nt * nb; i++)
+    {
+        tx += (theta+i)->nnz_D;
+    }
+
+    ia_D = malloc( );
+    ja_D = malloc( );
+    D = malloc( );
+
+    for (i = 0; nt * nb; i++
+
+}
+*/
+
 void
 c_mpdcm_transfer_y(mxArray **y, MPFLOAT *cy, int nx, int ny, int nt, int nb)
 {
@@ -186,7 +215,7 @@ c_mpdcm_prepare_input(
 
     ny = ceil(dp * mxGetPr(mxGetField(ptheta, 0, "dyu"))[0]) ;
 
-    /* Offset */
+    /* Offsets */
 
     o = nx * nx + /*A*/
         nx * nx * nu + /*B*/
