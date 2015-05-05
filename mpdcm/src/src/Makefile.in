@@ -466,10 +466,19 @@ $(CUDAOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.cu
 $(SRCDIR)/aux_mpdcm.cu : $(SRCCUDA)
 	cat $^ > $@
 
-$(BUILDDIR)/devlink.o : $(CUDAOBJ)  
-	$(NVCC) --device-link $(NVCCFLAGS) $^ -o $@
+# Again for compatility with cuda 4.2
 
-$(LIBDIR)/libmpdcm.a : $(CUDAOBJ) $(BUILDDIR)/devlink.o
+# This would be the case if compiling from different files.
+
+#$(BUILDDIR)/devlink.o : $(CUDAOBJ)  
+#	$(NVCC) --device-link $(NVCCFLAGS) $^ -o $@
+#
+#$(LIBDIR)/libmpdcm.a : $(CUDAOBJ) $(BUILDDIR)/devlink.o
+#	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
+
+# Instead directly compile the library.
+
+$(LIBDIR)/libmpdcm.a : $(CUDAOBJ)
 	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
 
 clean :
