@@ -7,8 +7,9 @@
 
 .PHONY = directories
 
+#NVCCFLAGS = -arch=sm_20 -rdc=true -Xcompiler -fPIC
 
-NVCCFLAGS = -arch=sm_20 -rdc=true -Xcompiler -fPIC
+NVCCFLAGS = -arch=sm_20 -Xcompiler -fPIC
 
 # Mex Flags
 
@@ -77,11 +78,19 @@ $(MEXDEVOBJ) $(MEXDCMOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.c
 
 # Compile cuda
 
-CUDAOBJ = $(BUILDDIR)/mpdcm.o $(BUILDDIR)/kernels.o $(BUILDDIR)/dynamics.o \
+AUXOBJ = $(BUILDDIR)/mpdcm.o $(BUILDDIR)/kernels.o $(BUILDDIR)/dynamics.o \
 	$(BUILDDIR)/updates.o $(BUILDDIR)/integrators.o
+
+SRCCUDA = $(SRCDIR)/mpdcm.cu $(SRCDIR)/kernels.cu $(SRCDIR)/dynamics.cu \
+	$(SRCDIR)/updates.cu $(SRCDIR)/integrators.cu
+
+CUDAOBJ = $(BUILDDIR)/aux_mpdcm.o
 
 $(CUDAOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.cu 
 	$(NVCC) -c $(NVCCFLAGS) $^ -o $@
+
+$(SRCDIR)/aux_mpdcm.cu : $(SRCCUDA)
+	cat $^ > $@
 
 $(BUILDDIR)/devlink.o : $(CUDAOBJ)  
 	$(NVCC) --device-link $(NVCCFLAGS) $^ -o $@
@@ -90,6 +99,7 @@ $(LIBDIR)/libmpdcm.a : $(CUDAOBJ) $(BUILDDIR)/devlink.o
 	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
 
 clean :
-	$(RM) -r $(BINDIR)/*.$(MEXEXT)
-	$(RM) -r $(BUILDDIR)/*.o
-	$(RM) -r $(LIBDIR)/*.so 
+	$(RM) $(BINDIR)/*.$(MEXEXT)
+	$(RM) $(BUILDDIR)/*.o
+	$(RM) $(LIBDIR)/*.so
+	$(RM) $(SRCDIR)/aux_mpdcm.cu

@@ -111,7 +111,7 @@ c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, MPFLOAT *dptheta)
     cptheta->dt = (MPFLOAT ) *mxGetPr(mxGetField(ptheta, 0, "dt"));
     cptheta->dyu = (MPFLOAT ) *mxGetPr(mxGetField(ptheta, 0, "dyu"));
     // Precompute this value. For efficiency in cuda.
-    cptheta->de = cptheta->dt*cptheta->dyu;
+    cptheta->de = 2*cptheta->dt*cptheta->dyu;
     cptheta->mode = 'f';
 }
 

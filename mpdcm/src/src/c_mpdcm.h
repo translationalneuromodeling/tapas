@@ -48,7 +48,7 @@ void c_mpdcm_fmri_bs(mxArray **y, const mxArray **u,
 void
 c_mpdcm_prepare_input(
     mxArray **y, const mxArray *u, const mxArray *theta, const mxArray *ptheta,
-    ntegrator integ);
+    integrator integ);
 
 void
 c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta);
