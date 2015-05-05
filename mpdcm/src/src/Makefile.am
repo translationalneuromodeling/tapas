@@ -74,7 +74,7 @@ MEXDEVOBJ = $(BUILDDIR)/c_mpdcm_num_devices.o $(BUILDDIR)/c_mpdcm_get_device.o \
 	$(BUILDDIR)/c_mpdcm_set_device.o 	 
 
 $(MEXDEVOBJ) $(MEXDCMOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.c
-	$(MEXCC) $(MEXFLAGS) -c -outdir $(BUILDDIR) $@ CFLAGS="\$$CFLAGS -std=c99 $(CUDA_CFLAGS)" $^
+	$(MEXCC) $(MEXFLAGS) -c -outdir $(BUILDDIR) -output $@ CFLAGS="\$$CFLAGS -std=c99 $(CUDA_CFLAGS)" $^
 
 # Compile cuda
 
