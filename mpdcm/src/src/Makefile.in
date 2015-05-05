@@ -205,7 +205,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-.PHONY = directories
+.PHONY = $(MDIRS)
 
 #NVCCFLAGS = -arch=sm_20 -rdc=true -Xcompiler -fPIC
 NVCCFLAGS = -arch=sm_20 -Xcompiler -fPIC
@@ -444,7 +444,7 @@ all: $(MDIRS) $(MEXDCMBIN) $(MEXDEVBIN)
 # ===========================================================================
 
 $(MDIRS):
-	$(MKDIR_P) $^
+	$(MKDIR_P) $(MDIRS)
 
 # ===========================================================================
 # Link
