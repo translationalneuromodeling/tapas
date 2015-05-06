@@ -2,7 +2,11 @@ function [llh, ny] = mpdcm_fmri_llh(y, u, theta, ptheta, sloppy)
 %% Computes the likelihood of the data.
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 if nargin < 5

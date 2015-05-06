@@ -15,7 +15,11 @@ function [q, ntheta] = mpdcm_fmri_gmodel(y, u, theta, ptheta, pars)
 % ntheta -- MAP estimator of the model
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 if nargin < 5

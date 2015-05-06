@@ -13,7 +13,11 @@ function [y, u, theta, ptheta] = mpdcm_fmri_tinput(dcm)
 % ptheta -- Hyperparameters
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 nm = numel(dcm);

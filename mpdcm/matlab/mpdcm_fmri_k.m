@@ -2,7 +2,11 @@ function [k1, k2, k3] = mpdcm_fmri_k(theta)
 %% Computes the values of k 
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 r0      = 25;

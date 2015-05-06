@@ -2,7 +2,11 @@ function [ny, nu, ntheta, nptheta] = mpdcm_fmri_qinput(y, u, theta, ptheta)
 %% Expand the input for a simplified version of the Laplace approximation
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 % Check input

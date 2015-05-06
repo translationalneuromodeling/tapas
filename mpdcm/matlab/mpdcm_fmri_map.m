@@ -21,7 +21,11 @@ function [mu, ny, dfdx, nrs] = mpdcm_fmri_map(y, u, theta, ptheta, pars)
 % optimization.
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 assert(size(theta, 2) == 1, 'mpdcm:fmri:mle:input', ...

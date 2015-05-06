@@ -17,7 +17,11 @@ function [dfdx ny] = mpdcm_fmri_gradient(p, u, theta, ptheta, sloppy)
 % ny -- Cell array of the matrices of evaluation a system in p
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 if nargin < 5

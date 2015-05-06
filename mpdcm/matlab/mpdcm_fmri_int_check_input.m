@@ -6,7 +6,11 @@ function mpdcm_fmri_int_check_input(u, theta, ptheta)
 % ptheta -- 
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 check_u(u)

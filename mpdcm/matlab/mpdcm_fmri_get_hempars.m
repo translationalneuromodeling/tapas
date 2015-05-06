@@ -8,7 +8,11 @@ function [hempars] =  mpdcm_fmri_get_hempars(spmv)
 % hempars -- Structuce containing default values for the hemodynamic parameters
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 if nargin < 1

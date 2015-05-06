@@ -2,7 +2,11 @@ function [p] = mpdm_fmri_get_parameters(theta, ptheta)
 %% Gets the parameters in vectorial form. 
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 

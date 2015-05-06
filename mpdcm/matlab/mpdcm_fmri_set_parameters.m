@@ -11,7 +11,11 @@ function [theta] = mpdcm_fmri_set_parameters(p, theta, ptheta)
 % Ouput -- Cell array of parameters in structure form
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 

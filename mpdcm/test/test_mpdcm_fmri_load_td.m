@@ -2,7 +2,11 @@ function [d] = test_dcm_fmri_load_td(fp)
 %% Loads test data into a cell array.
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 % Get current location

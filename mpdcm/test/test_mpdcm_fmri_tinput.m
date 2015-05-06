@@ -4,7 +4,11 @@ function test_mpdcm_fmri_tinput(fp)
 % fp -- Pointer to a file for the test output, defaults to 1
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 if nargin < 1
