@@ -55,13 +55,13 @@ dcm_int_euler(dbuff x, dbuff y, dbuff u, void *p_theta,
     ty.arr = y.arr; 
     tu.arr = u.arr;
 
-    for (i=0; i < dp*ss; i++)
+    for (i=0; i <= dp*ss; i++)
     {
         if ( threadIdx.x < maxx )
             dcm_upx_euler(ox, ty, tu, p_theta, p_ptheta, nx);
         __syncthreads();
         // Only sample every 1/ptheta->dt times
-        if ( i%dy == 0 ) 
+        if ( i%dy == 0 && i > 0) 
         {
             if ( threadIdx.x < maxx )
                 dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
@@ -130,13 +130,13 @@ dcm_int_kr4(dbuff x, dbuff y, dbuff u, void *p_theta,
     ty.arr = y.arr; 
     tu.arr = u.arr;
 
-    for (i=0; i < dp*ss; i++)
+    for (i=0; i <= dp*ss; i++)
     {
         if ( threadIdx.x < maxx )
             dcm_upx_kr4(ox, ty, tu, p_theta, p_ptheta, nx);
         __syncthreads();
         // Only sample every 1/ptheta->dt times
-        if ( i%dy == 0 ) 
+        if ( i%dy == 0 && i > 0 ) 
         {
             if ( threadIdx.x < maxx )
                 dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           

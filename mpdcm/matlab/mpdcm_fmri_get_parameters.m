@@ -15,15 +15,8 @@ p = cell(size(theta));
 
 for i = 1:nt
 
-    ta = theta{i}.A(logical(ptheta.a));  
-
-    t = cell(numel(theta{i}.B), 1);
-    for j = 1:numel(theta{i}.B);
-        tt = theta{i}.B{j}(logical(ptheta.b(:,:,j)));
-        t{j} = tt(:);
-    end
-
-    tb = cell2mat(cat(1, t(:)));
+    ta = theta{i}.A(logical(ptheta.a)); 
+    tb = theta{i}.B(logical(ptheta.b));
     tc = theta{i}.C(logical(ptheta.c));
 
     ttran = theta{i}.K;

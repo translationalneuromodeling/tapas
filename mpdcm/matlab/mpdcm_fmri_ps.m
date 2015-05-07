@@ -170,7 +170,7 @@ c = diag([ones(1, np - (3 * nr + 1)), 1e-2 * ones(1, 2 * nr +1), ones(1, nr)]);
 nk = cell(size(op, 2), 1);
 nk(:) = {c};
 
-nk = struct('S', nk, 's', 0.01);
+nk = struct('S', nk, 's', 0.1);
 
 end
 

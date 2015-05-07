@@ -31,14 +31,11 @@ for i = 1:nt
     ni = sum(logical(ptheta.a(:)));
 
     theta{i}.A(logical(ptheta.a)) = indexing(tp, oi, ni);
-    
-    for j = 1:size(ptheta.b, 3)
-        t = logical(ptheta.b(:, :, j));
-        oi = ni;
-        ni = oi + sum(t(:));
-        theta{i}.B{j}(t) = indexing(tp, oi, ni);
-    end
 
+    oi = ni;
+    ni = oi + sum(logical(ptheta.b(:)));
+    theta{i}.B(ptheta.b) = indexing(tp, oi, ni);
+        
     oi = ni;
     ni = oi + sum(logical(ptheta.c(:)));
     theta{i}.C(logical(ptheta.c)) = indexing(tp, oi, ni);
@@ -70,6 +67,6 @@ if li == hi
     return
 end
 
-na = full(a(li+1:hi));
+na = a(li+1:hi);
 
 end

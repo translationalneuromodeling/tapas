@@ -383,135 +383,7 @@ catch err
     end
 end
 
-try
-    theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', zeros(8, 8), 'B', zeros(8, 8))};
-    mpdcm_fmri_int_check_input(u, theta, ptheta);
-    error('    Not passed')
-catch err
-    if strcmp(err.identifier, ...
-        'mpdcm:fmri:int:input:theta:cell:B:not_cell')
-        display('   Passed')
-    else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
-    end
-end
-try
-    theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', zeros(8, 8), 'B', zeros(8, 8))};
-    mpdcm_fmri_int_check_input(u, theta, ptheta);
-    error('    Not passed')
-catch err
-    if strcmp(err.identifier, ...
-        'mpdcm:fmri:int:input:theta:cell:B:not_cell')
-        display('   Passed')
-    else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
-    end
-end
-try
-    theta0 = struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', zeros(8, 8), 'B', [] );
-    theta0.B = {zeros(8,8)};
-    theta = {theta0};
-    mpdcm_fmri_int_check_input(u, theta, ptheta);
-    error('    Not passed')
-catch err
-    if strcmp(err.identifier, ...
-        'mpdcm:fmri:int:input:theta:cell:B:ndim')
-        display('   Passed')
-    else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
-    end
-end
-try
-    theta0 = struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', zeros(8, 8), 'B', [] );
-    theta0.B = cell(8, 1);
-    theta0.B(:) = {struct('A', [])};
-    theta = {theta0};
-    mpdcm_fmri_int_check_input(u, theta, ptheta);
-    error('    Not passed')
-catch err
-    if strcmp(err.identifier, ...
-        'mpdcm:fmri:int:input:theta:cell:B:cell:not_numeric')
-        display('   Passed')
-    else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
-    end
-end
-try
-    theta0 = struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', zeros(8, 8), 'B', [] );
-    theta0.B = cell(8, 1);
-    theta0.B(:) = {j*eye(8)};
-    theta = {theta0};
-    mpdcm_fmri_int_check_input(u, theta, ptheta);
-    error('    Not passed')
-catch err
-    if strcmp(err.identifier, ...
-        'mpdcm:fmri:int:input:theta:cell:B:cell:not_real')
-        display('   Passed')
-    else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
-    end
-end
-try
-    theta0 = struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', zeros(8, 8), 'B', [] );
-    theta0.B = cell(8, 1);
-    theta0.B(:) = {sparse(eye(8))};
-    theta = {theta0};
-    mpdcm_fmri_int_check_input(u, theta, ptheta);
-    error('    Not passed')
-catch err
-    if strcmp(err.identifier, ...
-        'mpdcm:fmri:int:input:theta:cell:B:cell:sparse')
-        display('   Passed')
-    else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
-    end
-end
-try
-    theta0 = struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', zeros(8, 8), 'B', [] );
-    theta0.B = cell(8, 1);
-    theta0.B(:) = {zeros(7, 7, 7)};
-    theta = {theta0};
-    mpdcm_fmri_int_check_input(u, theta, ptheta);
-    error('    Not passed')
-catch err
-    if strcmp(err.identifier, ...
-        'mpdcm:fmri:int:input:theta:cell:B:cell:ndim')
-        display('   Passed')
-    else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
-    end
-end
-try
-    theta0 = struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', zeros(8, 8), 'B', [] );
-    theta0.B = cell(8, 1);
-    theta0.B(:) = {zeros(7, 8)};
-    theta = {theta0};
-    mpdcm_fmri_int_check_input(u, theta, ptheta);
-    error('    Not passed')
-catch err
-    if strcmp(err.identifier, ...
-        'mpdcm:fmri:int:input:theta:cell:B:cell:dsize')
-        display('   Passed')
-    else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
-    end
-end
+
 
 end
 
@@ -534,9 +406,7 @@ theta = struct('A', [], 'B', [], 'C', [], 'epsilon', [], ...
     'k3', 1.0, 'alpha', 1.0, 'gamma', 1.0, 'dim_x', dim_x, 'dim_u', dim_u);
 
 theta.A = -0.3*eye(dim_x);
-
-B = cell(dim_u, 1);
-B(:) = {zeros(dim_x, dim_x)};
+B = zeros(dim_x, dim_x, dim_u);
 theta.B = B;
 
 theta.C = zeros(dim_x, dim_u);
