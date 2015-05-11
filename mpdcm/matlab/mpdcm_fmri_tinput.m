@@ -146,9 +146,9 @@ function [ptheta] = tinput_ptheta(dcm, scale, dyu, ys, us)
     ptheta.p.theta.chol_pi = chol(ptheta.p.theta.pi);
     ptheta.p.theta.sigma = ctheta;
 
-    ptheta.a = a;
-    ptheta.b = b;
-    ptheta.c = c;
+    ptheta.a = logical(a);
+    ptheta.b = logical(b);
+    ptheta.c = logical(c);
 
     ptheta.dyu = dyu(1);
 
