@@ -57,6 +57,7 @@ kdcm_euler(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
             nx * nx + // A
             nx * nx * nu + // B 
             nx * nu + // C
+            nx * nx * nx + // D
             nx + // Kappa (K)
             nx); // tau
         
@@ -68,6 +69,9 @@ kdcm_euler(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
 
         ltheta->C = o; 
         o+= nx * nu;
+
+        ltheta->D = o;
+        o += nx * nx * nx;
 
         ltheta->K = o;
         o += nx;
@@ -128,6 +132,7 @@ kdcm_kr4(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
             nx * nx + // A
             nx * nx * nu + // B 
             nx * nu + // C
+            nx * nx * nx + // D
             nx + // Kappa (K)
             nx); // tau
         
@@ -138,7 +143,10 @@ kdcm_kr4(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
         o += nx * nx * nu;
 
         ltheta->C = o; 
-        o+= nx * nu;
+        o += nx * nu;
+
+        ltheta->D = o;
+        o += nx * nx * nx;
 
         ltheta->K = o;
         o += nx;
@@ -207,6 +215,7 @@ kdcm_bs(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
             nx * nx + // A
             nx * nx * nu + // B 
             nx * nu + // C
+            nx * nx * nx + // D
             nx + // Kappa (K)
             nx); // tau
         
@@ -217,7 +226,10 @@ kdcm_bs(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
         o += nx * nx * nu;
 
         ltheta->C = o; 
-        o+= nx * nu;
+        o += nx * nu;
+
+        ltheta->D = o;
+        o += nx * nx * nx;
 
         ltheta->K = o;
         o += nx;

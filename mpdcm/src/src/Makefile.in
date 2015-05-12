@@ -457,15 +457,6 @@ $(MEXDCMBIN) : $(BINDIR)/%.$(MEXEXT) : $(BUILDDIR)/%.o $(LIBDIR)/libmpdcm.a \
 $(MEXDEVBIN) : $(BINDIR)/%.$(MEXEXT) : $(BUILDDIR)/%.o
 	$(MEXCC) $(MEXFLAGS) -outdir $(BINDIR) $^ $(LOP1)
 
-$(MEXDEVOBJ) $(MEXDCMOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.c
-	$(MEXCC) $(MEXFLAGS) -c -outdir $(BUILDDIR) -output $@ CFLAGS="\$$CFLAGS -std=c99 $(CUDA_CFLAGS)" $^
-
-$(CUDAOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.cu 
-	$(NVCC) -c $(NVCCFLAGS) $^ -o $@
-
-$(SRCDIR)/aux_mpdcm.cu : $(SRCCUDA)
-	cat $^ > $@
-
 # Again for compatility with cuda 4.2
 
 # This would be the case if compiling from different files.
@@ -480,6 +471,15 @@ $(SRCDIR)/aux_mpdcm.cu : $(SRCCUDA)
 
 $(LIBDIR)/libmpdcm.a : $(CUDAOBJ)
 	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
+
+$(MEXDEVOBJ) $(MEXDCMOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.c
+	$(MEXCC) $(MEXFLAGS) -c -outdir $(BUILDDIR) -output $@ CFLAGS="\$$CFLAGS -std=c99 $(CUDA_CFLAGS)" $^
+
+$(CUDAOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.cu 
+	$(NVCC) -c $(NVCCFLAGS) $(DEFS) $^ -o $@
+
+$(SRCDIR)/aux_mpdcm.cu : $(SRCCUDA)
+	cat $^ > $@
 
 clean :
 	$(RM) $(BINDIR)/*.$(MEXEXT)

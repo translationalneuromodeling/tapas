@@ -34,7 +34,7 @@ if ~isfield(pars, 'maxi')
     pars.maxi = 5;
 end
 
-
+TOL = 1e-6;
 
 assert(size(y{1}, 2) > 1, 'mpdcm:fmri:gmodel:input', ...
     'Single region models are not implemented');
@@ -84,9 +84,18 @@ for i = 1:pars.maxi
         for k = 1:nr
             h = dfdx{1}(:, k, :);
             h = squeeze(h);
-            h = h'*h; 
+            h = h'*h;
+            % h is probably a low dimensional rank matrix so we can transport
+            % it to a new space
+            [v, s, ~] = svd(h);
+
+            s = diag(s);            
+            v = v(:, s > TOL);
+            s = 1./s(s > TOL);
+
             q{j}.lambda.b(k) = 0.5*e(:,k)'*e(:,k) + ...
-                0.5*trace(q{j}.theta.pi\h) + ptheta.p.lambda.b(k);
+                0.5*trace(q{j}.theta.pi * v * diag(s) * v') + ...
+                ptheta.p.lambda.b(k);
         end
     end
 end

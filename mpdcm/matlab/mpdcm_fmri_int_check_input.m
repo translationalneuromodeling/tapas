@@ -118,6 +118,9 @@ assert(ndims(theta) == 2, ...
     'theta should be two dimensional, number of dimensions is %d', ...
     ndims(theta))
 
+ofD = 0;
+nfD = 0;
+
 for i = 1:numel(theta)
 
     assert(isstruct(theta{i}), ...
@@ -142,16 +145,31 @@ for i = 1:numel(theta)
 
     assert(du == theta{i}.dim_u, ...
         'mpdcm:fmri:int:input:theta:cell:dim_u:not_match', ...
-        'theta{%d}.dim_u doesn''t match previous values');
+        'theta{%d}.dim_u doesn''t match previous values', i);
 
     check_matrix(theta, [1, 1], 'fA', i);
     check_matrix(theta, [1, 1], 'fB', i);
     check_matrix(theta, [1, 1], 'fC', i);
     check_matrix(theta, [1, 1], 'fD', i);
 
+    % Check if the flag is the same for all of the data structures.
+
+    if i == 1
+        ofD = theta{i}.fD;
+    end
+
+    assert(ofD == theta{i}.fD, ...
+        'mpdcm:fmri:int:input:theta:cell:fD:not_match', ...
+        'theta{%d}.fD doesn''t match previous values', i);
+
+    % Check matrices
+
     check_matrix(theta, [dx, dx], 'A', i);
     check_matrix(theta, [dx, dx, du], 'B', i);
     check_matrix(theta, [dx, du], 'C', i);
+    if theta{i}.fD 
+        check_matrix(theta, [dx, dx, dx], 'D', i);
+    end
     check_matrix(theta, [dx, 1], 'K', i);
     check_matrix(theta, [dx, 1], 'tau', i);
     check_matrix(theta, [1, 1], 'V0', i);
@@ -222,4 +240,3 @@ assert(0 < dyu && dyu <= 1, ...
     'ptheta.%s should not be < 0 and > 1', 'dyu');
 
 end
-

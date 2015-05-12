@@ -37,6 +37,7 @@ dam_theta(
         (nx * nx +      // A:
         nx * nx * nu +  // B's
         nx * nu +       // C
+        nx * nx * nx +
         nx + // kappa
         nx); // tau 
 
@@ -200,5 +201,3 @@ mpdcm_fmri_bs( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
 
     return r;
 };
-
-

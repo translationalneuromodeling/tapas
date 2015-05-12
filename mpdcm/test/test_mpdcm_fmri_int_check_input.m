@@ -29,8 +29,9 @@ try
     mpdcm_fmri_int_check_input(u, theta, ptheta);
     display('   Passed');   
 catch err
-    d = dbstack();
-    fprintf('   Not passed at line %d\n', d(1).line)
+    db = dbstack();
+    fprintf(fp, '   Not passed at line %d\n', db(1).line)
+    disp(getReport(err, 'extended'));
 end
 
 % Test u
@@ -43,8 +44,9 @@ catch err
     if strcmp(err.identifier, 'mpdcm:fmri:int:input:u:not_cell')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 try
@@ -55,8 +57,9 @@ catch err
     if strcmp(err.identifier, 'mpdcm:fmri:int:input:u:ndim')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 try
@@ -67,8 +70,9 @@ catch err
     if strcmp(err.identifier, 'mpdcm:fmri:int:input:u:dsize')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 try
@@ -79,8 +83,9 @@ catch err
     if strcmp(err.identifier, 'mpdcm:fmri:int:input:u:cell:not_numeric')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 try
@@ -91,8 +96,9 @@ catch err
     if strcmp(err.identifier, 'mpdcm:fmri:int:input:u:cell:not_real')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 try
@@ -103,8 +109,9 @@ catch err
     if strcmp(err.identifier, 'mpdcm:fmri:int:input:u:cell:sparse')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 
@@ -118,8 +125,9 @@ catch err
     if strcmp(err.identifier, 'mpdcm:fmri:int:input:u:cell:not_match')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 
@@ -135,8 +143,9 @@ catch err
     if strcmp(err.identifier, 'mpdcm:fmri:int:input:theta:not_cell')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 
@@ -148,8 +157,9 @@ catch err
     if strcmp(err.identifier, 'mpdcm:fmri:int:input:theta:ndim')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 
@@ -161,8 +171,9 @@ catch err
     if strcmp(err.identifier, 'mpdcm:fmri:int:input:theta:cell:not_struct')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 
@@ -175,8 +186,9 @@ catch err
         'mpdcm:fmri:int:input:theta:cell:ndim')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 
@@ -190,8 +202,9 @@ catch err
         'mpdcm:fmri:int:input:theta:cell:dim_x:missing')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 
@@ -204,8 +217,9 @@ catch err
         'mpdcm:fmri:int:input:theta:cell:dim_x:dsize')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 try
@@ -217,8 +231,9 @@ catch err
         'mpdcm:fmri:int:input:theta:cell:dim_u:missing')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 try
@@ -230,8 +245,9 @@ catch err
         'mpdcm:fmri:int:input:theta:cell:dim_u:dsize')
         display('   Passed')
     else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
+        db = dbstack();
+        fprintf(fp, '   Not passed at line %d\n', db(1).line)
+        disp(getReport(err, 'extended'));
     end
 end
 try
@@ -251,21 +267,8 @@ end
 % Should work fine for all the flags
 
 try
-    theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1)};
-    mpdcm_fmri_int_check_input(u, theta, ptheta);
-    error('    Not passed')
-catch err
-    if strcmp(err.identifier, ...
-        'mpdcm:fmri:int:input:theta:cell:A:missing')
-        display('   Passed')
-    else
-        d = dbstack();
-        fprintf('   Not passed at line %d\n', d(1).line)
-    end
-end
-
-try
-    theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1)};
+    theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
+        'fD', 0)};
     mpdcm_fmri_int_check_input(u, theta, ptheta);
     error('    Not passed')
 catch err
@@ -280,7 +283,22 @@ end
 
 try
     theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', struct('A', 0))};
+        'fD', 0)};
+    mpdcm_fmri_int_check_input(u, theta, ptheta);
+    error('    Not passed')
+catch err
+    if strcmp(err.identifier, ...
+        'mpdcm:fmri:int:input:theta:cell:A:missing')
+        display('   Passed')
+    else
+        d = dbstack();
+        fprintf('   Not passed at line %d\n', d(1).line)
+    end
+end
+
+try
+    theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
+        'fD', 0, 'A', struct('A', 0))};
     mpdcm_fmri_int_check_input(u, theta, ptheta);
     error('    Not passed')
 catch err
@@ -295,7 +313,7 @@ end
 
 try
     theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', struct('A', 0))};
+        'fD', 0, 'A', struct('A', 0))};
     mpdcm_fmri_int_check_input(u, theta, ptheta);
     error('    Not passed')
 catch err
@@ -310,7 +328,7 @@ end
 
 try
     theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', zeros(3, 3, 3))};
+        'fD', 0, 'A', zeros(3, 3, 3))};
     mpdcm_fmri_int_check_input(u, theta, ptheta);
     error('    Not passed')
 catch err
@@ -325,7 +343,7 @@ end
 
 try
     theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', j*eye(3))};
+        'fD', 0, 'A', j*eye(3))};
     mpdcm_fmri_int_check_input(u, theta, ptheta);
     error('    Not passed')
 catch err
@@ -340,7 +358,7 @@ end
 
 try
     theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', sparse(eye(3)))};
+        'fD', 0, 'A', sparse(eye(3)))};
     mpdcm_fmri_int_check_input(u, theta, ptheta);
     error('    Not passed')
 catch err
@@ -355,7 +373,7 @@ end
 
 try
     theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', zeros(3, 3, 3))};
+        'fD', 0, 'A', zeros(3, 3, 3))};
     mpdcm_fmri_int_check_input(u, theta, ptheta);
     error('    Not passed')
 catch err
@@ -370,7 +388,7 @@ end
 
 try
     theta = {struct('dim_x', 8, 'dim_u', 8, 'fA', 1, 'fB', 1, 'fC', 1, ...
-        'A', zeros(7, 7))};
+        'fD', 0, 'A', zeros(7, 7))};
     mpdcm_fmri_int_check_input(u, theta, ptheta);
     error('    Not passed')
 catch err
@@ -383,6 +401,7 @@ catch err
     end
 end
 
+% TODO test B, C and D ...
 
 
 end
@@ -401,8 +420,8 @@ u(:, 450) = 20;
 u(:, 540) = 20;
 
 theta = struct('A', [], 'B', [], 'C', [], 'epsilon', [], ...
-    'K', [], 'tau',  [], 'V0', 1.0, 'E0', 1.0, 'k1', 1.0, 'k2', 1.0, ...
-    'fA', 1, 'fB', 1, 'fC', 1, ...
+    'K', [], 'tau',  [], 'V0', 1.0, 'E0', 0.7, 'k1', 1.0, 'k2', 1.0, ...
+    'fA', 1, 'fB', 1, 'fC', 1, 'fD', 0, ...
     'k3', 1.0, 'alpha', 1.0, 'gamma', 1.0, 'dim_x', dim_x, 'dim_u', dim_u);
 
 theta.A = -0.3*eye(dim_x);

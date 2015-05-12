@@ -59,6 +59,21 @@ $(MEXDCMBIN) : $(BINDIR)/%.$(MEXEXT) : $(BUILDDIR)/%.o $(LIBDIR)/libmpdcm.a \
 $(MEXDEVBIN) : $(BINDIR)/%.$(MEXEXT) : $(BUILDDIR)/%.o
 	$(MEXCC) $(MEXFLAGS) -outdir $(BINDIR) $^ $(LOP1)
 
+# Again for compatility with cuda 4.2
+
+# This would be the case if compiling from different files.
+
+#$(BUILDDIR)/devlink.o : $(CUDAOBJ)  
+#	$(NVCC) --device-link $(NVCCFLAGS) $^ -o $@
+#
+#$(LIBDIR)/libmpdcm.a : $(CUDAOBJ) $(BUILDDIR)/devlink.o
+#	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
+
+# Instead directly compile the library.
+
+$(LIBDIR)/libmpdcm.a : $(CUDAOBJ)
+	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
+
 # ===========================================================================
 # Compile
 # ===========================================================================
@@ -87,25 +102,10 @@ SRCCUDA = $(SRCDIR)/mpdcm.cu $(SRCDIR)/kernels.cu $(SRCDIR)/dynamics.cu \
 CUDAOBJ = $(BUILDDIR)/aux_mpdcm.o
 
 $(CUDAOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.cu 
-	$(NVCC) -c $(NVCCFLAGS) $^ -o $@
+	$(NVCC) -c $(NVCCFLAGS) $(DEFS) $^ -o $@
 
 $(SRCDIR)/aux_mpdcm.cu : $(SRCCUDA)
 	cat $^ > $@
-
-# Again for compatility with cuda 4.2
-
-# This would be the case if compiling from different files.
-
-#$(BUILDDIR)/devlink.o : $(CUDAOBJ)  
-#	$(NVCC) --device-link $(NVCCFLAGS) $^ -o $@
-#
-#$(LIBDIR)/libmpdcm.a : $(CUDAOBJ) $(BUILDDIR)/devlink.o
-#	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
-
-# Instead directly compile the library.
-
-$(LIBDIR)/libmpdcm.a : $(CUDAOBJ)
-	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
 
 
 clean :

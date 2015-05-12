@@ -41,6 +41,10 @@ for i = 1:nt
     theta{i}.C(logical(ptheta.c)) = indexing(tp, oi, ni);
 
     oi = ni;
+    ni = oi + sum(logical(ptheta.d(:)));
+    theta{i}.D(logical(ptheta.d)) = indexing(tp, oi, ni);
+
+    oi = ni;
     ni = oi + nr;
     theta{i}.K = indexing(tp, oi, ni);
 
@@ -62,6 +66,7 @@ end
 
 function [na] = indexing(a, li, hi )
 
+% Empty array
 if li == hi
     na = [];
     return

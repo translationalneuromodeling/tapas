@@ -32,7 +32,7 @@
 
 // Determines whether compile double or single precision
 
-# define MPDOUBLEFLAG
+//# define MPDOUBLEFLAG
 
 # ifdef MPDOUBLEFLAG
 # define MPFLOAT double 
@@ -64,6 +64,7 @@ typedef struct
     MPFLOAT *A;
     MPFLOAT *B;
     MPFLOAT *C;
+    MPFLOAT *D;
 
     /* Use a sparse representation of B and D */
 
@@ -79,7 +80,6 @@ typedef struct
     unsigned int nnz_D;
     unsigned int *ia_D;
     unsigned int *ja_D;
-    MPFLOAT *D;
 
     MPFLOAT *K; /* Kappa */
     MPFLOAT *tau;

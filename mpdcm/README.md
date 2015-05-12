@@ -1,7 +1,6 @@
 # README
 
 aponteeduardo@gmail.com
-copyright (C) 2015
 
 ## Introduction
 
@@ -39,9 +38,15 @@ For example
 
  ./configure --with-cuda=/cluster/apps/cuda/4.2.9/
 
+mpdcm compiles by default in single precision float numbers. Double precision
+compilation is possible, but there is only a small difference in performance.
+
+
 ## Initilization
 
-Simply execute the file on the top folder startup()i
+Simply execute the file on the top folder:
+
+ >>startup()
 
 ## Available routines
 
@@ -62,12 +67,3 @@ Simply execute the file on the top folder startup()i
 * mpdcm_set_device.m: Sets the active card.
 * mpdcm_update_kernel.m: 
 
-## MAP estimator
-
-## MLE estimator
-
-## VM hierarchical inference
-
-## Thermodynamic integration
-
-## Population MCMC

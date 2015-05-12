@@ -48,8 +48,9 @@ try
     y = mpdcm_fmri_int(u, theta, ptheta);
     fprintf(fp, '    Passed\n')
 catch err
-    fprintf(fp, '   Not passed at line %d\n', err.stack(end).line);
-    fprintf(fp, getReport(err, 'extended'));
+    db = dbstack();
+    fprintf('   Not passed at line %d\n', db(1).line)
+    disp(getReport(err, 'extended'));
 end
 
 try
@@ -157,14 +158,12 @@ tau = 1.0;
 theta0 = struct('A', [], 'B', [], 'C', [], 'epsilon', [], ...
     'K', [], 'tau',  [], 'V0', 1.0, 'E0', 1.0, 'k1', 1.0, 'k2', 1.0, ...
     'k3', 1.0, 'alpha', 1.0, 'gamma', 1.0, 'dim_x', dim_x, 'dim_u', dim_u, ...
-    'fA', 1, 'fB', 1, 'fC', 1 );
+    'fA', 1, 'fB', 1, 'fC', 1 , 'fD', 0);
 
 %%
 
 theta0.A = -0.3*eye(dim_x, dim_x);
-B = cell(dim_u, 1);
-B(:) = {zeros(dim_x, dim_x)};
-theta0.B = B;
+theta0.B = zeros(dim_x, dim_x, dim_u);
 theta0.C = eye(dim_x, dim_u);
 
 %%
@@ -212,7 +211,7 @@ theta0 = struct('A', [], 'B', [], 'C', [], ...
     'epsilon', [], 'K', [], 'tau',  [], ...
     'V0', [], 'E0', [], 'k1', [], 'k2', [], 'k3', [], ... 
     'alpha', [], 'gamma', [], 'dim_x', [], 'dim_u', [], ...
-    'fA', 1, 'fB', 1, 'fC', 1 );
+    'fA', 1, 'fB', 1, 'fC', 1 , 'fD', 0);
 
 ptheta = struct('dt', 1.0, 'dyu', [], 'integ', integ);
 
@@ -252,8 +251,7 @@ for i = 1:5
     theta0.A = d{i}.A;
     theta0.fA = 1;
 
-    theta0.B = cell(theta0.dim_u, 1);
-    theta0.B(:) = {d{i}.B(:,:,1) d{i}.B(:, :, 2)};
+    theta0.B = d{i}.B; 
     theta0.fB = 1;
     
     theta0.C = d{i}.C;
@@ -287,10 +285,7 @@ for i = 1:5
     [y, u, theta, ptheta] = mpdcm_fmri_tinput({dcm});
     ptheta.integ = integ;
     theta{1}.A = dcm.A;
-    theta{1}.B = cell(1, size(dcm.B,3));
-    for j = 1:size(dcm.B, 3)
-        theta{1}.B{j} = dcm.B(:, :, j);
-    end
+    theta{1}.B = dcm.B;
     theta{1}.C = dcm.C;
     ny = mpdcm_fmri_int(u, theta, ptheta);
     if all(abs(dcm.y - ny{1}) < tol)
@@ -309,10 +304,7 @@ ptheta.integ = integ;
 for i = 1:5
     dcm = d{i};
     theta{i}.A = dcm.A;
-    theta{i}.B = cell(1, size(dcm.B,3));
-    for j = 1:size(dcm.B, 3)
-        theta{i}.B{j} = dcm.B(:, :, j);
-    end
+    theta{i}.B = dcm.B;
     theta{i}.C = dcm.C;
 end
 ny = mpdcm_fmri_int(u, theta, ptheta);
@@ -344,15 +336,11 @@ u(:, 540) = 20;
 
 theta = struct('A', [], 'B', [], 'C', [], 'epsilon', [], ...
     'K', [], 'tau',  [], 'V0', 1.0, 'E0', 0.7, 'k1', 1.0, 'k2', 1.0, ...
-    'fA', 1, 'fB', 1, 'fC', 1, ...
+    'fA', 1, 'fB', 1, 'fC', 1, 'fD', 0, ...
     'k3', 1.0, 'alpha', 1.0, 'gamma', 1.0, 'dim_x', dim_x, 'dim_u', dim_u);
 
 theta.A = -0.3*eye(dim_x);
-
-B = cell(dim_u, 1);
-B(:) = {zeros(dim_x, dim_x)};
-theta.B = B;
-
+theta.B = zeros(dim_x, dim_x, dim_u);
 theta.C = zeros(dim_x, dim_u);
 
 theta.epsilon = ones(dim_x, 1);

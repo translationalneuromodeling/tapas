@@ -81,8 +81,7 @@ for i = 1:numel(u)
     tQ = zeros(size(ptheta.dQ.Q{1}));
     for k = 1:numel(ptheta.dQ.Q)
         tQ = tQ + tlambda(k)*ptheta.dQ.Q{k};
-    end
-   
+    end 
     % Weight data by temperature
     nQ{i} = [ptheta.T(i) * tQ(:); nctheta];
 end

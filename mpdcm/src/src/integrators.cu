@@ -218,7 +218,8 @@ dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
     dmin = min(dy, MAXDY);
 
     // SPM hack
-    ptheta->de = ptheta->dyu;
+    if ( threadIdx.x == 0 && threadIdx.y == 0 )
+    ptheta->de = 2 * ptheta->dyu;
     __syncthreads();
 
     dcm_upx_bs0(ox, ty, tu, p_theta, p_ptheta, nx);
@@ -242,7 +243,7 @@ dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
             odt >>= 1;
             if ( threadIdx.x == 0 && threadIdx.y == 0 )
                 // SPM hack
-                ptheta->de = ptheta->dyu * (((float ) odt)/MAXDY);   
+                ptheta->de = 2 * ptheta->dyu * (((float ) odt)/MAXDY);   
         
             __syncthreads();
         
@@ -252,11 +253,7 @@ dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
         // Below the error tolerance
 
         if ( z < MINTOL && odt < MAXDY )
-        {
             odt <<= 1;
-        }
-
-        // I might need to adapt this to spm
 
         // Always sample at the right spot.
         if ( i%dmin + odt > dmin )
@@ -265,30 +262,29 @@ dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
             ndt = odt;
 
         if ( threadIdx.x == 0 && threadIdx.y == 0 )
-            ptheta->de = ptheta->dyu * (((float ) ndt)/MAXDY);
+            ptheta->de = 2 * ptheta->dyu * (((float ) ndt)/MAXDY);
        
         __syncthreads();
 
-        if ( i%dy == 0 ) 
+        // Only sample every 1/ptheta->dt times
+        if ( i%dy == 0  && i > 0 ) 
         {
            if ( maxx < 0 )
                 dcm_upy(nx, ty, tu, p_theta, p_ptheta, ox);           
             __syncthreads();
+
            if ( maxx < 0 && threadIdx.y == 0 )
                ty.arr[j] = ox.arr[INDEX_LK1 * ox.dim + j] +
                    ox.arr[ INDEX_LK2 * ox.dim + j] +
                    ox.arr[ INDEX_LK3 * ox.dim + j];
-            if ( i > 0 )
-                ty.arr += y.dim;
+
+           ty.arr += y.dim;
            __syncthreads(); 
         }
 
-        // Only sample every 1/ptheta->dt times
         if ( i%MAXDY == 0 )
-        {
-            if ( i > 0 )
-                tu.arr += u.dim;
-        }
+            tu.arr += u.dim;
+
         // Swap the pointers
         t = ox.arr;
         ox.arr = nx.arr;

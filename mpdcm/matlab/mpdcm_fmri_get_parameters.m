@@ -18,13 +18,15 @@ for i = 1:nt
     ta = theta{i}.A(logical(ptheta.a)); 
     tb = theta{i}.B(logical(ptheta.b));
     tc = theta{i}.C(logical(ptheta.c));
+    td = theta{i}.D(logical(ptheta.d));
 
     ttran = theta{i}.K;
     tdecay = theta{i}.tau;
     tepsilon = theta{i}.epsilon;
     tl = theta{i}.lambda;
 
-    p{i} = [ta(:); tb(:); tc(:); ttran(:); tdecay(:); tepsilon(:); tl(:)];
+    p{i} = [ta(:); tb(:); tc(:); td(:); ttran(:); tdecay(:); tepsilon(:); ...
+        tl(:)];
 
 end
 
