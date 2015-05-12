@@ -21,7 +21,11 @@ function [ps, fe] = mpdcm_fmri_ps(dcm, pars)
 % Models, Journal of American Statistica Association, Liang & Wong 2001.
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 if ~isfield(pars, 'verb')
@@ -166,7 +170,7 @@ c = diag([ones(1, np - (3 * nr + 1)), 1e-2 * ones(1, 2 * nr +1), ones(1, nr)]);
 nk = cell(size(op, 2), 1);
 nk(:) = {c};
 
-nk = struct('S', nk, 's', 0.01);
+nk = struct('S', nk, 's', 0.1);
 
 end
 

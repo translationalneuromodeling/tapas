@@ -2,7 +2,11 @@ function [p] = mpdm_fmri_get_parameters(theta, ptheta)
 %% Gets the parameters in vectorial form. 
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 
@@ -11,23 +15,18 @@ p = cell(size(theta));
 
 for i = 1:nt
 
-    ta = theta{i}.A(logical(ptheta.a));  
-
-    t = cell(numel(theta{i}.B), 1);
-    for j = 1:numel(theta{i}.B);
-        tt = theta{i}.B{j}(logical(ptheta.b(:,:,j)));
-        t{j} = tt(:);
-    end
-
-    tb = cell2mat(cat(1, t(:)));
+    ta = theta{i}.A(logical(ptheta.a)); 
+    tb = theta{i}.B(logical(ptheta.b));
     tc = theta{i}.C(logical(ptheta.c));
+    td = theta{i}.D(logical(ptheta.d));
 
     ttran = theta{i}.K;
     tdecay = theta{i}.tau;
     tepsilon = theta{i}.epsilon;
     tl = theta{i}.lambda;
 
-    p{i} = [ta(:); tb(:); tc(:); ttran(:); tdecay(:); tepsilon(:); tl(:)];
+    p{i} = [ta(:); tb(:); tc(:); td(:); ttran(:); tdecay(:); tepsilon(:); ...
+        tl(:)];
 
 end
 

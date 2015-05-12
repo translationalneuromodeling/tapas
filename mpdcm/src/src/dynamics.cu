@@ -1,5 +1,9 @@
 /* aponteeduardo@gmail.com */
-/* copyright (C) 2014 */
+//
+// Author: Eduardo Aponte
+//
+// Revision log:
+//
 
 
 #include "mpdcm.hcu"
@@ -11,8 +15,8 @@ MPFLOAT
 dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
      void *p_ptheta, int i)
 {
-    MPFLOAT dx=0;
-    MPFLOAT bt=0;
+    MPFLOAT dx = 0;
+    MPFLOAT bt = 0;
     int j;
     int k;
     int p;
@@ -25,6 +29,14 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
     for (j = 0; j < x.dim; j++)
     {
         dx = fma(theta->A[i + x.dim*j], x.arr[o + j], dx);
+        if ( theta->fD == MF_TRUE )
+        {
+            bt = 0;
+            k = x.dim * x.dim * j + i;
+            for (p = 0; p < x.dim; p++)
+                bt = fma(theta->D[k + x.dim * p], x.arr[o + p], bt);
+            dx = fma(bt, x.arr[o + j], dx);
+        }
     }
 
     for (j = 0; j < u.dim; j++)
@@ -33,12 +45,12 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
             continue;
         // B
         bt = 0;
-        k = x.dim*x.dim*j + i;
+        k = x.dim * x.dim * j + i;
         for (p = 0; p < x.dim; p++){
-            bt = fma(theta->B[k + x.dim*p], x.arr[o + p], bt);
+            bt = fma(theta->B[k + x.dim * p], x.arr[o + p], bt);
         }
         // C
-        dx = fma(theta->C[i + x.dim*j] + bt, u.arr[j], dx);
+        dx = fma(theta->C[i + x.dim * j] + bt, u.arr[j], dx);
     }
 
     return dx;

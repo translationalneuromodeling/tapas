@@ -13,7 +13,11 @@ function [y, u, theta, ptheta] = mpdcm_fmri_tinput(dcm)
 % ptheta -- Hyperparameters
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 nm = numel(dcm);
@@ -70,8 +74,13 @@ function [ptheta] = tinput_ptheta(dcm, scale, dyu, ys, us)
     a = dcm{1}.a;
     b = dcm{1}.b;
     c = dcm{1}.c;
+    d = dcm{1}.d;
 
-    [pE, pC, x] = spm_dcm_fmri_priors(a, b, c);
+    if ~any(d)
+        d = [];
+    end
+
+    [pE, pC, x] = spm_dcm_fmri_priors(a, b, c, d);
 
     % hyperpriors - Basis matrixes
 
@@ -126,12 +135,12 @@ function [ptheta] = tinput_ptheta(dcm, scale, dyu, ys, us)
     end
 
 
-    v = [ logical(a(:)); logical(b(:)); logical(c(:)); 
+    v = [ logical(a(:)); logical(b(:)); logical(c(:)); logical(d(:)); 
         ones(nr + nr + 1 + nh, 1)];
     v = logical(v);
 
     mtheta = [pE.A(:); pE.B(:); ...
-        pE.C(:); pE.transit(:); pE.decay(:); ...
+        pE.C(:); pE.D(:); pE.transit(:); pE.decay(:); ...
         pE.epsilon(:); hE(:)];
 
     ctheta = sparse(blkdiag(pC, hC));
@@ -142,9 +151,10 @@ function [ptheta] = tinput_ptheta(dcm, scale, dyu, ys, us)
     ptheta.p.theta.chol_pi = chol(ptheta.p.theta.pi);
     ptheta.p.theta.sigma = ctheta;
 
-    ptheta.a = a;
-    ptheta.b = b;
-    ptheta.c = c;
+    ptheta.a = logical(a);
+    ptheta.b = logical(b);
+    ptheta.c = logical(c);
+    ptheta.d = logical(d);
 
     ptheta.dyu = dyu(1);
 
@@ -184,7 +194,9 @@ function [y, scale] = tinput_y(dcm, ys)
     % Data
 
     Y = dcm.Y;
-    %Y.y = spm_detrend(Y.y);
+    
+    Y.y = spm_detrend(Y.y);
+    fprintf(1, 'Detrending input Y.y\n')
 
     if isfield(Y, 'scale')
         scale = Y.scale;
@@ -192,6 +204,8 @@ function [y, scale] = tinput_y(dcm, ys)
         scale   = max(max((Y.y))) - min(min((Y.y)));
         scale   = 4/max(scale,4);
     end
+
+    fprintf(1, 'Rescaling input Y.y\n')
 
     Y.y = Y.y*scale;
     y   = Y.y';
@@ -203,16 +217,13 @@ end
 function [theta] = tinput_theta(dcm)
     % A single theta set of parameters
 
-    if isfield(dcm, 'd')
-        [pE, pC, x] = spm_dcm_fmri_priors(dcm.a, dcm.b, dcm.c, dcm.d);
-    else
-        [pE, pC, x] = spm_dcm_fmri_priors(dcm.a, dcm.b, dcm.c);
-    end
+    [pE, pC, x] = spm_dcm_fmri_priors(dcm.a, dcm.b, dcm.c, dcm.d);
 
-    theta = struct('A', [], 'B', [], 'C', [], 'D', [], 'epsilon', [], ...
-        'K', [], 'tau',  [], 'V0', [], 'E0', [], 'k1', [], 'k2', [], ...
-        'k3', [], 'alpha', [], 'gamma', [], 'dim_x', [], 'dim_u', [], ...
-        'ny', [], 'fA', 1, 'fB', 1, 'fC', 1, 'fD', 0);
+    theta = struct('A', [], 'B', [], 'C', [], 'D', [], ...
+        'epsilon', [], 'K', [], ...
+        'tau',  [], 'V0', [], 'E0', [], 'k1', [], 'k2', [], 'k3', [], ...
+        'alpha', [], 'gamma', [], 'dim_x', [], 'dim_u', [], 'ny', [], ...
+        'fA', 1, 'fB', 1, 'fC', 1 , 'fD', 0);
 
     decay = 0;
     transit = 0;
@@ -242,7 +253,6 @@ function [theta] = tinput_theta(dcm)
     end
 
     theta.B = full(pE.B);
-    
     if any(dcm.b(:))
         theta.fB = 1;
     else
@@ -259,10 +269,10 @@ function [theta] = tinput_theta(dcm)
 
     theta.D = full(pE.D);
 
-    if ~isfield(dcm, 'd') || ~any(dcm.d(:))
-        theta.fD = 0;
-    else
+    if any(dcm.d(:))
         theta.fD = 1;
+    else
+        theta.fD = 0;
     end
 
     theta.epsilon = ep;

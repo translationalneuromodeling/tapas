@@ -12,7 +12,11 @@ function [np] = mpdcm_fmri_sample(op, ptheta, htheta, v)
 %   np -- New output 
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 if nargin < 4

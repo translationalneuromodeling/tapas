@@ -16,7 +16,11 @@ function [y] = mpdcm_fmri_int(u, theta, ptheta, sloppy)
 % functions.
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 if nargin < 4
@@ -62,13 +66,13 @@ end
 
 % Integrate
 
-ptheta.dyu = 2 * ptheta.dyu;
+ptheta.dyu = ptheta.dyu;
 y = integ(u, theta, ptheta);
 
 % Downsample
 for i = 1:numel(y)
     if isfield(theta{i}, 'ny')
-        y{i} = y{i}(:, 2:2:end, :)';
+        y{i} = y{i}';
     end
 end
 

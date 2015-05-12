@@ -1,4 +1,4 @@
-function varargout = spm_dcm_generate(syn_model,source_model,SNR)
+function varargout = mpdcm_spm_dcm_generate(syn_model,source_model,SNR)
 % Generate synthetic data from a DCM specification
 % FORMAT spm_dcm_generate(syn_model,source_model,SNR)
 % 
@@ -90,7 +90,7 @@ try, M.TE     = DCM.TE;     end
 y      = feval(M.IS,DCM.Ep,M,U);
 ny     = spm_int_J(DCM.Ep, M, U);
 nj     = size(ny, 1)/v;
-y      = ny((nj-1):nj:end, :);
+y      = ny(nj:nj:end, :);
 
 
 % Compute required r: standard deviation of additive noise, for all areas
@@ -118,11 +118,6 @@ Y.secs = Y.dt*v;
 DCM.Y  = Y;                                    % simulated data
 DCM.y  = y;                                    % simulated signal
 DCM.M  = M;                                    % model
-if spm_check_version('matlab','7') >= 0
-    save(syn_model, 'DCM', '-V6');
-else
-    save(syn_model, 'DCM');
-end
 
 if nargout==1
     varargout{1} = DCM;

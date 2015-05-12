@@ -5,128 +5,111 @@
 # Set up
 # ===========================================================================
 
-.PHONY = directories
+.PHONY = $(MDIRS)
+
+#NVCCFLAGS = -arch=sm_20 -rdc=true -Xcompiler -fPIC
+
+NVCCFLAGS = -arch=sm_20 -Xcompiler -fPIC
+
+# Mex Flags
+
+BDDM_MATLAB = @matlabhome@
+
+MEXCC = $(BDDM_MATLAB)/bin/mex
+MEXFLAGS = -silent -largeArrayDims -O
+MEXEXT = mexa64
+
+LOP1 = $(CUDA_LDFLAGS) $(LIBS) 
+
+# ===========================================================================
+# Compilation 
+# ===========================================================================
 
 SRCDIR = ./
 BUILDDIR = ./../build
 LIBDIR = $(abs_top_builddir)/lib
 BINDIR = ./../bin
 
-# Other things
+MDIRS = $(BUILDDIR) $(LIBDIR) $(BINDIR)
 
-BDDM_MATLAB = @matlabhome@
+MEXDCMBIN = $(BINDIR)/c_mpdcm_fmri_euler.$(MEXEXT) \
+	$(BINDIR)/c_mpdcm_fmri_kr4.$(MEXEXT) $(BINDIR)/c_mpdcm_fmri_bs.$(MEXEXT) 
 
-LCUDA = -arch=sm_20 $(CUDA_LDFLAGS) -lcuda -lcudart
-LNUM = -lm
+MEXDEVBIN = $(BINDIR)/c_mpdcm_num_devices.$(MEXEXT) \
+	$(BINDIR)/c_mpdcm_get_device.$(MEXEXT) \
+	$(BINDIR)/c_mpdcm_set_device.$(MEXEXT)
 
-NVCCFLAGS = -arch=sm_20 -rdc=true -Xcompiler -fPIC
-
-# Mex Flags
-
-MEXCC = $(BDDM_MATLAB)/bin/mex
-
-MATFLAGS = -I$(BDDM_MATLAB)/extern/include -DMATLAB_MEX_FILE -std=c99 -D_GNU_SOURCE  -fexceptions -fPIC -fno-omit-frame-pointer -pthread  -DMX_COMPAT_32 -O -DNDEBUG
-
-LOP0 =-O -pthread -shared -Wl,--version-script,$(BDDM_MATLAB)/extern/lib/glnxa64/mexFunction.map -Wl,--no-undefined
-
-LOP1 = $(CUDA_LDFLAGS) -lcudart 
-
-# Rules
-
-$(BUILDDIR)/%.o : $(SRCDIR)/%.cu
-	$(NVCC) -c $(NVCCFLAGS) $< -o $@
-
-# ===========================================================================
-# Compilation 
-# ===========================================================================
-
-all: directories $(BINDIR)/c_mpdcm_fmri_euler.mexa64 \
-	$(BINDIR)/c_mpdcm_fmri_kr4.mexa64 $(BINDIR)/c_mpdcm_fmri_bs.mexa64 \
-	$(BINDIR)/c_mpdcm_num_devices.mexa64 $(BINDIR)/c_mpdcm_set_device.mexa64 \
-	$(BINDIR)/c_mpdcm_get_device.mexa64
+all: $(MDIRS) $(MEXDCMBIN) $(MEXDEVBIN)
 
 # ===========================================================================
 # Directories
 # ===========================================================================
 
-directories: $(BUILDDIR) $(LIBDIR) $(BINDIR)
-
-$(BUILDDIR): 
-	$(MKDIR_P) $(BUILDDIR)
-$(LIBDIR):
-	$(MKDIR_P) $(LIBDIR)
-$(BINDIR):
-	$(MKDIR_P) $(BINDIR)
+$(MDIRS):
+	$(MKDIR_P) $(MDIRS)
 
 # ===========================================================================
 # Link
 # ===========================================================================
 
-#$(BINDIR)/%.mexa64 : $(BUILDDIR)/%.o
-#	$(CC) $(LOP0) -o $@ $^ $(LOP1)
+$(MEXDCMBIN) : $(BINDIR)/%.$(MEXEXT) : $(BUILDDIR)/%.o $(LIBDIR)/libmpdcm.a \
+		$(BUILDDIR)/c_mpdcm.o
+	$(MEXCC) $(MEXFLAGS) -outdir $(BINDIR) $^ $(LOP1)
 
-$(BINDIR)/c_mpdcm_fmri_euler.mexa64 : $(BUILDDIR)/c_mpdcm.o \
-	$(LIBDIR)/libmpdcm.a $(BUILDDIR)/c_mpdcm_fmri_euler.o 
+$(MEXDEVBIN) : $(BINDIR)/%.$(MEXEXT) : $(BUILDDIR)/%.o
+	$(MEXCC) $(MEXFLAGS) -outdir $(BINDIR) $^ $(LOP1)
 
-$(BINDIR)/c_mpdcm_fmri_kr4.mexa64 : $(BUILDDIR)/c_mpdcm.o \
-	$(LIBDIR)/libmpdcm.a $(BUILDDIR)/c_mpdcm_fmri_kr4.o 
+# Again for compatility with cuda 4.2
 
-$(BINDIR)/c_mpdcm_fmri_bs.mexa64 : $(BUILDDIR)/c_mpdcm.o \
-	$(LIBDIR)/libmpdcm.a $(BUILDDIR)/c_mpdcm_fmri_bs.o 
+# This would be the case if compiling from different files.
 
-$(BINDIR)/%.mexa64 : $(BUILDDIR)/%.o
-	mex -v -n -outdir ./../bin/ -O $^ $(LOP1)
+#$(BUILDDIR)/devlink.o : $(CUDAOBJ)  
+#	$(NVCC) --device-link $(NVCCFLAGS) $^ -o $@
+#
+#$(LIBDIR)/libmpdcm.a : $(CUDAOBJ) $(BUILDDIR)/devlink.o
+#	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
 
-$(BINDIR)/c_mpdcm_num_devices.mexa64 : $(BUILDDIR)/c_mpdcm_num_devices.o
-$(BINDIR)/c_mpdcm_get_device.mexa64 : $(BUILDDIR)/c_mpdcm_get_device.o
-$(BINDIR)/c_mpdcm_set_device.mexa64 : $(BUILDDIR)/c_mpdcm_set_device.o
+# Instead directly compile the library.
 
-$(BINDIR)/%.mexa64 : $(BUILDDIR)/%.o
-	mex -outdir ./../bin/ -output $@ -O $^ $(LOP1)
-#	$(CC) $(LOP0) -o $@ $^ $(LOP1)
+$(LIBDIR)/libmpdcm.a : $(CUDAOBJ)
+	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
 
 # ===========================================================================
 # Compile
 # ===========================================================================
 
-MEXWRAPPERS = $(BUILDDIR)/c_mpdcm_fmri_euler.o $(BUILDDIR)/c_mpdcm_fmri_kr4.o \
+# Compile mex
+
+MEXDCMOBJ = $(BUILDDIR)/c_mpdcm_fmri_euler.o $(BUILDDIR)/c_mpdcm_fmri_kr4.o \
 	$(BUILDDIR)/c_mpdcm_fmri_bs.o $(BUILDDIR)/c_mpdcm.o 
-
-$(MEXWRAPPERS):
-	$(MEXCC) -c -outdir $(BUILDDIR) $@ -O CFLAGS="\$$CFLAGS -std=c99" $^
-
-$(BUILDDIR)/c_mpdcm_fmri_euler.o : $(SRCDIR)/c_mpdcm_fmri_euler.c
-$(BUILDDIR)/c_mpdcm_fmri_kr4.o : $(SRCDIR)/c_mpdcm_fmri_kr4.c
-$(BUILDDIR)/c_mpdcm_fmri_bs.o : $(SRCDIR)/c_mpdcm_fmri_bs.c
-$(BUILDDIR)/c_mpdcm.o : $(SRCDIR)/c_mpdcm.c
 
 # Device code
 
-$(BUILDDIR)/c_mpdcm_num_devices.o : $(SRCDIR)/c_mpdcm_num_devices.c
-$(BUILDDIR)/c_mpdcm_get_device.o : $(SRCDIR)/c_mpdcm_get_device.c
-$(BUILDDIR)/c_mpdcm_set_device.o : $(SRCDIR)/c_mpdcm_set_device.c
+MEXDEVOBJ = $(BUILDDIR)/c_mpdcm_num_devices.o $(BUILDDIR)/c_mpdcm_get_device.o \
+	$(BUILDDIR)/c_mpdcm_set_device.o 	 
 
-$(BUILDDIR)/c_mpdcm_num_devices.o $(BUILDDIR)/c_mpdcm_get_device.o \
-	$(BUILDDIR)/c_mpdcm_set_device.o :
-	$(MEXCC) -c -outdir $(BUILDDIR) $@ -O CFLAGS="\$$CFLAGS -std=c99 $(CUDA_CFLAGS)" $^
+$(MEXDEVOBJ) $(MEXDCMOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.c
+	$(MEXCC) $(MEXFLAGS) -c -outdir $(BUILDDIR) -output $@ CFLAGS="\$$CFLAGS -std=c99 $(CUDA_CFLAGS)" $^
 
 # Compile cuda
+
+AUXOBJ = $(BUILDDIR)/mpdcm.o $(BUILDDIR)/kernels.o $(BUILDDIR)/dynamics.o \
+	$(BUILDDIR)/updates.o $(BUILDDIR)/integrators.o
 
 SRCCUDA = $(SRCDIR)/mpdcm.cu $(SRCDIR)/kernels.cu $(SRCDIR)/dynamics.cu \
 	$(SRCDIR)/updates.cu $(SRCDIR)/integrators.cu
 
-OBJCUDA = $(SRCCUDA:$(SRCDIR)/%.cu=$(BUILDDIR)/%.o)
+CUDAOBJ = $(BUILDDIR)/aux_mpdcm.o
 
-$(SRCDIR)/%.o : $(BUILDDIR)/%.cu
-	$(NVCC) -c $(NVCCFLAGS) $^ -o $@
+$(CUDAOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.cu 
+	$(NVCC) -c $(NVCCFLAGS) $(DEFS) $^ -o $@
 
-$(BUILDDIR)/devlink.o : $(OBJCUDA)  
-	$(NVCC) --device-link $(NVCCFLAGS) $^ -o $@
+$(SRCDIR)/aux_mpdcm.cu : $(SRCCUDA)
+	cat $^ > $@
 
-$(LIBDIR)/libmpdcm.a : $(OBJCUDA) $(BUILDDIR)/devlink.o
-	$(NVCC) --lib $(NVCCFLAGS) -o $@ $^
 
 clean :
-	$(RM) -r $(BINDIR)/*.mexa64
-	$(RM) -r $(BUILDDIR)/*.o
-	$(RM) -r $(LIBDIR)/*.so 
+	$(RM) $(BINDIR)/*.$(MEXEXT)
+	$(RM) $(BUILDDIR)/*.o
+	$(RM) $(LIBDIR)/*.so
+	$(RM) $(SRCDIR)/aux_mpdcm.cu

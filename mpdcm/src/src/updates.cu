@@ -1,5 +1,9 @@
 /* aponteeduardo@gmail.com */
-/* copyright (C) 2014 */
+//
+// Author: Eduardo Aponte
+//
+// Revision log:
+//
 
 
 #include "mpdcm.hcu"
@@ -130,7 +134,7 @@ dcm_upx_kr4(dbuff ox, dbuff y, dbuff u, void *p_theta,
                 break;
             case INDEX_Q:
                 s = INDEX_Q * ox.dim + j;
-                k1.arr[s] = ptheta->de*dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
+                k1.arr[s] = ptheta->de *dcm_dq(ox, y, u, p_theta, p_ptheta, j);
                 break;
         }
         nx.arr[s] = ox.arr[s]; 

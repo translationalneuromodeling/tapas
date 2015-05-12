@@ -1,57 +1,37 @@
 /* aponteeduardo@gmail.com */
-/* copyright (C) 2014 */
+//
+// Author: Eduardo Aponte
+//
+// Revision log:
+//
 
 #include "c_mpdcm.h"
-
-// Signatures
-
-void 
-c_mpdcm_prepare_input(
-    mxArray **y, const mxArray *u, const mxArray *theta, const mxArray *ptheta,
-    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb, integrator integ);
-
-void 
-c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta);
-
-void
-c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, MPFLOAT *dptheta);
-
-void
-c_mpdcm_transfer_y(mxArray **y, MPFLOAT *cy, int *nx, int *ny, int *nt, 
-    int *nb);
-
 
 // Wrappers
 
 void 
 c_mpdcm_fmri_euler(mxArray **y, const mxArray **u,
-    const mxArray **theta, const mxArray **ptheta,
-    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
+    const mxArray **theta, const mxArray **ptheta)
 {
- 
-    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
-        &mpdcm_fmri_euler);
+
+    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, &mpdcm_fmri_euler);
 }
 
 void 
 c_mpdcm_fmri_kr4(mxArray **y, const mxArray **u,
-    const mxArray **theta, const mxArray **ptheta,
-    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
+    const mxArray **theta, const mxArray **ptheta)
 {
- 
-    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
-        &mpdcm_fmri_kr4);
+
+    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, &mpdcm_fmri_kr4);
 }
 
 void 
 c_mpdcm_fmri_bs(mxArray **y, const mxArray **u,
-    const mxArray **theta, const mxArray **ptheta,
-    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb)
+    const mxArray **theta, const mxArray **ptheta)
 {
-    int i;
 
-    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, nx, ny, nu, dp, nt, nb, 
-        &mpdcm_fmri_bs);
+    c_mpdcm_prepare_input(y, *u, *theta, *ptheta, &mpdcm_fmri_bs);
+
 }
 
 
@@ -66,10 +46,14 @@ c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta)
     ctheta->dim_x = (int ) *mxGetPr(mxGetField(theta, 0, "dim_x"));
     ctheta->dim_u = (int ) *mxGetPr(mxGetField(theta, 0, "dim_u"));
 
-    ctheta->fA = *mxGetPr(mxGetField(theta, 0, "fA")) ? MF_TRUE : MF_FALSE;
-    ctheta->fB = *mxGetPr(mxGetField(theta, 0, "fB")) ? MF_TRUE : MF_FALSE;
-    ctheta->fC = *mxGetPr(mxGetField(theta, 0, "fC")) ? MF_TRUE : MF_FALSE;
-    ctheta->fD = *mxGetPr(mxGetField(theta, 0, "fD")) ? MF_TRUE : MF_FALSE;
+    ctheta->fA = (int ) *mxGetPr(mxGetField(theta, 0, "fA")) ?
+        MF_TRUE : MF_FALSE;
+    ctheta->fB = (int ) *mxGetPr(mxGetField(theta, 0, "fB")) ? 
+        MF_TRUE : MF_FALSE;
+    ctheta->fC = (int ) *mxGetPr(mxGetField(theta, 0, "fC")) ? 
+        MF_TRUE : MF_FALSE;
+    ctheta->fD = (int ) *mxGetPr(mxGetField(theta, 0, "fD")) ? 
+        MF_TRUE : MF_FALSE;
 
     ctheta->V0 = (MPFLOAT ) *mxGetPr(mxGetField(theta, 0, "V0"));
     ctheta->E0 = (MPFLOAT ) *mxGetPr(mxGetField(theta, 0, "E0"));
@@ -85,7 +69,7 @@ c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta)
     ctheta->alpha = (MPFLOAT ) *mxGetPr(mxGetField(theta, 0, "alpha"));
     ctheta->alpha = 1/ctheta->alpha - 1;
     ctheta->gamma = (MPFLOAT ) *mxGetPr(mxGetField(theta, 0, "gamma"));
-    
+
     // A memcpy would be faster but then the float and double implementation
     // would need to be different
 
@@ -106,6 +90,23 @@ c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta)
     for (k = 0; k < i; k++)
         dtheta[k] = (MPFLOAT ) ta[k];
     dtheta += i;
+
+    // Inefficient implementation
+    
+    i = ctheta->dim_x * ctheta->dim_x * ctheta->dim_x;
+    if ( ctheta->fD == MF_TRUE )
+    {
+        ta = mxGetPr(mxGetField(theta, 0, "D"));
+        for (k = 0; k < i; k++)
+            dtheta[k] = (MPFLOAT ) ta[k];
+    } else
+    {
+        memset(dtheta, 0, i * sizeof( MPFLOAT ));
+    }    
+    memset(dtheta, 0, i * sizeof( MPFLOAT ));
+
+    dtheta += i;
+     
 
     i = ctheta->dim_x;
     ta = mxGetPr(mxGetField(theta, 0, "K"));
@@ -128,7 +129,7 @@ c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, MPFLOAT *dptheta)
     cptheta->dt = (MPFLOAT ) *mxGetPr(mxGetField(ptheta, 0, "dt"));
     cptheta->dyu = (MPFLOAT ) *mxGetPr(mxGetField(ptheta, 0, "dyu"));
     // Precompute this value. For efficiency in cuda.
-    cptheta->de = cptheta->dt*cptheta->dyu;
+    cptheta->de = 2*cptheta->dt*cptheta->dyu;
     cptheta->mode = 'f';
 }
 
@@ -146,16 +147,16 @@ c_mpdcm_prepare_u(const mxArray *u, MPFLOAT *cu)
 }
 
 void
-c_mpdcm_transfer_y(mxArray **y, MPFLOAT *cy, int *nx, int *ny, int *nt, int *nb)
+c_mpdcm_transfer_y(mxArray **y, MPFLOAT *cy, int nx, int ny, int nt, int nb)
 {
     unsigned int i, k;
-    unsigned int tt = nt[0] * nb[0];
-    unsigned int td = nx[0] * ny[0];
+    unsigned int tt = nt * nb;
+    unsigned int td = nx * ny;
     double *ta;
 
     for (i=0; i < tt; i++)
     {
-        mxArray *ty = mxCreateDoubleMatrix(*nx, *ny, mxREAL);
+        mxArray *ty = mxCreateDoubleMatrix(nx, ny, mxREAL);
         ta = mxGetPr(ty);
         for (k = 0; k < td; k++)
             ta[k] = (MPFLOAT ) cy[k];
@@ -169,7 +170,7 @@ c_mpdcm_transfer_y(mxArray **y, MPFLOAT *cy, int *nx, int *ny, int *nt, int *nb)
 void 
 c_mpdcm_prepare_input(
     mxArray **y, const mxArray *u, const mxArray *theta, const mxArray *ptheta,
-    int *nx, int *ny, int *nu, int *dp, int *nt, int *nb, integrator integ)
+    integrator integ)
 {
     // Prepares the data in the format necessary to interface with the
     // cuda library.
@@ -183,35 +184,37 @@ c_mpdcm_prepare_input(
     PThetaDCM *cptheta;
     MPFLOAT *dtheta;
     MPFLOAT *dptheta;
+    int nx, ny, nu, dp, nt, nb;
+        
+    nx = (int ) *mxGetPr( mxGetField(mxGetCell(theta, 0), 0, "dim_x") );
+    nu = mxGetDimensions( mxGetCell( u, 0) )[0];
+    dp = mxGetDimensions( mxGetCell( u, 0) )[1];
+    nt = stheta[0];
+    nb = stheta[1];
 
-    *nx = (int ) *mxGetPr( mxGetField(mxGetCell(theta, 0), 0, "dim_x") );
-    *nu = mxGetDimensions( mxGetCell( u, 0) )[0];
-    *dp = mxGetDimensions( mxGetCell( u, 0) )[1];
-    *nt = stheta[0];
-    *nb = stheta[1];
+    ny = ceil(dp * mxGetPr(mxGetField(ptheta, 0, "dyu"))[0]) ;
 
-    *ny = ceil(dp[0] * mxGetPr(mxGetField(ptheta, 0, "dyu"))[0]) ;
+    /* Offsets */
 
-    /* Offset */
-
-    o = nx[0] * nx[0] + /*A*/
-        nx[0] * nx[0] * nu[0] + /*B*/
-        nx[0] * nu[0] + /*C*/
-        nx[0] + /* Kappa */
-        nx[0]; /* tau */
+    o = nx * nx + /*A*/
+        nx * nx * nu + /*B*/
+        nx * nu + /*C*/
+        nx * nx * nx + /*D*/
+        nx + /* Kappa */
+        nx; /* tau */
 
 
     /* Allocate memory */
 
-    cy = (MPFLOAT *) malloc(nt[0] * nb[0] * nx[0] * ny[0] * sizeof( MPFLOAT ));
+    cy = (MPFLOAT *) malloc(nt * nb * nx * ny * sizeof( MPFLOAT ));
     if ( cy == NULL )
         mexErrMsgIdAndTxt("mpdcm:fmri:int:y:memory", "Memory error y");	
 
-    cu = (MPFLOAT *) malloc(nt[0] * dp[0] * nu[0] * sizeof( MPFLOAT ));
+    cu = (MPFLOAT *) malloc(nt * dp * nu * sizeof( MPFLOAT ));
     if ( cu == NULL )
         mexErrMsgIdAndTxt("mpdcm:fmri:int:u:memory", "Memory error u");	
 
-    ctheta = (ThetaDCM *) malloc( nt[0] * nb[0] * sizeof( ThetaDCM ) );
+    ctheta = (ThetaDCM *) malloc( nt * nb * sizeof( ThetaDCM ) );
     if ( ctheta == NULL )
         mexErrMsgIdAndTxt("mpdcm:fmri:int:theta:memory", "Memory error theta");	
 
@@ -220,17 +223,17 @@ c_mpdcm_prepare_input(
         mexErrMsgIdAndTxt("mpdcm:fmri:int:ptheta:memory", 
             "Memory error ptheta");	
 
-    dtheta = (MPFLOAT *) malloc(nt[0] * nb[0] * o * sizeof( MPFLOAT ));
+    dtheta = (MPFLOAT *) malloc(nt * nb * o * sizeof( MPFLOAT ));
     if ( dtheta == NULL )
         mexErrMsgIdAndTxt("mpdcm:fmri:int:theta:memory",
             "Memory error theta");	
 
     // Prepare u and theta
 
-    for (i = 0; i < nt[0] * nb[0] ; i++ )
+    for (i = 0; i < nt * nb ; i++ )
     {
-        if ( i/nt[0] < 1 )
-            c_mpdcm_prepare_u(mxGetCell(u, i), cu + i * nu[0] * dp[0]);
+        if ( i/nt < 1 )
+            c_mpdcm_prepare_u(mxGetCell(u, i), cu + i * nu * dp);
 
         c_mpdcm_prepare_theta(mxGetCell(theta, i), ctheta + i, dtheta + i*o);
     }
@@ -242,11 +245,11 @@ c_mpdcm_prepare_input(
     // Run the function
 
     (*integ)(cx, cy, cu, ctheta, dtheta, cptheta, dptheta,
-        *nx, *ny, *nu, *dp, *nt, *nb);
+        nx, ny, nu, dp, nt, nb);
 
     // Tranfer results
 
-    *y = mxCreateCellMatrix(*nt, *nb);
+    *y = mxCreateCellMatrix(nt, nb);
     c_mpdcm_transfer_y(y, cy, nx, ny, nt, nb);
 
     free(cy);

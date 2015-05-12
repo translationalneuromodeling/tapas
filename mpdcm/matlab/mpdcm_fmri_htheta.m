@@ -2,7 +2,11 @@ function [htheta] = mpdcm_fmri_htheta(ptheta)
 %% Produces the kernel used for the proposal distribution. 
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 hA = 0.00001;

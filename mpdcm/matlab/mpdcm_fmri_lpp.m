@@ -2,7 +2,11 @@ function [lpp] = mpdcm_fmri_lpp(y, u, theta, ptheta)
 %% Computes the log prior probability of the parameters.
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 % Assumes Gaussian priors on all the parameters.

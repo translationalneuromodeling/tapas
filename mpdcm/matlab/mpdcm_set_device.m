@@ -1,10 +1,23 @@
 function [dn] = mpdcm_set_device(dn)
 %% Sets the device.
 %
+% Input:
+%
+%   dn      -- Device number
+%
+% Output:
+%
+%   dn      -- Devece number.
+%
+%
 % Integer representing a device.
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 

@@ -11,7 +11,11 @@ function [theta] = mpdcm_fmri_set_parameters(p, theta, ptheta)
 % Ouput -- Cell array of parameters in structure form
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 
@@ -27,17 +31,18 @@ for i = 1:nt
     ni = sum(logical(ptheta.a(:)));
 
     theta{i}.A(logical(ptheta.a)) = indexing(tp, oi, ni);
-    
-    for j = 1:size(ptheta.b, 3)
-        t = logical(ptheta.b(:, :, j));
-        oi = ni;
-        ni = oi + sum(t(:));
-        theta{i}.B{j}(t) = indexing(tp, oi, ni);
-    end
 
+    oi = ni;
+    ni = oi + sum(logical(ptheta.b(:)));
+    theta{i}.B(ptheta.b) = indexing(tp, oi, ni);
+        
     oi = ni;
     ni = oi + sum(logical(ptheta.c(:)));
     theta{i}.C(logical(ptheta.c)) = indexing(tp, oi, ni);
+
+    oi = ni;
+    ni = oi + sum(logical(ptheta.d(:)));
+    theta{i}.D(logical(ptheta.d)) = indexing(tp, oi, ni);
 
     oi = ni;
     ni = oi + nr;
@@ -61,11 +66,12 @@ end
 
 function [na] = indexing(a, li, hi )
 
+% Empty array
 if li == hi
     na = [];
     return
 end
 
-na = full(a(li+1:hi));
+na = a(li+1:hi);
 
 end

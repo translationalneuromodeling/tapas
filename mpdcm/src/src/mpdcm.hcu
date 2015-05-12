@@ -129,6 +129,10 @@ typedef struct {
     unsigned int cs; // Current data set.
 } thr_info;
 
+// ==========================================================================
+// Function signatures
+// ==========================================================================
+
 BDDM_EXTERN
 int mpdcm_fmri_euler( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
     void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 

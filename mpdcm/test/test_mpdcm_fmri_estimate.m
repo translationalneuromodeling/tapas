@@ -4,7 +4,11 @@ function test_mpdcm_fmri_estimate(fp)
 % fp -- Pointer to a file for the test output, defaults to 1
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 if nargin < 1
@@ -29,8 +33,8 @@ nd.U.dt = 1.0;
 try
     pars = struct();
     pars.T = linspace(1e-1, 1, 100).^5;
-    pars.nburnin = 100;
-    pars.niter = 200;
+    pars.nburnin = 1000;
+    pars.niter = 1000;
     pars.mc3 = 1;
     pars.verbose = 0;
     dcm = mpdcm_fmri_estimate(nd, pars);   

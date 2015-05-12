@@ -12,7 +12,11 @@ function [q] = mpdcm_fmri_himodel(dcm, optheta, pars)
 % pars.niter -- Number of iterations of the algorithm. Defaults to 5.
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
     if nargin < 3

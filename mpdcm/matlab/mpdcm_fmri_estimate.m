@@ -5,7 +5,11 @@ function [dcm] = mpdcm_fmri_estimate(dcm, pars)
 % pars -- Parameters. Values are T, nburnin, niter, verbose, mc3
 %
 % aponteeduardo@gmail.com
-% copyright (C) 2014
+%
+% Author: Eduardo Aponte
+%
+% Revision log:
+%
 %
 
 if nargin < 2

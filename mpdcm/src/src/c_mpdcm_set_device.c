@@ -1,5 +1,9 @@
 /* aponteeduardo@gmail.com */
-/* copyright (C) 2014 */
+//
+// Author: Eduardo Aponte
+//
+// Revision log:
+//
 
 #include <mex.h>
 #include <matrix.h>

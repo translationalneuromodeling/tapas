@@ -1,7 +1,6 @@
 # README
 
 aponteeduardo@gmail.com
-copyright (C) 2015
 
 ## Introduction
 
@@ -15,7 +14,10 @@ are documented below.
 ## Compilation
 
 Currently only LINUX is supported for compilation. We have compiled in a few
-different platforms successfully. Please refer to the doc/test.tx
+different platforms successfully. Most likely it will compile in MAC and 
+Windows but we haven't yet tested those environments. 
+
+Cuda version supported: 4.2 onward (testest until CUDA 7.0)
 
 For compilation you require a matlab running environment, a cuda installation
 and the supported compiler. If your standard compiler is not compatible with
@@ -36,16 +38,32 @@ For example
 
  ./configure --with-cuda=/cluster/apps/cuda/4.2.9/
 
+mpdcm compiles by default in single precision float numbers. Double precision
+compilation is possible, but there is only a small difference in performance.
+
+
 ## Initilization
 
-Simply execute the file on the top folder startup()
+Simply execute the file on the top folder:
 
-## MAP estimator
+ >>startup()
 
-## MLE estimator
+## Available routines
 
-## VM hierarchical inference
+* c_mpdcm_fmri_int.m: 
+* mpdcm_fmri_estimate.m: Thermodynamic integration for fmri with the same basic
+    interface that spm.
+* mpdcm_fmri_int_check_input.m: Checks that the input entered to the integrator
+    fullfils the API.
+* mpdcm_fmri_int.m: Integrates a set of DCM's. 
+* mpdcm_fmri_k.m: k Values for DCM.
+* mpdcm_fmri_llh.m: Log likelihood of the DCM.
+* mpdcm_fmri_lpp.m: Log prior probability of DCM.
+* mpdcm_fmri_map.m: Map estimator.
+* mpdcm_fmri_tinput.m: Tranform SPM format to MPDCM compatible format.
+* mpdcm_get_device.m: In case more that one Nvida card is available, gets the
+    number of the active card. 
+* mpdcm_num_devices.m: Returns the number of Nvidia cards.
+* mpdcm_set_device.m: Sets the active card.
+* mpdcm_update_kernel.m: 
 
-## Thermodynamic integration
-
-## Population MCMC
