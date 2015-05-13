@@ -16,7 +16,7 @@ function [q, ntheta] = mpdcm_fmri_gmodel(y, u, theta, ptheta, pars)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %

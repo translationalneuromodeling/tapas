@@ -5,7 +5,7 @@ function test_mpdcm(fp)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %
@@ -34,6 +34,11 @@ for i = 1:numel(tests)
 
     if strcmp(atest, fname)
         continue;
+    end
+
+    % Avoid anything that is not a test.
+    if numel(atest) < 4 || ~strcmp(atest(1:4), 'test')
+        continue
     end
 
     if strcmp(aext, '.m')

@@ -3,7 +3,7 @@ function [htheta] = mpdcm_fmri_htheta(ptheta)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %

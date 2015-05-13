@@ -3,7 +3,7 @@ function [lpp] = mpdcm_fmri_lpp(y, u, theta, ptheta)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %

@@ -3,7 +3,7 @@ function [k1, k2, k3] = mpdcm_fmri_k(theta)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %

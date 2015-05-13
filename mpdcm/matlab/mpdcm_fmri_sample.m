@@ -13,7 +13,7 @@ function [np] = mpdcm_fmri_sample(op, ptheta, htheta, v)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %

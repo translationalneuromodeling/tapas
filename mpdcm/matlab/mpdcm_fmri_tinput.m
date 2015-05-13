@@ -14,7 +14,7 @@ function [y, u, theta, ptheta] = mpdcm_fmri_tinput(dcm)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %

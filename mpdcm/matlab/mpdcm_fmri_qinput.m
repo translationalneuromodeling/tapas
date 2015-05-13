@@ -3,7 +3,7 @@ function [ny, nu, ntheta, nptheta] = mpdcm_fmri_qinput(y, u, theta, ptheta)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %

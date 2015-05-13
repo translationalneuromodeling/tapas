@@ -6,7 +6,7 @@ function [dcm] = mpdcm_fmri_estimate(dcm, pars)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %

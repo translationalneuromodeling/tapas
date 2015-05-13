@@ -9,7 +9,7 @@ function [hempars] =  mpdcm_fmri_get_hempars(spmv)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %

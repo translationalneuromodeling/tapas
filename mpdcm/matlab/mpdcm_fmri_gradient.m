@@ -18,7 +18,7 @@ function [dfdx ny] = mpdcm_fmri_gradient(p, u, theta, ptheta, sloppy)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %

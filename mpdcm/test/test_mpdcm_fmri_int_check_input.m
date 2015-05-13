@@ -5,7 +5,7 @@ function test_mpdcm_fmri_int_check_input(fp)
 %
 % aponteeduardo@gmail.com
 %
-% Author: Eduardo Aponte
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
 %
 % Revision log:
 %
