@@ -1,19 +1,24 @@
 function [q] = tapas_mpdcm_fmri_himodel(dcm, optheta, pars)
-%% Model inversion of a hierarchical model 
+%% Inversts a hierarchical a hierarchical model.
 % 
 % Input:
-% dcm -- Cell array of dcms
-% pars -- Parameters for the inversion.
+% dcm   -- Cell array of dcms in SPM format.
+% pars  -- Structure of parameters for the inversion.
 %
 % Output:
-% q -- Sufficient statistics of the variational energies.
+% q     -- Sufficient statistics of the variational energies.
 %
 % Defaults
 % pars.niter -- Number of iterations of the algorithm. Defaults to 5.
 %
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

@@ -2,7 +2,6 @@ function [q, ntheta] = tapas_mpdcm_fmri_gmodel(y, u, theta, ptheta, pars)
 %% Estimate the model using an approximate variational Bayes method
 % 
 % Input:
-%
 % y         -- Cell array of experimental observations.
 % u         -- Cell array of experimental input.
 % theta     -- Cell array of initial states of the parameters
@@ -10,13 +9,17 @@ function [q, ntheta] = tapas_mpdcm_fmri_gmodel(y, u, theta, ptheta, pars)
 % pars      -- Struct. Parameters for the optimization.
 %
 % Output:
+% q         -- Sufficient statistics of the approximate marginal posteriors.
+% ntheta    -- MAP estimator of the model
 %
-% q -- Sufficient statistics of the approximate marginal posteriors.
-% ntheta -- MAP estimator of the model
-%
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

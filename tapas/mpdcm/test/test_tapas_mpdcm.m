@@ -3,9 +3,14 @@ function test_tapas_mpdcm(fp)
 %
 % fp -- Pointer to a file for the test output, defaults to 1
 %
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

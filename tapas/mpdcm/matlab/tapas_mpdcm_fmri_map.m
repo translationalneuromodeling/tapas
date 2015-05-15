@@ -20,9 +20,14 @@ function [mu, ny, dfdx, nrs] = tapas_mpdcm_fmri_map(y, u, theta, ptheta, pars)
 % It uses weighted regularized Levenberg-Marquard Gaussian-Newton 
 % optimization.
 %
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

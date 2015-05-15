@@ -1,9 +1,21 @@
 function [p] = mpdm_fmri_get_parameters(theta, ptheta)
 %% Gets the parameters in vectorial form. 
 %
+% Input:
+% theta     -- Structure containing the parameters in mpdcm format.
+% ptheta    -- Structure containing the priors.
+%
+% Output:
+% p         -- Vectorization of all the parameters in theta.
+%
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

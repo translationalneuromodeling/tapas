@@ -1,18 +1,22 @@
 function [theta] = tapas_mpdcm_fmri_set_parameters(p, theta, ptheta)
-%% [ntheta] = tapas_mpdcm_fmri_set_parameters(p, theta, ptheta)
 % Sets the parameters introduced in vectorial form.
 %
 % Input:
+% p     -- Cell array of parameters in matrix form
+% theta     -- Cell array of parameters in structure form
+% ptheta    -- Hyperparameters
 %
-% p -- Cell array of parameters in matrix form
-% theta -- Cell array of parameters in structure form
-% ptheta -- Hyperparameters
+% Ouput:
+% thate     -- Cell array of parameters in structure form
 %
-% Ouput -- Cell array of parameters in structure form
-%
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

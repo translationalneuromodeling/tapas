@@ -1,5 +1,12 @@
-/*aponteeduardo@gmail.com */
-/* copyright 2014 */
+//
+// Author: Eduardo Aponte
+// Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+//
+// Licensed under GNU General Public License 3.0 or later.
+// Some rights reserved. See COPYING, AUTHORS.
+//
+// Revision log:
+//
 
 # ifndef DDM_HEADER
 # define DDM_HEADER
@@ -48,13 +55,13 @@ typedef struct
     MPFLOAT *arr;
 } dbuff;
 
-/*  Degrees of freedom */
+//  Degrees of freedom 
 typedef struct
 {
     int dim_x;
     int dim_u;
 
-    /* This flag indicates whether the matrix should be used or not. */
+    // This flag indicates whether the matrix should be used or not. 
 
     MatFlag fA;
     MatFlag fB;
@@ -66,13 +73,13 @@ typedef struct
     MPFLOAT *C;
     MPFLOAT *D;
 
-    MPFLOAT *K; /* Kappa */
+    MPFLOAT *K; // Kappa 
     MPFLOAT *tau;
 
     MPFLOAT V0;
     MPFLOAT E0;
-    MPFLOAT ln1_E0; /* For optimization. */
-    MPFLOAT lnE0; /* For optimization. */
+    MPFLOAT ln1_E0; // For optimization. 
+    MPFLOAT lnE0; // For optimization.
     MPFLOAT k1;
     MPFLOAT k2;
     MPFLOAT k3;
@@ -82,27 +89,28 @@ typedef struct
 
 } ThetaDCM;
 
-/* Fixed values */
+// Fixed values 
 typedef struct
 {
-    MPFLOAT dt; /* Step size in the integration */
-    MPFLOAT dyu; /* Ratio of the sampling rate of y and u. */
-    MPFLOAT de; /* Precomputed h */
-    char mode; /* Either 'f' or 'c'. It's the type of array of the theta, i.e.
-        fortran or c. */
+    MPFLOAT dt; // Step size in the integration
+    MPFLOAT dyu; // Ratio of the sampling rate of y and u.
+    MPFLOAT de; // Precomputed h 
+    char mode; // Either 'f' or 'c'. It's the type of array of the theta, i.e.
+        fortran or c.
 } PThetaDCM;
 
 
-/* Type def for the integrators. */
+// Type def for the integrators. 
+
 typedef int (*integrator)(MPFLOAT *, MPFLOAT *, MPFLOAT *, void *, MPFLOAT *,
             void *, MPFLOAT *, int, int, int, int, int, int);
 
-/* Kernel launchers */
+// Kernel launchers 
 
 typedef void (*klauncher)(MPFLOAT *, MPFLOAT *, MPFLOAT *, void *, MPFLOAT *, 
     void *, MPFLOAT *, int, int, int, int, int, int, unsigned int*);
 
-/* Update of x */
+// Update of x
 
 typedef void (*fupx)(dbuff, dbuff, dbuff, void *, void *, dbuff);
 

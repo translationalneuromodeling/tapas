@@ -1,13 +1,22 @@
 function tapas_mpdcm_fmri_int_check_input(u, theta, ptheta)
-%% tapas_mpdcm_fmri_int_check_input(u, theta, ptheta)
+% Check whether the input is compatible with mpdcm. If not an error is 
+% returned.
 % 
-% u -- 
-% theta -- 
-% ptheta -- 
+% Input:
+% u         -- Structure. Inputs to DCM in mpdcm format.
+% theta     -- Structure. Model parameters in mpdcm format.
+% ptheta    -- Structure. Priors of the model in mpdcm format.
 %
+% Output:
+%
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

@@ -2,22 +2,27 @@ function [y] = tapas_mpdcm_fmri_int(u, theta, ptheta, sloppy)
 %% Integrates the system of differential equations specified by the input.
 %
 % Input:
-% u -- Cell array of experimental input
-% theta -- Cell array of model parameteres
-% ptheta -- Model priors or constants
-% sloppy -- If true don't check the input. 
+% u         -- Cell array of experimental input
+% theta     -- Cell array of model parameteres
+% ptheta    -- Structure. Model priors or constants
+% sloppy    -- Scalar. If true don't check the input. 
 %
 % Ouput:
-% y -- Cell array of predicted signals.
+% y         -- Cell array of predicted signals.
 %
 % If the input is not compliant, it's very likely that a segmentation fault
 % happens and that matlab closes. It should only be used once the input has
 % been check at least once and changes to them are done via well tested
 % functions.
 %
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

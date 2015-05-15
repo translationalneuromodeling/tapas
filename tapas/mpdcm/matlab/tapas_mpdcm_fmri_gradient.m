@@ -1,24 +1,29 @@
 function [dfdx ny] = tapas_mpdcm_fmri_gradient(p, u, theta, ptheta, sloppy)
-%% [dfdx ny] = tapas_mpdcm_fmri_gradient(p, u, theta, ptheta, sloppy
 % Computes the numerical gradient using forward finate differences method.
 % p is the location of the evalution of the gradient.
 %
 % Input:
 % 
-% p -- Cell array of parameters in matrix form
-% u -- Cell array of experimental inputs.
-% theta -- Cell array of parameters in structure from
-% ptheta -- Structure of hyperparameters
-% sloppy -- Flag for not checking theta before integration. Defaults to False.
+% p         -- Cell array of parameters in matrix form
+% u         -- Cell array of experimental inputs.
+% theta     -- Cell array of parameters in structure from
+% ptheta    -- Structure of hyperparameters
+% sloppy    -- Flag for not checking theta before integration. Defaults to
+%           False.
 % 
 % Output:
 %
-% dfdx -- Cell array of matrices with the gradients
-% ny -- Cell array of the matrices of evaluation a system in p
+% dfdx      -- Cell array of matrices with the gradients
+% ny        -- Cell array of the matrices of evaluation a system in p
 %
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

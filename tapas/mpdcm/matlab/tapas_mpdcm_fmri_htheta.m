@@ -1,9 +1,20 @@
 function [htheta] = tapas_mpdcm_fmri_htheta(ptheta)
 %% Produces the kernel used for the proposal distribution. 
 %
+% Input:
+% ptheta        -- Structure. Priors of the model in mpdcm format.
+%
+% Output:
+% htheta        -- Structure. Proposal kernel for MCMC.
+%
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

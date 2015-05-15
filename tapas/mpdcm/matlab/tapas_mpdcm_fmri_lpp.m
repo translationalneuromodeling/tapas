@@ -1,9 +1,25 @@
 function [lpp] = tapas_mpdcm_fmri_lpp(y, u, theta, ptheta)
 %% Computes the log prior probability of the parameters.
 %
+% Input:
+% y         -- Cell array. Each cell contains the experimental data.
+% u         -- Cell array. Each cell contains the model input.
+% theta     -- Cell array. Each cell contains the model parameters.
+% ptheta    -- Structure. Prior of all models.
+% sloppy    -- Scalar. If 0 input is not checked. Defaults to 1.
+%
+% Output:
+% lpp       -- Cell array. Each cell contains an scalar with the log prior 
+%           probability.
+%
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

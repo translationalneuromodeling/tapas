@@ -1,9 +1,26 @@
 function [llh, ny] = tapas_mpdcm_fmri_llh(y, u, theta, ptheta, sloppy)
 %% Computes the likelihood of the data.
 %
+% Input:
+% y         -- Cell array. Each cell contains the experimental data.
+% u         -- Cell array. Each cell contains the model input.
+% theta     -- Cell array. Each cell contains the model parameters.
+% ptheta    -- Structure. Prior of all models.
+% sloppy    -- Scalar. If 0 input is not checked. Defaults to 1.
+%
+% Output:
+% llh       -- Cell array. Each cell contains an scalar with the loglikelihood
+%           of the correspoding cell.
+% ny        -- Cell array. Each cell contains an array of predicted signales.
+% 
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %

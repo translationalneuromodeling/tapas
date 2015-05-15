@@ -1,12 +1,24 @@
 function [dcm] = tapas_mpdcm_fmri_estimate(dcm, pars)
 %% Estimates a fmri mimicking spm
 %
-% dcm -- DCM structure according to SPM
-% pars -- Parameters. Values are T, nburnin, niter, verbose, mc3
+% Input:
+% dcm       -- DCM structure according to SPM
+% pars      -- Structure.  Values are T, nburnin, niter, verbose, mc3
 %
+% Output:
+% dmc       -- Structure. It contains the expected value of the model
+%           parameters, The estimated free energy, using thermodynamic 
+%           integration, the posterior harmonic mean, and the prior arithmetic
+%           mean.
+%
+
 % aponteeduardo@gmail.com
 %
 % Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
 %
 % Revision log:
 %
