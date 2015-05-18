@@ -24,7 +24,6 @@ neurology. Problems that can be addressed by tools in TAPAS presently include:
     - Bayesian inference on computational processes from observed behaviour.
     - Bayesian mixed-effects inference for classification studies.
     - Variational-Bayes Linear Regression.
-    - Efficient integration of the DCMs using massive parallelization.
 
 TAPAS is written in MATLAB and distributed as open source code under 
 the GNU General Public License (GPL, Version 3).

@@ -42,6 +42,12 @@ mpdcm compiles by default in single precision float numbers. Double precision
 compilation is possible, but there is only a small difference in performance.
 
 
+## Initilization
+
+Simply execute the file on the top folder:
+
+ >>startup()
+
 ## Available routines
 
 * c_mpdcm_fmri_int.m: 
