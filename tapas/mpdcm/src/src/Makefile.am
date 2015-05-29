@@ -28,7 +28,7 @@ LOP1 = $(CUDA_LDFLAGS) $(LIBS)
 SRCDIR = ./
 BUILDDIR = ./../build
 LIBDIR = $(abs_top_builddir)/lib
-BINDIR = ./../bin
+BINDIR = ./../../matlab/
 
 MDIRS = $(BUILDDIR) $(LIBDIR) $(BINDIR)
 

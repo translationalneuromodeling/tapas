@@ -223,7 +223,7 @@ LOP1 = $(CUDA_LDFLAGS) $(LIBS)
 SRCDIR = ./
 BUILDDIR = ./../build
 LIBDIR = $(abs_top_builddir)/lib
-BINDIR = ./../bin
+BINDIR = ./../../matlab/
 MDIRS = $(BUILDDIR) $(LIBDIR) $(BINDIR)
 MEXDCMBIN = $(BINDIR)/c_mpdcm_fmri_euler.$(MEXEXT) \
 	$(BINDIR)/c_mpdcm_fmri_kr4.$(MEXEXT) $(BINDIR)/c_mpdcm_fmri_bs.$(MEXEXT) 
