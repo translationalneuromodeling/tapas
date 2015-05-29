@@ -96,7 +96,7 @@ typedef struct
     MPFLOAT dyu; // Ratio of the sampling rate of y and u.
     MPFLOAT de; // Precomputed h 
     char mode; // Either 'f' or 'c'. It's the type of array of the theta, i.e.
-        fortran or c.
+        //fortran or c.
 } PThetaDCM;
 
 
