@@ -155,9 +155,9 @@ ps.theta = ps_theta;
 ps.y = ps.y{:};
 ps.F = fe;
 % Prior posterior mean
-ps.ppm = 1/mean(exp(-ellh(end, :))); 
+ps.ppm = -log(mean(exp(-ellh(end, :))));
 % Prior arithmetic mean (or almost)
-ps.pam = mean(exp(ellh(1, :))); 
+ps.pam = log(mean(exp(ellh(1, :))));
 
 end
 
