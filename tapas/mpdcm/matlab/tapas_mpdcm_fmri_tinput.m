@@ -208,8 +208,8 @@ function [y, scale] = tinput_y(dcm, ys)
 
     Y = dcm.Y;
     
-    Y.y = spm_detrend(Y.y);
-    fprintf(1, 'Detrending input Y.y\n')
+    %Y.y = spm_detrend(Y.y);
+    %fprintf(1, 'Detrending input Y.y\n')
 
     if isfield(Y, 'scale')
         scale = Y.scale;
