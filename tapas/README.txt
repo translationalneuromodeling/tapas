@@ -1,4 +1,4 @@
-Version 2.0.0.0
+Version 2.0.0.1
 ________________________________________________________________________
 
      T  A  P  A  S - TNU Algorithms for Psychiatry-Advancing Science.
@@ -55,8 +55,7 @@ Bugs in the software can be emailed directly to: tapas-bugs@biomed.ee.ethz.ch
 Changes in this version
 ------------------------
 
-A new toolbox mpdcm (Massively Parallel DCM) has been added to Tapas. mpdcm is a toolbox for efficient integration of the dynamical system defined by DCM on GPU architectures. For more details, refer to the readme fil in the mpdcm folder. 
-
+Hot fix in mpdcm: Fixed compilation issue. Refer to Readme of mpdcm.
 
 -------
 LICENSE                            

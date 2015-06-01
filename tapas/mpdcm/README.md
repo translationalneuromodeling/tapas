@@ -61,3 +61,6 @@ compilation is possible, but there is only a small difference in performance.
 * mpdcm_set_device.m: Sets the active card.
 * mpdcm_update_kernel.m: 
 
+# Change log:
+
+v2.0.0.1: Fixed compilation issue in ./src/src/mpdcm.hcu.
