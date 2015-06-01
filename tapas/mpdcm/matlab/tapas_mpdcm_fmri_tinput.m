@@ -35,17 +35,15 @@ theta = cell(nm, 1);
 
 scale = zeros(nm, 1);
 dyu = zeros(nm, 1);
+udt = zeros(nm, 1);
 
 for i = 1:nm
     [y{i} scale(i)] = tinput_y(dcm{i}, max(ys));
-    [u{i} dyu(i)] = tinput_u(dcm{i}, max(us));
+    [u{i} dyu(i) udt(i)] = tinput_u(dcm{i}, max(us));
     theta{i} = tinput_theta(dcm{i});
 end
 
-assert(all(dyu == dyu(1)), 'mpdcm:fmri:tinput:dyu', ...
-    'Ratio of sampling rate between y and u are not equal across data sets');
-
-ptheta = tinput_ptheta(dcm, scale, dyu, ys, us);
+ptheta = tinput_ptheta(dcm, scale, dyu, udt, ys, us);
 
 end
 
@@ -66,13 +64,13 @@ end
 
 %% ===========================================================================
 
-function [ptheta] = tinput_ptheta(dcm, scale, dyu, ys, us)
+function [ptheta] = tinput_ptheta(dcm, scale, dyu, udt, ys, us)
     % Priors
 
     nr = size(dcm{1}.Y.y, 2);
 
-    ptheta = struct('dt', 1.0, 'dyu', [], 'rescale', scale, 'ys', ys, ...
-        'us', us);
+    ptheta = struct('dt', 1.0, 'udt', [], 'dyu', [], 'rescale', scale, ...
+        'ys', ys, 'us', us);
 
     Q = dcm{1}.Y.Q;
     M = dcm{1}.M;
@@ -160,12 +158,17 @@ function [ptheta] = tinput_ptheta(dcm, scale, dyu, ys, us)
     ptheta.b = logical(b);
     ptheta.c = logical(c);
     ptheta.d = logical(d);
+    assert(all(dyu == dyu(1)), 'mpdcm:fmri:tinput:dyu', ...
+        'Sampling rates not equal across data sets');
+    assert(all(udt == udt(1)), 'mpdcm:fmri:tinput:dyu', ...
+        'U.dt is not equal across data sets');
 
     ptheta.dyu = dyu(1);
+    ptheta.udt = udt(1);
 
 end
 
-function [u, dyu] = tinput_u(dcm, us)
+function [u, dyu, udt] = tinput_u(dcm, us)
 %% Prepare U
 
     U = dcm.U;
@@ -177,6 +180,12 @@ function [u, dyu] = tinput_u(dcm, us)
             end
         end
     end
+
+    if ~isfield(U, 'dt')
+        U.dt = 1;
+    end
+
+    udt = U.dt;
 
     % Sampling frequency
     dyu = size(dcm.Y.y, 1)/size(U.u, 1);

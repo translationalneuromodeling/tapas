@@ -251,4 +251,7 @@ assert(0 < dyu && dyu <= 1, ...
     sprintf('mpdcm:fmri:int:input:theta:cell:%s:val', 'dyu'), ...
     'ptheta.%s should not be < 0 and > 1', 'dyu');
 
+
+check_ptheta_scalar(ptheta, 'udt');
+
 end
