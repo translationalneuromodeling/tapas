@@ -52,7 +52,7 @@ if isfield(ptheta, 'integ')
             'Unknown method for ptheta.int');
     end
 else
-    integ = @(u, theta, ptheta) c_mpdcm_fmri_euler(u, theta, ptheta); 
+    integ = @(u, theta, ptheta) c_mpdcm_fmri_kr4(u, theta, ptheta); 
 end
 
 hps = tapas_mpdcm_fmri_get_hempars();
