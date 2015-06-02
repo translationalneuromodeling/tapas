@@ -211,15 +211,16 @@ function [y, scale] = tinput_y(dcm, ys)
     %Y.y = spm_detrend(Y.y);
     %fprintf(1, 'Detrending input Y.y\n')
 
-    if isfield(Y, 'scale')
-        scale = Y.scale;
-    else
-        scale   = max(max((Y.y))) - min(min((Y.y)));
-        scale   = 4/max(scale,4);
-    end
+    %if isfield(Y, 'scale')
+    %    scale = Y.scale;
+    %else
+    %    scale   = max(max((Y.y))) - min(min((Y.y)));
+    %    scale   = 4/max(scale,4);
+    %end
 
-    fprintf(1, 'Rescaling input Y.y\n')
+    %fprintf(1, 'Rescaling input Y.y\n')
 
+    scale = 1;
     Y.y = Y.y*scale;
     y   = Y.y';
 
