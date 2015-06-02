@@ -73,6 +73,14 @@ typedef struct
     MPFLOAT *C;
     MPFLOAT *D;
 
+    int *iB;
+    int *jB;
+    MPFLOAT *vB;
+
+    int *iD;
+    int *jD;
+    MPFLOAT *vD;
+
     MPFLOAT *K; // Kappa 
     MPFLOAT *tau;
 

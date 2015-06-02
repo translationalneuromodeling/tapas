@@ -139,14 +139,22 @@ c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, MPFLOAT *dptheta)
 void 
 c_mpdcm_prepare_u(const mxArray *u, MPFLOAT *cu)
 {
-    const mwSize *su = mxGetDimensions( u );
-    double *du = mxGetPr(u);
-    unsigned int tu = su[0] * su[1];
-    unsigned int i;
-   
-    for ( i = 0; i < tu; i++)
-        cu[i] = (MPFLOAT ) du[i];
+    unsigned int i, j;
+    const mwSize *su = mxGetDimensions(u);
+    unsigned int nt = su[0] * su[1];
 
+    for (i = 0; i < nt ; i++ )
+    {
+        const mxArray *tu = mxGetCell(u, i);    
+        const mwSize *stu = mxGetDimensions(tu);
+        unsigned int ntu = stu[0] * stu[1];
+        double *dtu = mxGetPr(tu);
+
+        for ( j = 0; j < ntu; j++)
+            cu[j] = (MPFLOAT ) dtu[j];
+
+        cu += ntu;
+    }
 }
 
 void
@@ -231,15 +239,15 @@ c_mpdcm_prepare_input(
         mexErrMsgIdAndTxt("mpdcm:fmri:int:theta:memory",
             "Memory error theta");	
 
-    // Prepare u and theta
+    // Prepare u
+    
+    c_mpdcm_prepare_u(u, cu);
+
+    // Prepare theta
 
     for (i = 0; i < nt * nb ; i++ )
-    {
-        if ( i/nt < 1 )
-            c_mpdcm_prepare_u(mxGetCell(u, i), cu + i * nu * dp);
-
         c_mpdcm_prepare_theta(mxGetCell(theta, i), ctheta + i, dtheta + i*o);
-    }
+
 
     // Prepare ptheta
 
@@ -261,4 +269,42 @@ c_mpdcm_prepare_input(
     free(cptheta);
     free(dtheta);
 
+}
+
+
+int 
+c_transfer_sparse(const mxArray *ab, int *jB, int *iB, MPFLOAT *vB, int nx, 
+    int o)
+{
+    // 
+    // Input
+    //      ab      -- Cell array with the matrices
+    //      jB      -- Jc of the sparse matrices
+    //      iB      -- Ir of the sparse matrices
+    //      vB      -- Pr Of the sparse matrices
+    //      o       -- Total number of previous non zero entries.
+    //      nx      -- Dimensionality of the matrixes
+    //      nu      -- Number of matrices in the cell array.
+    // Output
+    //      te      -- Return the total number of non zero elements.
+    
+    int i, j;
+    mwSize nu = mxGetDimensions(ab)[0] * mxGetDimensions(ab)[0];
+
+    // Iterate over matrices
+    for ( i = 0; i < nu; i++)
+    {
+        mwSize *jc = mxGetJc(mxGetCell(ab, i));
+        mwSize te = mxGetNzmax(mxGetCell(ab, i));
+        // Get absolute indices
+        for ( j = 0; j < nu + 1; j++ )
+            jB[j] = o + jc[j];
+        // Increase the pointer
+        jB += nx + 1;
+        // Transfer the other arrays
+        memcpy(iB, mxGetIr(mxGetCell(ab, i)), sizeof( int ) * te);
+        memcpy(vB, mxGetPr(mxGetCell(ab, i)), sizeof( MPFLOAT ) * te);
+    }
+
+    return jB[nx]; 
 }
