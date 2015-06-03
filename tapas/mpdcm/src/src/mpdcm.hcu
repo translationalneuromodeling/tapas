@@ -55,6 +55,19 @@ typedef struct
     MPFLOAT *arr;
 } dbuff;
 
+// Data structure for a set of concatenated sparse square matrices.
+
+typedef struct
+{
+    int dim_x;  // Dimension of the matrices
+    int n;     // Total number of matrices.
+    int *i;
+    int *j;
+    MPFLOAT *v;
+} sqsparse; 
+
+
+
 //  Degrees of freedom 
 typedef struct
 {
@@ -73,13 +86,8 @@ typedef struct
     MPFLOAT *C;
     MPFLOAT *D;
 
-    int *iB;
-    int *jB;
-    MPFLOAT *vB;
-
-    int *iD;
-    int *jD;
-    MPFLOAT *vD;
+    sqsparse *sB;
+    sqsparse *sD;
 
     MPFLOAT *K; // Kappa 
     MPFLOAT *tau;
@@ -107,17 +115,6 @@ typedef struct
         //fortran or c.
 } PThetaDCM;
 
-
-// Data structure for a set of concatenated sparse square matrices.
-
-typedef struct
-{
-    int dim_x;  // Dimension of the matrices
-    int n;     // Total number of matrices.
-    int *i;
-    int *j;
-    MPFLOAT *v;
-} sqsparse; 
 
 // Arguments
 

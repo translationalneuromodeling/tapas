@@ -39,7 +39,6 @@ kdcm_euler(kernpars pars, unsigned int *errcode)
 
     // Assign pointers to theta
 
-
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     ThetaDCM *ltheta;
 
@@ -124,12 +123,16 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
 
     // Assign pointers to theta
 
-
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     ThetaDCM *ltheta;
 
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     __shared__ PThetaDCM lptheta[1];
+
+    // Assign the sparse matrices
+
+    sqsparse sB[1];
+    sqsparse sD[1];
 
     lptheta->dt = ptheta->dt;
     lptheta->dyu = ptheta->dyu;
@@ -145,6 +148,7 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
     while ( i < nb * nt )
     {
         MPFLOAT *o;
+        int nB, nD;
 
         tu.arr = u + (i/nb) * nu * dp;
         // Get the new address
@@ -174,7 +178,24 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
         ltheta->K = o;
         o += nx;
 
-        ltheta->tau = o; 
+        ltheta->tau = o;
+
+        ltheta->sB = sB;
+        ltheta->sD = sD;
+
+        // Assign the appropriate offset
+
+        ltheta->sB->j = pars.jB + (nx + 1) * nu * i;
+        ltheta->sD->j = pars.jD + (nx + 1) * nx * i;
+
+        nB = *(sB->j);
+        nD = *(sD->j);
+
+        ltheta->sB->i = pars.iB + nB;
+        ltheta->sD->i = pars.iD + nD;
+
+        ltheta->sB->v = pars.vB + nB;
+        ltheta->sD->v = pars.vD + nD;
 
         tx.arr = sx + PRELOC_SIZE_X_KR4 * DIM_X * nx * (threadIdx.x/nx);
 
