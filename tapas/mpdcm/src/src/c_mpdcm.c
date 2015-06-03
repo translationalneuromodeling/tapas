@@ -86,7 +86,7 @@ c_mpdcm_transfer_sparse(const mxArray *ab, sqsparse *sm, int *ij, int *ii)
 
 void
 c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta,
-    sqsparse *mB, sqsparse *mD, int o)
+    sqsparse *sB, sqsparse *sD, int o)
 {
     unsigned int i;
     const mwSize *st = mxGetDimensions(theta);
@@ -97,9 +97,9 @@ c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta,
     {
         c_mpdcm_prepare_theta_fields(mxGetCell(theta, i), ctheta + i, 
             dtheta + i * o);
-        c_mpdcm_transfer_sparse(mxGetField(mxGetCell(theta, i), 0, "tB"), mB, 
+        c_mpdcm_transfer_sparse(mxGetField(mxGetCell(theta, i), 0, "tB"), sB, 
             &ijB, &iiB); 
-        c_mpdcm_transfer_sparse(mxGetField(mxGetCell(theta, i), 0, "tD"), mD,
+        c_mpdcm_transfer_sparse(mxGetField(mxGetCell(theta, i), 0, "tD"), sD,
             &ijD, &iiD); 
     }
 }
@@ -290,7 +290,7 @@ c_mpdcm_prepare_input(
     MPFLOAT *dptheta;
     int nx, ny, nu, dp, nt, nb;
     int nB, nD;
-    sqsparse mB[1], mD[1];
+    sqsparse sB[1], sD[1];
     kernpars pars;
 
     nx = (int ) *mxGetPr( mxGetField(mxGetCell(theta, 0), 0, "dim_x") );
@@ -339,20 +339,20 @@ c_mpdcm_prepare_input(
 
     c_mpdcm_transverse_sparse(theta, &nB, &nD);
 
-    mB->dim_x = nx;
-    mD->dim_x = nx;
+    sB->dim_x = nx;
+    sD->dim_x = nx;
     
-    mB->n = nt * nb;
-    mD->n = nt * nb;
+    sB->n = nt * nb;
+    sD->n = nt * nb;
 
-    mB->j = (int *) malloc(nt * nb * nu * (nx + 1) * sizeof( int ) );
-    mD->j = (int *) malloc(nt * nb * nx * (nx + 1) * sizeof( int ) );
+    sB->j = (int *) malloc(nt * nb * nu * (nx + 1) * sizeof( int ) );
+    sD->j = (int *) malloc(nt * nb * nx * (nx + 1) * sizeof( int ) );
 
-    mB->i = (int *) malloc(nB * sizeof( int ) );
-    mD->i = (int *) malloc(nD * sizeof( int ) );
+    sB->i = (int *) malloc(nB * sizeof( int ) );
+    sD->i = (int *) malloc(nD * sizeof( int ) );
 
-    mB->v = (MPFLOAT *) malloc(nB * sizeof( MPFLOAT ) );
-    mD->v = (MPFLOAT *) malloc(nD * sizeof( MPFLOAT ) );
+    sB->v = (MPFLOAT *) malloc(nB * sizeof( MPFLOAT ) );
+    sD->v = (MPFLOAT *) malloc(nD * sizeof( MPFLOAT ) );
  
     // Prepare u
     
@@ -360,13 +360,24 @@ c_mpdcm_prepare_input(
 
     // Prepare theta
 
-    c_mpdcm_prepare_theta(theta, ctheta, dtheta, mB, mD, o);
+    c_mpdcm_prepare_theta(theta, ctheta, dtheta, sB, sD, o);
 
     // Prepare ptheta
 
     c_mpdcm_prepare_ptheta(ptheta, cptheta, dptheta);
 
     // Run the function
+
+    pars.x = cx;
+    pars.y = cy;
+    pars.u = cu;
+    pars.p_theta = ctheta;
+    pars.d_theta = dtheta;
+    pars.p_ptheta = cptheta;
+    pars.d_ptheta = dptheta;
+
+    pars.sB = sB;
+    pars.sD = sD;
 
     pars.nx = nx;
     pars.ny = ny;
@@ -388,12 +399,12 @@ c_mpdcm_prepare_input(
     free(cptheta);
     free(dtheta);
     
-    free(mB->j);
-    free(mD->j);
-    free(mB->i);
-    free(mD->i);
-    free(mB->v);
-    free(mD->v);
+    free(sB->j);
+    free(sD->j);
+    free(sB->i);
+    free(sD->i);
+    free(sB->v);
+    free(sD->v);
     
 }
 

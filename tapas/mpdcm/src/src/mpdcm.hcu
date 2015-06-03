@@ -125,10 +125,12 @@ typedef struct {
     MPFLOAT *x;
     MPFLOAT *y;
     MPFLOAT *u;
-    void *p_theta;
+    ThetaDCM *p_theta;
     MPFLOAT *d_theta;
-    void *p_ptheta;
+    PThetaDCM *p_ptheta;
     MPFLOAT *d_ptheta;
+    sqsparse *sB;
+    sqsparse *sD;
     int nx;
     int ny;
     int nu;
@@ -136,6 +138,8 @@ typedef struct {
     int nt;
     int nb;
     unsigned int * errcode;
+    
+
     } kernpars;
 
 
