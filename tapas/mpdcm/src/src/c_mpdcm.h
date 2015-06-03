@@ -53,12 +53,16 @@ void c_mpdcm_fmri_bs(mxArray **y, const mxArray **u,
     */
 
 void
-c_mpdcm_prepare_input(
-    mxArray **y, const mxArray *u, const mxArray *theta, const mxArray *ptheta,
-    integrator integ);
+c_mpdcm_prepare_input(mxArray **y, const mxArray *u, const mxArray *theta, 
+    const mxArray *ptheta, integrator integ);
 
 void
-c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta);
+c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, 
+    MPFLOAT *dtheta, sqsparse *mB, sqsparse *mD, int o);
+
+void
+c_mpdcm_prepare_theta_fields(const mxArray *theta, ThetaDCM *ctheta, 
+    MPFLOAT *dtheta);
 
 void
 c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, MPFLOAT *dptheta);
@@ -66,6 +70,8 @@ c_mpdcm_prepare_ptheta(const mxArray *ptheta, void *vptheta, MPFLOAT *dptheta);
 void
 c_mpdcm_transfer_y(mxArray **y, MPFLOAT *cy, int nx, int ny, int nt, int nb);
 
+int
+c_mpdcm_transfer_sparse(const mxArray *ab, sqsparse *sm, int *ii, int *ij);
 
 
 

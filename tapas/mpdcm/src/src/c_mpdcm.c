@@ -37,9 +37,76 @@ c_mpdcm_fmri_bs(mxArray **y, const mxArray **u,
 
 }
 
+int 
+c_mpdcm_transfer_sparse(const mxArray *ab, sqsparse *sm, int *ij, int *ii)
+{
+    // 
+    // Input
+    //      ab      -- Cell array with the matrices
+    //      sm      -- Concatenated sparse matrices
+    //      ij      -- Index of the j array.
+    //      ii      -- Index of the i array.
+    // Output
+    //      te      -- Return the total number of non zero elements.
+    
+    int i, j;
+    int *jS = sm->j, *iS = sm->i;
+    MPFLOAT *vS = sm->v;
+    double *pr;
+    const mwSize *sab = mxGetDimensions(ab);
+    mwSize nu = sab[0] * sab[1]; 
+
+    // Iterate over matrices
+    for ( i = 0; i < nu; i++)
+    {
+        mwSize *jc = mxGetJc(mxGetCell(ab, i));
+        mwSize te = mxGetNzmax(mxGetCell(ab, i));
+
+        // Get absolute indices
+        for ( j = 0; j < sm->dim_x + 1; j++ )
+            jS[j + *ij] = *ii + jc[j];
+
+        // Increase the pointer
+        *ij += sm->dim_x + 1;
+        
+        // Transfer i
+        memcpy(sm->i + *ii, mxGetIr(mxGetCell(ab, i)), sizeof( int ) * te);
+        
+        // Transfer v
+        pr = mxGetPr(mxGetCell(ab, i));
+        for (j = 0; j < te; j ++)
+            sm->v[j + *ii] = (MPFLOAT ) pr[i];
+        
+        // Update the counter
+        *ii += te;
+    }
+    return 0;
+}
+
+
+void
+c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta,
+    sqsparse *mB, sqsparse *mD, int o)
+{
+    unsigned int i;
+    const mwSize *st = mxGetDimensions(theta);
+    unsigned int nt = st[0] * st[1];
+    int ijB = 0, iiB = 0, ijD = 0, iiD = 0;
+
+    for (i = 0; i < nt ; i++ )
+    {
+        c_mpdcm_prepare_theta_fields(mxGetCell(theta, i), ctheta + i, 
+            dtheta + i * o);
+        c_mpdcm_transfer_sparse(mxGetField(mxGetCell(theta, i), 0, "tB"), mB, 
+            &ijB, &iiB); 
+        c_mpdcm_transfer_sparse(mxGetField(mxGetCell(theta, i), 0, "tD"), mD,
+            &ijD, &iiD); 
+    }
+}
 
 void 
-c_mpdcm_prepare_theta(const mxArray *theta, ThetaDCM *ctheta, MPFLOAT *dtheta)
+c_mpdcm_prepare_theta_fields(const mxArray *theta, ThetaDCM *ctheta, 
+    MPFLOAT *dtheta)
 {
     int i, j, k;
 
@@ -177,6 +244,32 @@ c_mpdcm_transfer_y(mxArray **y, MPFLOAT *cy, int nx, int ny, int nt, int nb)
 
 }
 
+void
+c_mpdcm_transverse_sparse(const mxArray *theta, int *nB, int *nD)
+{
+    // Transverse the data to compute the total memory that is required
+    unsigned int i, j;
+    const mwSize *st = mxGetDimensions(theta);
+    unsigned int nt = st[0] * st[1];
+
+    *nB = 0;
+    *nD = 0;
+
+    for (i = 0; i < nt ; i++ )
+    {
+        mxArray *tB = mxGetField(mxGetCell(theta, i), 0, "tB");
+        mxArray *tD = mxGetField(mxGetCell(theta, i), 0, "tD");
+        
+        const mwSize *stB = mxGetDimensions(tB);
+        const mwSize *stD = mxGetDimensions(tD);
+
+        for (j = 0; j < stB[0]; j++ )
+            *nB += mxGetNzmax(mxGetCell(tB, j));
+        for (j = 0; j < stD[0]; j++ )
+            *nD += mxGetNzmax(mxGetCell(tD, j));
+
+    }
+}
 
 void 
 c_mpdcm_prepare_input(
@@ -196,7 +289,9 @@ c_mpdcm_prepare_input(
     MPFLOAT *dtheta;
     MPFLOAT *dptheta;
     int nx, ny, nu, dp, nt, nb;
-        
+    int nB, nD;
+    sqsparse mB[1], mD[1];
+
     nx = (int ) *mxGetPr( mxGetField(mxGetCell(theta, 0), 0, "dim_x") );
     nu = mxGetDimensions( mxGetCell( u, 0) )[0];
     dp = mxGetDimensions( mxGetCell( u, 0) )[1];
@@ -239,15 +334,32 @@ c_mpdcm_prepare_input(
         mexErrMsgIdAndTxt("mpdcm:fmri:int:theta:memory",
             "Memory error theta");	
 
+    // Allocate sparse matrix space 
+
+    c_mpdcm_transverse_sparse(theta, &nB, &nD);
+
+    mB->dim_x = nx;
+    mD->dim_x = nx;
+    
+    mB->n = nt * nb;
+    mD->n = nt * nb;
+
+    mB->j = (int *) malloc(nt * nb * nu * (nx + 1) * sizeof( int ) );
+    mD->j = (int *) malloc(nt * nb * nx * (nx + 1) * sizeof( int ) );
+
+    mB->i = (int *) malloc(nB * sizeof( int ) );
+    mD->i = (int *) malloc(nD * sizeof( int ) );
+
+    mB->v = (MPFLOAT *) malloc(nB * sizeof( MPFLOAT ) );
+    mD->v = (MPFLOAT *) malloc(nD * sizeof( MPFLOAT ) );
+ 
     // Prepare u
     
     c_mpdcm_prepare_u(u, cu);
 
     // Prepare theta
 
-    for (i = 0; i < nt * nb ; i++ )
-        c_mpdcm_prepare_theta(mxGetCell(theta, i), ctheta + i, dtheta + i*o);
-
+    c_mpdcm_prepare_theta(theta, ctheta, dtheta, mB, mD, o);
 
     // Prepare ptheta
 
@@ -268,43 +380,15 @@ c_mpdcm_prepare_input(
     free(ctheta);
     free(cptheta);
     free(dtheta);
-
-}
-
-
-int 
-c_transfer_sparse(const mxArray *ab, int *jB, int *iB, MPFLOAT *vB, int nx, 
-    int o)
-{
-    // 
-    // Input
-    //      ab      -- Cell array with the matrices
-    //      jB      -- Jc of the sparse matrices
-    //      iB      -- Ir of the sparse matrices
-    //      vB      -- Pr Of the sparse matrices
-    //      o       -- Total number of previous non zero entries.
-    //      nx      -- Dimensionality of the matrixes
-    //      nu      -- Number of matrices in the cell array.
-    // Output
-    //      te      -- Return the total number of non zero elements.
     
-    int i, j;
-    mwSize nu = mxGetDimensions(ab)[0] * mxGetDimensions(ab)[0];
-
-    // Iterate over matrices
-    for ( i = 0; i < nu; i++)
-    {
-        mwSize *jc = mxGetJc(mxGetCell(ab, i));
-        mwSize te = mxGetNzmax(mxGetCell(ab, i));
-        // Get absolute indices
-        for ( j = 0; j < nu + 1; j++ )
-            jB[j] = o + jc[j];
-        // Increase the pointer
-        jB += nx + 1;
-        // Transfer the other arrays
-        memcpy(iB, mxGetIr(mxGetCell(ab, i)), sizeof( int ) * te);
-        memcpy(vB, mxGetPr(mxGetCell(ab, i)), sizeof( MPFLOAT ) * te);
-    }
-
-    return jB[nx]; 
+    free(mB->j);
+    free(mD->j);
+    free(mB->i);
+    free(mD->i);
+    free(mB->v);
+    free(mD->v);
+    
 }
+
+
+

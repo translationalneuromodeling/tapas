@@ -108,6 +108,17 @@ typedef struct
 } PThetaDCM;
 
 
+// Data structure for a set of concatenated sparse square matrices.
+
+typedef struct
+{
+    int dim_x;  // Dimension of the matrices
+    int n;     // Total number of matrices.
+    int *i;
+    int *j;
+    MPFLOAT *v;
+} sqsparse; 
+
 // Type def for the integrators. 
 
 typedef int (*integrator)(MPFLOAT *, MPFLOAT *, MPFLOAT *, void *, MPFLOAT *,
