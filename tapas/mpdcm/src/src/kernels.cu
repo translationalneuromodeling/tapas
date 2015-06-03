@@ -18,10 +18,20 @@
 
 __global__
 void
-kdcm_euler(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
-    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
+kdcm_euler(kernpars pars, unsigned int *errcode)
 {
+
+    MPFLOAT *y = pars.y;
+    MPFLOAT *u = pars.u;
+    void *p_theta = (void *) pars.p_theta;
+    MPFLOAT *d_theta = pars.d_theta;
+    void *p_ptheta = (void *) pars.p_ptheta;
+    int nx = pars.nx;
+    int ny = pars.ny;
+    int nu = pars.nu;
+    int dp = pars.dp;
+    int nt = pars.nt;
+    int nb = pars.nb; 
 
     int i;
     dbuff tx, ty, tu;
@@ -93,10 +103,20 @@ kdcm_euler(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
 
 __global__
 void
-kdcm_kr4(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
-    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
+kdcm_kr4(kernpars pars, unsigned int *errcode)
 {
+
+    MPFLOAT *y = pars.y;
+    MPFLOAT *u = pars.u;
+    void *p_theta = (void *) pars.p_theta;
+    MPFLOAT *d_theta = pars.d_theta;
+    void *p_ptheta = (void *) pars.p_ptheta;
+    int nx = pars.nx;
+    int ny = pars.ny;
+    int nu = pars.nu;
+    int dp = pars.dp;
+    int nt = pars.nt;
+    int nb = pars.nb; 
 
     int i;
     dbuff tx, ty, tu;
@@ -166,15 +186,25 @@ kdcm_kr4(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
 
 __global__
 void
-kdcm_bs(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
-    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int * errcode)
+kdcm_bs(kernpars pars, unsigned int * errcode)
 {
     /* 
     mem -- Prealocate shared memory. It depends on the slots that the 
         integrator needs; two for euler and 4 for Kutta-Ruge.
     fupx -- Function used to integrate the update the system. 
     */
+
+    MPFLOAT *y = pars.y;
+    MPFLOAT *u = pars.u;
+    void *p_theta = (void *) pars.p_theta;
+    MPFLOAT *d_theta = pars.d_theta;
+    void *p_ptheta = (void *) pars.p_ptheta;
+    int nx = pars.nx;
+    int ny = pars.ny;
+    int nu = pars.nu;
+    int dp = pars.dp;
+    int nt = pars.nt;
+    int nb = pars.nb; 
 
     int i;
     dbuff tx, ty, tu;
@@ -256,10 +286,7 @@ kdcm_bs(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
 
 __host__
 void
-ldcm_euler
-(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
-    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
+ldcm_euler(kernpars pars, unsigned int *errcode)
 {
 
     int device;
@@ -268,7 +295,8 @@ ldcm_euler
     struct cudaDeviceProp props;
     cudaGetDeviceProperties(&props, device);
 
-    int num_blocks = min((nx * nt * nb + NUM_THREADS - 1)/NUM_THREADS,
+    int num_blocks = 
+        min((pars.nx * pars.nt * pars.nb + NUM_THREADS - 1)/NUM_THREADS,
         NUM_BLOCKS * props.multiProcessorCount);
 
     
@@ -279,17 +307,13 @@ ldcm_euler
     sems =  NUM_THREADS * DIM_X * PRELOC_SIZE_X_EULER * sizeof( MPFLOAT );
 
 
-    kdcm_euler<<<gblocks, gthreads, sems>>>(x, y, u, 
-        theta, d_theta, ptheta, d_ptheta, 
-        nx, ny, nu, dp, nt, nb, errcode); 
+    kdcm_euler<<<gblocks, gthreads, sems>>>(pars, errcode); 
 }
 
 
 __host__
 void
-ldcm_kr4(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
-    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
+ldcm_kr4(kernpars pars, unsigned int *errcode)
 {
     int device;
     cudaGetDevice(&device);
@@ -297,7 +321,8 @@ ldcm_kr4(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
     struct cudaDeviceProp props;
     cudaGetDeviceProperties(&props, device);
 
-    int num_blocks = min((nx * nt * nb + NUM_THREADS - 1)/NUM_THREADS,
+    int num_blocks = 
+        min((pars.nx * pars.nt * pars.nb + NUM_THREADS - 1)/NUM_THREADS,
         NUM_BLOCKS * props.multiProcessorCount);
     
     dim3 gthreads(NUM_THREADS, DIM_X);
@@ -305,16 +330,12 @@ ldcm_kr4(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
 
     int smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_KR4 * sizeof( MPFLOAT );
 
-    kdcm_kr4<<<gblocks, gthreads, smems>>>(x, y, u, 
-        theta, d_theta, ptheta, d_ptheta, 
-        nx, ny, nu, dp, nt, nb, errcode); 
+    kdcm_kr4<<<gblocks, gthreads, smems>>>(pars, errcode); 
 }
 
 __host__
 void 
-ldcm_bs(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
-    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode)
+ldcm_bs(kernpars pars, unsigned int *errcode)
 {
 
     int device;
@@ -323,7 +344,8 @@ ldcm_bs(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
     struct cudaDeviceProp props;
     cudaGetDeviceProperties(&props, device);
 
-    int num_blocks = min((nx * nt * nb + NUM_THREADS - 1)/NUM_THREADS,
+    int num_blocks = 
+        min((pars.nx * pars.nt * pars.nb + NUM_THREADS - 1)/NUM_THREADS,
         NUM_BLOCKS * props.multiProcessorCount);
 
     dim3 gthreads(NUM_THREADS, DIM_X);
@@ -331,9 +353,7 @@ ldcm_bs(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
 
     int smems = NUM_THREADS * DIM_X * PRELOC_SIZE_X_BS * sizeof( MPFLOAT );
 
-    kdcm_bs<<<gblocks, gthreads, smems>>>(x, y, u, 
-        theta, d_theta, ptheta, d_ptheta, 
-        nx, ny, nu, dp, nt, nb, errcode); 
+    kdcm_bs<<<gblocks, gthreads, smems>>>(pars, errcode); 
 }
 
 

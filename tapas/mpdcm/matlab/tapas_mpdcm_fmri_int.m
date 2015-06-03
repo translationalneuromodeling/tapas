@@ -67,18 +67,30 @@ for i = 1:numel(theta)
     % Change the parametrization
     theta{i}.K = hps.K * exp(theta{i}.K);
     theta{i}.tau = hps.tau + theta{i}.tau;
+
+    % Temporal solution
+
+    theta{i}.tB = cell(size(theta{i}.B, 3), 1);
+    for j = 1:numel(theta{i}.tB)
+        theta{i}.tB{j} = sparse(theta{i}.B(:, :, j));
+    end
+
+    theta{i}.tD = cell(size(theta{i}.D, 3), 1);
+    for j = 1:numel(theta{i}.tD)
+        theta{i}.tD{j} = sparse(theta{i}.D(:, :, j));
+    end
+
 end
+
 
 % Integrate
 
 ptheta.dyu = ptheta.dyu;
 y = integ(u, theta, ptheta);
 
-% Downsample
+
 for i = 1:numel(y)
-    if isfield(theta{i}, 'ny')
-        y{i} = y{i}';
-    end
+    y{i} = y{i}';
 end
 
 

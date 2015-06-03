@@ -131,6 +131,14 @@ typedef struct {
     MPFLOAT *d_ptheta;
     sqsparse *sB;
     sqsparse *sD;
+
+    int *jB;
+    int *jD;
+    int *iB;
+    int *iD;
+    MPFLOAT *vB;
+    MPFLOAT *vD;
+
     int nx;
     int ny;
     int nu;
@@ -138,8 +146,6 @@ typedef struct {
     int nt;
     int nb;
     unsigned int * errcode;
-    
-
     } kernpars;
 
 
@@ -150,8 +156,7 @@ typedef int (*integrator)(kernpars);
 
 // Kernel launchers 
 
-typedef void (*klauncher)(MPFLOAT *, MPFLOAT *, MPFLOAT *, void *, MPFLOAT *, 
-    void *, MPFLOAT *, int, int, int, int, int, int, unsigned int*);
+typedef void (*klauncher)(kernpars, unsigned int*);
 
 // Update of x
 
@@ -372,43 +377,28 @@ dcm_int_bs(dbuff x, dbuff y, dbuff u, void *p_theta,
 
 __global__
 void
-kdcm_euler(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
-    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta,
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
+kdcm_euler(kernpars pars, unsigned int *errcode);
 
 __global__
 void
-kdcm_kr4(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
-    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta,
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
-
+kdcm_kr4(kernpars pars, unsigned int *errcode);
 
 __global__
 void
-kdcm_bs(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
-    void *p_theta, MPFLOAT *d_theta, void *p_ptheta, MPFLOAT *d_ptheta,
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
+kdcm_bs(kernpars pars, unsigned int *errcode);
 
 __host__
 void
-ldcm_euler
-(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
-    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta,
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
+ldcm_euler(kernpars pars, unsigned int *errcode);
 
 __host__
 void
-ldcm_kr4
-(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
-    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta,
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
+ldcm_kr4(kernpars pars, unsigned int *errcode);
 
 __host__
 void
-ldcm_bs
-(MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
-    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta,
-    int nx, int ny, int nu, int dp, int nt, int nb, unsigned int *errcode);
+ldcm_bs(kernpars pars, unsigned int *errcode);
+
 
 # endif
 

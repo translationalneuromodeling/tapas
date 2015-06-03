@@ -18,7 +18,7 @@
 // Device alloc memory theta
 __host__ 
 void
-dam_theta(kernpars pars, void **pd_theta, MPFLOAT **dd_theta)
+dam_theta(kernpars pars, kernpars *d_pars)
 {
     int nx = pars.nx;
     int nu = pars.nu;
@@ -26,11 +26,13 @@ dam_theta(kernpars pars, void **pd_theta, MPFLOAT **dd_theta)
     int nb = pars.nb;
 
     int tp;
+    int nB;
+    int nD;
 
     // Allocate memory for the structures
 
-    HANDLE_ERROR( cudaMalloc( pd_theta, nt * nb * sizeof(ThetaDCM)));
-    HANDLE_ERROR( cudaMemcpy( *pd_theta, pars.p_theta, 
+    HANDLE_ERROR( cudaMalloc( &(d_pars->p_theta), nt * nb * sizeof(ThetaDCM)));
+    HANDLE_ERROR( cudaMemcpy( d_pars->p_theta, pars.p_theta, 
         nt * nb * sizeof(ThetaDCM), cudaMemcpyHostToDevice ) );
 
     // Allocate memory for the matrices. It is assumed that the parameters
@@ -45,39 +47,75 @@ dam_theta(kernpars pars, void **pd_theta, MPFLOAT **dd_theta)
         nx + // kappa
         nx); // tau 
 
-    HANDLE_ERROR( cudaMalloc( dd_theta, tp * sizeof(MPFLOAT) ) );
-    HANDLE_ERROR( cudaMemcpy( (void *) *dd_theta, pars.d_theta, 
+    HANDLE_ERROR( cudaMalloc( &(d_pars->d_theta), tp * sizeof(MPFLOAT) ) );
+    HANDLE_ERROR( cudaMemcpy( d_pars->d_theta, pars.d_theta, 
         tp * sizeof(MPFLOAT), cudaMemcpyHostToDevice ) );
+
+    // Allocate memory for B
+    
+    nB = (nx + 1) * nu * nt * nb;
+    
+    HANDLE_ERROR( cudaMalloc( &(d_pars->jB), nB * sizeof( int )) );
+    HANDLE_ERROR( cudaMemcpy( d_pars->jB, pars.sB->j, nB  * sizeof( int ),
+        cudaMemcpyHostToDevice));
+     
+    nB = pars.sB->j[nB - 1];
+
+    HANDLE_ERROR( cudaMalloc( &(d_pars->iB), nB * sizeof( int )) );
+    HANDLE_ERROR( cudaMemcpy( d_pars->iB, pars.sB->i, nB  * sizeof( int ),
+        cudaMemcpyHostToDevice));
+
+    HANDLE_ERROR( cudaMalloc( &(d_pars->vB), nB * sizeof( MPFLOAT )) );
+    HANDLE_ERROR( cudaMemcpy( d_pars->vB, pars.sB->v, 
+        nB * sizeof( MPFLOAT ), cudaMemcpyHostToDevice));
+
+    // Allocate memory for D
+
+    nD = (nx + 1) * nx * nt * nb;
+    
+    HANDLE_ERROR( cudaMalloc( &(d_pars->jD), nD * sizeof( int )) );
+    HANDLE_ERROR( cudaMemcpy( d_pars->jD, pars.sD->j, nD  * sizeof( int ),
+        cudaMemcpyHostToDevice));
+     
+    nD = pars.sD->j[nD - 1];
+
+    HANDLE_ERROR( cudaMalloc( &(d_pars->iD), nD * sizeof( int )) );
+    HANDLE_ERROR( cudaMemcpy( d_pars->iD, pars.sD->i, nD  * sizeof( int ),
+        cudaMemcpyHostToDevice));
+
+    HANDLE_ERROR( cudaMalloc( &(d_pars->vD), nD * sizeof( MPFLOAT )) );
+    HANDLE_ERROR( cudaMemcpy( d_pars->vD, pars.sD->v, 
+        nD * sizeof( MPFLOAT ), cudaMemcpyHostToDevice));
 
 }
 
 // Device alloc memory ptheta
 __host__ 
 void 
-dam_ptheta( kernpars pars, void **pd_ptheta, MPFLOAT **dd_ptheta)
+dam_ptheta( kernpars pars, kernpars *d_pars)
 {
-    HANDLE_ERROR( cudaMalloc( pd_ptheta, sizeof(PThetaDCM)));
-    HANDLE_ERROR( cudaMemcpy( *pd_ptheta, pars.p_ptheta, sizeof(PThetaDCM),
-        cudaMemcpyHostToDevice ) ); 
+    HANDLE_ERROR( cudaMalloc( &(d_pars->p_ptheta), sizeof(PThetaDCM)));
+    HANDLE_ERROR( cudaMemcpy( d_pars->p_ptheta, pars.p_ptheta, 
+        sizeof(PThetaDCM), cudaMemcpyHostToDevice ) ); 
 }
 
 __host__
 void 
-dam_y(kernpars pars, MPFLOAT **d_y)
+dam_y(kernpars pars, kernpars *d_pars)
 {
-    HANDLE_ERROR( cudaMalloc( (void **) d_y,
+    HANDLE_ERROR( cudaMalloc( &(d_pars->y),
         pars.nx * pars.ny * pars.nt * pars.nb * sizeof(MPFLOAT) ) );
 }
 
 __host__
 void
-dam_u(kernpars pars, MPFLOAT **d_u)
+dam_u(kernpars pars, kernpars *d_pars)
 {
-    HANDLE_ERROR( cudaMalloc( (void**) d_u,
+    HANDLE_ERROR( cudaMalloc( &(d_pars->u),
         pars.nt * pars.nu * pars.dp *  sizeof(MPFLOAT) ) );
 
-    HANDLE_ERROR( cudaMemcpy( *d_u, pars.u, pars.nt * pars.nu * pars.dp * 
-        sizeof(MPFLOAT), cudaMemcpyHostToDevice ) );
+    HANDLE_ERROR( cudaMemcpy( d_pars->u, pars.u, pars.nt * pars.nu * 
+        pars.dp * sizeof(MPFLOAT), cudaMemcpyHostToDevice ) );
 }
 
 
@@ -89,43 +127,31 @@ dam_u(kernpars pars, MPFLOAT **d_u)
 int 
 mpdcm_fmri( kernpars pars, klauncher launcher)
 {
-    // TODO Can be done in a much better way
-    //MPFLOAT *x = pars.x;
     MPFLOAT *y = pars.y;
 
-    MPFLOAT *d_x, *d_y, *d_u;
-    void *pd_theta, *pd_ptheta;
-    MPFLOAT *dd_theta, *dd_ptheta;
     unsigned int errcode[1], *d_errcode;
 
     kernpars d_pars;
 
     // x
-    d_x = 0;
+    //d_x = 0;
 
     // y
-    dam_y(pars, &d_y);
+    dam_y(pars, &d_pars);
   
     // u
-    dam_u(pars, &d_u);
+    dam_u(pars, &d_pars);
 
     // Error code
     HANDLE_ERROR( cudaMalloc( (void**) &d_errcode, 
         sizeof( unsigned int ) ) );
 
     // Theta 
-    dam_theta(pars, &pd_theta, &dd_theta);
+    dam_theta(pars, &d_pars);
  
     // PThetaDCM
-    dam_ptheta(pars, &pd_ptheta, &dd_ptheta); 
-
-    d_pars.y = d_y;
-    d_pars.u = d_u;
-    d_pars.p_theta = (ThetaDCM *) pd_theta;
-    d_pars.d_theta = dd_theta;
-    d_pars.p_ptheta = (PThetaDCM *) pd_ptheta;
-    d_pars.d_ptheta = dd_ptheta;
-
+    dam_ptheta(pars, &d_pars); 
+ 
     d_pars.nx = pars.nx;
     d_pars.ny = pars.ny;
     d_pars.nu = pars.nu;
@@ -135,15 +161,11 @@ mpdcm_fmri( kernpars pars, klauncher launcher)
 
 
     // Launch the kernel
-    (*launcher)(
-        d_x, d_y, d_u, 
-        pd_theta, dd_theta, 
-        pd_ptheta, dd_ptheta,
-        pars.nx, pars.ny, pars.nu, pars.dp, pars.nt, pars.nb, d_errcode);
+    (*launcher)( d_pars, d_errcode);
 
     // Get y back
 
-    HANDLE_ERROR( cudaMemcpy(y, d_y,
+    HANDLE_ERROR( cudaMemcpy(y, d_pars.y,
         pars.nx * pars.ny * pars.nt * pars.nb * sizeof(MPFLOAT),
         cudaMemcpyDeviceToHost) );
 
@@ -155,16 +177,24 @@ mpdcm_fmri( kernpars pars, klauncher launcher)
 
     // free the memory allocated on the GPU
     //HANDLE_ERROR( cudaFree( d_x ) );
-    HANDLE_ERROR( cudaFree( d_y ) );
-    HANDLE_ERROR( cudaFree( d_u ) );
+    HANDLE_ERROR( cudaFree( d_pars.y ) );
+    HANDLE_ERROR( cudaFree( d_pars.u ) );
     HANDLE_ERROR( cudaFree( d_errcode ) );
 
-    HANDLE_ERROR( cudaFree( pd_theta ) );
-    HANDLE_ERROR( cudaFree( dd_theta ) );
+    HANDLE_ERROR( cudaFree( d_pars.p_theta ) );
+    HANDLE_ERROR( cudaFree( d_pars.d_theta ) );
 
-    if ( DIM_PTHETA ) HANDLE_ERROR( cudaFree( pd_ptheta ) );
-    if ( DIM_DPTHETA ) HANDLE_ERROR( cudaFree( dd_ptheta ) );
-    
+    if ( DIM_PTHETA ) HANDLE_ERROR( cudaFree( d_pars.p_ptheta ) );
+    if ( DIM_DPTHETA ) HANDLE_ERROR( cudaFree( d_pars.d_ptheta ) );
+
+    HANDLE_ERROR( cudaFree( d_pars.jB ) );
+    HANDLE_ERROR( cudaFree( d_pars.iB ) );
+    HANDLE_ERROR( cudaFree( d_pars.vB ) );
+
+    HANDLE_ERROR( cudaFree( d_pars.jD ) );
+    HANDLE_ERROR( cudaFree( d_pars.iD ) );
+    HANDLE_ERROR( cudaFree( d_pars.vD ) );
+   
     return 0; 
 }
 
@@ -177,7 +207,8 @@ int
 mpdcm_fmri_euler( kernpars pars )
 {
    return mpdcm_fmri( pars, &ldcm_euler);
-};
+}
+;
 
 extern "C"
 int
