@@ -119,19 +119,7 @@ typedef struct
     MPFLOAT *v;
 } sqsparse; 
 
-// Type def for the integrators. 
-
-typedef int (*integrator)(MPFLOAT *, MPFLOAT *, MPFLOAT *, void *, MPFLOAT *,
-            void *, MPFLOAT *, int, int, int, int, int, int);
-
-// Kernel launchers 
-
-typedef void (*klauncher)(MPFLOAT *, MPFLOAT *, MPFLOAT *, void *, MPFLOAT *, 
-    void *, MPFLOAT *, int, int, int, int, int, int, unsigned int*);
-
-// Update of x
-
-typedef void (*fupx)(dbuff, dbuff, dbuff, void *, void *, dbuff);
+// Arguments
 
 typedef struct {
     MPFLOAT *x;
@@ -150,6 +138,22 @@ typedef struct {
     unsigned int * errcode;
     } kernpars;
 
+
+
+// Type def for the integrators. 
+
+typedef int (*integrator)(MPFLOAT *, MPFLOAT *, MPFLOAT *, void *, MPFLOAT *,
+            void *, MPFLOAT *, kernpars);
+
+// Kernel launchers 
+
+typedef void (*klauncher)(MPFLOAT *, MPFLOAT *, MPFLOAT *, void *, MPFLOAT *, 
+    void *, MPFLOAT *, int, int, int, int, int, int, unsigned int*);
+
+// Update of x
+
+typedef void (*fupx)(dbuff, dbuff, dbuff, void *, void *, dbuff);
+
 // Thread info. Needed for the synchronization of the adapted step methods.
 typedef struct {
     unsigned int ns; // Number of data sets
@@ -163,7 +167,7 @@ typedef struct {
 BDDM_EXTERN
 int mpdcm_fmri_euler( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
     void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb);
+    kernpars pars);
     /* 
     Integrate DCM using a parallel architecture with the euler method.
 
@@ -185,7 +189,7 @@ int mpdcm_fmri_euler( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
 BDDM_EXTERN
 int mpdcm_fmri_kr4( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
     void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb);
+    kernpars pars);
     /* 
     Integrate DCM using a parallel architecture, with a kutta runga of 4th 
     order. 
@@ -208,7 +212,7 @@ int mpdcm_fmri_kr4( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
 BDDM_EXTERN
 int mpdcm_fmri_bs( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
     void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb);
+    kernpars pars);
     /* 
     Integrate DCM using a parallel architecture, with a kutta runga of 4th 
     order. 

@@ -291,6 +291,7 @@ c_mpdcm_prepare_input(
     int nx, ny, nu, dp, nt, nb;
     int nB, nD;
     sqsparse mB[1], mD[1];
+    kernpars pars;
 
     nx = (int ) *mxGetPr( mxGetField(mxGetCell(theta, 0), 0, "dim_x") );
     nu = mxGetDimensions( mxGetCell( u, 0) )[0];
@@ -367,8 +368,14 @@ c_mpdcm_prepare_input(
 
     // Run the function
 
-    (*integ)(cx, cy, cu, ctheta, dtheta, cptheta, dptheta,
-        nx, ny, nu, dp, nt, nb);
+    pars.nx = nx;
+    pars.ny = ny;
+    pars.nu = nu;
+    pars.dp = dp;
+    pars.nt = nt;
+    pars.nb = nb;
+
+    (*integ)(cx, cy, cu, ctheta, dtheta, cptheta, dptheta, pars);
 
     // Tranfer results
 

@@ -69,12 +69,11 @@ dam_ptheta(
 // Host code
 // ===========================================================================
 
-extern "C"
 int 
 mpdcm_fmri( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
     void *theta, MPFLOAT *d_theta,
     void *ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb,
+    kernpars pars,
     klauncher launcher)
 {
 
@@ -82,6 +81,8 @@ mpdcm_fmri( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
     void *pd_theta, *pd_ptheta;
     MPFLOAT *dd_theta, *dd_ptheta;
     unsigned int errcode[1], *d_errcode;
+    int nx = pars.nx, ny = pars.ny, nu = pars.nu, dp = pars.dp, nt = pars.nt,
+       nb = pars.nb;
 
     // x
 
@@ -162,12 +163,12 @@ int
 mpdcm_fmri_euler( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
     void *theta, MPFLOAT *d_theta,
     void *ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb)
+    kernpars pars)
 {
    int r = mpdcm_fmri(x, y, u,
         theta, d_theta,
         ptheta, d_ptheta, 
-        nx, ny, nu, dp, nt, nb,
+        pars,
         &ldcm_euler);
     
     return r;
@@ -178,12 +179,12 @@ int
 mpdcm_fmri_kr4( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
     void *theta, MPFLOAT *d_theta,
     void *ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb)
+    kernpars pars)
 {
     int r = mpdcm_fmri(x, y, u,
         theta, d_theta,
         ptheta, d_ptheta, 
-        nx, ny, nu, dp, nt, nb,
+        pars,
         &ldcm_kr4);
 
     return r;
@@ -194,12 +195,12 @@ int
 mpdcm_fmri_bs( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
     void *theta, MPFLOAT *d_theta,
     void *ptheta, MPFLOAT *d_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb)
+    kernpars pars)
 {
     int r = mpdcm_fmri(x, y, u,
         theta, d_theta,
         ptheta, d_ptheta, 
-        nx, ny, nu, dp, nt, nb,
+        pars,
         &ldcm_bs);
 
     return r;
