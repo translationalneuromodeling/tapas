@@ -146,8 +146,7 @@ typedef struct {
 
 // Type def for the integrators. 
 
-typedef int (*integrator)(MPFLOAT *, MPFLOAT *, MPFLOAT *, void *, MPFLOAT *,
-            void *, MPFLOAT *, kernpars);
+typedef int (*integrator)(kernpars);
 
 // Kernel launchers 
 
@@ -169,9 +168,7 @@ typedef struct {
 // ==========================================================================
 
 BDDM_EXTERN
-int mpdcm_fmri_euler( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
-    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
-    kernpars pars);
+int mpdcm_fmri_euler( kernpars pars );
     /* 
     Integrate DCM using a parallel architecture with the euler method.
 
@@ -191,9 +188,7 @@ int mpdcm_fmri_euler( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
     */
 
 BDDM_EXTERN
-int mpdcm_fmri_kr4( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
-    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
-    kernpars pars);
+int mpdcm_fmri_kr4( kernpars pars );
     /* 
     Integrate DCM using a parallel architecture, with a kutta runga of 4th 
     order. 
@@ -214,9 +209,7 @@ int mpdcm_fmri_kr4( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
     */
 
 BDDM_EXTERN
-int mpdcm_fmri_bs( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u, 
-    void *theta, MPFLOAT *d_theta, void *ptheta, MPFLOAT *d_ptheta, 
-    kernpars pars);
+int mpdcm_fmri_bs( kernpars pars  );
     /* 
     Integrate DCM using a parallel architecture, with a kutta runga of 4th 
     order. 

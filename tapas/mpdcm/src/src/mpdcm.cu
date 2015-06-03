@@ -18,19 +18,20 @@
 // Device alloc memory theta
 __host__ 
 void
-dam_theta(
-    void **theta, MPFLOAT **d_theta,
-    void **pd_theta, MPFLOAT **dd_theta,
-    int nx, int ny, int nu, int dp, int nt, int nb)
+dam_theta(kernpars pars, void **pd_theta, MPFLOAT **dd_theta)
 {
+    int nx = pars.nx;
+    int nu = pars.nu;
+    int nt = pars.nt;
+    int nb = pars.nb;
 
     int tp;
 
     // Allocate memory for the structures
 
     HANDLE_ERROR( cudaMalloc( pd_theta, nt * nb * sizeof(ThetaDCM)));
-    HANDLE_ERROR( cudaMemcpy( *pd_theta, *theta, nt * nb * sizeof(ThetaDCM),
-        cudaMemcpyHostToDevice ) );
+    HANDLE_ERROR( cudaMemcpy( *pd_theta, pars.p_theta, 
+        nt * nb * sizeof(ThetaDCM), cudaMemcpyHostToDevice ) );
 
     // Allocate memory for the matrices. It is assumed that the parameters
     // are in a block of contiguous memory with the for A, Bs, C, x0, epsilon,
@@ -40,12 +41,12 @@ dam_theta(
         (nx * nx +      // A:
         nx * nx * nu +  // B's
         nx * nu +       // C
-        nx * nx * nx +
+        nx * nx * nx +  // D
         nx + // kappa
         nx); // tau 
 
     HANDLE_ERROR( cudaMalloc( dd_theta, tp * sizeof(MPFLOAT) ) );
-    HANDLE_ERROR( cudaMemcpy( (void *) *dd_theta, (void *) *d_theta, 
+    HANDLE_ERROR( cudaMemcpy( (void *) *dd_theta, pars.d_theta, 
         tp * sizeof(MPFLOAT), cudaMemcpyHostToDevice ) );
 
 }
@@ -53,84 +54,97 @@ dam_theta(
 // Device alloc memory ptheta
 __host__ 
 void 
-dam_ptheta(
-    void **ptheta, MPFLOAT **d_ptheta, 
-    void **pd_ptheta, MPFLOAT **dd_ptheta, 
-    int nx, int ny, int nu, int dp, int nt, int nb)
+dam_ptheta( kernpars pars, void **pd_ptheta, MPFLOAT **dd_ptheta)
 {
-
     HANDLE_ERROR( cudaMalloc( pd_ptheta, sizeof(PThetaDCM)));
-    HANDLE_ERROR( cudaMemcpy( *pd_ptheta, *ptheta, sizeof(PThetaDCM),
-        cudaMemcpyHostToDevice ) );
- 
+    HANDLE_ERROR( cudaMemcpy( *pd_ptheta, pars.p_ptheta, sizeof(PThetaDCM),
+        cudaMemcpyHostToDevice ) ); 
 }
+
+__host__
+void 
+dam_y(kernpars pars, MPFLOAT **d_y)
+{
+    HANDLE_ERROR( cudaMalloc( (void **) d_y,
+        pars.nx * pars.ny * pars.nt * pars.nb * sizeof(MPFLOAT) ) );
+}
+
+__host__
+void
+dam_u(kernpars pars, MPFLOAT **d_u)
+{
+    HANDLE_ERROR( cudaMalloc( (void**) d_u,
+        pars.nt * pars.nu * pars.dp *  sizeof(MPFLOAT) ) );
+
+    HANDLE_ERROR( cudaMemcpy( *d_u, pars.u, pars.nt * pars.nu * pars.dp * 
+        sizeof(MPFLOAT), cudaMemcpyHostToDevice ) );
+}
+
+
 
 // ===========================================================================
 // Host code
 // ===========================================================================
 
 int 
-mpdcm_fmri( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
-    void *theta, MPFLOAT *d_theta,
-    void *ptheta, MPFLOAT *d_ptheta, 
-    kernpars pars,
-    klauncher launcher)
+mpdcm_fmri( kernpars pars, klauncher launcher)
 {
+    // TODO Can be done in a much better way
+    //MPFLOAT *x = pars.x;
+    MPFLOAT *y = pars.y;
 
     MPFLOAT *d_x, *d_y, *d_u;
     void *pd_theta, *pd_ptheta;
     MPFLOAT *dd_theta, *dd_ptheta;
     unsigned int errcode[1], *d_errcode;
-    int nx = pars.nx, ny = pars.ny, nu = pars.nu, dp = pars.dp, nt = pars.nt,
-       nb = pars.nb;
+
+    kernpars d_pars;
 
     // x
-
     d_x = 0;
 
     // y
-
-    HANDLE_ERROR( cudaMalloc( (void **) &d_y,
-        nx * ny * nt * nb * sizeof(MPFLOAT) ) );
-
+    dam_y(pars, &d_y);
+  
     // u
-
-    HANDLE_ERROR( cudaMalloc( (void**) &d_u,
-        nt * nu * dp *  sizeof(MPFLOAT) ) );
-
-    HANDLE_ERROR( cudaMemcpy( d_u, u, nt * nu * dp * sizeof(MPFLOAT),
-        cudaMemcpyHostToDevice ) );
+    dam_u(pars, &d_u);
 
     // Error code
-
     HANDLE_ERROR( cudaMalloc( (void**) &d_errcode, 
         sizeof( unsigned int ) ) );
 
-
     // Theta 
-    dam_theta(
-        &theta, &d_theta,
-        &pd_theta, &dd_theta,
-        nx, ny, nu, dp, nt, nb);
-    
+    dam_theta(pars, &pd_theta, &dd_theta);
+ 
     // PThetaDCM
+    dam_ptheta(pars, &pd_ptheta, &dd_ptheta); 
 
-    dam_ptheta(
-        &ptheta, &d_ptheta,
-        &pd_ptheta, &dd_ptheta,
-        nx, ny, nu, dp, nt, nb); 
+    d_pars.y = d_y;
+    d_pars.u = d_u;
+    d_pars.p_theta = (ThetaDCM *) pd_theta;
+    d_pars.d_theta = dd_theta;
+    d_pars.p_ptheta = (PThetaDCM *) pd_ptheta;
+    d_pars.d_ptheta = dd_ptheta;
+
+    d_pars.nx = pars.nx;
+    d_pars.ny = pars.ny;
+    d_pars.nu = pars.nu;
+    d_pars.dp = pars.dp;
+    d_pars.nt = pars.nt;
+    d_pars.nb = pars.nb;
+
 
     // Launch the kernel
     (*launcher)(
         d_x, d_y, d_u, 
         pd_theta, dd_theta, 
         pd_ptheta, dd_ptheta,
-        nx, ny, nu, dp, nt, nb, d_errcode);
+        pars.nx, pars.ny, pars.nu, pars.dp, pars.nt, pars.nb, d_errcode);
 
     // Get y back
 
     HANDLE_ERROR( cudaMemcpy(y, d_y,
-        nx * ny * nt * nb * sizeof(MPFLOAT),
+        pars.nx * pars.ny * pars.nt * pars.nb * sizeof(MPFLOAT),
         cudaMemcpyDeviceToHost) );
 
     HANDLE_ERROR( cudaMemcpy(errcode, d_errcode, sizeof( unsigned int ), 
@@ -160,48 +174,21 @@ mpdcm_fmri( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
 
 extern "C"
 int
-mpdcm_fmri_euler( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
-    void *theta, MPFLOAT *d_theta,
-    void *ptheta, MPFLOAT *d_ptheta, 
-    kernpars pars)
+mpdcm_fmri_euler( kernpars pars )
 {
-   int r = mpdcm_fmri(x, y, u,
-        theta, d_theta,
-        ptheta, d_ptheta, 
-        pars,
-        &ldcm_euler);
-    
-    return r;
+   return mpdcm_fmri( pars, &ldcm_euler);
 };
 
 extern "C"
 int
-mpdcm_fmri_kr4( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
-    void *theta, MPFLOAT *d_theta,
-    void *ptheta, MPFLOAT *d_ptheta, 
-    kernpars pars)
+mpdcm_fmri_kr4( kernpars pars )
 {
-    int r = mpdcm_fmri(x, y, u,
-        theta, d_theta,
-        ptheta, d_ptheta, 
-        pars,
-        &ldcm_kr4);
-
-    return r;
+    return mpdcm_fmri(pars, &ldcm_kr4);
 }
 
 extern "C"
 int
-mpdcm_fmri_bs( MPFLOAT *x, MPFLOAT *y, MPFLOAT *u,
-    void *theta, MPFLOAT *d_theta,
-    void *ptheta, MPFLOAT *d_ptheta, 
-    kernpars pars)
+mpdcm_fmri_bs( kernpars pars)
 {
-    int r = mpdcm_fmri(x, y, u,
-        theta, d_theta,
-        ptheta, d_ptheta, 
-        pars,
-        &ldcm_bs);
-
-    return r;
+    return mpdcm_fmri( pars, &ldcm_bs);
 };

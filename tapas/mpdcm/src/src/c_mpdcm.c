@@ -386,7 +386,9 @@ c_mpdcm_prepare_input(
     pars.nt = nt;
     pars.nb = nb;
 
-    (*integ)(cx, cy, cu, ctheta, dtheta, cptheta, dptheta, pars);
+    // Run function
+
+    (*integ)(pars);
 
     // Tranfer results
 
