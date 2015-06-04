@@ -23,42 +23,42 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
     int nx = x.dim;
     int j;
     int k;
-    int p;
+    int l;
     int o;
 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
     o = INDEX_X * x.dim;
 
     // A
-    
+
     for (j = 0; j < nx; j++)
     {
-        dx = fma(theta->A[i + nx*j], x.arr[o + j], dx);
+        bt = 0;
         if ( theta->fD == MF_TRUE )
         {
+            for ( l = 0; l < nx; l++ )
+            {
+                int o = (nx + 1) * j;
+                int oj = theta->sB->j[o + l]; 
+                for (k = 0; k < theta->sD->j[o + l + 1] - oj;  k++)
+                {
+                    if ( theta->sD->i[oj + k] == i )
+                    {
+                        bt = fma(x.arr[l], theta->sD->v[oj + k], bt);
+                    }
+                }
+            }
+           
             bt = 0;
             k = nx * nx * j + i;
-            for (p = 0; p < x.dim; p++)
-                bt = fma(theta->D[k + nx * p], x.arr[o + p], bt);
-            dx = fma(bt, x.arr[o + j], dx);
+            for (l = 0; l < x.dim; l++)
+                bt = fma(theta->D[k + nx * l], x.arr[o + l], bt); 
         }
+        dx = fma(theta->A[i + nx*j] + bt, x.arr[o + j], dx);
     }
-    /*
-    for (j = 0; j < (nx + 1 ) * nx - 1; j++)
-    {
-        bt = 0;
-        for (k = 0; k < theta->sD->j[j+1] - theta->sD->j[j]; k++)
-        {
-            bt = fma(x.arr[o + theta->iD[theta->jD[j] + k]], 
-                theta->vD[theta->jD[j] + k], dx);
-        }
-        dx = fma(bt, x.arr[o + j / (nx + 1)], dx);
-    }
-    */
 
     for (j = 0; j < u.dim; j++)
     {
-        int l;
         if (  u.arr[j] == 0  )
             continue;
 
