@@ -23,7 +23,6 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
     int nx = x.dim;
     int j;
     int k;
-    int l;
     int o;
 
     ThetaDCM *theta = (ThetaDCM *) p_theta;
@@ -36,23 +35,10 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
         bt = 0;
         if ( theta->fD == MF_TRUE )
         {
-            for ( l = 0; l < nx; l++ )
-            {
-                int o = (nx + 1) * j;
-                int oj = theta->sB->j[o + l]; 
-                for (k = 0; k < theta->sD->j[o + l + 1] - oj;  k++)
-                {
-                    if ( theta->sD->i[oj + k] == i )
-                    {
-                        bt = fma(x.arr[l], theta->sD->v[oj + k], bt);
-                    }
-                }
-            }
-           
-            bt = 0;
-            k = nx * nx * j + i;
-            for (l = 0; l < x.dim; l++)
-                bt = fma(theta->D[k + nx * l], x.arr[o + l], bt); 
+            int o = (nx + 1) * j;
+            int oj = theta->sD->j[o + i]; 
+            for (k = 0; k < theta->sD->j[o + i + 1] - oj;  k++)
+                bt = fma(x.arr[theta->sD->i[oj + k]], theta->sD->v[oj + k], bt);
         }
         dx = fma(theta->A[i + nx*j] + bt, x.arr[o + j], dx);
     }
@@ -61,20 +47,13 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
     {
         if (  u.arr[j] == 0  )
             continue;
-
+        
         bt = 0;
-        for (l = 0; l < nx; l ++)
-        {
-            int o = (nx + 1) * j;
-            int oj = theta->sB->j[o + l]; 
-            for (k = 0; k < theta->sB->j[o + l + 1] - oj;  k++)
-            {
-                if ( theta->sB->i[oj + k] == i )
-                {
-                    bt = fma(x.arr[l], theta->sB->v[oj + k], bt);
-                }
-            }
-        }
+
+        int o = (nx + 1) * j;
+        int oj = theta->sB->j[o + i]; 
+        for (k = 0; k < theta->sB->j[o + i + 1] - oj;  k++)
+            bt = fma(x.arr[theta->sB->i[oj + k]], theta->sB->v[oj + k], bt);
 
         // C
 

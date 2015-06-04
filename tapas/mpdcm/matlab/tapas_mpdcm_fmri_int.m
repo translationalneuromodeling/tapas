@@ -72,12 +72,12 @@ for i = 1:numel(theta)
 
     theta{i}.tB = cell(size(theta{i}.B, 3), 1);
     for j = 1:numel(theta{i}.tB)
-        theta{i}.tB{j} = sparse(theta{i}.B(:, :, j));
+        theta{i}.tB{j} = sparse(theta{i}.B(:, :, j)');
     end
 
     theta{i}.tD = cell(size(theta{i}.D, 3), 1);
     for j = 1:numel(theta{i}.tD)
-        theta{i}.tD{j} = sparse(theta{i}.D(:, :, j));
+        theta{i}.tD{j} = sparse(theta{i}.D(:, :, j)');
     end
 
 end

@@ -255,6 +255,11 @@ kdcm_bs(kernpars pars, unsigned int * errcode)
 
     thr_info tinfo[1];
 
+    // Assign the sparse matrices
+
+    sqsparse sB[1];
+    sqsparse sD[1];
+
     tinfo->ns = nt * nb;
 
     lptheta->dt = ptheta->dt;
@@ -303,6 +308,20 @@ kdcm_bs(kernpars pars, unsigned int * errcode)
         o += nx;
 
         ltheta->tau = o; 
+
+        ltheta->sB = sB;
+        ltheta->sD = sD;
+
+        // Assign the appropriate offset
+
+        ltheta->sB->j = pars.jB + (nx + 1) * nu * i;
+        ltheta->sD->j = pars.jD + (nx + 1) * nx * i;
+
+        ltheta->sB->i = pars.iB;
+        ltheta->sD->i = pars.iD;
+
+        ltheta->sB->v = pars.vB; 
+        ltheta->sD->v = pars.vD;
 
         tx.arr = sx + PRELOC_SIZE_X_BS * DIM_X * nx * (threadIdx.x/nx);
 
