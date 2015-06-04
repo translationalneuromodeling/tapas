@@ -148,7 +148,7 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
     while ( i < nb * nt )
     {
         MPFLOAT *o;
-        int nB, nD;
+        //int nB, nD;
 
         tu.arr = u + (i/nb) * nu * dp;
         // Get the new address
@@ -188,14 +188,14 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
         ltheta->sB->j = pars.jB + (nx + 1) * nu * i;
         ltheta->sD->j = pars.jD + (nx + 1) * nx * i;
 
-        nB = *(sB->j);
-        nD = *(sD->j);
+        //nB = *(sB->j);
+        //nD = *(sD->j);
 
-        ltheta->sB->i = pars.iB + nB;
-        ltheta->sD->i = pars.iD + nD;
+        ltheta->sB->i = pars.iB;
+        ltheta->sD->i = pars.iD;
 
-        ltheta->sB->v = pars.vB + nB;
-        ltheta->sD->v = pars.vD + nD;
+        ltheta->sB->v = pars.vB; 
+        ltheta->sD->v = pars.vD;
 
         tx.arr = sx + PRELOC_SIZE_X_KR4 * DIM_X * nx * (threadIdx.x/nx);
 

@@ -20,6 +20,7 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
 {
     MPFLOAT dx = 0;
     MPFLOAT bt = 0;
+    int nx = x.dim;
     int j;
     int k;
     int p;
@@ -29,18 +30,31 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
     o = INDEX_X * x.dim;
 
     // A
-    for (j = 0; j < x.dim; j++)
+    
+    for (j = 0; j < nx; j++)
     {
-        dx = fma(theta->A[i + x.dim*j], x.arr[o + j], dx);
+        dx = fma(theta->A[i + nx*j], x.arr[o + j], dx);
         if ( theta->fD == MF_TRUE )
         {
             bt = 0;
-            k = x.dim * x.dim * j + i;
+            k = nx * nx * j + i;
             for (p = 0; p < x.dim; p++)
-                bt = fma(theta->D[k + x.dim * p], x.arr[o + p], bt);
+                bt = fma(theta->D[k + nx * p], x.arr[o + p], bt);
             dx = fma(bt, x.arr[o + j], dx);
         }
     }
+    /*
+    for (j = 0; j < (nx + 1 ) * nx - 1; j++)
+    {
+        bt = 0;
+        for (k = 0; k < theta->sD->j[j+1] - theta->sD->j[j]; k++)
+        {
+            bt = fma(x.arr[o + theta->iD[theta->jD[j] + k]], 
+                theta->vD[theta->jD[j] + k], dx);
+        }
+        dx = fma(bt, x.arr[o + j / (nx + 1)], dx);
+    }
+    */
 
     for (j = 0; j < u.dim; j++)
     {
@@ -48,14 +62,31 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
             continue;
         // B
         bt = 0;
+        /* 
         k = x.dim * x.dim * j + i;
         for (p = 0; p < x.dim; p++){
             bt = fma(theta->B[k + x.dim * p], x.arr[o + p], bt);
         }
+        */
         // C
         dx = fma(theta->C[i + x.dim * j] + bt, u.arr[j], dx);
     }
-
+    /* 
+    for (j = 0; j < (nx + 1) * u.dim - 1; j++)
+    {
+        // How many elements need to be summed
+        bt = 0;
+        for (k = 0; k < theta->sB->j[j+1] - theta->sB->j[j]; k++)
+        {
+            if ( theta->sB->i[theta->sB->j[j] + k] == i )
+            {
+                bt = fma(x.arr[o + (j % (nx + 1)) ],
+                    theta->sB->v[theta->sB->j[j] + k], bt);
+            }
+        }
+        dx = fma(bt, u.arr[j/(nx + 1)], dx);
+    }
+    */
     return dx;
 }
 
