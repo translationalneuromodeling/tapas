@@ -58,35 +58,28 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
 
     for (j = 0; j < u.dim; j++)
     {
+        int l;
         if (  u.arr[j] == 0  )
             continue;
-        // B
+
         bt = 0;
-        /* 
-        k = x.dim * x.dim * j + i;
-        for (p = 0; p < x.dim; p++){
-            bt = fma(theta->B[k + x.dim * p], x.arr[o + p], bt);
-        }
-        */
-        // C
-        dx = fma(theta->C[i + x.dim * j] + bt, u.arr[j], dx);
-    }
-    /* 
-    for (j = 0; j < (nx + 1) * u.dim - 1; j++)
-    {
-        // How many elements need to be summed
-        bt = 0;
-        for (k = 0; k < theta->sB->j[j+1] - theta->sB->j[j]; k++)
+        for (l = 0; l < nx; l ++)
         {
-            if ( theta->sB->i[theta->sB->j[j] + k] == i )
+            int o = (nx + 1) * j;
+            int oj = theta->sB->j[o + l]; 
+            for (k = 0; k < theta->sB->j[o + l + 1] - oj;  k++)
             {
-                bt = fma(x.arr[o + (j % (nx + 1)) ],
-                    theta->sB->v[theta->sB->j[j] + k], bt);
+                if ( theta->sB->i[oj + k] == i )
+                {
+                    bt = fma(x.arr[l], theta->sB->v[oj + k], bt);
+                }
             }
         }
-        dx = fma(bt, u.arr[j/(nx + 1)], dx);
+
+        // C
+
+        dx = fma(theta->C[i + x.dim * j] + bt, u.arr[j], dx);
     }
-    */
     return dx;
 }
 

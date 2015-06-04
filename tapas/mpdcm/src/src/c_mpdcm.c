@@ -75,7 +75,7 @@ c_mpdcm_transfer_sparse(const mxArray *ab, sqsparse *sm, int *ij, int *ii)
         // Transfer v
         pr = mxGetPr(mxGetCell(ab, i));
         for (j = 0; j < te; j++)
-            sm->v[j + *ii] = (MPFLOAT ) pr[i];
+            sm->v[j + *ii] = (MPFLOAT ) pr[j];
         
         // Update the counter
         *ii += te;

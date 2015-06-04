@@ -45,6 +45,9 @@ kdcm_euler(kernpars pars, unsigned int *errcode)
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     __shared__ PThetaDCM lptheta[1];
 
+    sqsparse sB[1];
+    sqsparse sD[1];
+
     lptheta->dt = ptheta->dt;
     lptheta->dyu = ptheta->dyu;
     lptheta->de = ptheta->de;
@@ -89,6 +92,20 @@ kdcm_euler(kernpars pars, unsigned int *errcode)
         o += nx;
 
         ltheta->tau = o; 
+
+        ltheta->sB = sB;
+        ltheta->sD = sD;
+
+        // Assign the appropriate offset
+
+        ltheta->sB->j = pars.jB + (nx + 1) * nu * i;
+        ltheta->sD->j = pars.jD + (nx + 1) * nx * i;
+
+        ltheta->sB->i = pars.iB;
+        ltheta->sD->i = pars.iD;
+
+        ltheta->sB->v = pars.vB; 
+        ltheta->sD->v = pars.vD;
 
         tx.arr = sx + PRELOC_SIZE_X_EULER * DIM_X * nx * (threadIdx.x/nx);
 
@@ -187,9 +204,6 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
 
         ltheta->sB->j = pars.jB + (nx + 1) * nu * i;
         ltheta->sD->j = pars.jD + (nx + 1) * nx * i;
-
-        //nB = *(sB->j);
-        //nD = *(sD->j);
 
         ltheta->sB->i = pars.iB;
         ltheta->sD->i = pars.iD;
