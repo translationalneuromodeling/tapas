@@ -26,7 +26,7 @@ function [dcm] = tapas_mpdcm_fmri_estimate(dcm, pars)
 
 if nargin < 2
     pars = struct();
-    pars.T = linspace(0.1, 1, 20)^5;
+    pars.T = linspace(0.001, 1, 100).^5;
     pars.nburnin = 2000;
     pars.niter = 5000;
     pars.verbose = 0;

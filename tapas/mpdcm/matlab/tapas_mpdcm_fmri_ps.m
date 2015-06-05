@@ -84,7 +84,9 @@ for i = 1:nburnin+niter
 
     % Diagnostics and kernel update
     if i > 1 && mod(i-1, pars.diagi) == 0
-        toc
+        try
+            toc
+        end
         diagnostics = diagnostics/pars.diagi;
         if pars.verb
             fprintf(1, 'Iter %d, diagnostics:  ', i);
