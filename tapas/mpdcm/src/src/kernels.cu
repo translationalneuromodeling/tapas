@@ -70,23 +70,15 @@ kdcm_euler(kernpars pars, unsigned int *errcode)
 
         o = d_theta + i * (
             nx * nx + // A
-            nx * nx * nu + // B 
             nx * nu + // C
-            nx * nx * nx + // D
             nx + // Kappa (K)
             nx); // tau
         
         ltheta->A = o;
         o += nx * nx;
 
-        ltheta->B = o;
-        o += nx * nx * nu;
-
         ltheta->C = o; 
         o+= nx * nu;
-
-        ltheta->D = o;
-        o += nx * nx * nx;
 
         ltheta->K = o;
         o += nx;
@@ -174,23 +166,15 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
 
         o = d_theta + i * (
             nx * nx + // A
-            nx * nx * nu + // B 
             nx * nu + // C
-            nx * nx * nx + // D
             nx + // Kappa (K)
             nx); // tau
         
         ltheta->A = o;
         o += nx * nx;
 
-        ltheta->B = o;
-        o += nx * nx * nu;
-
         ltheta->C = o; 
         o += nx * nu;
-
-        ltheta->D = o;
-        o += nx * nx * nx;
 
         ltheta->K = o;
         o += nx;
@@ -286,23 +270,15 @@ kdcm_bs(kernpars pars, unsigned int * errcode)
 
         o = d_theta + i * (
             nx * nx + // A
-            nx * nx * nu + // B 
             nx * nu + // C
-            nx * nx * nx + // D
             nx + // Kappa (K)
             nx); // tau
         
         ltheta->A = o;
         o += nx * nx;
 
-        ltheta->B = o;
-        o += nx * nx * nu;
-
         ltheta->C = o; 
         o += nx * nu;
-
-        ltheta->D = o;
-        o += nx * nx * nx;
 
         ltheta->K = o;
         o += nx;

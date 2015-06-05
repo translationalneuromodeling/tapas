@@ -149,34 +149,11 @@ c_mpdcm_prepare_theta_fields(const mxArray *theta, ThetaDCM *ctheta,
         dtheta[k] = (MPFLOAT ) ta[k];
     dtheta += i;
 
-    i = ctheta->dim_x * ctheta->dim_x * ctheta->dim_u;
-    ta = mxGetPr(mxGetField(theta, 0, "B"));
-    for (k = 0; k < i; k++)
-        dtheta[k] = (MPFLOAT ) ta[k];
-    dtheta += i;
-
     i = ctheta->dim_x * ctheta->dim_u;
     ta = mxGetPr(mxGetField(theta, 0, "C"));
     for (k = 0; k < i; k++)
         dtheta[k] = (MPFLOAT ) ta[k];
-    dtheta += i;
-
-    // Inefficient implementation
-    
-    i = ctheta->dim_x * ctheta->dim_x * ctheta->dim_x;
-    if ( ctheta->fD == MF_TRUE )
-    {
-        ta = mxGetPr(mxGetField(theta, 0, "D"));
-        for (k = 0; k < i; k++)
-            dtheta[k] = (MPFLOAT ) ta[k];
-    } else
-    {
-        memset(dtheta, 0, i * sizeof( MPFLOAT ));
-    }    
-    memset(dtheta, 0, i * sizeof( MPFLOAT ));
-
-    dtheta += i;
-     
+    dtheta += i;    
 
     i = ctheta->dim_x;
     ta = mxGetPr(mxGetField(theta, 0, "K"));
@@ -304,9 +281,7 @@ c_mpdcm_prepare_input(
     /* Offsets */
 
     o = nx * nx + /*A*/
-        nx * nx * nu + /*B*/
         nx * nu + /*C*/
-        nx * nx * nx + /*D*/
         nx + /* Kappa */
         nx; /* tau */
 

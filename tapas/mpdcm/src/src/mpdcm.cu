@@ -41,9 +41,7 @@ dam_theta(kernpars pars, kernpars *d_pars)
 
     tp = nt * nb * 
         (nx * nx +      // A:
-        nx * nx * nu +  // B's
         nx * nu +       // C
-        nx * nx * nx +  // D
         nx + // kappa
         nx); // tau 
 
