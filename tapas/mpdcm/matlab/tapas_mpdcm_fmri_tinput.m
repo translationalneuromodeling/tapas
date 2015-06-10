@@ -142,6 +142,7 @@ function [ptheta] = tinput_ptheta(dcm, scale, dyu, udt, ys, us)
         ones(nr + nr + 1 + nh, 1)];
     v = logical(v);
 
+    % Lambdas are included in the same parameters.
     mtheta = [pE.A(:); pE.B(:); ...
         pE.C(:); pE.D(:); pE.transit(:); pE.decay(:); ...
         pE.epsilon(:); hE(:)];
@@ -287,10 +288,6 @@ function [theta] = tinput_theta(dcm)
         theta.fD = 1;
     else
         theta.fD = 0;
-    end
-
-    if size(theta.D, 3) == 0
-        theta.D = zeros(theta.dim_x, theta.dim_x, theta.dim_x);
     end
 
     theta.epsilon = ep;

@@ -66,7 +66,7 @@ htheta = tapas_mpdcm_fmri_htheta(ptheta);
 
 nt = numel(T);
 
-[q, otheta, ollh, olpp] = init_estimate(y, u, theta, ptheta, T, pars);
+[otheta, ollh, olpp] = init_estimate(y, u, theta, ptheta, T, pars);
 
 op = tapas_mpdcm_fmri_get_parameters(otheta, ptheta);
 
@@ -222,20 +222,27 @@ end
     
 end
 
-function [q, otheta, ollh, olpp] = init_estimate(y, u, theta, ptheta, T, pars)
+function [otheta, ollh, olpp] = init_estimate(y, u, theta, ptheta, T, pars)
 % Create an initial estimate to reduce burn in phase by computing the 
 % posterior distribution of the power posteriors
 
 nt = numel(T);
 
-[q, otheta] = tapas_mpdcm_fmri_gmodel(y, u, theta, ptheta);
-[ollh, ny] = tapas_mpdcm_fmri_llh(y, u, otheta, ptheta);
-if pars.verb
-    fprintf(1, 'Starting llh: %0.5d\n', ollh);
+try
+    [q, otheta] = tapas_mpdcm_fmri_gmodel(y, u, theta, ptheta);
+    [ollh, ~] = tapas_mpdcm_fmri_llh(y, u, otheta, ptheta);
+    if pars.verb
+        fprintf(1, 'Starting llh: %0.5d\n', ollh);
+    end
+    [op] = tapas_mpdcm_fmri_get_parameters(otheta, ptheta);
+catch err
+    if strcmp(err.identifier, 'mpdcm:fmri:mle:numeric')
+        op = {ptheta.p.theta.mu};
+        otheta = tapas_mpdcm_fmri_set_parameters(op, theta, ptheta); 
+    else
+        rethrow(err)
+    end
 end
-
-[op] = tapas_mpdcm_fmri_get_parameters(otheta, ptheta);
-
 % This is purely heuristics. There is an interpolation between the prior and
 % the mle estimator such that not all chains are forced into high llh regions.
 % Moreover, at low temperatures the chains are started in more sensible regime
