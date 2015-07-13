@@ -40,7 +40,7 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
             for (k = 0; k < theta->sD->j[o + i + 1] - oj;  k++)
                 bt = fma(x.arr[theta->sD->i[oj + k]], theta->sD->v[oj + k], bt);
         }
-        dx = fma(theta->A[i + nx * j] + bt, x.arr[o + j], dx);
+        dx = fma(theta->A[i * nx + j] + bt, x.arr[o + j], dx);
     }
 
     for (j = 0; j < u.dim; j++)

@@ -76,12 +76,15 @@ kdcm_euler(kernpars pars, unsigned int *errcode)
             nx + // Kappa (K)
             nx); // tau
         
-
+        // Use shared memory
         ltheta->A = shA + nx * nx * (threadIdx.x/nx);
-
+        
+        // Transfere in parallel
         for (j = 0; j < nx; j++)
             if (threadIdx.y == 0)
-            ltheta->A[j * nx  + threadIdx.x % nx] = o[j * nx + threadIdx.x%nx];
+                // Transpose the matrix
+                ltheta->A[j * nx  + threadIdx.x % nx] = 
+                    o[j + nx * (threadIdx.x%nx)];
              
         o += nx * nx;
 
@@ -187,9 +190,12 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
         
         ltheta->A = shA + nx * nx * (threadIdx.x/nx);
 
+        // Transfere in parallel
         for (j = 0; j < nx; j++)
             if (threadIdx.y == 0)
-            ltheta->A[j * nx  + threadIdx.x % nx] = o[j * nx + threadIdx.x%nx];
+                // Transpose the matrix
+                ltheta->A[j * nx  + threadIdx.x % nx] = 
+                    o[j + nx * (threadIdx.x%nx)];
              
         o += nx * nx;
 
