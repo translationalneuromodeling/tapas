@@ -290,6 +290,10 @@ function [theta] = tinput_theta(dcm)
         theta.fD = 0;
     end
 
+    if size(theta.D, 3) == 0
+        theta.D = zeros(theta.dim_x, theta.dim_x, theta.dim_x);
+    end
+
     theta.epsilon = ep;
     theta.K = kappa.*ones(theta.dim_x, 1);
     theta.tau = tau.*ones(theta.dim_x, 1);
