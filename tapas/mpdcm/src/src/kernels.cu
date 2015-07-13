@@ -33,7 +33,7 @@ kdcm_euler(kernpars pars, unsigned int *errcode)
     int nt = pars.nt;
     int nb = pars.nb; 
 
-    int i;
+    int i,j;
     dbuff tx, ty, tu;
     extern __shared__ MPFLOAT sx[];
 
@@ -44,6 +44,8 @@ kdcm_euler(kernpars pars, unsigned int *errcode)
 
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     __shared__ PThetaDCM lptheta[1];
+    __shared__ MPFLOAT shA[1024];
+    __shared__ MPFLOAT shC[320];
 
     sqsparse sB[1];
     sqsparse sD[1];
@@ -74,10 +76,21 @@ kdcm_euler(kernpars pars, unsigned int *errcode)
             nx + // Kappa (K)
             nx); // tau
         
-        ltheta->A = o;
+
+        ltheta->A = shA + nx * nx * (threadIdx.x/nx);
+
+        for (j = 0; j < nx; j++)
+            if (threadIdx.y == 0)
+            ltheta->A[j * nx  + threadIdx.x % nx] = o[j * nx + threadIdx.x%nx];
+             
         o += nx * nx;
 
-        ltheta->C = o; 
+        ltheta->C = shC + nx * nu * (threadIdx.x/nx);
+
+        for (j = 0; j < nu; j++)
+            if (threadIdx.y == 0)
+            ltheta->C[j * nx  + threadIdx.x % nx] = o[j * nx + threadIdx.x%nx];
+
         o+= nx * nu;
 
         ltheta->K = o;
@@ -126,7 +139,7 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
     int nt = pars.nt;
     int nb = pars.nb; 
 
-    int i;
+    int i, j;
     dbuff tx, ty, tu;
     extern __shared__ MPFLOAT sx[];
 
@@ -137,6 +150,8 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
 
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     __shared__ PThetaDCM lptheta[1];
+    __shared__ MPFLOAT shA[1024];
+    __shared__ MPFLOAT shC[320];
 
     // Assign the sparse matrices
 
@@ -170,10 +185,20 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
             nx + // Kappa (K)
             nx); // tau
         
-        ltheta->A = o;
+        ltheta->A = shA + nx * nx * (threadIdx.x/nx);
+
+        for (j = 0; j < nx; j++)
+            if (threadIdx.y == 0)
+            ltheta->A[j * nx  + threadIdx.x % nx] = o[j * nx + threadIdx.x%nx];
+             
         o += nx * nx;
 
-        ltheta->C = o; 
+        ltheta->C = shC + nx * nu * (threadIdx.x/nx);
+
+        for (j = 0; j < nu; j++)
+            if (threadIdx.y == 0)
+            ltheta->C[j * nx  + threadIdx.x % nx] = o[j * nx + threadIdx.x%nx];
+
         o += nx * nu;
 
         ltheta->K = o;
