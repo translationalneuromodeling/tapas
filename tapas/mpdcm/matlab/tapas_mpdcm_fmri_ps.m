@@ -236,7 +236,8 @@ try
     end
     [op] = tapas_mpdcm_fmri_get_parameters(otheta, ptheta);
 catch err
-    if strcmp(err.identifier, 'mpdcm:fmri:mle:numeric')
+    if strcmp(err.identifier, 'mpdcm:fmri:mle:numeric') || ...
+        numel(err.identifier) == 0
         op = {ptheta.p.theta.mu};
         otheta = tapas_mpdcm_fmri_set_parameters(op, theta, ptheta); 
     else
