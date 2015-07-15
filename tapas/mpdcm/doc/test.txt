@@ -17,6 +17,8 @@ Ubuntu 13.10
 Cuda compilation tools, release 6.0, V6.0.1
 GK104 [GeForce GTX 760] [10DE:1187]
 MATLAB 8.1.0.604 (R2013a
+
+
 # Compilers tested:
 
 - CUDA 6.4.3
