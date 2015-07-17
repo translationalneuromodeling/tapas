@@ -15,7 +15,7 @@ try,  v = M.ns;  catch, v = u;   end
 DCM.M = M;
 DCM.U = U;
 
-Indices = ceil([0:v - 1]*u/v ) + + DCM.M.delays(1)/U.dt;
+Indices = ceil([0:v - 1]*u/v ) + DCM.M.delays(1)/U.dt;
 
 Ep.A = full(Ep.A);
 Ep.B = full(Ep.B);
@@ -75,6 +75,9 @@ coefficientK1  = 4.3*frequencyOffset*echoTime*oxygenExtractionFraction;
 coefficientK2  = epsilon.*(relaxationRateSlope*oxygenExtractionFraction*echoTime);
 coefficientK3  = 1 - epsilon;
 
+if Indices(1) == 0
+    Indices(1) = 1;
+end
 
 y = restingVenousVolume*( bsxfun(@times,coefficientK1,(1 - (q(Indices,:)))) +...
             bsxfun(@times,coefficientK2,(1 - (q(Indices,:)./v(Indices,:)))) +...
