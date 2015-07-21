@@ -268,7 +268,7 @@ int mpdcm_fmri_bs( kernpars pars  );
 #define INDEX_LK3 2 
 
 #define NUM_BLOCKS 6
-#define NUM_THREADS 32
+#define NUM_THREADS 64
 
 #define KRW1 0.16666666666
 #define KRW2 0.33333333333
