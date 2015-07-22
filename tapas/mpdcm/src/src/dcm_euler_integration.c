@@ -40,60 +40,59 @@
 %
 % This file is part of TAPAS, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. For further details, see <http://www.gnu.org/licenses/>. 
-
+% Modified by Eduardo Aponte 22.07.2015
 %%*/
+
 #include<stdio.h>
 #include<math.h>
 #include "mex.h"
+#include "c_mpdcm.h"
 
 void mexFunction(int nlhs, mxArray *plhs[],/*Outputvariables*/
                     int nrhs, const mxArray *prhs[])
 {
     /* Extract all input parameters*/
     
-    double *A  = mxGetPr(prhs[0]);
-    double *C  = mxGetPr(prhs[1]);
-    double *U  = mxGetPr(prhs[2]);
-    double *B  = mxGetPr(prhs[3]);
-    double *D = mxGetPr(prhs[4]);
-    double *rho  = mxGetPr(prhs[5]);
-    double alphainv  = mxGetScalar(prhs[6]);
-    double *tau  = mxGetPr(prhs[7]);
-    double gamma  = mxGetScalar(prhs[8]);
-    double *kappa  = mxGetPr(prhs[9]);
-    double *param = mxGetPr(prhs[10]);
-    double *x_out;
-    double *s_out;
-    double *f1_out;
-    double *v1_out;
-    double *q1_out;
+    MPFLOAT *A  = (MPFLOAT *) mxGetPr(prhs[0]);
+    MPFLOAT *C  = (MPFLOAT *) mxGetPr(prhs[1]);
+    MPFLOAT *U  = (MPFLOAT *) mxGetPr(prhs[2]);
+    MPFLOAT *B  = (MPFLOAT *) mxGetPr(prhs[3]);
+    MPFLOAT *D = (MPFLOAT *) mxGetPr(prhs[4]);
+    MPFLOAT *rho = (MPFLOAT *) mxGetPr(prhs[5]);
+    MPFLOAT alphainv = (MPFLOAT ) mxGetScalar(prhs[6]);
+    MPFLOAT *tau  = (MPFLOAT *) mxGetPr(prhs[7]);
+    MPFLOAT gamma  = (MPFLOAT ) mxGetScalar(prhs[8]);
+    MPFLOAT *kappa  = (MPFLOAT *) mxGetPr(prhs[9]);
+    MPFLOAT *param = (MPFLOAT *) mxGetPr(prhs[10]);
+    MPFLOAT temp1; 
+    MPFLOAT temp2;
 
-    int jState,mState,kIter;
+    double *mx_out;
+    double *ms_out;
+    double *mf1_out;
+    double *mv1_out;
+    double *mq1_out;
+
+    int jState, mState, kIter, i;
     long iStep;
-    double temp1; 
-    double temp2;
-    double timeStep = param[0];
+    MPFLOAT timeStep = param[0];
     long nTime = param[1];
     const int nStates = param[2];
     int nInputs = param[3];
     int dcmTypeB = param[5];
     int dcmTypeD = param[6];
-    double *oldf1 = (double *) malloc(nStates*sizeof(double));
-    double *oldv1 = (double *) malloc(nStates*sizeof(double));
-    double *oldq1 = (double *) malloc(nStates*sizeof(double));
-    
-    plhs[0] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
-    plhs[1] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
-    plhs[2] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
-    plhs[3] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
-    plhs[4] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
-    
-    x_out = mxGetPr(plhs[0]);
-    s_out = mxGetPr(plhs[1]);
-    f1_out = mxGetPr(plhs[2]);
-    v1_out = mxGetPr(plhs[3]);
-    q1_out = mxGetPr(plhs[4]);    
-    
+
+    MPFLOAT *oldf1 = (MPFLOAT *) malloc(nStates * sizeof( MPFLOAT ));
+    MPFLOAT *oldv1 = (MPFLOAT *) malloc(nStates * sizeof( MPFLOAT ));
+    MPFLOAT *oldq1 = (MPFLOAT *) malloc(nStates * sizeof( MPFLOAT ));
+   
+    MPFLOAT *x_out = (MPFLOAT *) malloc(nStates * nTime * sizeof( MPFLOAT ));
+    MPFLOAT *s_out = (MPFLOAT *) malloc(nStates * nTime * sizeof( MPFLOAT ));
+    MPFLOAT *f1_out = (MPFLOAT *) malloc(nStates * nTime * sizeof( MPFLOAT ));
+    MPFLOAT *v1_out = (MPFLOAT *) malloc(nStates * nTime * sizeof( MPFLOAT ));
+    MPFLOAT *q1_out = (MPFLOAT *) malloc(nStates * nTime * sizeof( MPFLOAT ));
+   
+   
     /* Initialize the dynamical system to resting state values */
     for(jState=0;jState<nStates;jState++)
     {
@@ -150,9 +149,10 @@ void mexFunction(int nlhs, mxArray *plhs[],/*Outputvariables*/
                 }
             }
             /* update s */
-            s_out[iStep+1 + nTime*jState] = s_out[iStep + nTime*jState] + timeStep*(x_out[iStep + nTime*jState] -
-                                            kappa[jState]*s_out[iStep + nTime*jState] - 
-                                            gamma*(f1_out[iStep + nTime*jState] - 1.0));
+            s_out[iStep+1 + nTime*jState] = s_out[iStep + nTime*jState] +
+                timeStep*(x_out[iStep + nTime*jState] -
+                kappa[jState]*s_out[iStep + nTime*jState] - 
+                gamma*(f1_out[iStep + nTime*jState] - 1.0));
             
             /* update f */
             oldf1[jState]= oldf1[jState] + timeStep*(s_out[iStep + nTime*jState]/f1_out[iStep + nTime*jState]);
@@ -164,8 +164,11 @@ void mexFunction(int nlhs, mxArray *plhs[],/*Outputvariables*/
                            (tau[jState]*v1_out[iStep + nTime*jState]));
             
             /* update q */
-            oldq1[jState]= oldq1[jState] + timeStep*((f1_out[iStep + nTime*jState]*temp2 - 
-                    temp1*q1_out[iStep + nTime*jState]/v1_out[iStep + nTime*jState])/(tau[jState]*q1_out[iStep + nTime*jState]));
+            oldq1[jState]= oldq1[jState] + 
+                timeStep * ((f1_out[iStep + nTime*jState]*temp2 - 
+                    temp1*q1_out[iStep + nTime*jState] / 
+                    v1_out[iStep + nTime*jState]) / 
+                    (tau[jState] * q1_out[iStep + nTime*jState]));
 
             /* tracking the exponentiated values */
             f1_out[iStep+1 + nTime*jState] = exp(oldf1[jState]);
@@ -173,8 +176,43 @@ void mexFunction(int nlhs, mxArray *plhs[],/*Outputvariables*/
             q1_out[iStep+1 + nTime*jState] = exp(oldq1[jState]);
         }       
     }
+
+    /* Double */
+
+    plhs[0] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
+    plhs[1] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
+    plhs[2] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
+    plhs[3] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
+    plhs[4] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
     
+    mx_out = mxGetPr(plhs[0]);
+    ms_out = mxGetPr(plhs[1]);
+    mf1_out = mxGetPr(plhs[2]);
+    mv1_out = mxGetPr(plhs[3]);
+    mq1_out = mxGetPr(plhs[4]);    
+
+
+    /* Transfer memory */
+
+    for ( i = 0; i < nTime * nStates; i++)
+        mx_out[i] = (MPFLOAT ) x_out[i];
+    for ( i = 0; i < nTime * nStates; i++)
+        ms_out[i] = (MPFLOAT ) s_out[i]; 
+    for ( i = 0; i < nTime * nStates; i++)
+        mf1_out[i] = (MPFLOAT ) f1_out[i]; 
+    for ( i = 0; i < nTime * nStates; i++)
+        mv1_out[i] = (MPFLOAT ) v1_out[i]; 
+    for ( i = 0; i < nTime * nStates; i++)
+        mq1_out[i] = (MPFLOAT ) q1_out[i]; 
+
+
     /* free all the created memory*/
+    free(x_out);
+    free(s_out);
+    free(f1_out);
+    free(v1_out);
+    free(q1_out);
+
     free(oldf1);
     free(oldv1);
     free(oldq1);

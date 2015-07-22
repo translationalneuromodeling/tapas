@@ -39,7 +39,7 @@
 
 // Determines whether compile double or single precision
 
-# define MPDOUBLEFLAG
+//# define MPDOUBLEFLAG
 
 # ifdef MPDOUBLEFLAG
 # define MPFLOAT double 

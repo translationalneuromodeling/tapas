@@ -39,7 +39,8 @@ MEXDEVBIN = $(BINDIR)/c_mpdcm_num_devices.$(MEXEXT) \
 	$(BINDIR)/c_mpdcm_get_device.$(MEXEXT) \
 	$(BINDIR)/c_mpdcm_set_device.$(MEXEXT)
 
-MEXMISCBIN = $(BINDIR)/dcm_euler_integration.$(MEXEXT)
+MEXMISCBIN = $(BINDIR)/dcm_euler_integration.$(MEXEXT) \
+	$(BINDIR)/c_mpdcm_compflag.$(MEXEXT)
 
 all: $(MDIRS) $(MEXDCMBIN) $(MEXDEVBIN) $(MEXMISCBIN)
 
@@ -94,7 +95,8 @@ MEXDCMOBJ = $(BUILDDIR)/c_mpdcm_fmri_euler.o $(BUILDDIR)/c_mpdcm_fmri_kr4.o \
 MEXDEVOBJ = $(BUILDDIR)/c_mpdcm_num_devices.o $(BUILDDIR)/c_mpdcm_get_device.o \
 	$(BUILDDIR)/c_mpdcm_set_device.o 	 
 
-MEXMISCOBJ = $(BUILDDIR)/dcm_euler_integration.o
+MEXMISCOBJ = $(BUILDDIR)/dcm_euler_integration.o $(BUILDDIR)/c_mpdcm_compflag.o
+ 
 
 $(MEXDEVOBJ) $(MEXDCMOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.c
 	$(MEXCC) $(MEXFLAGS) -c -outdir $(BUILDDIR) -output $@ CFLAGS="\$$CFLAGS -std=c99 $(CUDA_CFLAGS)" $^

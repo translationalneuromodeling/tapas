@@ -59,9 +59,17 @@ epsilon = full(1*exp(Ep.epsilon));
 
 paramList = [DCM.U.dt size(DCM.U.u,1) nr size(DCM.U.u,2) 0 1 1];
 
-[x,s,f,v,q]  = dcm_euler_integration(A,C,U,mArrayB,mArrayD,...
-    oxygenExtractionFraction,alphainv,tau,gamma,kappa,paramList);
-               
+% Transform to single if necessary
+switch tapas_mpdcm_compflag
+case 0
+    [x,s,f,v,q]  = dcm_euler_integration(single(A), single(C), single(U), ...
+        single(mArrayB), single(mArrayD), single(oxygenExtractionFraction), ...
+        single(alphainv), single(tau), single(gamma), single(kappa), ...
+        single(paramList));
+case 1
+    [x,s,f,v,q]  = dcm_euler_integration(A,C,U,mArrayB,mArrayD,...
+        oxygenExtractionFraction,alphainv,tau,gamma,kappa,paramList); 
+end       
                
                
 % generate the responses per time point
