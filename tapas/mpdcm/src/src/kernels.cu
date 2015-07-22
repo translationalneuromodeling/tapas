@@ -153,10 +153,10 @@ kdcm_kr4(kernpars pars, unsigned int *errcode)
 
     PThetaDCM *ptheta = (PThetaDCM *) p_ptheta;
     __shared__ PThetaDCM lptheta[1];
-//    __shared__ MPFLOAT shA[1024];
-//    __shared__ MPFLOAT shC[320];
     __shared__ MPFLOAT shA[1024];
     __shared__ MPFLOAT shC[320];
+
+
 
     // Assign the sparse matrices
 
