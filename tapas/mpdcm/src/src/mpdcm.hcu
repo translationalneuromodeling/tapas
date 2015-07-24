@@ -51,7 +51,7 @@ typedef enum { MF_TRUE, MF_FALSE } MatFlag;
 
 typedef struct
 {
-    int dim;
+    short int dim;
     MPFLOAT *arr;
 } dbuff;
 
@@ -233,7 +233,7 @@ int mpdcm_fmri_bs( kernpars pars  );
 
 
 
-#define DIM_X 5 
+#define DIM_X 6 
 
 # ifdef __CUDACC__
 
@@ -248,6 +248,11 @@ int mpdcm_fmri_bs( kernpars pars  );
 #define INDEX_S 2
 #define INDEX_V 3
 #define INDEX_Q 4
+#define INDEX_XAD 0
+#define INDEX_XBC 5
+#define INDEX_XB 5
+#define INDEX_XC 6
+
 
 #define PRELOC_SIZE_X_KR4 3
 #define PRELOC_SIZE_X_EULER 2
@@ -301,6 +306,22 @@ int mpdcm_fmri_bs( kernpars pars  );
 __device__
 MPFLOAT
 dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+MPFLOAT
+dcm_dxAD(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+MPFLOAT
+dcm_dxBC(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+MPFLOAT
+dcm_dxB(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
+
+__device__
+MPFLOAT
+dcm_dxC(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i);
 
 __device__
 MPFLOAT

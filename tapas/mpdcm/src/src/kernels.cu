@@ -88,11 +88,12 @@ kdcm_euler(kernpars pars, unsigned int *errcode)
              
         o += nx * nx;
 
-        ltheta->C = shC + nx * nu * (threadIdx.x/nx);
-
-        for (j = 0; j < nu; j++)
-            if (threadIdx.y == 0)
-            ltheta->C[j * nx  + threadIdx.x % nx] = o[j * nx + threadIdx.x%nx];
+        ltheta->C = o;
+//        ltheta->C = shC + nx * nu * (threadIdx.x/nx);
+//
+//        for (j = 0; j < nu; j++)
+//            if ( threadIdx.y == 0 )
+//            ltheta->C[j * nx  + threadIdx.x % nx] = o[j * nx + threadIdx.x%nx];
 
         o+= nx * nu;
 

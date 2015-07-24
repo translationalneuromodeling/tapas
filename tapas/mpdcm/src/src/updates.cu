@@ -52,7 +52,7 @@ dcm_upx_euler(dbuff ox, dbuff y, dbuff u, void *p_theta,
             case INDEX_X:
                 s = INDEX_X * ox.dim + j;
                 nx.arr[s] = ox.arr[s] + 
-                    ptheta->de * dcm_dx(ox, y, u, p_theta, p_ptheta, j);
+                    ptheta->de * dcm_dxAD(ox, y, u, p_theta, p_ptheta, j);
                 break;
             case INDEX_F:
                 s = INDEX_F * ox.dim + j;
@@ -74,8 +74,21 @@ dcm_upx_euler(dbuff ox, dbuff y, dbuff u, void *p_theta,
                 nx.arr[s] = ox.arr[s] + 
                     ptheta->de * dcm_dq(ox, y, u, p_theta, p_ptheta, j); 
                 break;
+            case INDEX_XB:
+                s = INDEX_XB * ox.dim + j;
+                nx.arr[s] = ox.arr[s] + 
+                    ptheta->de * dcm_dxB(ox, y, u, p_theta, p_ptheta, j);
+                break;
+            case INDEX_XC:
+                s = INDEX_XC * ox.dim + j;
+                nx.arr[s] = ox.arr[s] + 
+                    ptheta->de * dcm_dxC(ox, y, u, p_theta, p_ptheta, j);
+                break;
         }
     }
+    __syncthreads();
+    if ( threadIdx.y == INDEX_X )
+        nx.arr[s] += nx.arr[INDEX_XB * ox.dim + j] + nx.arr[INDEX_XC * ox.dim + j]; ;
 }
 
 // Runge Kutta

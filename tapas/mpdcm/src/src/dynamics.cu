@@ -15,8 +15,7 @@
 
 __device__
 MPFLOAT
-dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
-     void *p_ptheta, int i)
+dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i)
 {
     MPFLOAT dx = 0;
     MPFLOAT bt = 0;
@@ -57,10 +56,134 @@ dcm_dx(dbuff x, dbuff y, dbuff u, void *p_theta,
 
         // C
 
-        dx = fma(theta->C[i + x.dim * j] + bt, u.arr[j], dx);
-    }
+        dx = fma(theta->C[i * u.dim + j] + bt, u.arr[j], dx);
+
+      }
+    
     return dx;
 }
+
+
+__device__
+MPFLOAT
+dcm_dxAD(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i)
+{
+    MPFLOAT dx = 0;
+    MPFLOAT bt = 0;
+    int nx = x.dim;
+    int j;
+    int k;
+    int o;
+
+    ThetaDCM *theta = (ThetaDCM *) p_theta;
+    o = INDEX_X * x.dim;
+
+    // A
+
+    for (j = 0; j < nx; j++)
+    {
+        bt = 0;
+        if ( theta->fD == MF_TRUE )
+        {
+            int o = (nx + 1) * j;
+            int oj = theta->sD->j[o + i]; 
+            for (k = 0; k < theta->sD->j[o + i + 1] - oj;  k++)
+                bt = fma(x.arr[theta->sD->i[oj + k]], theta->sD->v[oj + k], bt);
+        }
+        dx = fma(theta->A[i * nx + j] + bt, x.arr[o + j], dx);
+    }
+
+    
+    return dx;
+}
+
+__device__
+MPFLOAT
+dcm_dxBC(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i)
+{
+    MPFLOAT dx = 0;
+    MPFLOAT bt = 0;
+    int nx = x.dim;
+    int j;
+    int k;
+
+    ThetaDCM *theta = (ThetaDCM *) p_theta;
+
+    for (j = 0; j < u.dim; j++)
+    {
+        if (  u.arr[j] == 0  )
+            continue;
+        
+        bt = 0;
+
+        int o = (nx + 1) * j;
+        int oj = theta->sB->j[o + i]; 
+        //for (k = 0; k < theta->sB->j[o + i + 1] - oj;  k++)
+        //    bt = fma(x.arr[theta->sB->i[oj + k]], theta->sB->v[oj + k], bt);
+
+        // C
+
+        dx = fma(theta->C[i * u.dim + j] + bt, u.arr[j], dx);
+
+      }
+    
+    return dx;
+}
+
+
+__device__
+MPFLOAT
+dcm_dxB(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i)
+{
+    MPFLOAT dx = 0;
+    MPFLOAT bt = 0;
+    int nx = x.dim;
+    int j;
+    int k;
+
+    ThetaDCM *theta = (ThetaDCM *) p_theta;
+
+    for (j = 0; j < u.dim; j++)
+    {
+        if (  u.arr[j] == 0  )
+            continue;
+        
+        bt = 0;
+
+        int o = (nx + 1) * j;
+        int oj = theta->sB->j[o + i]; 
+        for (k = 0; k < theta->sB->j[o + i + 1] - oj;  k++)
+            bt = fma(x.arr[theta->sB->i[oj + k]], theta->sB->v[oj + k], bt);
+
+        dx = fma(bt, u.arr[j], dx);
+      }
+    
+    return dx;
+}
+
+
+__device__
+MPFLOAT
+dcm_dxC(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i)
+{
+    MPFLOAT dx = 0;
+    int j;
+
+    ThetaDCM *theta = (ThetaDCM *) p_theta;
+
+    for (j = 0; j < u.dim; j++)
+    {
+        if (  u.arr[j] == 0  )
+            continue;
+        
+        dx = fma(theta->C[i * u.dim + j], u.arr[j], dx);
+
+      }
+    
+    return dx;
+}
+
+
 
 __device__ 
 MPFLOAT 
