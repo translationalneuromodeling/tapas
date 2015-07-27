@@ -153,7 +153,8 @@ dcm_dxB(dbuff x, dbuff y, dbuff u, void *p_theta, void *p_ptheta, int i)
         int o = (nx + 1) * j;
         int oj = theta->sB->j[o + i]; 
         for (k = 0; k < theta->sB->j[o + i + 1] - oj;  k++)
-            bt = fma(x.arr[theta->sB->i[oj + k]], theta->sB->v[oj + k], bt);
+            //bt = fma(x.arr[theta->sB->i[oj + k]], theta->sB->v[oj + k], bt);
+            //bt = fma(x.arr[theta->sB->i[oj + k]], 0.1, bt);
 
         dx = fma(bt, u.arr[j], dx);
       }
