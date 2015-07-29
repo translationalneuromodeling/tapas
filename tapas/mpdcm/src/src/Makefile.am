@@ -7,8 +7,6 @@
 
 .PHONY = $(MDIRS)
 
-#NVCCFLAGS = -arch=sm_20 -rdc=true -Xcompiler -fPIC
-
 NVCCFLAGS = -arch=sm_20 -Xcompiler -fPIC
 
 # Mex Flags
@@ -63,7 +61,7 @@ $(MEXDEVBIN) : $(BINDIR)/%.$(MEXEXT) : $(BUILDDIR)/%.o
 	$(MEXCC) $(MEXFLAGS) -outdir $(BINDIR) $^ $(LOP1)
 
 $(MEXMISCBIN) : $(BINDIR)/%.$(MEXEXT) : $(BUILDDIR)/%.o
-	$(MEXCC) $(MEXFLAGS) -outdir $(BINDIR) $^ 
+	$(MEXCC) $(MEXFLAGS) -outdir $(BINDIR) $^ LDFLAGS="\$$LDFLAGS -fopenmp"
 
 
 # Again for compatility with cuda 4.2
@@ -102,7 +100,7 @@ $(MEXDEVOBJ) $(MEXDCMOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.c
 	$(MEXCC) $(MEXFLAGS) -c -outdir $(BUILDDIR) -output $@ CFLAGS="\$$CFLAGS -std=c99 $(CUDA_CFLAGS)" $^
 
 $(MEXMISCOBJ) : $(BUILDDIR)/%.o : $(SRCDIR)/%.c
-	$(MEXCC) $(MEXFLAGS) -c -outdir $(BUILDDIR) -output $@ CFLAGS="\$$CFLAGS -std=c99" $^
+	$(MEXCC) $(MEXFLAGS) -c -outdir $(BUILDDIR) -output $@ CFLAGS="\$$CFLAGS -std=c99 -fopenmp" $^
 
 
 # Compile cuda

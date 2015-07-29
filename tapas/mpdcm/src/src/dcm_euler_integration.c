@@ -47,33 +47,147 @@
 #include<math.h>
 #include "mex.h"
 #include "c_mpdcm.h"
+#include <omp.h>
+
+typedef{
+    MPFLOAT *A;
+    MPFLOAT *C;
+    MPFLOAT *U;
+    MPFLOAT *B;
+    MPFLOAT *D;
+    MPFLOAT *rho;
+    MPFLOAT alphainv;
+    MPFLOAT *tau;
+    MPFLOAT gamma;
+    MPFLOAT *kappa;
+    MPFLOAT *param;
+} inputargs;
+
+typedef{
+    MPFLOAT *x_out;
+    MPFLOAT *s_out;
+    MPFLOAT *f1_out;
+    MPFLOAT *v1_out;
+    MPFLOAT *q1_out;
+} outargs;
 
 void mexFunction(int nlhs, mxArray *plhs[],/*Outputvariables*/
                     int nrhs, const mxArray *prhs[])
 {
     /* Extract all input parameters*/
     
-    MPFLOAT *A  = (MPFLOAT *) mxGetPr(prhs[0]);
-    MPFLOAT *C  = (MPFLOAT *) mxGetPr(prhs[1]);
-    MPFLOAT *U  = (MPFLOAT *) mxGetPr(prhs[2]);
-    MPFLOAT *B  = (MPFLOAT *) mxGetPr(prhs[3]);
-    MPFLOAT *D = (MPFLOAT *) mxGetPr(prhs[4]);
-    MPFLOAT *rho = (MPFLOAT *) mxGetPr(prhs[5]);
-    MPFLOAT alphainv = (MPFLOAT ) mxGetScalar(prhs[6]);
-    MPFLOAT *tau  = (MPFLOAT *) mxGetPr(prhs[7]);
-    MPFLOAT gamma  = (MPFLOAT ) mxGetScalar(prhs[8]);
-    MPFLOAT *kappa  = (MPFLOAT *) mxGetPr(prhs[9]);
-    MPFLOAT *param = (MPFLOAT *) mxGetPr(prhs[10]);
-    MPFLOAT temp1; 
-    MPFLOAT temp2;
+    int l;
+    int na;
 
-    double *mx_out;
-    double *ms_out;
-    double *mf1_out;
-    double *mv1_out;
-    double *mq1_out;
+    mxArray *id = prhs[0];
 
-    int jState, mState, kIter, i;
+    na = mxGetDimensions(id)[0] * mxGetDimensions(id)[1];
+    plhs[0] = mxCreateCellMatrix(na, 1); 
+    integrate_system(ds, plhs[0]);
+
+}
+
+void
+integrate_system(mxArray *ds, *mxArray rc)
+{
+    // Input
+    // ds       -- Data set
+    // rc       -- Results 
+
+    int l;
+    int na = mxGetDimensions(ds)[0] * mxGetDimensions(ds)[1]; 
+    const char *fieldnames[] = {"x_out", "s_out", "f1_out", "v1_out",
+        "q1_out"};
+
+    inputargs *ia = malloc(na * sizeof( inputargs ));
+    outputargs *oa = malloc(na * sizeof( outputargs ));
+
+    
+    for (l = 0; l < na; l++)
+    {
+        long nTime 0;
+        const int nStates 0; 
+
+        // Inputs
+
+        (ia + l)->A  = (MPFLOAT *) mxGetPr(mxGetField(ds, 0, "A"));
+        (ia + l)->C  = (MPFLOAT *) mxGetPr(mxGetField(ds, 0, "C"));
+        (ia + l)->U  = (MPFLOAT *) mxGetPr(mxGetField(ds, 0, "U"));
+        (ia + l)->B  = (MPFLOAT *) mxGetPr(mxGetField(ds, 0, "B"));
+        (ia + l)->D = (MPFLOAT *) mxGetPr(mxGetField(ds, 0, "rhp"));
+        (ia + l)->rho = (MPFLOAT *) mxGetPr(mxGetField(ds, 0, "rho"));
+        (ia + l)->alphainv = (MPFLOAT ) mxGetScalar(mxGetField(ds, 0, 
+            "alphainv"));
+        (ia + l)->tau  = (MPFLOAT *) mxGetPr(mxGetField(ds, 0, "tau"));
+        (ia + l)->gamma  = (MPFLOAT ) mxGetScalar(mxGetField(ds, 0, "gamma"));
+        (ia + l)->kappa  = (MPFLOAT *) mxGetPr(mxGetField(ds, 0, "kappa"));
+        (ia + l)->param = (MPFLOAT *) mxGetPr(mxGetField(ds, 0, "param"));
+     
+        nTime = (ia + l)->param[1];
+        nStates = (ia + l)->param[2];
+
+        mxArray *ty = mxCreateStructMatrix(1, 1, 5, fieldnames); 
+        
+        // Crete the arrays
+
+        mxArray ax_out = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
+        mxArray as_out = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
+        mxArray af1_out = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
+        mxArray av1_out = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
+        mxArray aq1_out = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
+
+        // Outputs
+        
+        (oa + l)->x_out[l] = mxGetPr(ax_out);
+        (oa + l)->s_out[l] = mxGetPr(ax_out);
+        (oa + l)->f1_out[l] = mxGetPr(ax_out);
+        (oa + l)->v1_out[l] = mxGetPr(ax_out);
+        (oa + l)->q1_out[l] = mxGetPr(ax_out);
+
+        /* Assign field */
+
+        mxSetField(ty, 0, "x", ax_out);
+        mxSetField(ty, 0, "s", as_out);
+        mxSetField(ty, 0, "f1", af1_out);
+        mxSetField(ty, 0, "v1", av1_out);
+        mxSetField(ty, 0, "q1", aq1_out);
+
+        mxSetCell(rc, l, ty);
+    
+    }
+
+
+    for ( l = 0; l < na; l++ )
+    {
+        integrator(ia + l, oa + l);
+    }
+
+    free(inputargs);
+    free(outputargs);
+
+
+    return; 
+}
+
+void
+integrator(inputargs *ia, outputargs *oa)
+{
+
+    MPFLOAT *A  = ia->A; 
+    MPFLOAT *B  = ia->B;
+    MPFLOAT *C  = ia->C;
+    MPFLOAT *D = ia->D;
+    MPFLOAT *U  = ia->U;
+    MPFLOAT *rho = ia->rhoM
+    MPFLOAT alphainv = ia->alphainv;
+    MPFLOAT *tau  = ia->tau;
+    MPFLOAT gamma  = ia->gamma;
+    MPFLOAT *kappa  = ia->kappa;
+    MPFLOAT *param = ia->param;
+
+    
+
+    int jState;
     long iStep;
     MPFLOAT timeStep = param[0];
     long nTime = param[1];
@@ -82,17 +196,16 @@ void mexFunction(int nlhs, mxArray *plhs[],/*Outputvariables*/
     int dcmTypeB = param[5];
     int dcmTypeD = param[6];
 
+    MPFLOAT *x_out = oa->x_out;
+    MPFLOAT *s_out = oa->s_out;
+    MPFLOAT *f1_out = oa->f1_out;
+    MPFLOAT *v1_out = oa->v1_out;
+    MPFLOAT *q1_out = oa->q1_out;
+
     MPFLOAT *oldf1 = (MPFLOAT *) malloc(nStates * sizeof( MPFLOAT ));
     MPFLOAT *oldv1 = (MPFLOAT *) malloc(nStates * sizeof( MPFLOAT ));
     MPFLOAT *oldq1 = (MPFLOAT *) malloc(nStates * sizeof( MPFLOAT ));
-   
-    MPFLOAT *x_out = (MPFLOAT *) malloc(nStates * nTime * sizeof( MPFLOAT ));
-    MPFLOAT *s_out = (MPFLOAT *) malloc(nStates * nTime * sizeof( MPFLOAT ));
-    MPFLOAT *f1_out = (MPFLOAT *) malloc(nStates * nTime * sizeof( MPFLOAT ));
-    MPFLOAT *v1_out = (MPFLOAT *) malloc(nStates * nTime * sizeof( MPFLOAT ));
-    MPFLOAT *q1_out = (MPFLOAT *) malloc(nStates * nTime * sizeof( MPFLOAT ));
-   
-   
+
     /* Initialize the dynamical system to resting state values */
     for(jState=0;jState<nStates;jState++)
     {
@@ -107,21 +220,30 @@ void mexFunction(int nlhs, mxArray *plhs[],/*Outputvariables*/
     }
     
     /* Euler's integration steps*/
-    for(iStep=0;iStep<(nTime-1);iStep++)
-    {        
+    
+    omp_set_num_threads((nStates < omp_get_max_threads()) ? nStates : 
+        omp_get_max_threads());
+    #pragma omp parallel private(iStep) private(jState)
+    for(iStep=0; iStep < (nTime - 1); iStep++)
+    {       
+        MPFLOAT temp1, temp2;
+        int mState, kIter;
+        int jState = omp_get_thread_num();
+
         /* For each region*/
-        for(jState=0;jState<nStates;jState++)
+        while ( jState < nStates )
         {
             /* update x */
             x_out[iStep+1 + nTime*jState] = 0.0;
             temp1 = 0.0;            
             for(kIter=0;kIter<nStates;kIter++)
             {
-                temp1=temp1+x_out[iStep + nTime*kIter]*A[kIter + nStates*jState];
+                temp1 += x_out[iStep + nTime*kIter] * A[kIter + nStates*jState];
             }            
-            x_out[iStep+1 + nTime*jState]= x_out[iStep + nTime*jState] + timeStep* (temp1+ C[iStep + nTime*jState]); 
+            x_out[iStep + 1 + nTime*jState] = x_out[iStep + nTime*jState] + 
+                timeStep * (temp1 + C[iStep + nTime * jState]); 
             
-            if(dcmTypeB != 0)
+            if( dcmTypeB != 0 )
             {
                 /*B matrix update*/
                 for(kIter=0;kIter<nInputs;kIter++)
@@ -129,93 +251,68 @@ void mexFunction(int nlhs, mxArray *plhs[],/*Outputvariables*/
                     temp1 = 0.0;
                     for(mState=0;mState<nStates;mState++)
                     {
-                        temp1=temp1+x_out[iStep + nTime*mState]*B[mState + nStates*(jState + nStates*kIter)];
+                        temp1 += x_out[iStep + nTime*mState] * 
+                            B[mState + nStates*(jState + nStates*kIter)];
                     }
-                    x_out[iStep+1 + nTime*jState] = x_out[iStep+1 + nTime*jState] + timeStep*(U[iStep +nTime*kIter]*temp1);
+                    x_out[iStep+1 + nTime*jState] += timeStep * 
+                        U[iStep +nTime*kIter] * temp1;
                 }
             }
             
             if(dcmTypeD != 0)
             {
                 /*D matrix update*/
-                for(kIter=0;kIter<nStates;kIter++)         
+                for( kIter=0; kIter < nStates; kIter++ )         
                 {
                      temp1 = 0.0;
-                     for(mState=0;mState<nStates;mState++)
+                     for(mState=0; mState<nStates; mState++)
                      {
-                         temp1=temp1+x_out[iStep + nTime*mState]*D[mState + nStates*(jState + nStates*kIter)];
+                         temp1 += x_out[iStep + nTime*mState] * 
+                            D[mState + nStates*(jState + nStates*kIter)];
                      }
-                     x_out[iStep+1 + nTime*jState] = x_out[iStep+1 + nTime*jState] + timeStep*(x_out[iStep +nTime*kIter]*temp1);
+                     x_out[iStep + 1 + nTime*jState] += timeStep * 
+                        x_out[iStep +nTime*kIter] * temp1;
                 }
             }
-            /* update s */
+            
+            /// update s
             s_out[iStep+1 + nTime*jState] = s_out[iStep + nTime*jState] +
-                timeStep*(x_out[iStep + nTime*jState] -
+                timeStep * (x_out[iStep + nTime*jState] -
                 kappa[jState]*s_out[iStep + nTime*jState] - 
                 gamma*(f1_out[iStep + nTime*jState] - 1.0));
             
-            /* update f */
-            oldf1[jState]= oldf1[jState] + timeStep*(s_out[iStep + nTime*jState]/f1_out[iStep + nTime*jState]);
+            // update f 
+            oldf1[jState] += timeStep * 
+                (s_out[iStep + nTime*jState]/f1_out[iStep + nTime*jState]);
             
-            /* update v */
-           temp1 = pow(v1_out[iStep + nTime*jState],alphainv);
-           temp2 = (1.0- pow((1.0-rho[jState]),(1.0/f1_out[iStep + nTime*jState])))/rho[jState];
-            oldv1[jState]= oldv1[jState] + timeStep*((f1_out[iStep + nTime*jState] - temp1)/
-                           (tau[jState]*v1_out[iStep + nTime*jState]));
+            // update v 
+            temp1 = pow(v1_out[iStep + nTime*jState],alphainv);
+            temp2 = (1.0 - pow((1.0-rho[jState]), 
+                (1.0/f1_out[iStep + nTime*jState])))/rho[jState];
+            oldv1[jState] += timeStep*( (f1_out[iStep + nTime*jState] - temp1) /
+                (tau[jState]*v1_out[iStep + nTime*jState]));
             
-            /* update q */
+            // update q 
             oldq1[jState]= oldq1[jState] + 
                 timeStep * ((f1_out[iStep + nTime*jState]*temp2 - 
                     temp1*q1_out[iStep + nTime*jState] / 
                     v1_out[iStep + nTime*jState]) / 
                     (tau[jState] * q1_out[iStep + nTime*jState]));
-
-            /* tracking the exponentiated values */
+            
+            // tracking the exponentiated values
+            
             f1_out[iStep+1 + nTime*jState] = exp(oldf1[jState]);
             v1_out[iStep+1 + nTime*jState] = exp(oldv1[jState]);
             q1_out[iStep+1 + nTime*jState] = exp(oldq1[jState]);
-        }       
+
+            // Go to the next state
+            jState += omp_get_num_threads();
+        }
+        #pragma omp barrier 
     }
-
-    /* Double */
-
-    plhs[0] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
-    plhs[1] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
-    plhs[2] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
-    plhs[3] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
-    plhs[4] = mxCreateDoubleMatrix(nTime, nStates, mxREAL);
     
-    mx_out = mxGetPr(plhs[0]);
-    ms_out = mxGetPr(plhs[1]);
-    mf1_out = mxGetPr(plhs[2]);
-    mv1_out = mxGetPr(plhs[3]);
-    mq1_out = mxGetPr(plhs[4]);    
-
-
-    /* Transfer memory */
-
-    for ( i = 0; i < nTime * nStates; i++)
-        mx_out[i] = (MPFLOAT ) x_out[i];
-    for ( i = 0; i < nTime * nStates; i++)
-        ms_out[i] = (MPFLOAT ) s_out[i]; 
-    for ( i = 0; i < nTime * nStates; i++)
-        mf1_out[i] = (MPFLOAT ) f1_out[i]; 
-    for ( i = 0; i < nTime * nStates; i++)
-        mv1_out[i] = (MPFLOAT ) v1_out[i]; 
-    for ( i = 0; i < nTime * nStates; i++)
-        mq1_out[i] = (MPFLOAT ) q1_out[i]; 
-
-
-    /* free all the created memory*/
-    free(x_out);
-    free(s_out);
-    free(f1_out);
-    free(v1_out);
-    free(q1_out);
-
     free(oldf1);
     free(oldv1);
     free(oldq1);
-    return;    
-}
 
+}
