@@ -1,4 +1,24 @@
-function y = tapas_dcm_int_euler_1(Ep, M, U)
+function y = tapas_dcm_int_euler_1(dcms)
+
+n = numel(dcms);
+intDCM = cell(n, 1);
+y = cell(n, 1);
+
+for i = 1:n
+    [Ep, M, U]= prepare_interface(dcms{i});    
+    intDCM{i} = prepare_data_structure(Ep, M, U);
+end
+
+r = dcm_euler_integration(intDCM);
+
+for i = 1:n
+    y{i} = forward_model(r{i}.x, r{i}.s, r{i}.f1, r{i}.v1, r{i}.q1, intDCM{i});
+end
+
+end
+
+
+function [intDCM] = prepare_data_structure(Ep, M, U)
 
 if ~isstruct(U), u.u = U; U = u; end
 try, dt = U.dt; catch, U.dt = 1; end
@@ -7,10 +27,6 @@ try, dt = U.dt; catch, U.dt = 1; end
 %--------------------------------------------------------------------------
 u       = size(U.u,1);
 try,  v = M.ns;  catch, v = u;   end
-
-
-%ceil([(1:v) - 0.5]*u/v);
-
 
 DCM.M = M;
 DCM.U = U;
@@ -59,28 +75,40 @@ epsilon = full(1*exp(Ep.epsilon));
 
 paramList = [DCM.U.dt size(DCM.U.u,1) nr size(DCM.U.u,2) 0 1 1];
 
-% Transform to single if necessary
 switch tapas_mpdcm_compflag
 case 0
-    [x,s,f,v,q]  = dcm_euler_integration(single(A), single(C), single(U), ...
-        single(mArrayB), single(mArrayD), single(oxygenExtractionFraction), ...
-        single(alphainv), single(tau), single(gamma), single(kappa), ...
-        single(paramList));
+    intDCM = struct('A', single(A), 'B', single(mArrayB), 'C', single(C), ... 
+    'D', single(mArrayD), 'U', single(U), 'rho', ...
+    single(oxygenExtractionFraction), 'alphainv', single(alphainv), ...
+    'tau', single(tau), 'gamma', single(gamma), 'kappa', single(kappa), ...
+    'param', single(paramList));
 case 1
-    [x,s,f,v,q]  = dcm_euler_integration(A,C,U,mArrayB,mArrayD,...
-        oxygenExtractionFraction,alphainv,tau,gamma,kappa,paramList); 
-end       
-               
-               
+     intDCM = struct('A', A, 'C', C, 'D', mArrayD, 'U', U, 'B', mArrayB, ... 
+        'rho', oxygenExtractionFraction, 'alphainv', alphainv, 'tau', tau, ...
+        'gamma', gamma, 'kappa', kappa, 'param', paramList);
+end
+
+intDCM.indices = Indices;
+intDCM.epsilon = epsilon;
+
+end
+
+
+function [y] = forward_model(x, s, f, v, q, intDCM )
 % generate the responses per time point
+
+epsilon = intDCM.epsilon;
+Indices = intDCM.indices;
+
 relaxationRateSlope  = 25;
 frequencyOffset = 40.3;  
-oxygenExtractionFraction = 0.4*ones(1,paramList(3));
+oxygenExtractionFraction = 0.4*  ones(1, intDCM.param(3));
 echoTime = 0.04;
 restingVenousVolume  = 4;
 
-coefficientK1  = 4.3*frequencyOffset*echoTime*oxygenExtractionFraction;
-coefficientK2  = epsilon.*(relaxationRateSlope*oxygenExtractionFraction*echoTime);
+coefficientK1  = 4.3*frequencyOffset * echoTime * oxygenExtractionFraction;
+coefficientK2  = epsilon .* (relaxationRateSlope * ...
+    oxygenExtractionFraction * echoTime);
 coefficientK3  = 1 - epsilon;
 
 if Indices(1) == 0
@@ -88,8 +116,67 @@ if Indices(1) == 0
 end
 
 y = restingVenousVolume*( bsxfun(@times,coefficientK1,(1 - (q(Indices,:)))) +...
-            bsxfun(@times,coefficientK2,(1 - (q(Indices,:)./v(Indices,:)))) +...
-            bsxfun(@times,coefficientK3,(1-v(Indices,:))));        
+    bsxfun(@times,coefficientK2,(1 - (q(Indices,:)./v(Indices,:)))) +...
+    bsxfun(@times,coefficientK3,(1-v(Indices,:))));        
+
 
 end
 
+
+function [Ep, M, U] = prepare_interface(syn_model)
+
+% Check parameters and load specified DCM
+%--------------------------------------------------------------------------
+
+DCM       = syn_model;
+SNR  = 1;
+
+
+% Unpack
+%--------------------------------------------------------------------------
+U     = DCM.U;        % inputs
+v     = DCM.v;        % number of scans
+n     = DCM.n;        % number of regions
+m     = size(U.u,2);  % number of inputs
+
+
+% check whether this is a nonlinear DCM
+%--------------------------------------------------------------------------
+if ~isfield(DCM,'d') || isempty(DCM.d)
+    DCM.d = zeros(n,n,0);
+end
+
+% priors
+%--------------------------------------------------------------------------
+[pE,pC] = spm_dcm_fmri_priors(DCM.a,DCM.b,DCM.c,DCM.d);
+
+
+% complete model specification
+%--------------------------------------------------------------------------
+
+M.x     = sparse(n,5);
+M.pE    = pE;
+M.pC    = pC;
+M.m     = size(U.u,2);
+M.n     = size(M.x(:),1);
+M.l     = size(M.x,1);
+M.N     = 32;
+M.dt    = 16/M.N;
+M.ns    = v;
+
+
+% fMRI slice time sampling
+%--------------------------------------------------------------------------
+try
+    M.delays = DCM.delays; 
+catch
+    M.delays = zeros(M.n, 1);
+end
+    
+try, M.TE     = DCM.TE;     end
+
+
+Ep = DCM.Ep;
+
+
+end
