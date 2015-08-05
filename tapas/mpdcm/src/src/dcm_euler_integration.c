@@ -251,7 +251,7 @@ c_integrator(inputargs *ia, outputargs *oa)
     for(iStep=0; iStep < (nTime - 1); iStep++)
     {       
         MPFLOAT temp1, temp2;
-        MPFLOAT *xnew, xold;
+        MPFLOAT *xnew, *xold;
         int mState, kIter;
 
         xold = x_out;
@@ -285,7 +285,7 @@ c_integrator(inputargs *ia, outputargs *oa)
                         temp1 += xold[mState] * 
                             B[mState + nStates*(jState + nStates*kIter)];
                     }
-                    xnew[State] += timeStep * 
+                    xnew[jState] += timeStep * 
                         U[iStep +nTime*kIter] * temp1;
                 }
             }
