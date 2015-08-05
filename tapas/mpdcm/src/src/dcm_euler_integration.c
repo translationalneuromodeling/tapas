@@ -146,15 +146,15 @@ integrate_system(const mxArray *ds, mxArray *rc)
 
         // Outputs
 
-        mxArray *ax_out = mxCreateNumericMatrix(nTime, nStates, MPMXFLOAT,
+        mxArray *ax_out = mxCreateNumericMatrix(nStates, nTime, MPMXFLOAT,
             mxREAL);
-        mxArray *as_out = mxCreateNumericMatrix(nTime, nStates, MPMXFLOAT,
+        mxArray *as_out = mxCreateNumericMatrix(nStates, nTime, MPMXFLOAT,
             mxREAL);
-        mxArray *af1_out = mxCreateNumericMatrix(nTime, nStates, MPMXFLOAT,
+        mxArray *af1_out = mxCreateNumericMatrix(nStates, nTime, MPMXFLOAT,
             mxREAL);
-        mxArray *av1_out = mxCreateNumericMatrix(nTime, nStates, MPMXFLOAT,
+        mxArray *av1_out = mxCreateNumericMatrix(nStates, nTime, MPMXFLOAT,
             mxREAL);
-        mxArray *aq1_out = mxCreateNumericMatrix(nTime, nStates, MPMXFLOAT,
+        mxArray *aq1_out = mxCreateNumericMatrix(nStates, nTime, MPMXFLOAT,
             mxREAL);
         
         (oa + l)->x_out = (MPFLOAT *) mxGetPr(ax_out);
@@ -231,11 +231,11 @@ c_integrator(inputargs *ia, outputargs *oa)
     /* Initialize the dynamical system to resting state values */
     for(jState=0; jState < nStates; jState++)
     {
-        x_out[nTime*jState] = 0.0;
-        s_out[nTime*jState] = 0.0;
-        f1_out[nTime*jState] = 1.0;
-        v1_out[nTime*jState] = 1.0;
-        q1_out[nTime*jState] = 1.0; 
+        x_out[jState] = 0.0;
+        s_out[jState] = 0.0;
+        f1_out[jState] = 1.0;
+        v1_out[jState] = 1.0;
+        q1_out[jState] = 1.0; 
         oldf1[jState] = 0.0;
         oldv1[jState] = 0.0;
         oldq1[jState] = 0.0;
@@ -251,7 +251,12 @@ c_integrator(inputargs *ia, outputargs *oa)
     for(iStep=0; iStep < (nTime - 1); iStep++)
     {       
         MPFLOAT temp1, temp2;
+        MPFLOAT *xnew, xold;
         int mState, kIter;
+
+        xold = x_out;
+        xnew = x_out + nStates;
+
         //int jState = omp_get_thread_num();
         int jState = 0;
         // For each region
@@ -260,13 +265,13 @@ c_integrator(inputargs *ia, outputargs *oa)
             // update x
             //switch ( n%5 )
             //case 0;
-            x_out[iStep+1 + nTime*jState] = 0.0;
+            xnew[jState] = 0.0;
             temp1 = 0.0;            
             for(kIter=0;kIter<nStates;kIter++)
             {
-                temp1 += x_out[iStep + nTime*kIter] * A[kIter + nStates*jState];
+                temp1 += xold[kIter] * A[kIter + nStates*jState];
             }            
-            x_out[iStep + 1 + nTime*jState] = x_out[iStep + nTime*jState] + 
+            xnew[jState] = xold[jState] + 
                 timeStep * (temp1 + C[iStep + nTime * jState]); 
             
             if( dcmTypeB != 0 )
@@ -277,10 +282,10 @@ c_integrator(inputargs *ia, outputargs *oa)
                     temp1 = 0.0;
                     for(mState=0; mState < nStates; mState++)
                     {
-                        temp1 += x_out[iStep + nTime*mState] * 
+                        temp1 += xold[mState] * 
                             B[mState + nStates*(jState + nStates*kIter)];
                     }
-                    x_out[iStep+1 + nTime*jState] += timeStep * 
+                    xnew[State] += timeStep * 
                         U[iStep +nTime*kIter] * temp1;
                 }
             }
@@ -296,43 +301,49 @@ c_integrator(inputargs *ia, outputargs *oa)
                          temp1 += x_out[iStep + nTime*mState] * 
                             D[mState + nStates*(jState + nStates*kIter)];
                      }
-                     x_out[iStep + 1 + nTime * jState] += timeStep * 
-                        x_out[iStep + nTime * kIter] * temp1;
+                     xnew[jState] += timeStep * 
+                        xold[kIter] * temp1;
                 }
             }
             
             /// update s
-            s_out[iStep+1 + nTime*jState] = s_out[iStep + nTime*jState] +
-                timeStep * (x_out[iStep + nTime*jState] -
-                kappa[jState]*s_out[iStep + nTime*jState] - 
-                gamma*(f1_out[iStep + nTime*jState] - 1.0));
+            s_out[jState+nStates] = s_out[jState] +
+                timeStep * (x_out[jState] -
+                kappa[jState]*s_out[jState] - 
+                gamma*(f1_out[jState] - 1.0));
 
             // update f 
             oldf1[jState] += timeStep * 
-                (s_out[iStep + nTime*jState]/f1_out[iStep + nTime*jState]);
-            f1_out[iStep+1 + nTime*jState] = exp(oldf1[jState]);
+                (s_out[jState]/f1_out[jState]);
+            f1_out[jState+nStates] = exp(oldf1[jState]);
             
             // update v 
             
-            temp1 = pow(v1_out[iStep + nTime*jState],alphainv);
-            oldv1[jState] += timeStep*( (f1_out[iStep + nTime*jState] -
-                 temp1) / (tau[jState]*v1_out[iStep + nTime*jState]));
-            v1_out[iStep+1 + nTime*jState] = exp(oldv1[jState]);
+            temp1 = pow(v1_out[jState],alphainv);
+            oldv1[jState] += timeStep*( (f1_out[jState] -
+                 temp1) / (tau[jState]*v1_out[jState]));
+            v1_out[jState+nStates] = exp(oldv1[jState]);
             
             // update q 
 
             temp2 = (1.0 - pow((1.0-rho[jState]), 
-                (1.0/f1_out[iStep + nTime*jState])))/rho[jState];
+                (1.0/f1_out[jState])))/rho[jState];
             oldq1[jState]= oldq1[jState] + 
-                timeStep * ((f1_out[iStep + nTime*jState]*temp2 - 
-                    temp1*q1_out[iStep + nTime*jState] / 
-                    v1_out[iStep + nTime*jState]) / 
-                    (tau[jState] * q1_out[iStep + nTime*jState]));    
-            q1_out[iStep+1 + nTime*jState] = exp(oldq1[jState]);
+                timeStep * ((f1_out[jState]*temp2 - 
+                    temp1*q1_out[jState] / 
+                    v1_out[jState]) / 
+                    (tau[jState] * q1_out[jState]));    
+            q1_out[jState+nStates] = exp(oldq1[jState]);
         
             // Go to the next state
             jState += 1; //omp_get_num_threads();
         }
+        xold = xnew;
+        xnew += nStates;
+        s_out += nStates;
+        f1_out += nStates;
+        v1_out += nStates;
+        q1_out += nStates;
         //#pragma omp barrier 
     }
 
