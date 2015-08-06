@@ -66,6 +66,7 @@ typedef struct {
     MPFLOAT *tau;
     MPFLOAT gamma;
     MPFLOAT *kappa;
+    MPFLOAT *epsilon;
     MPFLOAT *param;
 } inputargs;
 
@@ -75,6 +76,7 @@ typedef struct {
     MPFLOAT *f1_out;
     MPFLOAT *v1_out;
     MPFLOAT *q1_out;
+    MPFLOAT *y_out;
 } outputargs;
 
 
@@ -83,6 +85,9 @@ integrate_system(const mxArray *ds, mxArray *rc);
 
 void
 c_integrator(inputargs *ia, outputargs *oa);
+
+MPFLOAT
+forward_model(MPFLOAT q, MPFLOAT v, MPFLOAT rho, MPFLOAT epsilon);
 
 void 
 mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
@@ -109,7 +114,7 @@ integrate_system(const mxArray *ds, mxArray *rc)
 
     int l;
     int na = mxGetDimensions(ds)[0] * mxGetDimensions(ds)[1]; 
-    const char *fieldnames[] = {"x", "s", "f1", "v1", "q1"};
+    const char *fieldnames[] = {"x", "s", "f1", "v1", "q1", "y"};
 
     inputargs *ia = malloc(na * sizeof( inputargs ));
     outputargs *oa = malloc(na * sizeof( outputargs ));
@@ -135,12 +140,13 @@ integrate_system(const mxArray *ds, mxArray *rc)
         (ia + l)->tau  = (MPFLOAT *) mxGetPr(mxGetField(cds, 0, "tau"));
         (ia + l)->gamma  = (MPFLOAT ) mxGetScalar(mxGetField(cds, 0, "gamma"));
         (ia + l)->kappa  = (MPFLOAT *) mxGetPr(mxGetField(cds, 0, "kappa"));
+        (ia + l)->epsilon = (MPFLOAT *) mxGetPr(mxGetField(cds, 0, "epsilon"));
         (ia + l)->param = (MPFLOAT *) mxGetPr(mxGetField(cds, 0, "param"));
      
         nTime = (ia + l)->param[1];
         nStates = (ia + l)->param[2];
         
-        mxArray *ty = mxCreateStructMatrix(1, 1, 5, fieldnames); 
+        mxArray *ty = mxCreateStructMatrix(1, 1, 6, fieldnames); 
         
         // Crete the arrays
 
@@ -156,13 +162,15 @@ integrate_system(const mxArray *ds, mxArray *rc)
             mxREAL);
         mxArray *aq1_out = mxCreateNumericMatrix(nStates, nTime, MPMXFLOAT,
             mxREAL);
+        mxArray *ay_out = mxCreateNumericMatrix(nStates, nTime, MPMXFLOAT,
+            mxREAL);
         
         (oa + l)->x_out = (MPFLOAT *) mxGetPr(ax_out);
         (oa + l)->s_out = (MPFLOAT *) mxGetPr(as_out);
         (oa + l)->f1_out = (MPFLOAT *) mxGetPr(af1_out);
         (oa + l)->v1_out = (MPFLOAT *) mxGetPr(av1_out);
         (oa + l)->q1_out = (MPFLOAT *) mxGetPr(aq1_out);
-
+        (oa + l)->y_out = (MPFLOAT *) mxGetPr(ay_out);
         // Assign field 
 
         mxSetField(ty, 0, "x", ax_out);
@@ -170,6 +178,7 @@ integrate_system(const mxArray *ds, mxArray *rc)
         mxSetField(ty, 0, "f1", af1_out);
         mxSetField(ty, 0, "v1", av1_out);
         mxSetField(ty, 0, "q1", aq1_out);
+        mxSetField(ty, 0, "y", ay_out);
         
         mxSetCell(rc, l, ty);
      
@@ -207,6 +216,7 @@ c_integrator(inputargs *ia, outputargs *oa)
     MPFLOAT *tau  = ia->tau;
     MPFLOAT gamma  = ia->gamma;
     MPFLOAT *kappa  = ia->kappa;
+    MPFLOAT *epsilon = ia->epsilon;
     MPFLOAT *param = ia->param;
 
     int jState;
@@ -223,6 +233,7 @@ c_integrator(inputargs *ia, outputargs *oa)
     MPFLOAT *f1_out = oa->f1_out;
     MPFLOAT *v1_out = oa->v1_out;
     MPFLOAT *q1_out = oa->q1_out;
+    MPFLOAT *y_out = oa->y_out;
 
     MPFLOAT *oldf1 = (MPFLOAT *) malloc(nStates * sizeof( MPFLOAT ));
     MPFLOAT *oldv1 = (MPFLOAT *) malloc(nStates * sizeof( MPFLOAT ));
@@ -239,8 +250,12 @@ c_integrator(inputargs *ia, outputargs *oa)
         oldf1[jState] = 0.0;
         oldv1[jState] = 0.0;
         oldq1[jState] = 0.0;
+
+        y_out[jState] = forward_model(q1_out[jState], v1_out[jState], 
+            rho[jState], epsilon[jState]);
     }
 
+    y_out += nStates;
 
     // Euler's integration steps
     
@@ -251,11 +266,7 @@ c_integrator(inputargs *ia, outputargs *oa)
     for(iStep=0; iStep < (nTime - 1); iStep++)
     {       
         MPFLOAT temp1, temp2;
-        MPFLOAT *xnew, *xold;
         int mState, kIter;
-
-        xold = x_out;
-        xnew = x_out + nStates;
 
         //int jState = omp_get_thread_num();
         int jState = 0;
@@ -265,15 +276,21 @@ c_integrator(inputargs *ia, outputargs *oa)
             // update x
             //switch ( n%5 )
             //case 0;
-            xnew[jState] = 0.0;
+            x_out[jState + nStates] = 0.0;
             temp1 = 0.0;            
+            
             for(kIter=0;kIter<nStates;kIter++)
             {
-                temp1 += xold[kIter] * A[kIter + nStates*jState];
-            }            
-            xnew[jState] = xold[jState] + 
-                timeStep * (temp1 + C[iStep + nTime * jState]); 
-            
+                temp1 += x_out[kIter] * A[kIter + nStates*jState];
+            }
+
+            for (kIter = 0; kIter < nInputs; kIter++)
+            {
+                temp1 += U[iStep + nTime*kIter] * C[jState + nStates *kIter];
+            }
+                     
+            x_out[jState + nStates] = x_out[jState] + timeStep * temp1;
+        
             if( dcmTypeB != 0 )
             {
                 // B matrix update
@@ -282,15 +299,15 @@ c_integrator(inputargs *ia, outputargs *oa)
                     temp1 = 0.0;
                     for(mState=0; mState < nStates; mState++)
                     {
-                        temp1 += xold[mState] * 
+                        temp1 += x_out[mState] * 
                             B[mState + nStates*(jState + nStates*kIter)];
                     }
-                    xnew[jState] += timeStep * 
+                    x_out[jState + nStates] += timeStep * 
                         U[iStep +nTime*kIter] * temp1;
                 }
             }
             
-            if(dcmTypeD != 0)
+            if( dcmTypeD != 0 )
             {
                 // D matrix update
                 for( kIter=0; kIter < nStates; kIter++ )         
@@ -298,14 +315,13 @@ c_integrator(inputargs *ia, outputargs *oa)
                      temp1 = 0.0;
                      for(mState=0; mState<nStates; mState++)
                      {
-                         temp1 += x_out[iStep + nTime*mState] * 
+                         temp1 += x_out[mState] * 
                             D[mState + nStates*(jState + nStates*kIter)];
                      }
-                     xnew[jState] += timeStep * 
-                        xold[kIter] * temp1;
+                     x_out[jState + nStates] += timeStep * 
+                        x_out[kIter] * temp1;
                 }
             }
-            
             /// update s
             s_out[jState+nStates] = s_out[jState] +
                 timeStep * (x_out[jState] -
@@ -333,17 +349,23 @@ c_integrator(inputargs *ia, outputargs *oa)
                     temp1*q1_out[jState] / 
                     v1_out[jState]) / 
                     (tau[jState] * q1_out[jState]));    
-            q1_out[jState+nStates] = exp(oldq1[jState]);
-        
+            q1_out[jState + nStates] = exp(oldq1[jState]);
+
+            y_out[jState] = forward_model(q1_out[jState + nStates], 
+                v1_out[jState + nStates], rho[jState], epsilon[jState]);
+
             // Go to the next state
             jState += 1; //omp_get_num_threads();
+
         }
-        xold = xnew;
-        xnew += nStates;
+
+
+        x_out += nStates;
         s_out += nStates;
         f1_out += nStates;
         v1_out += nStates;
         q1_out += nStates;
+        y_out += nStates;
         //#pragma omp barrier 
     }
 
@@ -352,3 +374,24 @@ c_integrator(inputargs *ia, outputargs *oa)
     free(oldq1);
 
 }
+
+
+#define V0 4.0
+#define F_OFF 40.3
+#define ECHO_TIME 0.04
+#define RELAXATION_RATE 25.0
+#define OX_EXT 0.4
+
+
+MPFLOAT
+forward_model(MPFLOAT q, MPFLOAT v, MPFLOAT rho, MPFLOAT epsilon)
+{
+    MPFLOAT coeff1 = 4.3 * F_OFF * ECHO_TIME * OX_EXT; 
+    MPFLOAT coeff2 = epsilon * RELAXATION_RATE * OX_EXT * ECHO_TIME;
+    MPFLOAT coeff3 = 1 - epsilon;
+
+
+    return V0 * (coeff1 * (1 - q) + coeff2 * (1 - (q / v)) + coeff3 * (1 - v));
+}
+
+
