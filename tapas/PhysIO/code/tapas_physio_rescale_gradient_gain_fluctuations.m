@@ -33,7 +33,7 @@ function [G, gainArray, normFactor] = tapas_physio_rescale_gradient_gain_fluctua
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_rescale_gradient_gain_fluctuations.m 652 2015-01-24 10:15:28Z kasperla $
+% $Id: tapas_physio_rescale_gradient_gain_fluctuations.m 783 2015-07-23 15:52:51Z kasperla $
 
 % Determine gain fluctuations via steps in sliding-window-maximum
 
@@ -59,10 +59,14 @@ mG  = tapas_physio_maxfilter(abs(G), n);
 dmG = diff(mG);
 
 % determine positive and negative steps
-[~, idxGainPlus] = findpeaks((dmG), 'minpeakDistance', n, ...
+warning off tapas_physio_findpeaks:largeMinPeakHeight
+
+[~, idxGainPlus] = tapas_physio_findpeaks((dmG), 'minpeakDistance', n, ...
     'minpeakheight', minPeakHeight);
-[~, idxGainMinus] = findpeaks(-(dmG), 'minpeakDistance', n, ...
+[~, idxGainMinus] = tapas_physio_findpeaks(-(dmG), 'minpeakDistance', n, ...
     'minpeakheight', minPeakHeight);
+
+warning on tapas_physio_findpeaks:largeMinPeakHeight
 
 % plus gains refer to max-changes in the future
 
@@ -160,5 +164,7 @@ if nGainSwitches > 0
         title(stringTitle);
         linkaxes(hs, 'x');
     end
-  
+else
+    gainArray = 1;
+    normFactor = 1;
 end

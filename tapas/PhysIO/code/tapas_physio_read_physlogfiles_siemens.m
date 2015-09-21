@@ -62,7 +62,7 @@ dt                  = log_files.sampling_interval;
 
 if ~isempty(log_files.cardiac)
     fid             = fopen(log_files.cardiac);
-    C               = textscan(fid, '%s', 'Delimiter', '\n');
+    C               = textscan(fid, '%s', 'Delimiter', '\n', 'bufsize', 1e9);
     fclose(fid);
     
     % Determine relative start of acquisition from dicom headers and

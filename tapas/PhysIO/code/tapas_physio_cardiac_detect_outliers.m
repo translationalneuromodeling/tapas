@@ -1,6 +1,6 @@
-function [outliersHigh,outliersLow,fh] = ...
+function [outliersHigh, outliersLow, verbose] = ...
     tapas_physio_cardiac_detect_outliers(tCardiac,percentile,...
-    deviationPercentUp,deviationPercentDown, isVerbose, ah)
+    deviationPercentUp,deviationPercentDown, verbose, ah)
 % detects outliers (missed or erroneous pulses) in heartrate given a sequence of heartbeat pulses
 %
 %   output = tapas_physio_cardiac_detect_outliers(input)
@@ -32,17 +32,20 @@ function [outliersHigh,outliersLow,fh] = ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_cardiac_detect_outliers.m 619 2014-12-17 14:54:42Z kasperla $
+% $Id: tapas_physio_cardiac_detect_outliers.m 786 2015-07-31 13:28:34Z kasperla $
 
 dt = diff(tCardiac);
 
 if nargin < 5
     isVerbose = 1;
+else
+    isVerbose = verbose.level >=1;
 end
 
 if isVerbose
     if nargin < 6
         fh = tapas_physio_get_default_fig_params();
+        verbose.fig_handles(end+1,1) = fh;
         set(fh, 'Name','Diagnostics raw phys time series');
     else
         fh = get(ah, 'Parent');
@@ -52,10 +55,10 @@ if isVerbose
     
     
     
-    hp(1) = plot(tCardiac(2:end), dt);
+    hp(1) = plot(tCardiac(2:end), dt, 'Color', [0 0.5 0]);
     xlabel('t (seconds)');
     ylabel('lag between heartbeats (seconds)');
-    title('temporal lag between heartbeats');
+    title('Temporal lag between heartbeats');
     legend('Temporal lag between subsequent heartbeats');
     
 else
@@ -85,7 +88,8 @@ if ~isempty(percentile) && ~isempty(deviationPercentUp) && ~isempty(deviationPer
         stem(tCardiac(outliersHigh+1),upperThresh*ones(size(outliersHigh)),'g');
         text(tCardiac(2),max(dt),...
             {'Warning: There seem to be skipped heartbeats in the sequence of pulses', ...
-            sprintf('first at timepoint %01.1f s',tCardiac(min(outliersHigh+1)))}, ...
+            sprintf('(%d of %d intervals, first at timepoint %01.1f s)',...
+            numel(outliersHigh), numel(dt), tCardiac(min(outliersHigh+1)))}, ...
             'Color', [0 0.5 0]);
     end
     
@@ -93,7 +97,8 @@ if ~isempty(percentile) && ~isempty(deviationPercentUp) && ~isempty(deviationPer
         stem(tCardiac(outliersLow+1),lowerThresh*ones(size(outliersLow)),'b');
         text(tCardiac(2), min(dt),...
             {'Warning: There seem to be wrongly detected heartbeats in the sequence of pulses', ...
-            sprintf('first at timepoint %01.1f s',tCardiac(min(outliersLow+1)))}, ...
+            sprintf('(%d of %d intervals, first at timepoint %01.1f s)',...
+            numel(outliersLow), numel(dt), tCardiac(min(outliersLow+1)))}, ...
             'Color', [0 0 1]);
     end
     
@@ -102,11 +107,12 @@ if ~isempty(percentile) && ~isempty(deviationPercentUp) && ~isempty(deviationPer
         nHeartBeatDurations * 100;
     
     if percentageOutliers > 5
-        warning(sprintf(['%4.1f %% of all %d heartbeat durations are below %3.1f s ' ...
+        warningMessage = sprintf(['%4.1f %% of all %d heartbeat durations are below %3.1f s ' ...
             'or above %3.1f s \n - consider refining the pulse detection algorithm!' ...
             'Alternatively, do not model cardiac and interaction noise terms'], ...
             percentageOutliers, nHeartBeatDurations, ...
-            lowerThresh, upperThresh));
+            lowerThresh, upperThresh);
+        verbose = tapas_physio_log(warningMessage, verbose, 1);
     end
     
 end

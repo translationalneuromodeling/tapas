@@ -37,7 +37,7 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses_manual_template(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_pulses_manual_template.m 524 2014-08-13 16:21:56Z kasperla $
+% $Id: tapas_physio_get_cardiac_pulses_manual_template.m 816 2015-08-21 10:02:13Z kasperla $
 if nargin < 5
     verbose.level = 0;
     verbose.fig_handles = [];
@@ -50,8 +50,9 @@ hasKrpeakLogfile = exist(thresh_cardiac_initial_cpulse_select.file,'file') || ..
     exist([thresh_cardiac_initial_cpulse_select.file '.mat'],'file');
 
 % if no file exists, also do manual peak-find
-doSelectTemplateManually = strcmpi(...
-    thresh_cardiac_initial_cpulse_select.method, 'manual') || ~hasKrpeakLogfile;
+doSelectTemplateManually = any(strcmpi(...
+    thresh_cardiac_initial_cpulse_select.method, ...
+    {'manual', 'manual_template'})) || ~hasKrpeakLogfile;
 
 if doSelectTemplateManually
     thresh_cardiac_initial_cpulse_select.kRpeak = [];

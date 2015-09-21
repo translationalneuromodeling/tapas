@@ -40,23 +40,35 @@ function [events, ECG_min, kRpeak] = tapas_physio_find_ecg_r_peaks(t,y, ECG_min,
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_find_ecg_r_peaks.m 516 2014-07-17 21:54:50Z kasperla $
+% $Id: tapas_physio_find_ecg_r_peaks.m 816 2015-08-21 10:02:13Z kasperla $
 %
 manual_mode = ~exist('kRpeak', 'var') || isempty(kRpeak);
+
+nSamples    = numel(t);
+iSamples = 1:nSamples;
+% Determine plot window
+% Twindow     = 10; %seconds
+% dt          = t(2)-t(1);
+% iSamples    = floor(nSamples/2) + (1:ceil(Twindow/dt));
+
 
 if manual_mode
     %% Plot ECG curve, central part and already detected input events
     fh = tapas_physio_get_default_fig_params();
     set(fh, 'Name', 'Detection of R-wave from measured ECG-timecourse');
     subplot(3,1,1); hold off;
-    plot(t(end/2-3000:end/2+3000), y(end/2-3000:end/2+3000)); hold all;
+    
+    plot(t(iSamples), y(iSamples)); hold all;
     if exist('inp_events', 'var');
         ax = axis;
         stem(t(inp_events),ax(4)/2*ones(size(inp_events)));
         axis(ax);
     end
-    title('Central snippet of ECG-curve');
+    title('ECG curve - Zoom in, then press enter, if you are ready to select peak');
     xlabel('t(s)');
+    xlim([t(iSamples(1)), t(iSamples(end))]);
+    
+    tmp = input('Zoom in, then press enter, if you are read to select the representative peak');
     
     %% Interactive mode to identify R-wave snippet
     pause(1);

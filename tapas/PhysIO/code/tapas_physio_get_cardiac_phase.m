@@ -1,4 +1,5 @@
-function [cardiac_phase, fh] = tapas_physio_get_cardiac_phase(pulset,scannert, verbose, svolpulse)
+function [cardiac_phase, verbose] = tapas_physio_get_cardiac_phase(...
+    pulset,scannert, verbose, svolpulse)
 % estimates cardiac phases from cardiac pulse data
 %
 % USAGE
@@ -7,7 +8,7 @@ function [cardiac_phase, fh] = tapas_physio_get_cardiac_phase(pulset,scannert, v
 % INPUT
 %        pulset     - heart-beat/pulseoxymeter data read from spike file
 %        scannert   - scanner slice pulses read from log file
-%        verbose    - true, if figures for debugging are wanted
+%        verbose    - set verbose.level >=3, if figures for debugging are wanted
 %        svolpulse  - volume start pulses from log file (only for plot reasons)
 %
 % OUTPUT
@@ -30,15 +31,15 @@ function [cardiac_phase, fh] = tapas_physio_get_cardiac_phase(pulset,scannert, v
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_phase.m 489 2014-05-03 12:22:54Z kasperla $
+% $Id: tapas_physio_get_cardiac_phase.m 753 2015-07-05 20:03:43Z kasperla $
 %
 
 
 % Find the time of pulses just before and just after each scanner time
 % point. Where points are missing, fill with NaNs and set to zero later.
-if ~exist('verbose','var')
-    verbose=0;
-end
+
+isVerbose = verbose.level >=3;
+
 scannertpriorpulse = zeros(1,length(scannert));
 scannertafterpulse = scannertpriorpulse;
 for i=1:length(scannert)
@@ -58,7 +59,7 @@ cardiac_phase=(2*pi*(scannert'-scannertpriorpulse)./(scannertafterpulse-scannert
 
 
 
-if verbose
+if isVerbose
     % 1. plot chosen slice start event
     % 2. plot chosen c_sample phase on top of chosen slice scan start, (as a stem
     % and line of phases)
@@ -95,12 +96,15 @@ if ~isempty(n) % probably no heartbeat after last scan found
     [iVolExamples, iVolinN] = unique(iVolPhaseNaN'); % show only first occurence
     
     if min(iVolExamples) < Nvol
-        warning('Zero-padding for non-existent pulse data in %d slice(s)',size(n,1));
+        verbose = tapas_physio_log(sprintf('Zero-padding for non-existent pulse data in %d slice(s)',size(n,1)), ...
+            verbose, 1);
         
         for iVol = setdiff(iVolExamples, Nvol)
             iSli = Nsli - mod(Nsli - n(iVolinN(iVol)),Nsli);
-            fprintf('Volume %d, first occurence in slice %d\n', iVol, iSli);  
+            verbose = tapas_physio_log(sprintf('Volume %d, first occurence in slice %d\n', iVol, iSli), ...
+                verbose);  
         end
-        fprintf('NOTE: cardiac phase regressors might be mis-estimated for these volumes\n');
+        verbose = tapas_physio_log(sprintf('NOTE: cardiac phase regressors might be mis-estimated for these volumes\n'), ...
+            verbose);
     end
 end

@@ -39,7 +39,7 @@ function [c, r, t, cpulse, acq_codes] = tapas_physio_read_physlogfiles_philips(l
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_read_physlogfiles_philips.m 640 2015-01-11 22:03:32Z kasperla $
+% $Id: tapas_physio_read_physlogfiles_philips.m 815 2015-08-18 20:52:47Z kasperla $
 
 %% read out values
 hasCardiac  = ~isempty(log_files.cardiac);
@@ -106,6 +106,7 @@ if hasCardiac
     end
 else
     c = [];
+    cpulse = [];
 end
 
 end

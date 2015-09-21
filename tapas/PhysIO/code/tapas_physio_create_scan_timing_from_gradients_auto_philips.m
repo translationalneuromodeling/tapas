@@ -1,12 +1,12 @@
 function [VOLLOCS, LOCS, verbose] = ...
     tapas_physio_create_scan_timing_from_gradients_auto_philips(log_files, ...
-    thresh, sqpar, verbose)
+    scan_timing, verbose)
 % Automatically extracts slice/volume scan events from gradient timecourse
 % SCANPHYSLOG file
 %
 % [VOLLOCS, LOCS, verbose] = ...
 %     tapas_physio_create_scan_timing_from_gradients_auto_philips(log_files, ...
-%     thresh, sqpar, verbose)
+%     scan_timing, verbose)
 %
 % This function determines slice/volume starts from the gradient time course
 % automatically by assuming a regularity of them from the
@@ -36,7 +36,32 @@ function [VOLLOCS, LOCS, verbose] = ...
 %       .log_respiration    contains breathing belt amplitude time course
 %                           for Philips: same as .log_cardiac
 %
+%   scan_timing  - 
+%   Parameters for sequence timing & synchronization
+%   scan_tming.sqpar =    slice and volume acquisition starts, TR,
+%                       number of scans etc.
+%   scan_timing.sync =    synchronize phys logfile to scan acquisition
 %
+%   sync             gradient amplitude thresholds to detect slice and volume events
+%
+%           sync is a structure with the following elements
+%           .zero    - gradient values below this value are set to zero;
+%                      should be those which are unrelated to slice acquisition start
+%           .slice   - minimum gradient amplitude to be exceeded when a slice
+%                      scan starts
+%           .vol     - minimum gradient amplitude to be exceeded when a new
+%                      volume scan starts;
+%                      leave [], if volume events shall be determined as
+%                      every Nslices-th scan event
+%           .grad_direction
+%                    - leave empty to use nominal timing;
+%                      if set, sequence timing is calculated from logged gradient timecourse;
+%                    - value determines which gradient direction timecourse is used to
+%                      identify scan volume/slice start events ('x', 'y', 'z')
+%           .vol_spacing
+%                   -  duration (in seconds) from last slice acq to
+%                      first slice of next volume;
+%                      leave [], if .vol-threshold shall be used
 %   sqpar                   - sequence timing parameters
 %           .nSlices        - number of slices per volume in fMRI scan
 %           .nSlicesPerBeat - usually equals nSlices, unless you trigger with the heart beat
@@ -54,7 +79,7 @@ function [VOLLOCS, LOCS, verbose] = ...
 %            onset_slice    - slice whose scan onset determines the adjustment of the
 %                             regressor timing to a particular slice for the whole volume
 %
-%                             NOTE: only necessary, if thresh.grad_direction is empty
+%                             NOTE: only necessary, if sync.grad_direction is empty
 %   verbose
 %
 % OUT
@@ -64,8 +89,8 @@ function [VOLLOCS, LOCS, verbose] = ...
 %                             events started
 %
 % EXAMPLE
-%   [VOLLOCS, LOCS] = tapas_physio_create_scan_timing_from_gradients_philips(logfile,
-%   thresh.scan_timing);
+%   [VOLLOCS, LOCS, verbose] = tapas_physio_create_scan_timing_from_gradients_philips_auto(logfile,
+%   scan_timing, verbose);
 %
 %   See also tapas_physio_create_scan_timing_from_gradients_philips
 %
@@ -83,6 +108,9 @@ function [VOLLOCS, LOCS, verbose] = ...
 
 % smaller than typical single shot EPI slice duration (including waiting
 % for TE)
+
+sqpar   = scan_timing.sqpar;
+sync    = scan_timing.sync;
 
 debug = verbose.level >=2 ;
 
@@ -128,7 +156,7 @@ t           = -log_files.relative_start_acquisition + ((0:(nSamples-1))*dt)';
 % finding scan volume starts (svolpulse)
 
 G = y(:,7:9);
-switch lower(thresh.grad_direction)
+switch lower(sync.grad_direction)
     case 'x'
         gradient_choice = y(:,7);
     case 'y'
@@ -239,8 +267,8 @@ end
 % VOLLOCS-detection via spacing or counting
 nLocs = numel(LOCS);
 
-if isfield(thresh, 'vol_spacing') && ~isempty(thresh.vol_spacing)
-    iVolLocs = find((diff(LOCS) > thresh.vol_spacing/dt)) + 1;
+if isfield(sync, 'vol_spacing') && ~isempty(sync.vol_spacing)
+    iVolLocs = find((diff(LOCS) > sync.vol_spacing/dt)) + 1;
 else
     
     
@@ -286,25 +314,25 @@ LOCS                            = ons.acq_slice_all;
 VOLLOCS                         = ons.vol_all;
 
 %% Return error if not enough events flund
-% VOLLOCS = find(abs(diff(z2))>thresh.vol);
+% VOLLOCS = find(abs(diff(z2))>sync.vol);
 if isempty(VOLLOCS) || isempty(LOCS)
-    error('No volume start events found, Decrease thresh.vol or thresh.slice after considering the Thresholding figure');
+    error('No volume start events found, Decrease sync.vol or sync.slice after considering the Thresholding figure');
 elseif length(LOCS) < nSlicesPerBeat
-    error('Too few slice start events found. Decrease thresh.slice after considering the Thresholding figure');
+    error('Too few slice start events found. Decrease sync.slice after considering the Thresholding figure');
 end
 
 if doCountSliceEventsFromLogfileStart
     if length(VOLLOCS)< (Nprep+nScans+nDummies)
         error(['Not enough volume events found. \n\tFound:  %d\n ' ...
             '\tNeeded: %d+%d+%d (Nprep+nDummies+nScans)\n' ...
-            'Please lower thresh.vol or thresh.vol_spacing\n'], ...
+            'Please lower sync.vol or sync.vol_spacing\n'], ...
             length(VOLLOCS), Nprep, nDummies, nScans);
     end
 else
     if length(VOLLOCS)< (nScans+nDummies)
         error(['Not enough volume events found. \n\tFound:  %d\n ' ...
             '\tNeeded: %d+%d (nDummies+nScans)\n' ...
-            'Please lower thresh.vol or thresh.vol_spacing\n'], ...
+            'Please lower sync.vol or sync.vol_spacing\n'], ...
             length(VOLLOCS), nDummies, nScans);
     end
 end

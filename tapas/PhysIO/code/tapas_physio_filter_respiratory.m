@@ -20,7 +20,7 @@ function [rpulset, pulset] = tapas_physio_filter_respiratory(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_filter_respiratory.m 645 2015-01-15 20:41:00Z kasperla $
+% $Id: tapas_physio_filter_respiratory.m 780 2015-07-22 12:36:47Z kasperla $
 if isempty(rpulset)
     rpulset = [];
     return;
@@ -34,6 +34,9 @@ rpulset=rpulset-rpulset(1);
 
 % bandpass filter
 sampfreq    = 1/rsampint; % Hz
+
+% Vlad: 0.09 0.7, 4th order butterworth, filtfilt for phase mod?
+
 cutofflow   = 0.1; %10 seconds/rsampint units
 cutoffhigh  = 5; %Hz
 forder = 2;

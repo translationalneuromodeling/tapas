@@ -1,4 +1,5 @@
-function R = tapas_physio_load_other_multiple_regressors(filename_other_regressors)
+function [R, verbose] = tapas_physio_load_other_multiple_regressors(...
+    filename_other_regressors, verbose)
 % reads other multiple regressors from .txt-file or as variable R from .mat
 %
 %   R = tapas_physio_load_other_multiple_regressors(filename_other_regressors)
@@ -24,11 +25,11 @@ function R = tapas_physio_load_other_multiple_regressors(filename_other_regresso
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_load_other_multiple_regressors.m 354 2013-12-02 22:21:41Z kasperla $
+% $Id: tapas_physio_load_other_multiple_regressors.m 753 2015-07-05 20:03:43Z kasperla $
 [fp, fn, fs] = fileparts(filename_other_regressors);
 
 if ~exist(filename_other_regressors, 'file')
-    warning('No input multiple regressors found');
+    verbose = tapas_physio_log('No input multiple regressors found', verbose, 1);
     R = [];
 else
     rp = load(filename_other_regressors);

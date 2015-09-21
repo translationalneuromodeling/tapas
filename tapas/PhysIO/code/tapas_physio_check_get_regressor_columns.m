@@ -1,4 +1,4 @@
-function [colAll, colCard, colResp, colMult, colHRV, colRVT, colMove] = ...
+function [colAll, colCard, colResp, colMult, colHRV, colRVT, colRois, colMove] = ...
     tapas_physio_check_get_regressor_columns(SPM, model)
 %
 % returns indices of physiological regressors in an SPM design-matrix,
@@ -6,8 +6,8 @@ function [colAll, colCard, colResp, colMult, colHRV, colRVT, colMove] = ...
 %
 % INPUT:
 %   SPM     SPM.mat
-%   model  physIO.model-structure
-%    
+%   model   physIO.model-structure
+%
 %
 % OUTPUT:
 %   colAll      - index vector of all physiological regressor columns in design matrix (from SPM.xX.names)
@@ -16,6 +16,7 @@ function [colAll, colCard, colResp, colMult, colHRV, colRVT, colMove] = ...
 %   colMult     - index vector of interaction cardiac X respiration regressor columns in design matrix (from SPM.xX.names)
 %   colHRV      - index vector of heart rate variability column in design matrix (from SPM.xX.names)
 %   colRVT      - index vector of respiratory volume per time column in design matrix (from SPM.xX.names)
+%   colRois     - index vector of noise rois regressors (from SPM.xX.names)
 %   colMove     - index vector of movement regressor columns in design matrix (from SPM.xX.names)
 %
 % Author: Lars Kasper
@@ -27,7 +28,7 @@ function [colAll, colCard, colResp, colMult, colHRV, colRVT, colMove] = ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_check_get_regressor_columns.m 581 2014-11-09 01:05:46Z kasperla $
+% $Id: tapas_physio_check_get_regressor_columns.m 815 2015-08-18 20:52:47Z kasperla $
 
 nSess = length(SPM.Sess);
 
@@ -40,22 +41,39 @@ if nargin < 2
     nMult = 4;
     nHRV  = 0;
     nRVT  = 0;
-    
+    nRois = 0;
 else
     
-    if ~isempty(model.input_other_multiple_regressors)
-        nMove = 6;
+    if model.retroicor.include
+                
+        nCard = ~isempty(model.retroicor.order.c);
+        if nCard
+            nCard = model.retroicor.order.c*2;
+        end
+        
+        nResp = ~isempty(model.retroicor.order.r);
+        if nResp
+            nResp = model.retroicor.order.r*2;
+        end
+        
+        nMult = ~isempty(model.retroicor.order.cr);
+        if nMult
+            nMult = model.retroicor.order.cr*4;
+        end
+        
+        
     else
-        nMove = 0;
+        nCard = 0;
+        nResp = 0;
+        nMult = 0;
     end
     
-    nCard = model.order.c*2;
-    nResp = model.order.r*2;
-    nMult = model.order.cr*4;
     
-    % only for models with HRV or RVT, add these regressors
-    nHRV  = any(strfind(upper(model.type), 'HRV'));
-    nRVT  = any(strfind(upper(model.type), 'RVT'));
+    % only if following models were calculated
+    nRois = model.noise_rois.include.*sum(model.noise_rois.n_components);
+    nMove = model.movement.include.*model.movement.order;
+    nHRV  = model.hrv.include.*numel(model.hrv.delays);
+    nRVT  = model.rvt.include.*numel(model.rvt.delays);
     
 end
 
@@ -64,7 +82,7 @@ cnames = SPM.xX.name';
 colCard = [];
 colResp  = [];
 colMult = [];
-colAll  = [];
+colRois = [];
 colMove = [];
 colHRV  = [];
 colRVT  = [];
@@ -80,8 +98,10 @@ for s = 1:nSess
         (indC+nCard+nResp+nMult+nHRV-1)];
     colRVT  = [colRVT, (indC+nCard+nResp+nMult+nHRV):...
         (indC+nCard+nResp+nMult+nHRV+nRVT-1)];
-    colMove = [colMove, (indC+nCard+nResp+nMult+nHRV+nRVT):...
-        (indC+nCard+nResp+nMult+nHRV+nRVT+nMove-1)];
+    colRois = [colRois, (indC+nCard+nResp+nMult+nHRV+nRVT):...
+        (indC+nCard+nResp+nMult+nHRV+nRVT+nRois-1)];
+    colMove = [colMove, (indC+nCard+nResp+nMult+nHRV+nRVT+nRois):...
+        (indC+nCard+nResp+nMult+nHRV+nRVT+nRois+nMove-1)];
 end
 
-colAll = [colCard colResp colMult colHRV colRVT];
+colAll = [colCard colResp colMult colHRV colRVT colRois];

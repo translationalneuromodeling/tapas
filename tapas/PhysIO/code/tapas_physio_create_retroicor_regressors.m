@@ -1,4 +1,4 @@
-function [cardiac_sess, respire_sess, mult_sess, ons_secs, verbose, ...
+function [cardiac_sess, respire_sess, mult_sess, ons_secs, order, verbose, ...
     c_sample_phase, r_sample_phase] ...
     = tapas_physio_create_retroicor_regressors(ons_secs, sqpar, order, verbose)
 % calculation of regressors for physiological motion correction using RETROICOR (Glover, MRM, 2000)
@@ -6,6 +6,9 @@ function [cardiac_sess, respire_sess, mult_sess, ons_secs, verbose, ...
 % USAGE:
 %   [cardiac_sess, respire_sess, mult_sess, verbose, c_sample_phase, r_sample_phase] ...
 %        = tapas_physio_create_retroicor_regressors(ons_secs, sqpar, thresh, slicenum, order, verbose)
+%
+% NOTE: also updates order of models to 0, if some data does not exist
+% (cardiac or respiratory)
 %
 % INPUT:
 %   ons_secs    - onsets of all physlog events in seconds
@@ -36,7 +39,7 @@ function [cardiac_sess, respire_sess, mult_sess, ons_secs, verbose, ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_retroicor_regressors.m 652 2015-01-24 10:15:28Z kasperla $
+% $Id: tapas_physio_create_retroicor_regressors.m 815 2015-08-18 20:52:47Z kasperla $
 
 %% variable renaming
 if ~exist('verbose', 'var')
@@ -54,6 +57,20 @@ hasPhaseData = isfield(ons_secs, 'c_sample_phase') && ~isempty(ons_secs.c_sample
 hasCardiacData = hasPhaseData || ~isempty(cpulse);
 
 if ~hasPhaseData
+    
+    % update model order, if resp/cardiac data do not exist
+    if ~hasCardiacData
+        order.c = 0;
+    end
+    
+    if ~hasRespData
+        order.r = 0;
+    end
+    
+    if ~hasRespData || ~hasCardiacData
+        order.cr = 0;
+    end
+    
     % compute phases from pulse data
     
     % compute differently, i.e. separate regressors for multiple slice
@@ -67,15 +84,11 @@ if ~hasPhaseData
     %% Get phase, downsample and Fourier-expand
     sample_points   = tapas_physio_get_sample_points(ons_secs, sqpar);
     
-    if (order.c || order.cr) && hasCardiacData
+    % cardiac phase estimation and Fourier expansion
+    if (order.c || order.cr)
         
-        
-        if verbose.level >= 3
-            [c_phase, verbose.fig_handles(end+1)]    = ...
-                tapas_physio_get_cardiac_phase(cpulse, spulse, verbose.level, svolpulse);
-        else
-            c_phase    = tapas_physio_get_cardiac_phase(cpulse, spulse, 0, svolpulse);
-        end
+        [c_phase, verbose]    = ...
+            tapas_physio_get_cardiac_phase(cpulse, spulse, verbose, svolpulse);
         c_sample_phase  = tapas_physio_downsample_phase(spulse, c_phase, sample_points, rsampint);
         cardiac_sess    = tapas_physio_get_fourier_expansion(c_sample_phase,order.c);
         
@@ -89,8 +102,8 @@ if ~hasPhaseData
         c_sample_phase = [];
     end
     
-    if (order.r || order.cr) && hasRespData
-        
+    % Respiratory phase estimation and Fourier expansion
+    if (order.r || order.cr)
         
         fr = ons_secs.fr;
         
@@ -113,12 +126,13 @@ if ~hasPhaseData
     end
     
 else % compute Fourier expansion directly from cardiac/respiratory phases
-    
+    c_sample_phase = ons_secs.c_sample_phase;
+    r_sample_phase = ons_secs.r_sample_phase;
     if (order.c || order.cr)
         cardiac_sess    = tapas_physio_get_fourier_expansion(...
-            ons_secs.c_sample_phase, order.c);
+            c_sample_phase, order.c);
         respire_sess    = tapas_physio_get_fourier_expansion(...
-            ons_secs.r_sample_phase, order.r);
+            r_sample_phase, order.r);
     else
         cardiac_sess = [];
         respire_sess = [];
@@ -143,26 +157,16 @@ ons_secs.c_sample_phase = tapas_physio_split_regressor_slices(...
 ons_secs.r_sample_phase =  tapas_physio_split_regressor_slices(...
     r_sample_phase, nSampleSlices);
 
-subj='';
+
 %% plot cardiac & resp. regressors
 if verbose.level >=2
-    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
+    R = [cardiac_sess, respire_sess, mult_sess];
     
-    set(gcf,'Name','RETROICOR timecourse physiological regressors');
-    if order.cr
-        Nsubs=3;
-        ax(3) = subplot(Nsubs,1,3);
-        plot([mult_sess+repmat(1:size(mult_sess,2),length(mult_sess),1)]);
-        xlabel('scans');title([subj ' , RETROICOR multiplicative cardiac x respiratory regressors, vertical shift for visibility'])
-    else
-        Nsubs=2;
-    end
-    ax(1) = subplot(Nsubs,1,1);
-    plot([cardiac_sess+repmat(1:size(cardiac_sess,2),length(cardiac_sess),1)]);
-    xlabel('scans');title([subj ' , RETROICOR cardiac regressors, vertical shift for visibility'])
+    hasCardiacData = ~isempty(ons_secs.c);
+    hasRespData = ~isempty(ons_secs.r);
     
-    ax(2) = subplot(Nsubs,1,2);
-    plot([respire_sess+repmat(1:size(respire_sess,2),length(respire_sess),1)]);
-    xlabel('scans');title([subj ' , RETROICOR respiratory regressors, vertical shift for visibility'])
-    if ~(isempty(cardiac_sess) || isempty(respire_sess)), linkaxes(ax,'x'); end
+    verbose.fig_handles(end+1) = ...
+        tapas_physio_plot_retroicor_regressors(R, order, hasCardiacData, ...
+        hasRespData);
+    
 end

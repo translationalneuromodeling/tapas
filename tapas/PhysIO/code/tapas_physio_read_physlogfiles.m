@@ -44,7 +44,7 @@ function [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles(
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_read_physlogfiles.m 559 2014-10-29 15:18:19Z kasperla $
+% $Id: tapas_physio_read_physlogfiles.m 791 2015-08-05 21:54:21Z kasperla $
 
 if nargin < 2
     cardiac_modality = 'ECG';
@@ -57,7 +57,7 @@ end
 switch lower(log_files.vendor)
     case 'philips'
         [c, r, t, cpulse, acq_codes] = ...
-        tapas_physio_read_physlogfiles_philips(log_files, cardiac_modality);
+            tapas_physio_read_physlogfiles_philips(log_files, cardiac_modality);
     case 'ge'
         [c, r, t, cpulse] = ...
             tapas_physio_read_physlogfiles_GE(log_files, verbose);
@@ -74,5 +74,19 @@ switch lower(log_files.vendor)
         [c, r, t, cpulse] = ...
             tapas_physio_read_physlogfiles_custom(log_files, verbose);
         acq_codes = [];
+end
+
+% prepend all data with zeros for better processing, if scan starts before
+% physiological data
+if t(1) > 0
+    dt = t(2) - t(1);
+    nPrependSamples = ceil(t(1)/dt);
+    t = [(0:nPrependSamples-1)'*dt;t];
+    if ~isempty(log_files.cardiac)
+        c = [zeros(nPrependSamples, 1);c];
+    end
+    if ~isempty(log_files.respiration)
+        r = [zeros(nPrependSamples,1);r];
+    end
 end
 end
