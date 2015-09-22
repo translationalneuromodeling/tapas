@@ -27,12 +27,20 @@ function physio = tapas_physio_fill_empty_parameters(physio)
 %
 % $Id: teditRETRO.m 464 2014-04-27 11:58:09Z kasperla $
 
-if isempty(physio.sqpar.NslicesPerBeat)
-    physio.sqpar.NslicesPerBeat = physio.sqpar.Nslices;
+if isempty(physio.scan_timing.sqpar.NslicesPerBeat)
+    physio.scan_timing.sqpar.NslicesPerBeat = physio.scan_timing.sqpar.Nslices;
 end
 
-if isempty(physio.sqpar.time_slice_to_slice)
-    physio.sqpar.time_slice_to_slice = physio.sqpar.TR/physio.sqpar.Nslices;
+if isempty(physio.scan_timing.sqpar.Ndummies)
+    physio.scan_timing.sqpar.Ndummies = 0;
+end
+
+if isempty(physio.scan_timing.sqpar.time_slice_to_slice)
+    physio.scan_timing.sqpar.time_slice_to_slice = physio.scan_timing.sqpar.TR/physio.scan_timing.sqpar.Nslices;
+end
+
+if isempty(physio.log_files.scan_timing)
+    physio.log_files.scan_timing = {''};
 end
 
 if isempty(physio.log_files.sampling_interval)

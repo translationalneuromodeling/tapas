@@ -45,7 +45,7 @@ function [svolpulse, spulse, spulse_per_vol, verbose] = tapas_physio_get_onsets_
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_onsets_from_locs.m 466 2014-04-27 13:10:48Z kasperla $
+% $Id: tapas_physio_get_onsets_from_locs.m 753 2015-07-05 20:03:43Z kasperla $
 
 Nscans          = sqpar.Nscans;
 Ndummies        = sqpar.Ndummies;
@@ -67,12 +67,17 @@ for v = 1:Nallvols-1
     SLICELOCS{v} = LOCS(intersect(find(LOCS>=VOLLOCS(v), Nslices, 'first'), ...
         find(LOCS<VOLLOCS(v+1))));
     if length(SLICELOCS{v})~=Nslices
-        warning(sprintf('Volume event %d: %d instead of %d slice events found\n', v, length(SLICELOCS{v}), Nslices));
+        verbose = tapas_physio_log(sprintf(...
+            'Volume event %d: %d instead of %d slice events found\n', v, ...
+            length(SLICELOCS{v}), Nslices), verbose, 1);
     end
 end
 SLICELOCS{Nallvols} = LOCS(find(LOCS>=VOLLOCS(Nallvols), Nslices, 'first'));
 if length(SLICELOCS{Nallvols})~=Nslices
-    warning(sprintf('Volume event %d: %d instead of %d slice events found\n', Nallvols, length(SLICELOCS{Nallvols}), Nslices));
+    verbose = tapas_physio_log(sprintf(...
+        'Volume event %d: %d instead of %d slice events found\n', ...
+        Nallvols, length(SLICELOCS{Nallvols}), Nslices), ...
+        verbose, 1);
 end
 
 if verbose.level >= 3

@@ -22,14 +22,16 @@ function physio = tapas_physio_init_philips(physio)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_init_philips.m 539 2014-10-09 15:59:25Z kasperla $
+% $Id: tapas_physio_init_philips.m 756 2015-07-08 16:17:15Z kasperla $
 
-log_files = physio.log_files;
-sqpar = physio.sqpar;
-model = physio.model;
-thresh = physio.thresh;
-verbose = physio.verbose;
+log_files   = physio.log_files;
+scan_timing = physio.scan_timing;
+model       = physio.model;
+preproc     = physio.preproc;
+verbose     = physio.verbose;
 
+sqpar       = scan_timing.sqpar;
+sync        = scan_timing.sync;
 
 model.type = 'RETROICOR';
 model.order = struct('c',3,'r',4,'cr',1, 'orthogonalise', 'none');
@@ -49,18 +51,21 @@ verbose.level = 2; % PARAM
 verbose.fig_output_file ='physio_output.png';
 verbose.use_tabs = 0;
 
-thresh.scan_timing.method = 'gradient_log';
-thresh.scan_timing.grad_direction = 'z';
-thresh.scan_timing.slice = 1500;
-thresh.scan_timing.zero = 1400;
-thresh.scan_timing.vol_spacing = [];
+sync.method = 'gradient_log';
+sync.grad_direction = 'z';
+sync.slice = 1500;
+sync.zero = 1400;
+sync.vol_spacing = [];
 
-thresh.cardiac.modality = 'ECG';
-thresh.cardiac.initial_cpulse_select.method = 'load_from_logfile'; 'auto_matched';
-thresh.cardiac.posthoc_cpulse_select.method = 'off';
+preproc.cardiac.modality = 'ECG';
+preproc.cardiac.initial_cpulse_select.method = 'load_from_logfile'; 'auto_matched';
+preproc.cardiac.posthoc_cpulse_select.method = 'off';
+
+scan_timing.sqpar = sqpar;
+scan_timing.sync = sync;
 
 physio.log_files = log_files;
-physio.sqpar = sqpar;
+physio.scan_timing = scan_timing;
+physio.preproc = preproc;
 physio.model = model;
-physio.thresh = thresh;
 physio.verbose = verbose;

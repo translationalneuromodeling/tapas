@@ -3,9 +3,11 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses_auto_matched(...
     methodPeakDetection)
 % Automated, iterative pulse detection from cardiac (ECG/OXY) data
 % (1) Creates a template of representative heartbeats automatically (as
-%     *_auto-function)
-% (2) Uses template for peak-detection via matched-filtering of time course
-%     with determined filter (as *_manual_template-function)
+%     deprecated *_auto-function)
+% (2) Uses template for peak-detection via 
+%       (a) cross-correlation peak detection (default) or
+%       (b) matched-filtering of time course with determined filter
+%           (as deprecated *_manual_template-function)
 %
 %   [cpulse, verbose] = tapas_physio_get_cardiac_pulses_auto(...
 %    c, t, thresh_min, minPulseDistanceSamples, verbose)
@@ -37,14 +39,14 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses_auto_matched(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_pulses_auto_matched.m 636 2015-01-10 23:41:56Z kasperla $
+% $Id: tapas_physio_get_cardiac_pulses_auto_matched.m 755 2015-07-08 16:15:22Z kasperla $
 if nargin < 5
     verbose.level = 0;
     verbose.fig_handles = [];
 end
 
 if nargin < 6
-    methodPeakDetection = 'correlation'; %'matched_filter' or 'correlation'
+    methodPeakDetection = 'correlation'; %'matched_filter', 'xcorr', or 'correlation'
 end
 
 c = c-mean(c); c = c./std(c); % normalize time series
@@ -60,6 +62,11 @@ c = c-mean(c); c = c./std(c); % normalize time series
 
 switch methodPeakDetection
    
+    case 'xcorr' % sped-up version of Steffen's correlation algorithm utilizing Matlab xcorr via FFT
+        [cpulse, verbose] = tapas_physio_findpeaks_template_xcorr(...
+            c, pulseCleanedTemplate, cpulseSecondGuess, averageHeartRateInSamples, ...
+            verbose);
+    
     case 'correlation' % Steffen's forward-backward-correlation
         [cpulse, verbose] = tapas_physio_findpeaks_template_correlation(...
             c, pulseCleanedTemplate, cpulseSecondGuess, averageHeartRateInSamples, ...

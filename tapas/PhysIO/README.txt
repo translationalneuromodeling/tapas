@@ -118,9 +118,19 @@ DOWNLOADS & RELEASE INFORMATION
 - Current Release: 
 
 PhysIO_Toolbox_15 (Code | Examples)
-January 30th, 2015
+September 21st, 2015
 
-revision: $Rev: 667 $
+revision: $Rev: 836 $
+
+Major Release Notes (r835):
+- Software version for Toolbox Paper submission
+- Noise ROIs modeling
+- Extended motion models (24 parameters, Volterra expansion)
+- HRV/RVT models with optional multiple delay regressors
+- Report_contrasts with automatic contrast generation for all regressor groups
+- compute_tsnr_gains for individual physiological regressor groups
+- consistent module naming (scan_timing, preproc)
+- Visualisation improvement (color schemes, legends)
 
 Minor Release Notes (r666):
 - Compatibility tested for SPM12, small bugfixes Batch Dependencies
@@ -199,4 +209,4 @@ Kasper, Lars, Sarah Marti, S. Johanna Vannesjo, Chloe Hutton, Ray Dolan, Nikolau
 
 
 VERSION OF THIS FILE
-$Id: README.txt 667 2015-01-31 11:45:17Z kasperla $
+$Id: README.txt 836 2015-09-21 15:54:05Z kasperla $

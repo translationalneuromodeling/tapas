@@ -20,7 +20,7 @@ function fh = tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_plot_cropped_phys_to_acqwindow.m 645 2015-01-15 20:41:00Z kasperla $
+% $Id: tapas_physio_plot_cropped_phys_to_acqwindow.m 763 2015-07-14 11:28:57Z kasperla $
 [fh, MyColors] = tapas_physio_get_default_fig_params();
 set(fh,'Name','Cutout actual scans - all events and gradients');
 
@@ -98,9 +98,9 @@ if hasCardiacData
     hs(end+1) = stem(cpulse, ampc*ones(length(cpulse),1), 'm') ;
 end
 
-hs2 = plot(t(1:sampling:end), x, '-')';
-hs = [hs, hs2];
-
+for iLine = 1:size(x,2)
+    hs(end+1) = plot(t(1:sampling:end), x(:,iLine), '-')';
+end
 
 xlabel('t (s)'); ylabel('Amplitude (a. u.)');
 title('Cutout region for physiological regressors');

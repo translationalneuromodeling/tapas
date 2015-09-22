@@ -26,30 +26,36 @@ function [cpulse, verbose] = tapas_physio_findpeaks_template_correlation(...
 %
 % Author: Steffen Bollmann, merged in this function: Lars Kasper
 % Created: 2014-08-05
-% Copyright (C) 2014 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.
+% Copyright (C) 2014 TNU, Institute for Biomedical Engineering, 
+%                         University of Zurich and ETH Zurich.
 %
 % This file is part of the TAPAS PhysIO Toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_findpeaks_template_correlation.m 640 2015-01-11 22:03:32Z kasperla $
+% $Id: tapas_physio_findpeaks_template_correlation.m 787 2015-07-31 18:35:24Z kasperla $
 
 % Determine starting peak for the search:
 %   search for a representative R-peak a range of peaks
 
 % TODO: maybe replace via convolution with template? "matched
 % filter theorem"?
+
+
+nSamples = size(c,1);
+
 debug = verbose.level >= 4;
 
 defaults.idxStartPeakSearch = [0 20];
+defaults.t = 1:nSamples;
 
 args = tapas_physio_propval(varargin, defaults);
 tapas_physio_strip_fields(args);
 
 halfTemplateWidthInSamples = floor(numel(pulseCleanedTemplate)/2);
 
-[~,zTransformedTemplate] = tapas_physio_corrcoef12(pulseCleanedTemplate,...
+[tmp,zTransformedTemplate] = tapas_physio_corrcoef12(pulseCleanedTemplate,...
     pulseCleanedTemplate);
 isZTransformed = [0 1];
 
@@ -64,12 +70,12 @@ centreSampleEnd = cpulseSecondGuess(idxStartPeakSearch(2));
 
 similarityToTemplate = zeros(1, ceil(centreSampleEnd));
 for n=centreSampleStart:centreSampleEnd
-    startSignalIndex=n-halfTemplateWidthInSamples;
-    endSignalIndex=n+halfTemplateWidthInSamples;
+    startSignalIndex    = n - halfTemplateWidthInSamples;
+    endSignalIndex      = n + halfTemplateWidthInSamples;
     
     signalPart = c(startSignalIndex:endSignalIndex);
-    similarityToTemplate(n) = tapas_physio_corrcoef12(signalPart,zTransformedTemplate, ...
-        isZTransformed);
+    similarityToTemplate(n) = tapas_physio_corrcoef12(signalPart, ...
+        zTransformedTemplate, isZTransformed);
     
     %Debug
     if debug && ~mod(n, 100)
@@ -96,13 +102,13 @@ n = I_bestMatch;
 bestPosition = n; % to capture case where 1st R-peak is best
 
 peakNumber = 1;
-similarityToTemplate = zeros(size(c,1),1);
+similarityToTemplate = zeros(nSamples,1);
 
 searchStepsTotal = round(0.5*averageHeartRateInSamples);
 while n > 1+searchStepsTotal+halfTemplateWidthInSamples
     for searchPosition = -searchStepsTotal:1:searchStepsTotal
-        startSignalIndex    = n-halfTemplateWidthInSamples+searchPosition;
-        endSignalIndex      = n+halfTemplateWidthInSamples+searchPosition;
+        startSignalIndex    = n - halfTemplateWidthInSamples+searchPosition;
+        endSignalIndex      = n + halfTemplateWidthInSamples+searchPosition;
         
         signalPart          = c(startSignalIndex:endSignalIndex);
         correlation = tapas_physio_corrcoef12(signalPart,zTransformedTemplate, ...
@@ -133,10 +139,10 @@ while n > 1+searchStepsTotal+halfTemplateWidthInSamples
     
     %DEBUG
     if debug
-        if (n>100) && (n< size(c,1)-100)
-            figure(1);subplot 211;plot(t,similarityToTemplate,'b-')
+        if (n>100) && (n< nSamples-100)
+            figure(1);subplot 211;plot(t,similarityToTemplate,'b-');
             title('Finding first peak (heartbeat/max inhale), backwards');
-            xlim([t(n-100) t(n+100)])
+            xlim([t(n-100) t(n+100)]);
         end
     end
     %DEBUG
@@ -172,20 +178,25 @@ searchStepsTotal = round(0.5*averageHeartRateInSamples);
 % for weighted searching of max correlation
 gaussianWindow = gausswin(2*searchStepsTotal+1);
 
-if n < searchStepsTotal+halfTemplateWidthInSamples+1
-    n=searchStepsTotal+halfTemplateWidthInSamples+1;
-end
+n = max(n, searchStepsTotal + halfTemplateWidthInSamples + 1);
 
-while n < size(c,1)-searchStepsTotal-halfTemplateWidthInSamples
-    %search around peak
+% zero-pad c at end to allow for detection of last peak by
+% template-matching up to the last sample of c
+c = [c; zeros(searchStepsTotal + halfTemplateWidthInSamples + 1, 1)];
+
+while n < nSamples % -searchStepsTotal - halfTemplateWidthInSamples
     
-    for searchPosition=-searchStepsTotal:1:searchStepsTotal
-        startSignalIndex=n-halfTemplateWidthInSamples+searchPosition;
-        endSignalIndex=n+halfTemplateWidthInSamples+searchPosition;
+    %search around peak
+    for searchPosition = -searchStepsTotal:1:searchStepsTotal
+        startSignalIndex = ...
+            max(1, n-halfTemplateWidthInSamples+searchPosition);
+        endSignalIndex = n+halfTemplateWidthInSamples+searchPosition;
         
         signalPart = c(startSignalIndex:endSignalIndex);
-        correlation = tapas_physio_corrcoef12(signalPart,zTransformedTemplate, ...
-            isZTransformed);
+            
+        
+        correlation = tapas_physio_corrcoef12(signalPart, ...
+            zTransformedTemplate, isZTransformed);
         
         %DEBUG
         if debug && ~mod(n, 100)
@@ -210,7 +221,7 @@ while n < size(c,1)-searchStepsTotal-halfTemplateWidthInSamples
     
     %DEBUG
     if debug
-        if (n>100) && (n< size(c,1)-100)
+        if (n>100) && (n< nSamples-100)
             figure(1);subplot 211;plot(t,similarityToTemplate,'b-')
             xlim([t(n-100) t(n+100)])
         end
@@ -241,19 +252,19 @@ while n < size(c,1)-searchStepsTotal-halfTemplateWidthInSamples
         currentHeartRateInSamples=averageHeartRateInSamples;
     end
     
-    if  (foundCpulses < 21) && (foundCpulses >= 3)
+    if (foundCpulses < 21) && (foundCpulses >= 3)
         currentHeartRateInSamples = round(mean(diff(cpulse)));
     end
     
-    if foundCpulses > 20
+    if foundCpulses >= 21
         currentCpulses = cpulse (foundCpulses-20:foundCpulses);
         currentHeartRateInSamples = round(mean(diff(currentCpulses)));
     end
     
     
     %check currentHeartRate
-    checkSmaller=currentHeartRateInSamples > 0.5*averageHeartRateInSamples;
-    checkLarger=currentHeartRateInSamples < 1.5*averageHeartRateInSamples;
+    checkSmaller    = currentHeartRateInSamples > 0.5*averageHeartRateInSamples;
+    checkLarger     = currentHeartRateInSamples < 1.5*averageHeartRateInSamples;
     
     %jumpToNextPeakSearchArea
     if (checkSmaller && checkLarger)

@@ -1,4 +1,4 @@
-function [ons_secs, sqpar] = tapas_physio_crop_scanphysevents_to_acq_window(ons_secs, sqpar)
+function [ons_secs, sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_window(ons_secs, sqpar, verbose)
 % cropping of ons_secs into acquired scan/presentation session, augmenting
 % sqpar by scan-timing parameters from SCANPHYSLOG-file
 %
@@ -44,7 +44,7 @@ function [ons_secs, sqpar] = tapas_physio_crop_scanphysevents_to_acq_window(ons_
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_crop_scanphysevents_to_acq_window.m 664 2015-01-30 10:59:26Z kasperla $
+% $Id: tapas_physio_crop_scanphysevents_to_acq_window.m 791 2015-08-05 21:54:21Z kasperla $
 
 %% parameter settings
     Nscans          = sqpar.Nscans;
@@ -95,7 +95,8 @@ end
 sqpar.maxscan=length(sqpar.t); %counts each excitation
 
 % Counts only real repetitions of a slice
-sqpar.Nvols_paradigm   = (length(sqpar.t)-Ndummies*Nslices/NslicesPerBeat)/Nslices*NslicesPerBeat;
+sqpar.Nvols_paradigm   = (length(sqpar.t) - ...
+    Ndummies*Nslices / NslicesPerBeat)/Nslices*NslicesPerBeat;
 
 
 % Mean TR of time paradigm is running, excluding dummies
@@ -108,16 +109,17 @@ formatstr = ['    maxscan (incl. dummies) = %d \n    ', ...
     'tmax = %6.2f s \n    ', ...
     'mean TR = %6.2f s\n'];
 
-fprintf(1,formatstr, sqpar.maxscan, spulse(1), ...
-    spulse(1+Ndummies*Nslices), tmax, sqpar.meanTR);
+verbose = tapas_physio_log(sprintf(formatstr, sqpar.maxscan, spulse(1), ...
+    spulse(1+Ndummies*Nslices), tmax, sqpar.meanTR), verbose);
 
 
 %% prepare output variable
 
-ons_secs.c        = c;
-ons_secs.r        = r;
-ons_secs.spulse   = spulse;
-ons_secs.cpulse   = cpulse;
-ons_secs.svolpulse= svolpulse;
+ons_secs.c          = c;
+ons_secs.r          = r;
+ons_secs.spulse     = spulse;
+ons_secs.cpulse     = cpulse;
+ons_secs.svolpulse  = svolpulse;
+ 
 end
 

@@ -46,7 +46,7 @@ function [R, verbose] = tapas_physio_orthogonalise_physiological_regressors(card
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_orthogonalise_physiological_regressors.m 408 2014-01-20 00:25:56Z kasperla $
+% $Id: tapas_physio_orthogonalise_physiological_regressors.m 752 2015-07-05 18:01:32Z kasperla $
 R_non_orth = [cardiac_sess, respire_sess, mult_sess input_R];
 
 if isempty(R_non_orth)
@@ -72,11 +72,26 @@ end
 if verbose.level
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
     set(gcf, 'Name', 'RETROICOR GLM regressors');
-    subplot(1,3,1); imagesc(R); title({'physiological regressors matrix for GLM'...
-        ' - specified regressors orthogonalized - '}); colormap gray; xlabel('regressor');ylabel('scan volume');
-    subplot(1,3,2);
-    imagesc(R_non_orth);title('non-orthogonalized regressors for GLM'); colormap gray; xlabel('regressor');
-    subplot(1,3,3);
-    imagesc((R_non_orth-R).^2 );title({'squared differences of raw RETROICOR matrix to'...
-        ' matrix with orthogonalized cardiac regressors'}); colormap gray; xlabel('regressor'); colorbar;
+    
+    switch lower(orthogonalise)
+        case {'n', 'none'}
+            imagesc(R); 
+            title({'Physiological regressor matrix for GLM', ...
+                '- including input confound regressors -'});
+            colormap gray; xlabel('regressor');ylabel('scan volume');
+            
+        otherwise
+            subplot(1,3,1); imagesc(R); title({'Physiological regressor matrix for GLM'...
+                ' - specified regressors orthogonalized - '}); 
+            colormap gray; xlabel('regressor');ylabel('scan volume');
+            subplot(1,3,2);
+            imagesc(R_non_orth);
+            title('non-orthogonalized regressors for GLM'); 
+            colormap gray; xlabel('regressor');
+            subplot(1,3,3);
+            imagesc((R_non_orth-R).^2 );
+            title({'squared differences of raw RETROICOR matrix to'...
+                ' matrix with orthogonalized cardiac regressors'}); 
+            colormap gray; xlabel('regressor'); colorbar;
+    end
 end

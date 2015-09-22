@@ -1,4 +1,4 @@
-function [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(varargin)
+function [physio, R, ons_secs] = tapas_physio_main_create_regressors(varargin)
 % Main Toolbox Function for preprocessing & modelling from physio-structure
 %
 % [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(physio)
@@ -6,7 +6,7 @@ function [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(varargi
 %   OR
 %
 % [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(...
-%    log_files, sqpar, model, thresh, verbose, save_dir);
+%    log_files, scan_timing, preproc, model, verbose, save_dir);
 %
 % NOTE: All inputs in physio-structure have to be specified previous to
 %       running this function.
@@ -15,7 +15,7 @@ function [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(varargi
 %   physio      physio-structure, See also tapas_physio_new
 %               OR
 %               sub-structures of physio-structure, i.e.
-%               log_files, sqpar, thresh, model, verbose, save_dir
+%               log_files, sqpar, preproc, model, verbose, save_dir
 %
 % OUT
 %   physio_out  modified physio-structure, contains read or computed values
@@ -46,7 +46,7 @@ function [physio_out, R, ons_secs] = tapas_physio_main_create_regressors(varargi
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_main_create_regressors.m 670 2015-02-01 19:21:55Z kasperla $
+% $Id: tapas_physio_main_create_regressors.m 815 2015-08-18 20:52:47Z kasperla $
 %
 
 
@@ -63,12 +63,12 @@ if nargin == 1 % assuming sole PhysIO-object as input
     physio      = varargin{1}; % first argument of function
 else % assemble physio-structure
     physio = tapas_physio_new();
-    physio.save_dir = varargin{6};
-    physio.log_files = varargin{1};
-    physio.thresh  = varargin{3};
-    physio.sqpar   = varargin{2};
-    physio.model   = varargin{4};
-    physio.verbose = varargin{5};
+    physio.log_files    = varargin{1};
+    physio.scan_timing  = varargin{2};
+    physio.preproc      = varargin{3};
+    physio.model        = varargin{4};
+    physio.verbose      = varargin{5};
+    physio.save_dir     = varargin{6};
 end
 
 % fill up empty parameters
@@ -85,11 +85,11 @@ physio = tapas_physio_prepend_absolute_paths(physio);
 ons_secs    = physio.ons_secs;
 save_dir    = physio.save_dir;
 log_files   = physio.log_files;
-thresh      = physio.thresh;
-sqpar       = physio.sqpar;
+preproc     = physio.preproc;
+scan_timing = physio.scan_timing;
 model       = physio.model;
 verbose     = physio.verbose;
-
+sqpar       = scan_timing.sqpar;
 
 hasPhaseLogfile = strcmpi(log_files.vendor, 'CustomPhase');
 
@@ -103,7 +103,7 @@ if ~hasPhaseLogfile
     
     [ons_secs.c, ons_secs.r, ons_secs.t, ons_secs.cpulse, ons_secs.acq_codes, ...
         verbose] = tapas_physio_read_physlogfiles(...
-        log_files, thresh.cardiac.modality, verbose);
+        log_files, preproc.cardiac.modality, verbose);
     
     % also: normalize cardiac/respiratory data, if wanted
     doNormalize = true;
@@ -128,9 +128,8 @@ if ~hasPhaseLogfile
     hasCardiacData = ~isempty(ons_secs.c);
     hasRespData = ~isempty(ons_secs.r);
     
-    if verbose.level >= 2
-        verbose.fig_handles(end+1) = tapas_physio_plot_raw_physdata(ons_secs);
-    end
+   
+    verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose);
     
     
     
@@ -138,29 +137,26 @@ if ~hasPhaseLogfile
     %% 2. Create scan timing nominally or from logfile
     % (Philips: via gradient time-course; Siemens (NEW): from tics)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    useNominal = isempty(thresh.scan_timing) || ...
-        strcmpi(thresh.scan_timing.method, 'nominal');
-    if useNominal
-        [VOLLOCS, LOCS] = ...
-            tapas_physio_create_nominal_scan_timing(ons_secs.t, sqpar, ...
-            log_files.align_scan);
-    else
-        switch thresh.scan_timing.method
-            case {'gradient', 'gradient_log'}
-                [VOLLOCS, LOCS, verbose] = ...
-                    tapas_physio_create_scan_timing_from_gradients_philips( ...
-                    log_files, thresh.scan_timing, sqpar, verbose);
-            case {'gradient_auto', 'gradient_log_auto'}
-                [VOLLOCS, LOCS, verbose] = ...
-                    tapas_physio_create_scan_timing_from_gradients_auto_philips( ...
-                    log_files, thresh.scan_timing, sqpar, verbose);
-            case 'scan_timing_log'
-                [VOLLOCS, LOCS, verbose] = ...
-                    tapas_physio_create_scan_timing_from_tics_siemens( ...
-                    ons_secs.t, log_files, verbose);
-        end
+  
+    switch lower(scan_timing.sync.method)
+        case 'nominal'
+            [VOLLOCS, LOCS] = ...
+                tapas_physio_create_nominal_scan_timing(ons_secs.t, ...
+                sqpar, log_files.align_scan);
+        case {'gradient', 'gradient_log'}
+            [VOLLOCS, LOCS, verbose] = ...
+                tapas_physio_create_scan_timing_from_gradients_philips( ...
+                log_files, scan_timing, verbose);
+        case {'gradient_auto', 'gradient_log_auto'}
+            [VOLLOCS, LOCS, verbose] = ...
+                tapas_physio_create_scan_timing_from_gradients_auto_philips( ...
+                log_files, scan_timing, verbose);
+        case 'scan_timing_log'
+            [VOLLOCS, LOCS, verbose] = ...
+                tapas_physio_create_scan_timing_from_tics_siemens( ...
+                ons_secs.t, log_files, verbose);
     end
+    
     
     % remove arbitrary offset in time vector now, since all timings have now
     % been aligned to ons_secs.t
@@ -171,45 +167,46 @@ if ~hasPhaseLogfile
         ons_secs.t, VOLLOCS, LOCS, sqpar, verbose);
     
     
-    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% 3. Extract and preprocess physiological data, crop to scan aquisition
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     if hasCardiacData
-        % thresh.cardiac.modality = 'OXY'; % 'ECG' or 'OXY' (for pulse oximetry)
+        % preproc.cardiac.modality = 'OXY'; % 'ECG' or 'OXY' (for pulse oximetry)
         %% initial pulse select via load from logfile or autocorrelation with 1
         %% cardiac pulse
-        switch thresh.cardiac.initial_cpulse_select.method
+        switch preproc.cardiac.initial_cpulse_select.method
             case {'load_from_logfile', ''}
                 % do nothing
             otherwise
                 % run one of the various cardiac pulse detection algorithms
                 minCardiacCycleSamples = floor((1/(90/60)/dt));
-                [ons_secs.cpulse, verbose] = tapas_physio_get_cardiac_pulses(ons_secs.t, ons_secs.c, ...
-                    thresh.cardiac.initial_cpulse_select, thresh.cardiac.modality, minCardiacCycleSamples, verbose);
+                [ons_secs.cpulse, verbose] = ...
+                    tapas_physio_get_cardiac_pulses(ons_secs.t, ons_secs.c, ...
+                    preproc.cardiac.initial_cpulse_select, ...
+                    preproc.cardiac.modality, minCardiacCycleSamples, verbose);
         end
         
         
         %% post-hoc: hand pick additional cardiac pulses or load from previous
         %% time
-        switch thresh.cardiac.posthoc_cpulse_select.method
+        switch preproc.cardiac.posthoc_cpulse_select.method
             case {'manual'}
                 % additional manual fill-in of more missed pulses
-                [ons_secs, outliersHigh, outliersLow] = ...
+                [ons_secs, outliersHigh, outliersLow, verbose] = ...
                     tapas_physio_correct_cardiac_pulses_manually(ons_secs, ...
-                    thresh.cardiac.posthoc_cpulse_select);
+                    preproc.cardiac.posthoc_cpulse_select, verbose);
             case {'load'}
-                hasPosthocLogFile = exist(thresh.cardiac.posthoc_cpulse_select.file, 'file') || ...
-                    exist([thresh.cardiac.posthoc_cpulse_select.file '.mat'], 'file');
+                hasPosthocLogFile = exist(preproc.cardiac.posthoc_cpulse_select.file, 'file') || ...
+                    exist([preproc.cardiac.posthoc_cpulse_select.file '.mat'], 'file');
                 
                 if hasPosthocLogFile % load or set selection to manual, if no file exists
-                    osload = load(thresh.cardiac.posthoc_cpulse_select.file, 'ons_secs');
+                    osload = load(preproc.cardiac.posthoc_cpulse_select.file, 'ons_secs');
                     ons_secs = osload.ons_secs;
                 else
-                    [ons_secs, outliersHigh, outliersLow] = ...
+                    [ons_secs, outliersHigh, outliersLow, verbose] = ...
                         tapas_physio_correct_cardiac_pulses_manually(ons_secs,...
-                        thresh.cardiac.posthoc_cpulse_select);
+                        preproc.cardiac.posthoc_cpulse_select, verbose);
                 end
             case {'off', ''}
         end
@@ -217,7 +214,9 @@ if ~hasPhaseLogfile
     end
     
     
-    [ons_secs, sqpar] = tapas_physio_crop_scanphysevents_to_acq_window(ons_secs, sqpar);
+    [ons_secs, sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_window(...
+        ons_secs, sqpar, verbose);
+    scan_timing.sqpar = sqpar;
     
     if hasRespData
         % filter respiratory signal
@@ -230,16 +229,11 @@ if ~hasPhaseLogfile
             tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar);
     end
     
-    if verbose.level >= 1
-        verbose.fig_handles(end+1) = ...
-            tapas_physio_plot_raw_physdata_diagnostics(ons_secs.cpulse, ...
-            ons_secs.r, thresh.cardiac.posthoc_cpulse_select, verbose.level, ...
-            ons_secs.t, ons_secs.c);
-    else % without figure creation    else
+    [verbose, ons_secs.c_outliers_low, ons_secs.c_outliers_high, ...
+        ons_secs.r_hist] = ...
         tapas_physio_plot_raw_physdata_diagnostics(ons_secs.cpulse, ...
-            ons_secs.r, thresh.cardiac.posthoc_cpulse_select, 0);
-    end
-    
+        ons_secs.r, preproc.cardiac.posthoc_cpulse_select, verbose, ...
+        ons_secs.t, ons_secs.c);
     
 else
     % Phase data saved in log-file already
@@ -259,13 +253,14 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% 4. Create RETROICOR/response function regressors for GLM
+%% 4. Create physiological noise model regressors for GLM
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if any(strfind(upper(model.type),'RETROICOR'))
-    [cardiac_sess, respire_sess, mult_sess, ons_secs, verbose] = ...
+if model.retroicor.include
+    [cardiac_sess, respire_sess, mult_sess, ons_secs, ...
+        model.retroicor.order, verbose] = ...
         tapas_physio_create_retroicor_regressors(ons_secs, sqpar, ...
-        model.order, verbose);
+        model.retroicor.order, verbose);
 else
     cardiac_sess = [];
     respire_sess = [];
@@ -276,9 +271,9 @@ end
 % Create a heart-rate variability regressor using the cardiac response
 % function
 
-if any(strfind(upper(model.type),'HRV'))
-    [convHRV, ons_secs.hr, verbose] = tapas_physio_create_hrv_regressor(...
-        ons_secs, sqpar, verbose);
+if model.hrv.include % TODO: include delays!
+    [convHRV, ons_secs.hr, verbose] = tapas_physio_create_hrv_regressors(...
+        ons_secs, sqpar, model.hrv, verbose);
 else
     convHRV = [];
 end
@@ -287,62 +282,87 @@ end
 % Create a respiratory volume/time regressor using the respiratory response
 % function
 
-if any(strfind(upper(model.type),'RVT'))
-    [convRVT, ons_secs.rvt, verbose] = tapas_physio_create_rvt_regressor(...
-        ons_secs, sqpar, verbose);
+if model.rvt.include
+    [convRVT, ons_secs.rvt, verbose] = tapas_physio_create_rvt_regressors(...
+        ons_secs, sqpar, model.rvt, verbose);
 else
     convRVT = [];
 end
 
+% Extract anatomical defined (ROI) principal component regressors
 
-% 4.1 Load other confound regressors, e.g. realigment parameters
-
-if isfield(model, 'input_other_multiple_regressors') && ~isempty(model.input_other_multiple_regressors)
-    input_R = tapas_physio_load_other_multiple_regressors(model.input_other_multiple_regressors);
+if model.noise_rois.include
+    [noise_rois_R, model.noise_rois, verbose] = tapas_physio_create_noise_rois_regressors(...
+        model.noise_rois, verbose);
 else
-    input_R = [];
+    noise_rois_R = [];
 end
 
-input_R = [input_R, convHRV, convRVT];
+
+% Load other (physiological) confound regressors
+
+if model.other.include && ~isempty(model.other.input_multiple_regressors)
+    [other_R, verbose] = tapas_physio_load_other_multiple_regressors(...
+        model.other.input_multiple_regressors, verbose);
+else
+    other_R = [];
+end
+
+% load and manipulate movement parameters as confound regressors
+if model.movement.include && ~isempty(model.movement.file_realignment_parameters)
+     [movement_R, verbose] = tapas_physio_create_movement_regressors(...
+         model.movement, verbose);
+else
+    movement_R = [];
+end
 
 
-% 4.2   Orthogonalisation of regressors ensures numerical stability for
-%       otherwise correlated cardiac regressors
 
-[R, verbose] = tapas_physio_orthogonalise_physiological_regressors(cardiac_sess, respire_sess, ...
-    mult_sess, input_R, model.order.orthogonalise, verbose);
+
+R = [convHRV, convRVT, noise_rois_R, movement_R, other_R ];
+
+
+% Orthogonalisation of regressors ensures numerical stability for
+% otherwise correlated cardiac regressors
+
+[R, verbose] = tapas_physio_orthogonalise_physiological_regressors(...
+    cardiac_sess, respire_sess, ...
+    mult_sess, R, model.orthogonalise, verbose);
 
 
 % 4.3   Save Multiple Regressors file for SPM
 
 model.R = R;
 
-physio_out.save_dir     = save_dir;
-physio_out.log_files    = log_files;
-physio_out.thresh       = thresh;
-physio_out.sqpar        = sqpar;
-physio_out.model        = model;
-physio_out.verbose      = verbose;
-physio_out.ons_secs     = ons_secs;
+physio.save_dir     = save_dir;
+physio.log_files    = log_files;
+physio.preproc      = preproc;
+physio.scan_timing  = scan_timing;
+physio.model        = model;
+physio.verbose      = verbose;
+physio.ons_secs     = ons_secs;
+
+% save final physio-structure in .mat-file
+if ~isempty(model.output_physio)
+    save(model.output_physio, 'physio');
+end
 
 
-switch lower(model.type)
-    case 'none'
-        disp('No model estimated. Saving read log-files data into output-file instead: Check variable physio.ons_secs');
-        if ~isempty(model.output_multiple_regressors)
-            [fpfx, fn] = fileparts(model.output_multiple_regressors);
-            save(fullfile(fpfx, [fn '.mat']), 'physio_out');
-        end
-        
-    otherwise
-        [fpfx, fn, fsfx] = fileparts(model.output_multiple_regressors);
-        
-        switch fsfx
-            case '.mat'
-                save(model.output_multiple_regressors, 'R');
-            otherwise
-                save(model.output_multiple_regressors, 'R', '-ascii', '-double', '-tabs');
-        end
+if isempty(R)
+    disp(['No model estimated. Saving read log-files data into physio ' ...
+        'output-file instead: Check variable physio.ons_secs']);
+else
+    [fpfx, fn, fsfx] = fileparts(model.output_multiple_regressors);
+    
+    % TODO: slice-wise saving here...
+    % indSlice = physio.scan_timing.sqpar.onset_slice
+    
+    switch fsfx
+        case '.mat'
+            save(model.output_multiple_regressors, 'R');
+        otherwise
+            save(model.output_multiple_regressors, 'R', '-ascii', '-double', '-tabs');
+    end
 end
 
 
@@ -352,6 +372,5 @@ end
 %% 5. Save output figures to files
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if isfield(verbose, 'fig_output_file') && ~isempty(verbose.fig_output_file)
-    tapas_physio_print_figs_to_file(verbose);
-end
+[physio.verbose] = tapas_physio_print_figs_to_file(physio.verbose);
+

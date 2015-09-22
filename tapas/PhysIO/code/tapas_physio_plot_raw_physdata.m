@@ -1,4 +1,4 @@
-function fh = tapas_physio_plot_raw_physdata(ons_secs)
+function verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose)
 % plots raw data from physiological logfile(s) to check whether read-in worked
 %
 %   fh = tapas_physio_plot_raw_physdata(ons_secs)
@@ -27,47 +27,54 @@ function fh = tapas_physio_plot_raw_physdata(ons_secs)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_plot_raw_physdata.m 354 2013-12-02 22:21:41Z kasperla $
-fh = tapas_physio_get_default_fig_params();
-set(fh, 'Name', 'Raw Physiological Logfile Data');
+% $Id: tapas_physio_plot_raw_physdata.m 756 2015-07-08 16:17:15Z kasperla $
 
-has_cardiac = isfield(ons_secs, 'c') && ~isempty(ons_secs.c);
-has_respiration = isfield(ons_secs, 'r') && ~isempty(ons_secs.r);
-lg = cell(0,1);
-
-if has_cardiac
-    amp = max(ons_secs.c);
-else
-    if has_respiration
-        amp = max(ons_secs.r);
+if verbose.level >= 2
+    
+    fh = tapas_physio_get_default_fig_params();
+    set(fh, 'Name', 'Raw Physiological Logfile Data');
+    
+    has_cardiac = isfield(ons_secs, 'c') && ~isempty(ons_secs.c);
+    has_respiration = isfield(ons_secs, 'r') && ~isempty(ons_secs.r);
+    lg = cell(0,1);
+    
+    if has_cardiac
+        amp = max(ons_secs.c);
     else
-        amp = 1;
+        if has_respiration
+            amp = max(ons_secs.r);
+        else
+            amp = 1;
+        end
     end
+    
+    if isfield(ons_secs, 'cpulse') && ~isempty(ons_secs.cpulse)
+        stem(ons_secs.cpulse,amp*ones(size(ons_secs.cpulse)), 'm'); hold all;
+        lg{end+1} = 'Cardiac R-peak (heartbeat) events';
+    else
+        tapas_physio_log('No cardiac R-peak (heartbeat) events provided', verbose, 1);
+    end
+    
+    
+    if has_cardiac
+        plot(ons_secs.t, ons_secs.c, 'r'); hold all;
+        lg{end+1} = 'Cardiac time course';
+    else
+        tapas_physio_log('No cardiac time series provided', verbose, 1);
+    end
+    
+    if has_respiration
+        plot(ons_secs.t, ons_secs.r, 'g'); hold all;
+        lg{end+1} = 'Respiratory time course';
+    else
+        tapas_physio_log('No respiratory time series provided', verbose, 1);
+    end
+    
+    if ~isempty(lg), legend(lg); end;
+    
+    title('Raw Physiological Logfile Data');
+    xlabel('t (s)');
+    
+    verbose.fig_handles(end+1) = fh;
+    
 end
-
-if isfield(ons_secs, 'cpulse') && ~isempty(ons_secs.cpulse)
-    stem(ons_secs.cpulse,amp*ones(size(ons_secs.cpulse)), 'm'); hold all;
-    lg{end+1} = 'cardiac R-peak (heartbeat) events';
-else
-    warning('No cardiac R-peak (heartbeat) events provided');
-end
-
-
-if has_cardiac
-    plot(ons_secs.t, ons_secs.c, 'r'); hold all;
-    lg{end+1} = 'cardiac time course';
-else
-    warning('No cardiac time series provided');
-end
-
-if has_respiration
-    plot(ons_secs.t, ons_secs.r, 'g'); hold all;
-    lg{end+1} = 'respiratory time course';
-else
-    warning('No respiratory time series provided');
-end
-
-if ~isempty(lg), legend(lg); end;
-
-title('Raw Physiological Logfile Data');
-xlabel('t (s)');

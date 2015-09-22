@@ -8,7 +8,7 @@ function physio = tapas_physio_cfg_matlabbatch
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_cfg_matlabbatch.m 668 2015-02-01 12:22:26Z kasperla $
+% $Id: tapas_physio_cfg_matlabbatch.m 810 2015-08-12 00:50:31Z kasperla $
 
 
 pathThis = fileparts(mfilename('fullpath')); % TODO: more elegant via SPM!
@@ -16,7 +16,7 @@ addpath(pathThis);
 
 
 %--------------------------------------------------------------------------
-% save_dir (directory) - where all data is saved
+%% Save_dir (directory) - where all data is saved
 %--------------------------------------------------------------------------
 save_dir         = cfg_files;
 save_dir.tag     = 'save_dir';
@@ -121,6 +121,7 @@ log_scan_timing.help    = {
      };
 log_scan_timing.filter  = 'any';
 log_scan_timing.ufilter = '.*';
+log_scan_timing.val     = {{''}};
 log_scan_timing.num     = [0 1];
 
 %--------------------------------------------------------------------------
@@ -199,7 +200,7 @@ files.help = {'Specify log files where peripheral data was stored, and their pro
 
 
 %==========================================================================
-%% Sub-structure sqpar
+%% Subsub-structure sqpar
 %==========================================================================
 
 
@@ -325,158 +326,8 @@ sqpar.val  = {Nslices NslicesPerBeat TR Ndummies Nscans onset_slice time_slice_t
 sqpar.help = {'Sequence timing parameters, (number of slices, volumes, dummies, volume TR, slice TR ...)'};
 
 
-
-
-%==========================================================================
-%% Sub-structure model
-%==========================================================================
-
-
-%--------------------------------------------------------------------------
-% c
-%--------------------------------------------------------------------------
-c         = cfg_entry;
-c.tag     = 'c';
-c.name    = 'cardiac';
-c.help    = {'Order of Fourier expansion for cardiac phase'
-    ' - equals 1/2 number of cardiac regressors, since sine and cosine terms'
-    'are computed, i.e. sin(phi), cos(phi), sin(2*phi), cos(2*phi), ..., sin(c*phi), cos(c*phi)'
-    };
-c.strtype = 'e';
-c.num     = [1 1];
-c.val     = {3};
-
-%--------------------------------------------------------------------------
-% r
-%--------------------------------------------------------------------------
-r         = cfg_entry;
-r.tag     = 'r';
-r.name    = 'respiratory';
-r.help    = {
-    'Order of Fourier expansion for respiratory phase'
-    ' - equals 1/2 number of respiratory regressors, since sine and cosine terms'
-    'are computed, i.e. sin(phi), cos(phi), sin(2*phi), cos(2*phi), ..., sin(r*phi), cos(r*phi)'
-    };
-r.strtype = 'e';
-r.num     = [1 1];
-r.val     = {4};
-
-%--------------------------------------------------------------------------
-% cr
-%--------------------------------------------------------------------------
-cr         = cfg_entry;
-cr.tag     = 'cr';
-cr.name    = 'cardiac X respiratory';
-cr.help    = {
-    'Order of Fourier expansion for interaction of cardiac and respiratory phase'
-    ' - equals 1/4 number of interaction regressors, since sine and cosine terms'
-    'are computed and multiplied, i.e. sin(phi_c)*cos(phi_r), sin(phi_r)*cos(phi_c)'
-    };
-cr.strtype = 'e';
-cr.num     = [1 1];
-cr.val     = {1};
-
-%--------------------------------------------------------------------------
-% orthog
-%--------------------------------------------------------------------------
-orthog        = cfg_menu;
-orthog.tag    = 'orthogonalise';
-orthog.name   = 'orthogonalise';
-orthog.help   = {
-    'Orthogonalize physiological regressors with respect to each other.'
-    'Note: This is only recommended for triggered/gated acquisition sequences.'
-    };
-orthog.labels = {'none' 'cardiac' 'resp' 'mult' 'all'};
-orthog.values = {'none' 'cardiac' 'resp' 'mult' 'all'};
-orthog.val    = {'none'};
-
-%--------------------------------------------------------------------------
-% order
-%--------------------------------------------------------------------------
-order      = cfg_branch;
-order.tag  = 'order';
-order.name = 'order';
-order.val  = {c r cr orthog};
-order.help = {'...'};
-
-%--------------------------------------------------------------------------
-% model_type
-%--------------------------------------------------------------------------
-model_type        = cfg_menu;
-model_type.tag    = 'type';
-model_type.name   = 'type';
-model_type.help   = {'Physiological Model estimated'};
-model_type.labels = {
-    'none (only read-in of logfile data into physio.ons_secs)'
-    'RETROICOR (RETRO)'
-    'Heart Rate Variability (HRV)'
-    'Respiratory Volume per Time (RVT)'
-    'RETRO+HRV'
-    'RETRO+RVT'
-    'HRV+RVT'
-    'RETRO+HRV+RVT'
-    };
-model_type.values = {
-    'none'
-    'RETROICOR'
-    'HRV'
-    'RVT'
-    'RETROICOR_HRV'
-    'RETROICOR_RVT'
-    'HRV_RVT'
-    'RETROICOR_HRV_RVT'
-    };
-model_type.val    = {'RETROICOR'};
-
-%--------------------------------------------------------------------------
-% output_multiple_regressors
-%--------------------------------------------------------------------------
-output_multiple_regressors         = cfg_entry;
-output_multiple_regressors.tag     = 'output_multiple_regressors';
-output_multiple_regressors.name    = 'output_multiple_regressors';
-output_multiple_regressors.help    = {
-    'Output file for physiologica regressors'
-    'Choose file name with extension:'
-    '.txt for ASCII files with 1 regressor per column'
-    '.mat for matlab variable file'
-    };
-output_multiple_regressors.strtype = 's';
-output_multiple_regressors.num     = [1 Inf];
-output_multiple_regressors.val     = {'multiple_regressors.txt'};
-
-%--------------------------------------------------------------------------
-% input_other_multiple_regressors
-%--------------------------------------------------------------------------
-input_other_multiple_regressors         = cfg_files;
-input_other_multiple_regressors.tag     = 'input_other_multiple_regressors';
-input_other_multiple_regressors.name    = 'input_other_multiple_regressors';
-input_other_multiple_regressors.val     = {{''}};
-input_other_multiple_regressors.help    = {'...'};
-input_other_multiple_regressors.filter  = '.*';
-input_other_multiple_regressors.ufilter = '.mat$|.txt$';
-input_other_multiple_regressors.num     = [0 1];
-
-%--------------------------------------------------------------------------
-% model
-%--------------------------------------------------------------------------
-model      = cfg_branch;
-model.tag  = 'model';
-model.name = 'model';
-model.val  = {model_type, order, input_other_multiple_regressors, ...
-    output_multiple_regressors};
-model.help = {['Physiological Model to be estimated and Included in GLM ' ... 
-    'multiple_regressors.txt']};
-
-
-
-
 % ==========================================================================
-%% Sub-structure thresh
-%==========================================================================
-
-
-% ==========================================================================
-%% Subsub-structure scan_timing
+%% Subsub-structure sync
 %==========================================================================
 
 
@@ -538,38 +389,34 @@ zero.num     = [Inf Inf];
 zero.val     = {1700};
 
 
-
-
 %--------------------------------------------------------------------------
-% scan_timing_method_gradient_log
+% sync_method_gradient_log
 %--------------------------------------------------------------------------
 
-
-scan_timing_method_gradient_log = cfg_branch;
-scan_timing_method_gradient_log.tag = 'gradient_log';
-scan_timing_method_gradient_log.name = 'gradient_log';
-scan_timing_method_gradient_log.val  = {
+sync_method_gradient_log = cfg_branch;
+sync_method_gradient_log.tag = 'gradient_log';
+sync_method_gradient_log.name = 'gradient_log';
+sync_method_gradient_log.val  = {
    grad_direction 
    zero 
    slice 
    vol 
    vol_spacing
 };
-scan_timing_method_gradient_log.help = { ...
+sync_method_gradient_log.help = { ...
     ' Derive scan-timing from logged gradient time courses'
     ' in SCANPHYSLOG-files (Philips only)'};
 
 
 %--------------------------------------------------------------------------
-% scan_timing_method_gradient_log_auto
+% sync_method_gradient_log_auto
 %--------------------------------------------------------------------------
 
-
-scan_timing_method_gradient_log_auto = cfg_branch;
-scan_timing_method_gradient_log_auto.tag = 'gradient_log_auto';
-scan_timing_method_gradient_log_auto.name = 'gradient_log_auto';
-scan_timing_method_gradient_log_auto.val  = {};
-scan_timing_method_gradient_log_auto.help = { ...
+sync_method_gradient_log_auto = cfg_branch;
+sync_method_gradient_log_auto.tag = 'gradient_log_auto';
+sync_method_gradient_log_auto.name = 'gradient_log_auto';
+sync_method_gradient_log_auto.val  = {};
+sync_method_gradient_log_auto.help = { ...
     ' Derive scan-timing from logged gradient time courses'
     ' in SCANPHYSLOG-files automatically (Philips only), '
     ' using prior information on TR and number of slices, '
@@ -578,44 +425,43 @@ scan_timing_method_gradient_log_auto.help = { ...
 
 
 %--------------------------------------------------------------------------
-% scan_timing_method_nominal
+% sync_method_nominal
 %--------------------------------------------------------------------------
 
-scan_timing_method_nominal = cfg_branch;
-scan_timing_method_nominal.tag = 'nominal';
-scan_timing_method_nominal.name = 'nominal';
-scan_timing_method_nominal.val  = {};
-scan_timing_method_nominal.help = { ...
+sync_method_nominal = cfg_branch;
+sync_method_nominal.tag = 'nominal';
+sync_method_nominal.name = 'nominal';
+sync_method_nominal.val  = {};
+sync_method_nominal.help = { ...
     ' Derive scan-timing for sqpar (nominal scan timing parameters)'};
 
 
 %--------------------------------------------------------------------------
-% scan_timing_method_scan_timing_log
+% sync_method_sync_log
 %--------------------------------------------------------------------------
 
-scan_timing_method_scan_timing_log = cfg_branch;
-scan_timing_method_scan_timing_log.tag = 'scan_timing_log';
-scan_timing_method_scan_timing_log.name = 'scan_timing_log';
-scan_timing_method_scan_timing_log.val  = {};
-scan_timing_method_scan_timing_log.help = { ...
+sync_method_scan_timing_log = cfg_branch;
+sync_method_scan_timing_log.tag = 'scan_timing_log';
+sync_method_scan_timing_log.name = 'scan_timing_log';
+sync_method_scan_timing_log.val  = {};
+sync_method_scan_timing_log.help = { ...
     ' Derive scan-timing from individual scan timing logfile with time '
     ' stamps ("tics") for each slice and volume (e.g. Siemens_Cologne)'};
 
  
- 
+%--------------------------------------------------------------------------
+% sync
+%--------------------------------------------------------------------------
 
-%--------------------------------------------------------------------------
-% scan_timing
-%--------------------------------------------------------------------------
-scan_timing      = cfg_choice;
-scan_timing.tag  = 'scan_timing';
-scan_timing.name = 'Scan/Physlog Time Synchronization';
-scan_timing.values  = {scan_timing_method_nominal, ...
-    scan_timing_method_gradient_log, ...
-    scan_timing_method_gradient_log_auto, ...
-    scan_timing_method_scan_timing_log};
-scan_timing.val = {scan_timing_method_nominal};
-scan_timing.help = {'Determines scan timing from nominal scan parameters or logged gradient time courses'
+sync      = cfg_choice;
+sync.tag  = 'sync';
+sync.name = 'Scan/Physlog Time Synchronization';
+sync.values  = {sync_method_nominal, ...
+    sync_method_gradient_log, ...
+    sync_method_gradient_log_auto, ...
+    sync_method_scan_timing_log};
+sync.val = {sync_method_nominal};
+sync.help = {'Determines scan timing from nominal scan parameters or logged gradient time courses'
     ''
 ' Available methods to determine slice onset times'
 ' ''nominal''         - to derive slice acquisition timing from sqpar directly'
@@ -627,7 +473,23 @@ scan_timing.help = {'Determines scan timing from nominal scan parameters or logg
 };
 
 
+%--------------------------------------------------------------------------
+% scan_timing
+%--------------------------------------------------------------------------
+scan_timing      = cfg_branch;
+scan_timing.tag  = 'scan_timing';
+scan_timing.name = 'scan_timing (Parameters for sequence timing & synchronization)';
+scan_timing.val  = {sqpar sync};
+scan_timing.help = {'Parameters for sequence timing & synchronization, i.e.'
+    'scan_tming.sqpar =  slice and volume acquisition starts, TR,'
+    '                    number of scans etc.'
+    'scan_timing.sync = synchronize phys logfile to scan acquisition via logged MR gradient time courses/time stamps'
+    };
+ 
 
+% ==========================================================================
+%% Sub-structure preproc
+%==========================================================================
 
 % ==========================================================================
 %% Subsub-structure cardiac
@@ -688,8 +550,6 @@ initial_cpulse_select_method_auto_template.help = { ...
     '             maximising auto-correlation with it (default)'};
 
 
-
-
 %--------------------------------------------------------------------------
 % initial_cpulse_select_method_auto_matched
 %--------------------------------------------------------------------------
@@ -705,8 +565,6 @@ initial_cpulse_select_method_auto_matched.help = { ...
     'Auto generation of template QRS wave, '
     '             matched-filter/autocorrelation detection of heartbeats'
     };
-
-
 
 
 %--------------------------------------------------------------------------
@@ -770,7 +628,6 @@ initial_cpulse_select.values  = {
     };
 
 
-
 initial_cpulse_select.help = {
     'The initial cardiac pulse selection structure: Determines how the'
     'majority of cardiac pulses is detected in a first pass.'
@@ -796,10 +653,10 @@ posthoc_cpulse_select_file.num     = [0 Inf];
 posthoc_cpulse_select_file.val     = {'posthoc_cpulse.mat'};
 
 
-
 %--------------------------------------------------------------------------
 % posthoc_cpulse_select_percentile
 %--------------------------------------------------------------------------
+
 posthoc_cpulse_select_percentile       = cfg_entry;
 posthoc_cpulse_select_percentile.tag     = 'percentile';
 posthoc_cpulse_select_percentile.name    = 'percentile';
@@ -809,6 +666,7 @@ posthoc_cpulse_select_percentile.help    = {
 posthoc_cpulse_select_percentile.strtype = 'e';
 posthoc_cpulse_select_percentile.num     = [Inf Inf];
 posthoc_cpulse_select_percentile.val     = {80};
+
 
 %--------------------------------------------------------------------------
 % posthoc_cpulse_select_upper_thresh
@@ -823,9 +681,11 @@ posthoc_cpulse_select_upper_thresh.strtype = 'e';
 posthoc_cpulse_select_upper_thresh.num     = [Inf Inf];
 posthoc_cpulse_select_upper_thresh.val     = {60};
 
+
 %--------------------------------------------------------------------------
 % posthoc_cpulse_select_lower_thresh
 %--------------------------------------------------------------------------
+
 posthoc_cpulse_select_lower_thresh       = cfg_entry;
 posthoc_cpulse_select_lower_thresh.tag     = 'lower_thresh';
 posthoc_cpulse_select_lower_thresh.name    = 'lower_thresh';
@@ -848,7 +708,6 @@ posthoc_cpulse_select_method_off.val  = {};
 posthoc_cpulse_select_method_off.help = {'No manual post-hoc pulse selection'};
 
 
-
 %--------------------------------------------------------------------------
 % posthoc_cpulse_select_method_manual
 %--------------------------------------------------------------------------
@@ -863,7 +722,6 @@ posthoc_cpulse_select_method_manual.val = {...
     posthoc_cpulse_select_percentile ...
     posthoc_cpulse_select_upper_thresh ...
     posthoc_cpulse_select_lower_thresh};
-
 
 
 %--------------------------------------------------------------------------
@@ -897,7 +755,7 @@ posthoc_cpulse_select.help = {
     'manual selection after visual inspection is possible using the'
     'following parameters. The results are saved for reproducibility.'
     ''
-    'Refers to physio.thresh.cardiac.posthoc_cpulse_select.method in physio-structure'
+    'Refers to physio.preproc.cardiac.posthoc_cpulse_select.method in physio-structure'
     };
 
 
@@ -913,14 +771,567 @@ cardiac.help = {'...'};
 
 
 %--------------------------------------------------------------------------
-% thresh
+% preproc
 %--------------------------------------------------------------------------
-thresh      = cfg_branch;
-thresh.tag  = 'thresh';
-thresh.name = 'thresh (Thresholding parameters for de-noising and timing)';
-thresh.val  = {scan_timing cardiac};
-thresh.help = {'Thresholding parameters for de-noising of raw peripheral data'
+preproc      = cfg_branch;
+preproc.tag  = 'preproc';
+preproc.name = 'preproc (Thresholding parameters for de-noising and timing)';
+preproc.val  = {cardiac};
+preproc.help = {'Thresholding parameters for de-noising of raw peripheral data'
     'and determination of sequence timing from logged MR gradient time courses'};
+
+
+
+%==========================================================================
+%% Sub-structure model
+%==========================================================================
+
+
+%--------------------------------------------------------------------------
+% orthog
+%--------------------------------------------------------------------------
+
+orthog        = cfg_menu;
+orthog.tag    = 'orthogonalise';
+orthog.name   = 'orthogonalise';
+orthog.help   = {
+    'Orthogonalize physiological regressors with respect to each other.'
+    'Note: This is only recommended for triggered/gated acquisition sequences.'
+    };
+orthog.labels = {'none' 'cardiac' 'resp' 'mult' 'RETROCOR', 'HRV', 'RVT', 'Noise_ROIs'};
+orthog.values = {'none' 'cardiac' 'resp' 'mult' 'retroicor', 'hrv', 'rvt', 'noise_rois'};
+orthog.val    = {'none'};
+
+
+%--------------------------------------------------------------------------
+% output_multiple_regressors
+%--------------------------------------------------------------------------
+
+output_multiple_regressors         = cfg_entry;
+output_multiple_regressors.tag     = 'output_multiple_regressors';
+output_multiple_regressors.name    = 'output_multiple_regressors';
+output_multiple_regressors.help    = {
+    'Output file for physiological regressors'
+    'Choose file name with extension:'
+    '.txt for ASCII files with 1 regressor per column'
+    '.mat for matlab variable file'
+    };
+output_multiple_regressors.strtype = 's';
+output_multiple_regressors.num     = [1 Inf];
+output_multiple_regressors.val     = {'multiple_regressors.txt'};
+
+
+%--------------------------------------------------------------------------
+% output_physio
+%--------------------------------------------------------------------------
+
+output_physio         = cfg_entry;
+output_physio.tag     = 'output_physio';
+output_physio.name    = 'output_physio';
+output_physio.help    = {
+    'Output file for physio-structure with extracted physiological time'
+    'series, detected peak and created regressors'
+    'Choose mat-file name; structure will be saved as variable physio in there.'
+    };
+output_physio.strtype = 's';
+output_physio.num     = [1 Inf];
+output_physio.val     = {'physio.mat'};
+
+
+%--------------------------------------------------------------------------
+%% Sub-substructure retroicor
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+% c
+%--------------------------------------------------------------------------
+c         = cfg_entry;
+c.tag     = 'c';
+c.name    = 'cardiac';
+c.help    = {'Order of Fourier expansion for cardiac phase'
+    ' - equals 1/2 number of cardiac regressors, since sine and cosine terms'
+    'are computed, i.e. sin(phi), cos(phi), sin(2*phi), cos(2*phi), ..., sin(c*phi), cos(c*phi)'
+    };
+c.strtype = 'e';
+c.num     = [1 1];
+c.val     = {3};
+
+%--------------------------------------------------------------------------
+% r
+%--------------------------------------------------------------------------
+r         = cfg_entry;
+r.tag     = 'r';
+r.name    = 'respiratory';
+r.help    = {
+    'Order of Fourier expansion for respiratory phase'
+    ' - equals 1/2 number of respiratory regressors, since sine and cosine terms'
+    'are computed, i.e. sin(phi), cos(phi), sin(2*phi), cos(2*phi), ..., sin(r*phi), cos(r*phi)'
+    };
+r.strtype = 'e';
+r.num     = [1 1];
+r.val     = {4};
+
+%--------------------------------------------------------------------------
+% cr
+%--------------------------------------------------------------------------
+cr         = cfg_entry;
+cr.tag     = 'cr';
+cr.name    = 'cardiac X respiratory';
+cr.help    = {
+    'Order of Fourier expansion for interaction of cardiac and respiratory phase'
+    ' - equals 1/4 number of interaction regressors, since sine and cosine terms'
+    'are computed and multiplied, i.e. sin(phi_c)*cos(phi_r), sin(phi_r)*cos(phi_c)'
+    };
+cr.strtype = 'e';
+cr.num     = [1 1];
+cr.val     = {1};
+
+
+%--------------------------------------------------------------------------
+% order
+%--------------------------------------------------------------------------
+
+order      = cfg_branch;
+order.tag  = 'order';
+order.name = 'order';
+order.val  = {c r cr};
+order.help = {'...'};
+
+
+%--------------------------------------------------------------------------
+% retroicor_no
+%--------------------------------------------------------------------------
+
+retroicor_no         = cfg_branch;
+retroicor_no.tag  = 'no';
+retroicor_no.name = 'No';
+retroicor_no.val  = {};
+retroicor_no.help = {'RETROICOR not used'};
+
+
+%--------------------------------------------------------------------------
+% retroicor_yes
+%--------------------------------------------------------------------------
+
+retroicor_yes      = cfg_branch;
+retroicor_yes.tag  = 'yes';
+retroicor_yes.name = 'Yes';
+retroicor_yes.val  = {order};
+retroicor_yes.help = {'Include RETROICOR Model, as described in Glover et al., MRM 2000'};
+
+
+
+%--------------------------------------------------------------------------
+% retroicor
+%--------------------------------------------------------------------------
+
+retroicor      = cfg_choice;
+retroicor.tag  = 'retroicor';
+retroicor.name = 'RETROICOR';
+retroicor.val  = {retroicor_yes};
+retroicor.values  = {retroicor_no, retroicor_yes};
+retroicor.help = {'RETROICOR Model, as described in Glover et al., MRM 2000'};
+
+
+%--------------------------------------------------------------------------
+%% Sub-substructure RVT
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+% rvt_delays
+%--------------------------------------------------------------------------
+rvt_delays         = cfg_entry;
+rvt_delays.tag     = 'delays';
+rvt_delays.name    = 'Delays (seconds)';
+rvt_delays.help    = {
+    'Delays (in seconds) by which respiratory response function is '
+    'shifted with respect to RVT regressor before convolution'
+    };
+rvt_delays.num     = [Inf Inf];
+rvt_delays.val     = {0};
+
+%--------------------------------------------------------------------------
+% rvt_no
+%--------------------------------------------------------------------------
+
+rvt_no         = cfg_branch;
+rvt_no.tag  = 'no';
+rvt_no.name = 'No';
+rvt_no.val  = {};
+rvt_no.help = {'Respiratory Volume per Time Model not used'};
+
+
+%--------------------------------------------------------------------------
+% rvt_yes
+%--------------------------------------------------------------------------
+
+rvt_yes      = cfg_branch;
+rvt_yes.tag  = 'yes';
+rvt_yes.name = 'Yes';
+rvt_yes.val  = {rvt_delays};
+rvt_yes.help = {
+    'Include Respiratory Volume per Time (RVT) Model, '
+    'as described in Birn, R.M., et al. NeuroImage 40, 644?654. doi:10.1016/j.neuroimage.2007.11.059'
+    };
+
+
+
+%--------------------------------------------------------------------------
+% rvt
+%--------------------------------------------------------------------------
+
+rvt      = cfg_choice;
+rvt.tag  = 'rvt';
+rvt.name = 'Respiratory Volume per Time (RVT)';
+rvt.val  = {rvt_no};
+rvt.values  = {rvt_no, rvt_yes};
+rvt.help = {
+    'Respiratory Volume per Time (RVT) Model, '
+    'as described in Birn, R.M., et al. NeuroImage 40, 644?654. doi:10.1016/j.neuroimage.2007.11.059'
+    };
+
+
+%--------------------------------------------------------------------------
+%% Sub-substructure HRV
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+% hrv_delays
+%--------------------------------------------------------------------------
+hrv_delays         = cfg_entry;
+hrv_delays.tag     = 'delays';
+hrv_delays.name    = 'Delays (seconds)';
+hrv_delays.help    = {
+    'Delays (in seconds) by which respiratory response function is '
+    'shifted with respect to HRV regressor before convolution'
+    };
+hrv_delays.num     = [Inf Inf];
+hrv_delays.val     = {0};
+
+%--------------------------------------------------------------------------
+% hrv_no
+%--------------------------------------------------------------------------
+
+hrv_no         = cfg_branch;
+hrv_no.tag  = 'no';
+hrv_no.name = 'No';
+hrv_no.val  = {};
+hrv_no.help = {'Heart Rate Variability Model not used'};
+
+
+%--------------------------------------------------------------------------
+% hrv_yes
+%--------------------------------------------------------------------------
+
+hrv_yes      = cfg_branch;
+hrv_yes.tag  = 'yes';
+hrv_yes.name = 'Yes';
+hrv_yes.val  = {hrv_delays};
+hrv_yes.help = {
+    'Include Heart Rate Variability (HRV) Model, '
+    'as described in Birn, R.M., et al. NeuroImage 40, 644?654. doi:10.1016/j.neuroimage.2007.11.059'
+    };
+
+
+
+%--------------------------------------------------------------------------
+% hrv
+%--------------------------------------------------------------------------
+
+hrv      = cfg_choice;
+hrv.tag  = 'hrv';
+hrv.name = 'Heart Rate Variability (HRV)';
+hrv.val  = {hrv_no};
+hrv.values  = {hrv_no, hrv_yes};
+hrv.help = {
+    'Heart Rate Variability (HRV) Model, as described in '
+    'Chang, C. et al., NeuroImage 44, 857?869. doi:10.1016/j.neuroimage.2008.09.029'
+};
+
+
+%--------------------------------------------------------------------------
+%% Sub-substructure Noise_Rois Model
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+% fmri_files
+%--------------------------------------------------------------------------
+
+fmri_files         = cfg_files;
+fmri_files.tag     = 'fmri_files';
+fmri_files.name    = 'FMRI Time Series File(s)';
+fmri_files.val     = {{''}};
+fmri_files.help    = {
+    'Preprocessed fmri nifti/analyze files, from which time series '
+    'shall be extracted'};
+fmri_files.filter  = '.*';
+fmri_files.ufilter = '.nii$|.img$';
+fmri_files.num     = [0 Inf];
+
+%--------------------------------------------------------------------------
+% roi_files
+%--------------------------------------------------------------------------
+
+roi_files         = cfg_files;
+roi_files.tag     = 'roi_files';
+roi_files.name    = 'Noise ROI Image File(s)';
+roi_files.val     = {{''}};
+roi_files.help    = {'Masks/tissue probability maps characterizing where noise resides'};
+roi_files.filter  = '.*';
+roi_files.ufilter = '.nii$|.img$';
+roi_files.num     = [0 Inf];
+
+
+%--------------------------------------------------------------------------
+% roi_thresholds
+%--------------------------------------------------------------------------
+
+roi_thresholds         = cfg_entry;
+roi_thresholds.tag     = 'thresholds';
+roi_thresholds.name    = 'ROI thresholds';
+roi_thresholds.help    = {
+    'Single threshold or vector [1, nRois] of thresholds to be applied to' 
+    'mask files to decide which voxels to include '
+    '(e.g. a probability like 0.99, if roi_files'
+    'are tissue probability maps'
+    };
+roi_thresholds.num     = [Inf Inf];
+roi_thresholds.val     = {0.9};
+
+
+%--------------------------------------------------------------------------
+% n_voxel_crop
+%--------------------------------------------------------------------------
+
+n_voxel_crop         = cfg_entry;
+n_voxel_crop.tag     = 'n_voxel_crop';
+n_voxel_crop.name    = 'Number of ROI pixels to be cropped';
+n_voxel_crop.help    = {
+       'Single number or vector [1, nRois] of number of voxels to crop per ROI'
+    };
+n_voxel_crop.num     = [Inf Inf];
+n_voxel_crop.val     = {0};
+
+
+%--------------------------------------------------------------------------
+% n_components
+%--------------------------------------------------------------------------
+
+n_components         = cfg_entry;
+n_components.tag     = 'n_components';
+n_components.name    = 'Number of principal components';
+n_components.help    = {
+ ' Single number or vector [1, nRois] of numbers'
+    ' integer >=1:      number of principal components to be extracted'
+    '                   from all voxel time series within each ROI'
+    ' float in [0,1[    choose as many components as needed to explain this'
+    '                   relative share of total variance, e.g. 0.99 ='
+    '                   add more components, until 99 % of variance explained'
+    ' NOTE: Additionally, the mean time series of the region is also'
+    ' extracted'    };
+n_components.num     = [Inf Inf];
+n_components.val     = {1};
+
+
+%--------------------------------------------------------------------------
+% noise_rois_no
+%--------------------------------------------------------------------------
+
+noise_rois_no         = cfg_branch;
+noise_rois_no.tag  = 'no';
+noise_rois_no.name = 'No';
+noise_rois_no.val  = {};
+noise_rois_no.help = {'Noise ROIs not used'};
+
+
+%--------------------------------------------------------------------------
+% noise_rois_yes
+%--------------------------------------------------------------------------
+
+noise_rois_yes      = cfg_branch;
+noise_rois_yes.tag  = 'yes';
+noise_rois_yes.name = 'Yes';
+noise_rois_yes.val  = {fmri_files, roi_files, roi_thresholds, n_voxel_crop, ...
+    n_components};
+noise_rois_yes.help = {'Include Noise ROIs model'};
+
+
+
+%--------------------------------------------------------------------------
+% noise_rois
+%--------------------------------------------------------------------------
+
+noise_rois      = cfg_choice;
+noise_rois.tag  = 'noise_rois';
+noise_rois.name = 'Noise ROIs model (Principal components of anatomical regions)';
+noise_rois.val  = {noise_rois_no};
+noise_rois.values  = {noise_rois_no, noise_rois_yes};
+noise_rois.help = {'Noise ROIs model (Principal components of anatomical regions), similar to aCompCor, Behzadi et al. 2007'};
+
+
+
+%--------------------------------------------------------------------------
+%% Sub-substructure Movement Model
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+% movement_file_realignment_parameters
+%--------------------------------------------------------------------------
+
+movement_file_realignment_parameters         = cfg_files;
+movement_file_realignment_parameters.tag     = 'file_realignment_parameters';
+movement_file_realignment_parameters.name    = 'Realignment Parameter File';
+movement_file_realignment_parameters.val     = {{''}};
+movement_file_realignment_parameters.help    = {'...'};
+movement_file_realignment_parameters.filter  = '.*';
+movement_file_realignment_parameters.ufilter = '.mat$|.txt$';
+movement_file_realignment_parameters.num     = [0 1];
+
+
+%--------------------------------------------------------------------------
+% movement_order
+%--------------------------------------------------------------------------
+movement_order        = cfg_menu;
+movement_order.tag    = 'order';
+movement_order.name   = 'order';
+movement_order.help   = {'Order of movement regressors 6/12/24, including derivatives and squared parameters/derivatives'};
+movement_order.labels = {'6' '12' '24'};
+movement_order.values = {6, 12 24};
+movement_order.val    = {6};
+
+
+%--------------------------------------------------------------------------
+% movement_outlier_translation_mm
+%--------------------------------------------------------------------------
+
+movement_outlier_translation_mm         = cfg_entry;
+movement_outlier_translation_mm.tag     = 'outlier_translation_mm';
+movement_outlier_translation_mm.name    = 'Outlier Translation Treshold (mm)';
+movement_outlier_translation_mm.help    = {
+   'Threshold, above which a stick regressor is created for ' 
+   'corresponding volume of exceeding shift'
+   };
+movement_outlier_translation_mm.strtype = 'e';
+movement_outlier_translation_mm.num     = [1 1];
+movement_outlier_translation_mm.val     = {1};
+
+
+%--------------------------------------------------------------------------
+% movement_outlier_rotation_deg
+%--------------------------------------------------------------------------
+
+movement_outlier_rotation_deg         = cfg_entry;
+movement_outlier_rotation_deg.tag     = 'outlier_rotation_deg';
+movement_outlier_rotation_deg.name    = 'Outlier Rotation Treshold (degrees)';
+movement_outlier_rotation_deg.help    = {
+   'Threshold, above which a stick regressor is created for '
+   'corresponding volume of exceeding rotational movement'
+   };
+movement_outlier_rotation_deg.strtype = 'e';
+movement_outlier_rotation_deg.num     = [1 1];
+movement_outlier_rotation_deg.val     = {1};
+
+
+%--------------------------------------------------------------------------
+% movement_no
+%--------------------------------------------------------------------------
+
+movement_no         = cfg_branch;
+movement_no.tag  = 'no';
+movement_no.name = 'No';
+movement_no.val  = {};
+movement_no.help = {'Movement regressors not used.'};
+
+
+%--------------------------------------------------------------------------
+% movement_yes
+%--------------------------------------------------------------------------
+
+movement_yes      = cfg_branch;
+movement_yes.tag  = 'yes';
+movement_yes.name = 'Yes';
+movement_yes.val  = {movement_file_realignment_parameters, movement_order, ...
+    movement_outlier_translation_mm movement_outlier_rotation_deg};
+movement_yes.help = {'Include Movement Model, as described in Friston et al., 1996.'};
+
+
+
+%--------------------------------------------------------------------------
+% movement
+%--------------------------------------------------------------------------
+
+movement      = cfg_choice;
+movement.tag  = 'movement';
+movement.name = 'Movement';
+movement.val  = {movement_yes};
+movement.values  = {movement_no, movement_yes};
+movement.help = {'Movement Model, as described in Friston et al., 1996'};
+
+
+%--------------------------------------------------------------------------
+%% Sub-substructure Other (model)
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+% input_other_multiple_regressors
+%--------------------------------------------------------------------------
+
+input_other_multiple_regressors         = cfg_files;
+input_other_multiple_regressors.tag     = 'input_multiple_regressors';
+input_other_multiple_regressors.name    = 'input_multiple_regressors';
+input_other_multiple_regressors.val     = {{''}};
+input_other_multiple_regressors.help    = {'...'};
+input_other_multiple_regressors.filter  = '.*';
+input_other_multiple_regressors.ufilter = '.mat$|.txt$';
+input_other_multiple_regressors.num     = [0 Inf];
+
+
+%--------------------------------------------------------------------------
+% other_model_no
+%--------------------------------------------------------------------------
+
+other_model_no         = cfg_branch;
+other_model_no.tag  = 'no';
+other_model_no.name = 'No';
+other_model_no.val  = {};
+other_model_no.help = {'Movement regressors not used'};
+
+
+%--------------------------------------------------------------------------
+% other_model_yes
+%--------------------------------------------------------------------------
+
+other_model_yes      = cfg_branch;
+other_model_yes.tag  = 'yes';
+other_model_yes.name = 'Yes';
+other_model_yes.val  = {input_other_multiple_regressors};
+other_model_yes.help = {'Include Other multiple regressor file(s)'};
+
+
+
+%--------------------------------------------------------------------------
+% other_model
+%--------------------------------------------------------------------------
+
+other_model      = cfg_choice;
+other_model.tag  = 'other';
+other_model.name = 'Other Multiple Regressors';
+other_model.val  = {other_model_no};
+other_model.values  = {other_model_no, other_model_yes};
+other_model.help = {'Other multiple regressor file(s)'};
+
+
+%--------------------------------------------------------------------------
+%% Sub-structure model
+%--------------------------------------------------------------------------
+model      = cfg_branch;
+model.tag  = 'model';
+model.name = 'model';
+model.val  = {output_multiple_regressors, output_physio, orthog, retroicor, ...
+    rvt, hrv, noise_rois, movement, other_model};
+model.help = {['Physiological Model to be estimated and Included in GLM as ' ... 
+    'multiple_regressors.txt']};
+
 
 
 
@@ -1025,7 +1436,7 @@ verbose.val    = {level fig_output_file use_tabs};
 physio      = cfg_exbranch;
 physio.tag  = 'physio';
 physio.name = 'TAPAS PhysIO Toolbox';
-physio.val  = {save_dir files sqpar thresh model verbose};
+physio.val  = {save_dir files scan_timing preproc model verbose};
 physio.help = {'...'};
 physio.prog = @run_physio;
 physio.vout = @vout_physio;
@@ -1040,10 +1451,11 @@ function out = run_physio(job)
 
 physio = tapas_physio_job2physio(job);
 
-[physio_out, R] = tapas_physio_main_create_regressors(physio);
+[physio, R] = tapas_physio_main_create_regressors(physio);
 
-out.physnoisereg = cellstr(physio_out.model.output_multiple_regressors);
+out.physnoisereg = cellstr(physio.model.output_multiple_regressors);
 out.R = R;
+out.physiofile  = cellstr(physio.model.output_physio);
 
 
 %==========================================================================
@@ -1051,6 +1463,11 @@ out.R = R;
 %==========================================================================
 function dep = vout_physio(job)
 dep(1)            = cfg_dep;
-dep(1).sname      = 'physiological noise regressors file';
+dep(1).sname      = 'physiological noise regressors file (Multiple Regresssors)';
 dep(1).src_output = substruct('.','physnoisereg');
 dep(1).tgt_spec   = cfg_findspec({{'filter','mat','strtype','e'}});
+
+dep(2)            = cfg_dep;
+dep(2).sname      = 'PhysIO Structure File';
+dep(2).src_output = substruct('.','physiofile');
+dep(2).tgt_spec   = cfg_findspec({{'filter','mat','strtype','e'}});
