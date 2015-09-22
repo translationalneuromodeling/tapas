@@ -1,4 +1,4 @@
-function add_tapas_prefix()
+function tapas_add_tapas_prefix()
 
 % directory where the renaming is to be done
 dir1 = 'C:\Sudhir\Tapas\admin\testfolder\testtest\';

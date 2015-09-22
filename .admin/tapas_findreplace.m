@@ -1,4 +1,4 @@
-function findreplace(file,otext,ntext,varargin)
+function tapas_findreplace(file,otext,ntext,varargin)
 
 %FINDREPLACE finds and replaces strings in a text file
 %
@@ -141,7 +141,4 @@ else
     end
 end
 uline = [uline s];
-
-
-
 
