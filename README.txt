@@ -1,4 +1,5 @@
-Version 2.0.0.1
+Version 2.1.0.0
+
 ________________________________________________________________________
 
      T  A  P  A  S - TNU Algorithms for Psychiatry-Advancing Science.
@@ -55,7 +56,16 @@ Bugs in the software can be emailed directly to: tapas-bugs@biomed.ee.ethz.ch
 Changes in this version
 ------------------------
 
-Hot fix in mpdcm: Fixed compilation issue. Refer to Readme of mpdcm.
+Major release of PhysIO for PhysIO toolbox paper.
+
+Software version for Toolbox Paper submission
+Noise ROIs modeling
+Extended motion models (24 parameters, Volterra expansion)
+HRV/RVT models with optional multiple delay regressors
+Report_contrasts with automatic contrast generation for all regressor groups
+compute_tsnr_gains for individual physiological regressor groups
+consistent module naming (scan_timing, preproc)
+Visualisation improvement (color schemes, legends)
 
 -------
 LICENSE                            
