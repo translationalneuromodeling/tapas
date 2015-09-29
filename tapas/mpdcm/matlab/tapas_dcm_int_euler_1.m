@@ -7,7 +7,7 @@ intDCM{1} = prepare_data_structure(Ep, M, U);
 
 r = dcm_euler_integration(intDCM);
 
-y = forward_model(r{1}.x, r{1}.s, r{1}.f1, r{1}.v1, r{1}.q1, intDCM{1});
+y = forward_model(r{1}.x', r{1}.s', r{1}.f1', r{1}.v1', r{1}.q1', intDCM{1});
 
 y = double(y);
 end
@@ -55,7 +55,7 @@ if (isempty(mArrayD))
 end
 
 
-C = DCM.U.u*Ep.C'/16;
+C = Ep.C/16;
 
 U = full(DCM.U.u);
 
