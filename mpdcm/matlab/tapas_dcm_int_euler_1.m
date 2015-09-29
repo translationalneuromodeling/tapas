@@ -1,4 +1,28 @@
 function y = tapas_dcm_int_euler_1(Ep, M, U)
+%
+% Input:
+% Ep      -- Priors
+% M       -- Model specification
+% U       -- Input signal
+% Output:
+% y      -- Predicted signal.
+%
+%
+% Integer representing a device.
+%
+
+% aponteeduardo@gmail.com
+%
+% Author: Raman Shankar & Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Raman Shankar & Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
+%
+% Revision log:
+%
+%
+
 
 intDMC = cell(1, 1);
 

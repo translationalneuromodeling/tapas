@@ -2,6 +2,18 @@ function [ny, nu, ntheta, nptheta] = tapas_mpdcm_fmri_qinput(y, u, theta, ...
 ptheta)
 %% Expand the input for a simplified version of the Laplace approximation
 %
+% Input
+% y         -- Response.
+% u         -- Input signal.
+% theta     -- Model parameters.
+% ptheta    -- Priors.
+%
+% Output
+% ny        -- Transformed response.
+% nu        -- Transformed input signal.
+% ntheta    -- New model parameters.
+% ptheta    -- New prior parametes.
+%
 
 % aponteeduardo@gmail.com
 %

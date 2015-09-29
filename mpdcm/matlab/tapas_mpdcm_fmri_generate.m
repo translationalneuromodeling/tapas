@@ -7,9 +7,19 @@ function [dcms] = tapas_mpdcm_fmri_generate(dcms)
 % Output
 %   dcms        -- Cell array of DCM structures including the predicted signals
 %
+
 % aponteeduardo@gmail.com
-% copyright (C) 2015
 %
+% Author: Eduardo Aponte, TNU, UZH & ETHZ - 2015
+% Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+%
+% Licensed under GNU General Public License 3.0 or later.
+% Some rights reserved. See COPYING, AUTHORS.
+%
+% Revision log:
+%
+%
+
 
 [y, u, theta, ptheta] = tapas_mpdcm_fmri_tinput(dcms);
 
