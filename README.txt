@@ -1,4 +1,4 @@
-Version 2.1.0.0
+Version 2.2.0.0
 
 ________________________________________________________________________
 
@@ -56,16 +56,12 @@ Bugs in the software can be emailed directly to: tapas-bugs@biomed.ee.ethz.ch
 Changes in this version
 ------------------------
 
-Major release of PhysIO for PhysIO toolbox paper.
+Major changes in the mpdmc toolbox
 
-Software version for Toolbox Paper submission
-Noise ROIs modeling
-Extended motion models (24 parameters, Volterra expansion)
-HRV/RVT models with optional multiple delay regressors
-Report_contrasts with automatic contrast generation for all regressor groups
-compute_tsnr_gains for individual physiological regressor groups
-consistent module naming (scan_timing, preproc)
-Visualisation improvement (color schemes, legends)
+Support for non linear DCM
+Model parameters are stored as sparse matrices
+Fully tested
+This version corresponds to the paper doi:10.1016/j.jneumeth.2015.09.009
 
 -------
 LICENSE                            
