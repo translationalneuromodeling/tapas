@@ -85,6 +85,14 @@ function [ptheta] = tinput_ptheta(dcm, scale, dyu, udt, ys, us)
 
     [pE, pC, x] = spm_dcm_fmri_priors(a, b, c, d);
 
+    if isfield(M, 'pE')
+        pE = M.pE;
+    end
+
+    if isfield(M, 'pC')
+        pC = M.pC;
+    end
+
     % hyperpriors - Basis matrixes
 
     try
