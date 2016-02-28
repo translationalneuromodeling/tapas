@@ -10,16 +10,16 @@ function y = tapas_softmax_sim(r, infStates, p)
 % COPYING or <http://www.gnu.org/licenses/>.
 
 % Number of response options
-nw = size(infStates,3);
+no = size(infStates,3);
 
 % The value of the last dimension of infStates determines whether responses are
 % based on: 1 = predictions, 2 = posteriors.
-states = squeeze(infStates(:,1,:,1,2));
+states = squeeze(infStates(:,1,:,1));
 be = p;
 
 % Partition functions
 Z = sum(exp(be*states),2);
-Z = repmat(Z,1,nw);
+Z = repmat(Z,1,no);
 
 % Softmax probabilities
 prob = exp(be*states)./Z;

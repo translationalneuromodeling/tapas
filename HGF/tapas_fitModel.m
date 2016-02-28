@@ -115,7 +115,7 @@ function r = tapas_fitModel(responses, inputs, varargin)
 %     tapas_fit_plotCorr(est)
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2012-2015 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -129,33 +129,18 @@ r = dataPrep(responses, inputs);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% CONFIGURE THESE AS DESCRIBED ABOVE:
+% THE DEFAULTS DEFINED HERE WILL BE OVERWRITTEN BY ANY ARGUMENTS GIVEN WHEN CALLING tapas_fitModel.m
 %
-% Perceptual model
-% ~~~~~~~~~~~~~~~~
-% Choices are: 
-% - tapas_hgf_binary_config
-% - tapas_hgf_binary3l_config
-% - tapas_rw_binary_config
-% - tapas_hgf_config
-% - tapas_hgf_ar1_config
+% Default perceptual model
+% ~~~~~~~~~~~~~~~~~~~~~~~~
 r.c_prc = tapas_hgf_binary_config;
 
-% Observation model
-% ~~~~~~~~~~~~~~~~~
-% Choices are:
-% - tapas_unitsq_sgm_config                 (compatible with *_binary_config)
-% - tapas_softmax_binary_config             (compatible with *_binary_config)
-% - tapas_bayes_optimal_binary_config       (compatible with *_binary_config)
-% - tapas_gaussian_obs_config               (compatible with tapas_hgf_config)
-% - tapas_bayes_optimal_config              (compatible with tapas_hgf_config)
-% - tapas_squared_pe_config                 (compatible with tapas_hgf_config)
+% Default observation model
+% ~~~~~~~~~~~~~~~~~~~~~~~~~
 r.c_obs = tapas_unitsq_sgm_config;
 
-% Optimization algorithm
-% ~~~~~~~~~~~~~~~~~~~~~~
-% Choices are:
-% - tapas_quasinewton_optim_config
+% Default optimization algorithm
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 r.c_opt = tapas_quasinewton_optim_config;
 
 % END OF CONFIGURATION
@@ -163,7 +148,7 @@ r.c_opt = tapas_quasinewton_optim_config;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Overridden settings from the command line
+% Override default settings with arguments from the command line
 if nargin > 2 && ~isempty(varargin{1})
     r.c_prc = eval(varargin{1});
 end
