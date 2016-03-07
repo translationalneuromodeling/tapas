@@ -9,7 +9,7 @@ function logp = tapas_beta_obs(r, infStates, ptrans)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
-% Transform zeta to its native space
+% Transform nu-prime to its native space
 nupr = exp(ptrans(1));
 
 % Initialize returned log-probabilities as NaNs so that NaN is
@@ -22,7 +22,10 @@ if size(infStates,2) >= 3
     mu = mu + infStates(:,3);
 end
 if strcmp(r.c_prc.model,'hgf_whichworld')
-    mu = infStates(:,1,1,3);
+    mu = tapas_sgm(infStates(:,2,1,3), 1);
+end
+if strcmp(r.c_prc.model,'ph_binary')
+    mu = infStates(:,2);
 end
 
 mu(r.irr) = [];
@@ -34,7 +37,7 @@ y(r.irr) = [];
 %y(y==1) = 1-1e-4;
 y = 0.95.*(y-0.5)+0.5; % Shrink all y values toward 1/2 by a factor of 0.95
 
-% Nu is nu-prime plus two
+% Nu is nu-prime plus two (sometimes)
 %nu = nupr+2;
 nu = nupr;
 

@@ -1,4 +1,4 @@
-Version 2.2.0.0
+Version 2.3.0.0
 
 ________________________________________________________________________
 
@@ -56,12 +56,66 @@ Bugs in the software can be emailed directly to: tapas-bugs@biomed.ee.ethz.ch
 Changes in this version
 ------------------------
 
-Major changes in the mpdmc toolbox
+HGF v4.10 released:
 
-Support for non linear DCM
-Model parameters are stored as sparse matrices
-Fully tested
-This version corresponds to the paper doi:10.1016/j.jneumeth.2015.09.009
+v4.10
+~~~~~
+- Added hgf_categorical_norm
+- Added Boltzmann distribution (i.e., softmax normalization) as tapas_boltzmann()
+
+
+v4.9
+~~~~
+- Set implied learning rate at first level to 0 if update is zero
+
+v4.8
+~~~~
+- Give choice of using predictions or posteriors with softmax_binary
+
+v4.7
+~~~~
+- Added cdfgaussian_obs model
+- Added hgf_binary_pu (perceptual uncertainty) model
+- Improvements for beta_obs with hgf_whichworld
+
+v4.6
+~~~~
+- Adapted beta_obs to deal with ph_binary
+- Added Pearce-Hall in ph_binary
+- Clarified the role of default settings in comments of fitModel
+- Brought softmax_binary_sim up to date
+
+v4.5
+~~~~
+- Improved comments in softmax_binary_sim
+- Improved comments in tapas_beta_obs.m
+- Added tapas_beta_obs_{sim,namep}.m
+
+v4.4
+~~~~
+- Added tapas_hgf_ar1_binary_namep.m
+- Improved rw_binary
+
+v4.3
+~~~~
+- Added bayes_optimal_categorical
+- Improved hgf_categorical_plotTraj
+
+v4.2
+~~~~
+- Adapted softmax_sim to hgf_categorical
+- Added hgf_categorical
+- Added datagen_categorical and categorical data example
+
+v4.1
+~~~~
+- Improved hgf_jget
+
+v4.0
+~~~~
+- Added PDF manual
+- Added interactive demo in hgf_demo
+
 
 -------
 LICENSE                            
