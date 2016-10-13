@@ -1211,7 +1211,7 @@ movement_order.val    = {6};
 
 movement_outlier_translation_mm         = cfg_entry;
 movement_outlier_translation_mm.tag     = 'outlier_translation_mm';
-movement_outlier_translation_mm.name    = 'Outlier Translation Treshold (mm)';
+movement_outlier_translation_mm.name    = 'Outlier Translation Threshold (mm)';
 movement_outlier_translation_mm.help    = {
    'Threshold, above which a stick regressor is created for ' 
    'corresponding volume of exceeding shift'
@@ -1227,7 +1227,7 @@ movement_outlier_translation_mm.val     = {1};
 
 movement_outlier_rotation_deg         = cfg_entry;
 movement_outlier_rotation_deg.tag     = 'outlier_rotation_deg';
-movement_outlier_rotation_deg.name    = 'Outlier Rotation Treshold (degrees)';
+movement_outlier_rotation_deg.name    = 'Outlier Rotation Threshold (degrees)';
 movement_outlier_rotation_deg.help    = {
    'Threshold, above which a stick regressor is created for '
    'corresponding volume of exceeding rotational movement'

@@ -1,4 +1,4 @@
-function [matlabbatch, indContrastsExisting, indContrastsCreate] = ...
+function [SPM, matlabbatch, indContrastsExisting, indContrastsCreate] = ...
     tapas_physio_create_missing_physio_contrasts(SPM, model, namesPhysContrasts)
 % Creates all valid physiological subset regressors for given PhysIO model
 % that are not already existing in SPM, ignores
@@ -17,6 +17,7 @@ function [matlabbatch, indContrastsExisting, indContrastsCreate] = ...
 %           creation, as listed in 
 %
 % OUT
+%   SPM     SPM structured variable with updated contrasts
 %   matlabbatch 
 %           that was used to create new valid contrasts
 %   indContrastsExisting
@@ -68,8 +69,11 @@ if ~isempty(model)
         model, SPM, indContrastsCreate, namesContrastsCreate);
     if ~isempty(matlabbatch{1}.spm.stats.con.consess)
         spm_jobman('run', matlabbatch);
-        load(fileSpm);
     end
 else
     error('No physio.model specified');
+end
+
+if nargout
+    load(fileSpm);
 end

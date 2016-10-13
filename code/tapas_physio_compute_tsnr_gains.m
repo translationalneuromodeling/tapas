@@ -84,7 +84,7 @@ end
 % model and create the missing ones
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-tapas_physio_create_missing_physio_contrasts(SPM, physio.model, ...
+SPM = tapas_physio_create_missing_physio_contrasts(SPM, physio.model, ...
     namesPhysContrasts);
 
 nContrasts = numel(namesPhysContrasts);

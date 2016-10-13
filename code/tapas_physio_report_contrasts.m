@@ -142,7 +142,7 @@ set(0, 'DefaultFigureWindowStyle', 'normal');
 
 % create physiological contrasts that don't exist so far and can be created
 % due to the model components included
-tapas_physio_create_missing_physio_contrasts(SPM, model, namesPhysContrasts)
+SPM = tapas_physio_create_missing_physio_contrasts(SPM, model, namesPhysContrasts);
 
 %% report contrasts
 pathBeforeReport = pwd;
