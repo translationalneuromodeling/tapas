@@ -49,7 +49,6 @@ function [VOLLOCS, LOCS, verbose] = ...
 %
 %       sqpar                   - sequence timing parameters
 %           .Nslices        - number of slices per volume in fMRI scan
-%           .NslicesPerBeat - usually equals Nslices, unless you trigger with the heart beat
 %           .TR             - repetition time in seconds
 %           .Ndummies       - number of dummy volumes
 %           .Nscans         - number of full volumes saved (volumes in nifti file,
@@ -129,7 +128,6 @@ end
 
 Nscans          = sqpar.Nscans;
 Ndummies        = sqpar.Ndummies;
-NslicesPerBeat  = sqpar.NslicesPerBeat;
 Nslices         = sqpar.Nslices;
 
 
@@ -295,7 +293,7 @@ end
 if isempty(VOLLOCS) || isempty(LOCS)
     verbose = tapas_physio_log('No volume start events found, Decrease sync.vol or sync.slice after considering the Thresholding figure', ...
         verbose, 2);
-elseif length(LOCS) < NslicesPerBeat
+elseif length(LOCS) < Nslices
     verbose = tapas_physio_log('Too few slice start events found. Decrease sync.slice after considering the Thresholding figure', ...
         verbose, 2);
 end
