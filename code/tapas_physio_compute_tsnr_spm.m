@@ -1,4 +1,5 @@
-function [tSnrImage, fileTsnr, tSnrRatioImage, fileTsnrRatio] = tapas_physio_compute_tsnr_spm(SPM, iC, iCForRatio, doInvert, doSaveNewContrasts)
+function [tSnrImage, fileTsnr, tSnrRatioImage, fileTsnrRatio] = ...
+    tapas_physio_compute_tsnr_spm(SPM, iC, iCForRatio, doInvert, doSaveNewContrasts)
 % Computes temporal SNR image after correcting for a contrast
 % from SPM general linear model
 %
@@ -84,18 +85,20 @@ if nargin < 2
 end
 
 if nargin < 3
-    doInvert = true;
-end
-
-if nargin < 4
     iCForRatio = 0;
 end
 
-doComputeRatio = ~isempty(iCForRatio);
+if nargin < 4
+    doInvert = true;
+end
 
 if nargin < 5
     doSaveNewContrasts = false;
 end
+
+
+doComputeRatio = ~isempty(iCForRatio);
+
 
 % load SPM-variable, if filename given
 if ~isstruct(SPM)
@@ -210,5 +213,5 @@ if ~doSaveNewContrasts
     rmdir(newDirSpm);
 else
     % delete at least the Res-images
-    delete(fullfile(oldDirSpm, 'Res*.nii')); 
+    delete(fullfile(oldDirSpm, 'Res_*.nii')); 
 end
