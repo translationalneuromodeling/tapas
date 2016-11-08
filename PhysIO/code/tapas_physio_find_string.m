@@ -27,7 +27,7 @@ function indexFoundPattern = tapas_physio_find_string(stringArray, searchPattern
 % Author: Lars Kasper
 % Created: 2014-11-05
 % Copyright (C) 2014 Institute for Biomedical Engineering, ETH/Uni Zurich.
-% $Id: tapas_physio_find_string.m 778 2015-07-19 20:21:19Z kasperla $
+% $Id$
 
 if nargin < 3
     isExact = false;

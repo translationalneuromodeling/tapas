@@ -14,7 +14,7 @@
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_example_multi_subjects.m 787 2015-07-31 18:35:24Z kasperla $
+% $Id$
 
 %% # MOD - Change parameters to your needs in this section %%%%%%%%%%%%%%%%
 

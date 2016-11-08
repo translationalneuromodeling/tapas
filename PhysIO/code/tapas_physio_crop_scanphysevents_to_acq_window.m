@@ -44,7 +44,7 @@ function [ons_secs, sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_wi
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_crop_scanphysevents_to_acq_window.m 791 2015-08-05 21:54:21Z kasperla $
+% $Id$
 
 %% parameter settings
     Nscans          = sqpar.Nscans;
@@ -57,6 +57,9 @@ function [ons_secs, sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_wi
     cpulse          = ons_secs.cpulse;
     c               = ons_secs.c;
     r               = ons_secs.r;
+    c_is_reliable = ons_secs.c_is_reliable;
+    r_is_reliable = ons_secs.r_is_reliable;
+    fr              = ons_secs.fr;
     t               = ons_secs.t;
     ons_secs.raw    = ons_secs;
     
@@ -82,8 +85,11 @@ acqwindow   = sort([find(t<=tend & t>=tstart); ...
                 find(t<tstart,1,'last'); find(t>tend,1,'first')]);
 
             
-if ~isempty(r), r      = r(acqwindow); end;
-if ~isempty(c), c      = c(acqwindow); end;
+if ~isempty(r),  r      = r(acqwindow); end;
+if ~isempty(r_is_reliable), r_is_reliable = r_is_reliable(acqwindow); end;
+if ~isempty(c_is_reliable), c_is_reliable = c_is_reliable(acqwindow); end;
+if ~isempty(fr), fr     = fr(acqwindow); end;
+if ~isempty(c),  c      = c(acqwindow); end;
 
 ons_secs.t  = t(acqwindow);
 
@@ -117,6 +123,9 @@ verbose = tapas_physio_log(sprintf(formatstr, sqpar.maxscan, spulse(1), ...
 
 ons_secs.c          = c;
 ons_secs.r          = r;
+ons_secs.c_is_reliable = c_is_reliable;
+ons_secs.r_is_reliable = r_is_reliable;
+ons_secs.fr         = fr;
 ons_secs.spulse     = spulse;
 ons_secs.cpulse     = cpulse;
 ons_secs.svolpulse  = svolpulse;

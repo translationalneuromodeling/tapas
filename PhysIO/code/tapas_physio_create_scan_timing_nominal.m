@@ -1,8 +1,8 @@
-function [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, ...
+function [VOLLOCS, LOCS] = tapas_physio_create_scan_timing_nominal(t, ...
     sqpar, align_scan)
 % Creates locations of scan volume and slice events in time vector of SCANPHYSLOG-files
 %
-%   [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, sqpar);
+%   [VOLLOCS, LOCS] = tapas_physio_create_scan_timing_nominal(t, sqpar);
 %
 % In cases where the SCANPHYSLOG-file has no gradient entries (column
 % 7-9), the actual time-course of the sequence has to be inferred from the
@@ -31,9 +31,9 @@ function [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, ...
 %           .onset_slice    - slice whose scan onset determines the adjustment of the
 %                             regressor timing to a particular slice for the whole volume
 %   align_scan              'first' or 'last' (default)
-%                           'first' t == 0 will be aligned to first scan 
+%                           'first' t == 0 will be aligned to first scan
 %                                   volume, first slice
-%                           'last'  t(end) will be aligned to last scan 
+%                           'last'  t(end) will be aligned to last scan
 %                                   volume, last slice
 % OUT
 %           VOLLOCS         - locations in time vector, when volume scan
@@ -41,7 +41,7 @@ function [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, ...
 %           LOCS            - locations in time vector, when slice or volume scan
 %                             events started
 % EXAMPLE
-%   [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, sqpar);
+%   [VOLLOCS, LOCS] = tapas_physio_create_scan_timing_nominal(t, sqpar);
 %
 %   See also
 %
@@ -54,7 +54,7 @@ function [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_nominal_scan_timing.m 670 2015-02-01 19:21:55Z kasperla $
+% $Id$
 
 if nargin < 3
     align_scan = 'last';
@@ -62,36 +62,37 @@ end
 
 Nscans          = sqpar.Nscans;
 Ndummies        = sqpar.Ndummies;
-Nslices         = sqpar.Nslices;
 
 NallVols = (Ndummies+Nscans);
-VOLLOCS = zeros(NallVols,1);
-LOCS = zeros(NallVols*Nslices,1);
+VOLLOCS = NaN(NallVols,1);
 TR = sqpar.TR;
-   
 
-%default for equidistantly spaced slices
-if isempty(sqpar.time_slice_to_slice) 
-    sqpar.time_slice_to_slice = TR/Nslices;
-end
 
+%% First, find volume starts either forward or backward through time series
 do_count_from_start = strcmpi(align_scan, 'first');
 if do_count_from_start % t = 0 is assumed to be the start of the scan
     for n = 1:NallVols
         [tmp, VOLLOCS(n)] = min(abs(t - TR*(n-1)));
-        for s = 1:Nslices
-            [tmp, LOCS((n-1)*Nslices + s)] = min(abs(t - ...
-                (TR*(n-1)+sqpar.time_slice_to_slice*(s-1))));
-        end
-    end   
+    end
 else
-    tRef = t(end);
+    tEndPhys = t(end);
+    
+    tStartPhys = t(1);
     for n = 1:NallVols
-        [tmp, VOLLOCS(NallVols-n+1)] = min(abs(t - (tRef-TR*n)));
-        for s = 1:Nslices
-            [tmp, LOCS((NallVols - n)*Nslices + s)] = min(abs(t - ...
-                (tRef-TR*n+sqpar.time_slice_to_slice*(s-1))));
+        
+        tStartVol = (tEndPhys-TR*(NallVols-n+1));
+        
+        if tStartPhys > tStartVol
+            VOLLOCS(n) = NaN;
+        else
+            [tmp, VOLLOCS(n)] = min(abs(t - tStartVol));
         end
     end
 end
+
+%% Then, find slice starts between determined volume starts
+
+LOCS = tapas_physio_create_LOCS_from_VOLLOCS(VOLLOCS, t, sqpar);
+
+
 end

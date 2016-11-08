@@ -31,7 +31,7 @@ function hr = tapas_physio_hr(cpulse, t)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_hr.m 773 2015-07-14 15:04:22Z kasperla $
+% $Id$
 
 n = length(t);
 

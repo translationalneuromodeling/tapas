@@ -39,7 +39,7 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses_auto_matched(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_pulses_auto_matched.m 755 2015-07-08 16:15:22Z kasperla $
+% $Id$
 if nargin < 5
     verbose.level = 0;
     verbose.fig_handles = [];

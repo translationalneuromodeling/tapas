@@ -35,7 +35,7 @@ function [correlation,x,y] = tapas_physio_corrcoef12(x,y, isZtransformed)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_corrcoef12.m 748 2015-06-19 11:29:27Z kasperla $
+% $Id$
 if nargin < 3
     isZtransformed = [0 0];
 end

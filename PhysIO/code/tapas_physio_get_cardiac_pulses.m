@@ -61,7 +61,7 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses(t, c, ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_pulses.m 753 2015-07-05 20:03:43Z kasperla $
+% $Id$
 
 %% detection of cardiac R-peaks
 
@@ -73,7 +73,7 @@ switch lower(cardiac_modality)
     case 'oxy_old'
         [cpulse, verbose] = tapas_physio_get_oxy_pulses_filtered(c, t, ...
             dt120, verbose);
-    case {'oxy','ppu', 'oxy_wifi', 'ppu_wifi','ecg', 'ecg_wifi'}
+    otherwise % {'oxy','ppu', 'oxy_wifi', 'ppu_wifi','ecg', 'ecg_wifi'} etc., including ecg_raw o
         switch thresh_cardiac.method
             case 'load_from_logfile'
                 tapas_physio_log('How did you end up here? I better do nothing.', ...
@@ -88,7 +88,4 @@ switch lower(cardiac_modality)
                     tapas_physio_get_cardiac_pulses_auto_matched( ...
                     c, t, thresh_cardiac.min, dt120, verbose);
         end %  switch thresh_cardiac.method
-    otherwise
-        tapas_physio_log('How did you measure your cardiac cycle, dude? (ECG, OXY)', ...
-            verbose, 1);
 end

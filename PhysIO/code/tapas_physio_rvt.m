@@ -46,7 +46,7 @@ function [rvt, timeRpulseMax, timeRpulseMin, verbose] = ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_rvt.m 773 2015-07-14 15:04:22Z kasperla $
+% $Id$
 
 
 dt = t(2)-t(1);

@@ -32,7 +32,7 @@ function [outliersHigh, outliersLow, verbose] = ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_cardiac_detect_outliers.m 786 2015-07-31 13:28:34Z kasperla $
+% $Id$
 
 dt = diff(tCardiac);
 

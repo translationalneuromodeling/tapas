@@ -55,7 +55,11 @@ function [h, errid, errmsg, msgObj] = tapas_physio_uddpvparse(c, varargin)
 %   Copyright 1988-2008 The MathWorks, Inc.
 %   $Revision: 1.1.6.6 $  $Date: 2011/05/13 18:14:45 $
 
-error(nargchk(1,inf,nargin,'struct'));
+if verLessThan('matlab','8.4')
+    error(nargchk(1,11,nargin,'struct'));
+else
+    narginchk(1,11);
+end
 
 identifier = '';
 

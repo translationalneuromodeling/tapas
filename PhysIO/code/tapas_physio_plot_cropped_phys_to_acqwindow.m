@@ -20,8 +20,8 @@ function fh = tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_plot_cropped_phys_to_acqwindow.m 763 2015-07-14 11:28:57Z kasperla $
-[fh, MyColors] = tapas_physio_get_default_fig_params();
+% $Id$
+fh = tapas_physio_get_default_fig_params();
 set(fh,'Name','Cutout actual scans - all events and gradients');
 
 Ndummies    = sqpar.Ndummies;
@@ -43,27 +43,35 @@ maxValc = max(abs(c));
 maxValr = max(abs(r));
 if hasCardiacData && hasRespData
     maxVal = maxValc; % max(maxValc, maxValr);
+    colors = [1 0 0; 0 1 0];
 elseif hasCardiacData
     maxVal = maxValc;
+    colors = [1 0 0];
+
 else
     maxVal = maxValr;
+    colors = [0 1 0];
 end
 
 ampsv = maxVal*1;
 amps = maxVal*0.8; % maxVal / 3;
 ampc = maxVal*1.2; % maxVal / 2;
 
-y = [r, c];
-x = y (1:sampling:end, :);
-stem(spulse(1:Ndummies*Nslices),amps*ones(Ndummies*Nslices,1),'r--');
+%% Plot raw time series data and recorded events as stems
+y = [c, r];
+x = y(1:sampling:end, :);
+stem(spulse(1:Ndummies*Nslices),amps*ones(Ndummies*Nslices,1),'k--');
 hold on;
-stem(svolpulse(Ndummies+1:end),ampsv*ones(length(svolpulse)-Ndummies,1),'--g', 'LineWidth',2);
+stem(svolpulse(Ndummies+1:end),ampsv*ones(length(svolpulse)-Ndummies,1),'c', 'LineWidth',2);
 stem(spulse((Ndummies*Nslices+1):end), amps*ones(length(spulse)-Ndummies*Nslices,1), 'c--') ;
 
 if hasCardiacData
-    stem(cpulse, ampc*ones(length(cpulse),1), 'm--') ;
+    stem(cpulse, ampc*ones(length(cpulse),1), 'r--') ;
 end
-plot(t(1:sampling:end), x, '--');
+
+for iLine = 1:size(x,2)
+   plot(t(1:sampling:end), x(:,iLine), '--', 'Color', colors(iLine,:));
+end
 
 
 %% 2. Plot cropped data
@@ -87,19 +95,19 @@ end
 
 y = [c, r];
 x = y (1:sampling:end, :);
-hs(end+1) = stem(spulse(1:Ndummies*Nslices),amps*ones(Ndummies*Nslices,1),'r');
+hs(end+1) = stem(spulse(1:Ndummies*Nslices),amps*ones(Ndummies*Nslices,1),'--k');
 hold on;
-hs(end+1) = stem(svolpulse(Ndummies+1:end),ampsv*ones(length(svolpulse)-Ndummies,1),'g', 'LineWidth',2);
-hs(end+1) = stem(spulse((Ndummies*Nslices+1):end), amps*ones(length(spulse)-Ndummies*Nslices,1), 'c') ;
+hs(end+1) = stem(svolpulse(Ndummies+1:end),ampsv*ones(length(svolpulse)-Ndummies,1),'c', 'LineWidth',2);
+hs(end+1) = stem(spulse((Ndummies*Nslices+1):end), amps*ones(length(spulse)-Ndummies*Nslices,1), '--c') ;
 
 
 
 if hasCardiacData
-    hs(end+1) = stem(cpulse, ampc*ones(length(cpulse),1), 'm') ;
+    hs(end+1) = stem(cpulse, ampc*ones(length(cpulse),1), 'r') ;
 end
 
 for iLine = 1:size(x,2)
-    hs(end+1) = plot(t(1:sampling:end), x(:,iLine), '-')';
+    hs(end+1) = plot(t(1:sampling:end), x(:,iLine), '-', 'Color', colors(iLine,:));
 end
 
 xlabel('t (s)'); ylabel('Amplitude (a. u.)');

@@ -20,7 +20,7 @@ function [rpulset, pulset] = tapas_physio_filter_respiratory(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_filter_respiratory.m 780 2015-07-22 12:36:47Z kasperla $
+% $Id$
 if isempty(rpulset)
     rpulset = [];
     return;

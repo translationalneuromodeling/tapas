@@ -47,11 +47,11 @@ if isempty(physio.log_files.sampling_interval)
     switch lower(physio.log_files.vendor)
         case 'philips'
             physio.log_files.sampling_interval = 2e-3;
-        case 'siemens'
-            physio.log_files.sampling_interval = 1/400;
         case 'ge'
             physio.log_files.sampling_interval = 25e-3;
+        case {'biopac_mat', 'siemens'} % will be read from file later
+            physio.log_files.sampling_interval = [];
         otherwise % e.g. custom
-            physio.log_files.sampling_interval = 25e-3;
+            error('Please specify sampling interval for custom text data');
     end
 end

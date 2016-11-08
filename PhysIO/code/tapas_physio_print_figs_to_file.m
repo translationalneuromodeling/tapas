@@ -25,7 +25,7 @@ function verbose = tapas_physio_print_figs_to_file(verbose, save_dir)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_print_figs_to_file.m 753 2015-07-05 20:03:43Z kasperla $
+% $Id$
 if nargin > 1
     verbose.fig_output_file = fullfile(save_dir, verbose.fig_output_file);
 end
@@ -40,17 +40,15 @@ else
     switch sfx
         case '.ps'
             try %level 2 PS
-                print(verbose.fig_handles(1),'-dpsc2',verbose.fig_output_file);
-                for k=2:length(verbose.fig_handles)
-                    print(verbose.fig_handles(k),'-append',verbose.fig_output_file);
+                for k=1:length(verbose.fig_handles)
+                    print(verbose.fig_handles(k),'-dpsc2', '-append',verbose.fig_output_file);
                 end
             catch
                 delete(verbose.fig_output_file);
-                print(verbose.fig_handles(1),'-dpsc',verbose.fig_output_file);
-                for k=2:length(verbose.fig_handles)
-                    print(verbose.fig_handles(k),'-append',verbose.fig_output_file);
+                for k=1:length(verbose.fig_handles)
+                    print(verbose.fig_handles(k), '-dpsc', '-append', verbose.fig_output_file);
                 end
-            end
+             end
         case '.fig'
             for k=1:length(verbose.fig_handles)
                 saveas(verbose.fig_handles(k), fullfile(pfx,[fn sprintf('_%02d', k) sfx]));

@@ -39,7 +39,7 @@ function [cardiac_sess, respire_sess, mult_sess, ons_secs, order, verbose, ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_retroicor_regressors.m 815 2015-08-18 20:52:47Z kasperla $
+% $Id$
 
 %% variable renaming
 if ~exist('verbose', 'var')
@@ -126,6 +126,7 @@ if ~hasPhaseData
     end
     
 else % compute Fourier expansion directly from cardiac/respiratory phases
+    % select subset of slice-wise sampled phase for current onset_slice
     c_sample_phase = ons_secs.c_sample_phase;
     r_sample_phase = ons_secs.r_sample_phase;
     if (order.c || order.cr)

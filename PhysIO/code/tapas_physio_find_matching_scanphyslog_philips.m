@@ -47,7 +47,11 @@ end
 fnPhysLogArray = cell(nFiles,1);
 
 for d = 1:nFiles
-    tFun(d) = str2num(fnImageArray{d}(13:18));
+    
+    % Philips par/rec files always have a ddmmyyyy_HHMMSST_ formatting part, from
+    % which we extract the time
+    tFunString = regexp(fnImageArray{d}, '_\d{8}_(\d{6})\d_', 'tokens');
+    tFun(d) = str2num(tFunString{1}{1});
     [tmp, iFun] = min(abs(tPhys-tFun(d)));
     fnPhysLogArray{d} = x(iFun).name;
     fprintf(1,'matched %s \n \t --> %s\n\n', fnImageArray{d}, ...

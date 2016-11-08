@@ -47,7 +47,7 @@ verbose)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_read_physlogfiles_GE.m 538 2014-09-22 14:45:23Z kasperla $
+% $Id$
 
 %% read out values
 DEBUG = verbose.level >= 3;

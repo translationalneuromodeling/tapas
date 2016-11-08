@@ -35,7 +35,7 @@ function [convHRVOut, hrOut, verbose] = tapas_physio_create_hrv_regressors(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_hrv_regressors.m 807 2015-08-11 23:55:12Z kasperla $
+% $Id$
 if nargin < 3
     physio = tapas_physio_new;
     model_hrv = physio.model.hrv;

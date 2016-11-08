@@ -1,7 +1,7 @@
-TAPAS PhysIO Toolbox Version 2015
+TAPAS PhysIO Toolbox Version 2016
 
 ************************************************************************
-Copyright (C) 2012-2015 Lars Kasper <kasper@biomed.ee.ethz.ch>
+Copyright (C) 2012-2016 Lars Kasper <kasper@biomed.ee.ethz.ch>
 Translational Neuromodeling Unit (TNU)
 Institute for Biomedical Engineering
 University of Zurich and ETH Zurich
@@ -40,9 +40,9 @@ The PhysIO Toolbox provides physiological noise correction for fMRI-data
 from peripheral measures (ECG/pulse oximetry, breathing belt). It is 
 model-based, i.e. creates nuisance regressors from the physiological 
 monitoring that can enter a General Linear Model (GLM) analysis, e.g. 
-SPM8/12. Furthermore, for PHILIPS SCANPHYSLOG logfiles, it provides means 
-to statistically assess peripheral data (e.g. heart rate variability) and 
-recover imperfect measures (e.g. distorted R-peaks of the ECG).
+SPM8/12. Furthermore, for scanner vendor logfiles (PHILIPS, GE, Siemens), 
+it provides means to statistically assess peripheral data (e.g. heart rate variability) 
+and recover imperfect measures (e.g. distorted R-peaks of the ECG).
 
 Facts about physiological noise in fMRI:
 - Physiological noise can explain 20-60 % of variance in fMRI voxel time 
@@ -86,15 +86,15 @@ Physiological Noise Modeling :
 - Automatic creation of nuisance regressors, full integration into standard 
   GLMs, tested for SPM8/12 ("multiple_regressors.mat")
 
-Philips SCANPHYSLOG-file handling:
+Flexible Read-in:
 The toolbox is dedicated to seamless integration into a clinical research s
 etting and therefore offers correction methods to recover physiological 
 data from imperfect peripheral measures.
-For Philips SCANPHYSLOG-files, this includes
-- Automatic alignment of scan volume timing and physiological time series 
+- General Electric logfiles
+- Siemens logfiles (synchronization via DICOM time stamp or tics time scale)
+- Philips SCANPHYSLOG-file handling, including automatic alignment of scan volume timing and physiological time series 
   from logged gradient timecourses
-- Automatic detection of ECG-R-peak events from raw ECG-signal, even if 
-  online detection (and logging) was unsuccessful
+- BioPac .mat-files
 
 
 COMPATIBILITY & SUPPORT
@@ -117,10 +117,19 @@ DOWNLOADS & RELEASE INFORMATION
 
 - Current Release: 
 
-PhysIO_Toolbox_15 (Code | Examples)
-September 21st, 2015
+PhysIO_Toolbox_16 (Code | Examples)
+October 10, 2016
 
-revision: $Rev: 836 $
+revision: $Rev$
+
+Major Release Notes (r904):
+- Software version for revised PhysIO Toolbox Paper 
+- Tested and expanded versions of examples
+- Improved stability by bugfixes and compatibility to Matlab R2016
+- Slice-wise regressor creation
+- Detection of constant physiological time series (detachment, clipping)
+- Refactoring of report_contrasts and compute_tsnr_gains as standalone functionality
+- Improved Read-in capabilities (Siemens respiration data, BioPac .mat)
 
 Major Release Notes (r835):
 - Software version for Toolbox Paper submission
@@ -209,4 +218,4 @@ Kasper, Lars, Sarah Marti, S. Johanna Vannesjo, Chloe Hutton, Ray Dolan, Nikolau
 
 
 VERSION OF THIS FILE
-$Id: README.txt 836 2015-09-21 15:54:05Z kasperla $
+$Id$

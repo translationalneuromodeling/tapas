@@ -30,7 +30,7 @@ function job = tapas_physio_replace_absolute_paths(job, pathArray)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_replace_absolute_paths.m 797 2015-08-10 16:07:10Z kasperla $
+% $Id$
 
 jobFields = tapas_physio_fieldnamesr(job);
 

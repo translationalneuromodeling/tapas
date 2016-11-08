@@ -1,4 +1,4 @@
-function [c, r, c_t, c_pulse, verbose] = tapas_physio_read_physlogfiles_siemens(log_files, ...
+function [c, r, c_t, c_pulse, verbose] = tapas_physio_read_physlogfiles_siemens_resp(log_files, ...
     verbose, varargin)
 % reads out physiological time series and timing vector for Siemens
 % logfiles of peripheral cardiac monitoring (ECG/Breathing Belt or
@@ -41,7 +41,7 @@ function [c, r, c_t, c_pulse, verbose] = tapas_physio_read_physlogfiles_siemens(
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_read_physlogfiles_siemens_resp.m 781 2015-07-22 16:46:30Z kasperla $
+% $Id$
 
 %% read out values
 
@@ -57,33 +57,40 @@ defaults.endCropSeconds     = 1;
 args                = tapas_physio_propval(varargin, defaults);
 tapas_physio_strip_fields(args);
 
-dt                  = log_files.sampling_interval;
+% is calculated from files itself!
+% dt                  = log_files.sampling_interval;
 
 
 if ~isempty(log_files.cardiac)
     fid             = fopen(log_files.cardiac);
     s               = dir(log_files.cardiac);
     bufsize         = s.bytes;
-% BufSize is needed for older matlab version (comment from Philipp Riedel,
-% TU Dresden)
-    C               = textscan(fid, '%s', 'Delimiter', '\n', 'BufSize', bufsize);
+    
+    if verLessThan('matlab', '8.6') % use buffer size for speed-up, as long as it exists
+        C               = textscan(fid, '%s', 'Delimiter', '\n', 'bufsize', bufsize);
+    else
+        C               = textscan(fid, '%s', 'Delimiter', '\n');
+    end
+    
     fclose(fid);
     
     % Determine relative start of acquisition from dicom headers and
     % logfile footers
     hasScanTimingDicomImage = ~isempty(log_files.scan_timing);
     
+    linesFooter = C{1}(2:end);
+    LogStartTimeSeconds =   str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
+        'LogStartMDHTime'))),'\D',''))) / 1000;
+    LogStopTimeSeconds =    str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
+        'LogStopMDHTime'))),'\D',''))) / 1000;
+    
+    tLogTotal = LogStopTimeSeconds - LogStartTimeSeconds;
+      
     if hasScanTimingDicomImage
         
         %Get time stamps from footer:
         
-        linesFooter = C{1}(2:end);
-        LogStartTimeSeconds =   str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
-            'LogStartMDHTime'))),'\D',''))) / 1000;
-        LogStopTimeSeconds =    str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
-            'LogStopMDHTime'))),'\D',''))) / 1000;
-        
-        % load dicom
+       % load dicom
         dicomHeader             = spm_dicom_headers(fullfile(log_files.scan_timing));
         ScanStartTimeSeconds    = dicomHeader{1}.AcquisitionTime;
         ScanStopTimeSeconds     = dicomHeader{1}.AcquisitionTime + ...
@@ -209,7 +216,10 @@ if ~isempty(log_files.cardiac)
     
     % compute timing vector and time of detected trigger/cpulse events
     c_nSamples = size(c,1);
-    c_t = -relative_start_acquisition + ((0:(c_nSamples-1))*dt)';
+    
+    dt_c = tLogTotal/(c_nSamples-1);
+    
+    c_t = -relative_start_acquisition + ((0:(c_nSamples-1))*dt_c)';
     c_pulse = c_t(c_pulse);
     c_pulse_off = c_t(c_pulse_off);
     c_recording_on = c_t(c_recording_on);
@@ -219,7 +229,7 @@ if ~isempty(log_files.cardiac)
     % for now: we assume that log file ends when scan ends (plus a fixed
     % EndClip
     
-    c_endClipSamples = floor(endCropSeconds/dt);
+    c_endClipSamples = floor(endCropSeconds/dt_c);
     c_stopSample = c_nSamples - c_endClipSamples;
     c_ampl = max(c_meanChannel); % for plotting timing events
     
@@ -267,9 +277,15 @@ if ~isempty(log_files.respiration)
     bufsize         = s.bytes;
     % BufSize is needed for older matlab version (comment from Philipp Riedel,
     % TU Dresden)
-    R               = textscan(fid, '%s', 'Delimiter', '\n', 'BufSize', bufsize);
+
+    if verLessThan('matlab', '8.6') % use buffer size for speed-up, as long as it exists
+        R               = textscan(fid, '%s', 'Delimiter', '\n', 'bufsize', bufsize);
+    else
+        R               = textscan(fid, '%s', 'Delimiter', '\n');
+    end
+    
     fclose(fid);
-        
+    
     
     r_lineData = R{1}{1};
     r_iTrigger = regexpi(r_lineData, '6002'); % signals start of data logging
@@ -367,7 +383,10 @@ if ~isempty(log_files.respiration)
     
     % compute timing vector and time of detected trigger/cpulse events
     r_nSamples = size(r,1);
-    r_t = -relative_start_acquisition + ((0:(r_nSamples-1))*dt)';
+    
+    dt_r = tLogTotal/(r_nSamples-1);
+ 
+    r_t = -relative_start_acquisition + ((0:(r_nSamples-1))*dt_r)';
     r_pulse = r_t(r_pulse);
     r_pulse_off = r_t(r_pulse_off);
     r_recording_on = r_t(r_recording_on);
@@ -377,7 +396,7 @@ if ~isempty(log_files.respiration)
     % for now: we assume that log file ends when scan ends (plus a fixed
     % EndClip
     
-    r_endClipSamples = floor(endCropSeconds/dt);
+    r_endClipSamples = floor(endCropSeconds/dt_r);
     r_stopSample = r_nSamples - r_endClipSamples;
     r_ampl = max(r_meanChannel); % for plotting timing events
     
@@ -418,12 +437,15 @@ if ~isempty(log_files.respiration)
 %     r_nSamples = size(r,1);
 %     r_t = relative_start_acquisition + ((0:(r_nSamples-1))*dt)';
     
-    %     shorten or zero fill r_t to get equal length with c_t;
+    %  zero fill c or r to get equal length with max(c_t, r_t)
     r_count = numel(r);
     c_count = numel(c);
     
     if  r_count > c_count
-        r(c_count:r_count) = [];
+        c_t = r_t; % time scale defined by respiration now, since longer
+        if c_count > 0 % zero-fill cardiac data
+            c(c_count+1:r_count) = 0;
+        end
     end
     
     if  r_count < c_count

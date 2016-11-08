@@ -30,7 +30,7 @@ function physio = tapas_physio_save_batch_mat_script(fileBatchM)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_save_batch_mat_script.m 800 2015-08-10 16:26:26Z kasperla $
+% $Id$
 
 if nargin < 1
     fileBatchM = 'example_spm_job_ECG7T.m';

@@ -23,7 +23,7 @@ function fh = plot_gradient(G, t)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_plot_gradient.m 640 2015-01-11 22:03:32Z kasperla $
+% $Id$
 
 stringTitle = 'Gradient subplots';
 

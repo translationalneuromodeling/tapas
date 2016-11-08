@@ -33,7 +33,7 @@ function [G, gainArray, normFactor] = tapas_physio_rescale_gradient_gain_fluctua
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_rescale_gradient_gain_fluctuations.m 783 2015-07-23 15:52:51Z kasperla $
+% $Id$
 
 % Determine gain fluctuations via steps in sliding-window-maximum
 

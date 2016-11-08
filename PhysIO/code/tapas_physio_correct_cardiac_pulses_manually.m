@@ -15,7 +15,7 @@ function [ons_secs, outliersHigh, outliersLow, verbose] = ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_correct_cardiac_pulses_manually.m 753 2015-07-05 20:03:43Z kasperla $
+% $Id$
 
 if verbose.level < 1
     error('Manual picking of cardiac pulses requires verbose.level >= 1');

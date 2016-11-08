@@ -34,7 +34,7 @@ function [R_noise_rois, noise_rois, verbose] = tapas_physio_create_noise_rois_re
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_noise_rois_regressors.m 810 2015-08-12 00:50:31Z kasperla $
+% $Id$
 
 % TODO: visualization of Rois, components/mean and spatial loads in ROIs
 
@@ -79,6 +79,28 @@ R_noise_rois = [];
 for r = 1:nRois
     
     Vroi = spm_vol(roi_files{r});
+    
+    hasRoiDifferentGeometry = any(any(abs(Vroi.mat - Vimg(1).mat) > 1e-5)) | ...
+        any(Vroi.dim-Vimg(1).dim(1:3));
+    hasRoiDifferentGeometry = true;
+    
+    if hasRoiDifferentGeometry
+        
+        % reslice to same geometry
+        matlabbatch{1}.spm.spatial.coreg.write.ref = fmri_files(1);
+        matlabbatch{1}.spm.spatial.coreg.write.source = roi_files(r);
+        matlabbatch{1}.spm.spatial.coreg.write.roptions.interp = 4;
+        matlabbatch{1}.spm.spatial.coreg.write.roptions.wrap = [0 0 0];
+        matlabbatch{1}.spm.spatial.coreg.write.roptions.mask = 0;
+        matlabbatch{1}.spm.spatial.coreg.write.roptions.prefix = 'r';
+        
+        spm_jobman('run', matlabbatch);
+        
+        % update header link to new reslice mask-file
+        Vroi = spm_vol(spm_file(roi_files{r}, 'prefix', 'r'));
+    end
+        
+        
     roi = spm_read_vols(Vroi);
     roi(roi < thresholds(r)) = 0;
     roi(roi >= thresholds(r)) = 1;
@@ -92,6 +114,32 @@ for r = 1:nRois
     end
        
     Yroi = Yimg(roi(:)==1, :);
+    
+    %% mean and linear trend removal according to CompCor pub
+    % design matrix
+     X = ones(nVolumes,1);
+     X(:,2) = 1:nVolumes;
+     % fit 1st order polynomial to time series data in each voxel
+     for n_roi_voxel = 1:size(Yroi,1)
+         % extract data
+         raw_Y = Yroi(n_roi_voxel,:)';
+         % estimate betas
+         beta = X\raw_Y;
+         % fitted data
+         fit_Y = X*beta;
+         % detrend data
+         detrend_Y = raw_Y - fit_Y;  
+         
+         % overwrite Yroi
+         Yroi(n_roi_voxel,:) = detrend_Y;
+     end
+    
+    
+    
+    
+    
+    %%
+    
     
     % COEFF = [nVolumes, nPCs]  principal components (PCs) ordered by variance
     %                           explained
@@ -149,12 +197,14 @@ for r = 1:nRois
         ylabel('PCs, mean-centred and std-scaled');
     end
     
-    % write away extracted PC-loads
+    % write away extracted PC-loads & roi of extraction
     [tmp,fnRoi] = fileparts(Vroi(1).fname);
     fpFmri = fileparts(Vimg(1).fname);
     for c = 1:nComponents
-        Vpc= Vroi;
+        Vpc = Vroi;
         Vpc.fname = fullfile(fpFmri, sprintf('pc%02d_scores_%s.nii',c, fnRoi));
+        % saved as float, since was masked before
+        Vpc.dt = [spm_type('float32') 1]; 
         pcScores = zeros(Vpc.dim);
         pcScores(roi(:)==1) = SCORE(:, c);
         spm_write_vol(Vpc, pcScores);

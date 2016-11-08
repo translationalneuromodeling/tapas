@@ -8,7 +8,7 @@ function physio = tapas_physio_cfg_matlabbatch
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_cfg_matlabbatch.m 810 2015-08-12 00:50:31Z kasperla $
+% $Id$
 
 
 pathThis = fileparts(mfilename('fullpath')); % TODO: more elegant via SPM!
@@ -47,6 +47,7 @@ vendor.help   = {' vendor                Name depending on your MR Scanner syste
     '                       (= steps of 2.5 ms since midnight) and'
     '                       extra acquisition (scan_timing) logfile with'
     '                       time stamps of all volumes and slices'
+    '                       ''Biopac_Mat'' - exported mat files from Biopac system'
     ' '
     '                       or'
     '                       ''Custom'''
@@ -68,8 +69,8 @@ vendor.help   = {' vendor                Name depending on your MR Scanner syste
     ' NOTE: the sampling interval has to be specified for these files as'
     ' well (s.b.)'
     };
-vendor.labels = {'Philips', 'GE', 'Siemens', 'Siemens_Tics', 'Custom'};
-vendor.values = {'Philips', 'GE', 'Siemens', 'Siemens_Tics', 'Custom'};
+vendor.labels = {'Philips', 'GE', 'Siemens', 'Siemens_Tics', 'Biopac_Mat', 'Custom'};
+vendor.values = {'Philips', 'GE', 'Siemens', 'Siemens_Tics', 'Biopac_Mat', 'Custom'};
 vendor.val    = {'Philips'};
 
 %--------------------------------------------------------------------------
@@ -133,6 +134,7 @@ sampling_interval.name    = 'sampling_interval';
 sampling_interval.help    = {
     'sampling interval of phys log files (in seconds)'
     ' If empty, default values are used: 2 ms for Philips, 25 ms for GE and others'
+    ' For Biopac, sampling rate is read directly from logfile'
     ' If cardiac and respiratory sampling rate differ, enter them as vector'
     ' [sampling_interval_cardiac, sampling_interval_respiratory]'
     ' '
@@ -987,7 +989,7 @@ rvt.val  = {rvt_no};
 rvt.values  = {rvt_no, rvt_yes};
 rvt.help = {
     'Respiratory Volume per Time (RVT) Model, '
-    'as described in Birn, R.M., et al. NeuroImage 40, 644?654. doi:10.1016/j.neuroimage.2007.11.059'
+    'as described in Birn, R.M., et al. NeuroImage 40, 644-654. doi:10.1016/j.neuroimage.2007.11.059'
     };
 
 
@@ -1029,7 +1031,7 @@ hrv_yes.name = 'Yes';
 hrv_yes.val  = {hrv_delays};
 hrv_yes.help = {
     'Include Heart Rate Variability (HRV) Model, '
-    'as described in Birn, R.M., et al. NeuroImage 40, 644?654. doi:10.1016/j.neuroimage.2007.11.059'
+    'as described in Chang, C. et al., NeuroImage 44, 857-869. doi:10.1016/j.neuroimage.2008.09.029'
     };
 
 
@@ -1045,7 +1047,7 @@ hrv.val  = {hrv_no};
 hrv.values  = {hrv_no, hrv_yes};
 hrv.help = {
     'Heart Rate Variability (HRV) Model, as described in '
-    'Chang, C. et al., NeuroImage 44, 857?869. doi:10.1016/j.neuroimage.2008.09.029'
+    'Chang, C. et al., NeuroImage 44, 857-869. doi:10.1016/j.neuroimage.2008.09.029'
 };
 
 
@@ -1153,7 +1155,10 @@ noise_rois_yes.tag  = 'yes';
 noise_rois_yes.name = 'Yes';
 noise_rois_yes.val  = {fmri_files, roi_files, roi_thresholds, n_voxel_crop, ...
     n_components};
-noise_rois_yes.help = {'Include Noise ROIs model'};
+noise_rois_yes.help = {
+    'Include Noise ROIs model'
+    '(Principal components of anatomical regions), similar to aCompCor, Behzadi et al. 2007'
+    };
 
 
 
@@ -1206,7 +1211,7 @@ movement_order.val    = {6};
 
 movement_outlier_translation_mm         = cfg_entry;
 movement_outlier_translation_mm.tag     = 'outlier_translation_mm';
-movement_outlier_translation_mm.name    = 'Outlier Translation Treshold (mm)';
+movement_outlier_translation_mm.name    = 'Outlier Translation Threshold (mm)';
 movement_outlier_translation_mm.help    = {
    'Threshold, above which a stick regressor is created for ' 
    'corresponding volume of exceeding shift'
@@ -1222,7 +1227,7 @@ movement_outlier_translation_mm.val     = {1};
 
 movement_outlier_rotation_deg         = cfg_entry;
 movement_outlier_rotation_deg.tag     = 'outlier_rotation_deg';
-movement_outlier_rotation_deg.name    = 'Outlier Rotation Treshold (degrees)';
+movement_outlier_rotation_deg.name    = 'Outlier Rotation Threshold (degrees)';
 movement_outlier_rotation_deg.help    = {
    'Threshold, above which a stick regressor is created for '
    'corresponding volume of exceeding rotational movement'

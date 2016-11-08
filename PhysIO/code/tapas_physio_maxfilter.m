@@ -24,7 +24,7 @@ function y = tapas_physio_maxfilter(x, n)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_maxfilter.m 638 2015-01-11 13:20:33Z kasperla $
+% $Id$
 
 nSamples = numel(x);
 if nargin < 2

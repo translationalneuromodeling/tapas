@@ -1,5 +1,5 @@
 function [svolpulse, spulse, spulse_per_vol, verbose] = tapas_physio_get_onsets_from_locs(t, VOLLOCS, LOCS, sqpar, verbose)
-% creates timing vectors of found 
+% creates timing vectors of found
 %
 %   [svolpulse, spulse, spulse_per_vol] = tapas_physio_get_onsets_from_locs(t, VOLLOCS,
 %                                           LOCS, sqpar, verbose);
@@ -22,7 +22,7 @@ function [svolpulse, spulse, spulse_per_vol, verbose] = tapas_physio_get_onsets_
 %                             slices; typically TR/Nslices or
 %                             minTR/Nslices, if minimal temporal slice
 %                             spacing was chosen
-%            onset_slice    - slice whose scan onset determines the adjustment of the 
+%            onset_slice    - slice whose scan onset determines the adjustment of the
 %                             regressor timing to a particular slice for the whole volume
 %
 %   verbose             physio.verbose, See also tapas_physio_new
@@ -32,7 +32,7 @@ function [svolpulse, spulse, spulse_per_vol, verbose] = tapas_physio_get_onsets_
 %   spulse_per_vol  cell of slice scan events; one cell element per volume
 % EXAMPLE
 %   [ons_secs.svolpulse, ons_secs.spulse] = tapas_physio_get_onsets_from_locs(ons_secs.t, VOLLOCS, LOCS);
-%    
+%
 %   See also tapas_physio_main_create_regressors tapas_physio_read_physlogfiles_philips
 %
 % Author: Lars Kasper
@@ -45,7 +45,7 @@ function [svolpulse, spulse, spulse_per_vol, verbose] = tapas_physio_get_onsets_
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_onsets_from_locs.m 753 2015-07-05 20:03:43Z kasperla $
+% $Id$
 
 Nscans          = sqpar.Nscans;
 Ndummies        = sqpar.Ndummies;
@@ -63,19 +63,27 @@ if VOLLOCS(end) ~= LOCS(end-NslicesPerBeat+1)
 end
 
 Nallvols = length(VOLLOCS);
+
+hasWarned = false;
+
 for v = 1:Nallvols-1
     SLICELOCS{v} = LOCS(intersect(find(LOCS>=VOLLOCS(v), Nslices, 'first'), ...
         find(LOCS<VOLLOCS(v+1))));
-    if length(SLICELOCS{v})~=Nslices
+    if length(SLICELOCS{v})~=Nslices && ~hasWarned
         verbose = tapas_physio_log(sprintf(...
-            'Volume event %d: %d instead of %d slice events found\n', v, ...
-            length(SLICELOCS{v}), Nslices), verbose, 1);
+            'First volume with missing slice events (%d: %d instead of %d found)\n', ...
+            Nallvols, length(SLICELOCS{v}), Nslices), ...
+            verbose, 1);
+        hasWarned = true;
     end
+    
 end
+
 SLICELOCS{Nallvols} = LOCS(find(LOCS>=VOLLOCS(Nallvols), Nslices, 'first'));
-if length(SLICELOCS{Nallvols})~=Nslices
+
+if length(SLICELOCS{Nallvols})~=Nslices && ~hasWarned
     verbose = tapas_physio_log(sprintf(...
-        'Volume event %d: %d instead of %d slice events found\n', ...
+        'First volume with missing slice events (%d: %d instead of %d found)\n', ...
         Nallvols, length(SLICELOCS{Nallvols}), Nslices), ...
         verbose, 1);
 end
@@ -99,26 +107,6 @@ end
 
 DUMMYLOCS = reshape(DUMMYLOCS,length(DUMMYLOCS),1);
 REALLOCS = reshape(REALLOCS,length(REALLOCS),1);
-% 
-% if verbose.level>=2
-%     figure('Name', 'Found scan events through gradient thresholding');
-%     %subplot(3,1,3);
-%     hp3 = stem(t(LOCS),repmat(max(gradient_choice),1,length(t(LOCS)))); hold all
-%     hp3(end+1) = plot(t,gradient_choice );
-%     
-%     hp3(end+1) = stem(t(REALLOCS),repmat(max(gradient_choice),1,length(t(REALLOCS))));
-%     if Ndummies
-%         hp3(end+1) = stem(t(DUMMYLOCS),repmat(max(gradient_choice),1,length(t(DUMMYLOCS))));
-%         lg = {'found scan events','chosen gradient for thresholding', ...
-%             'Saved slice events', 'Dummy slice events', 'vol scan events'};
-%     else
-%         lg = {'found scan events','chosen gradient for thresholding', ...
-%             'Saved slice events', 'vol scan events'};
-%     end
-%     hp3(end+1) = stem(t(VOLLOCS),repmat(max(gradient_choice),1,length(t(VOLLOCS))));title('chosen scan events');
-%     legend(hp3, lg{:});
-%     linkaxes(fs,'x');
-% end
 
 ons.acq_slice_all = [DUMMYLOCS; REALLOCS];
 
@@ -130,6 +118,17 @@ else
     ons.acq_slice_per_vol_all = SLICELOCS(end-Nscans-Ndummies+1:end);
 end
 
-spulse     = t(ons.acq_slice_all);
-svolpulse  = t(ons.acq_vol_all);
+
+%% set scan time (in phys time scale) corresponding to index, where valid index exists 
+% (i.e. for scan events occuring during phys logfile
+
+spulse = NaN(size(ons.acq_slice_all));
+svolpulse = NaN(size(ons.acq_vol_all));
+
+iValidSlice = find(~isnan(ons.acq_slice_all));
+spulse(iValidSlice) = t(ons.acq_slice_all(iValidSlice));
+
+iValidVol = find(~isnan(ons.acq_vol_all));
+svolpulse(iValidVol) = t(ons.acq_vol_all(iValidVol));
+
 spulse_per_vol = cellfun(@(x) t(x), ons.acq_slice_per_vol_all, 'UniformOutput', false);

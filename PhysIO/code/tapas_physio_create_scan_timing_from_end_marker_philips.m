@@ -75,7 +75,7 @@ function [VOLLOCS, LOCS, verbose] = tapas_physio_create_scan_timing_from_end_mar
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_create_scan_timing_from_end_marker_philips.m 775 2015-07-17 10:52:58Z kasperla $
+% $Id$
     
 % everything stored in 1 logfile
 if ~isfield(log_files, 'cardiac') || isempty(log_files.cardiac)

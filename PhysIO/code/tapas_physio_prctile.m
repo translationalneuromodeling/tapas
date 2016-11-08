@@ -27,7 +27,7 @@ function p = tapas_physio_prctile(x, percentile)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_prctile.m 524 2014-08-13 16:21:56Z kasperla $
+% $Id$
 sx = sort(x);
 N = length(x);
 

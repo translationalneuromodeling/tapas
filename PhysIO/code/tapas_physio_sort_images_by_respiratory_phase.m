@@ -57,7 +57,7 @@ function [tableVolSliPhase, indVolPerPhaseSlice, imgRespiratoryPhasesMeanVols, .
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_sort_images_by_respiratory_phase.m 509 2014-07-03 21:59:03Z kasperla $
+% $Id$
 if nargin < 5
     verbose = false;
 end
@@ -234,7 +234,7 @@ function [T, Y, V] = spm_img_load(fn, verbose)
 % Author: Lars Kasper
 % Created: 2013-08-01
 % Copyright (C) 2013 Institute for Biomedical Engineering, ETH/Uni Zurich.
-% $Id: tapas_physio_sort_images_by_respiratory_phase.m 509 2014-07-03 21:59:03Z kasperla $
+% $Id$
 if nargin < 2
     verbose = false;
 end
@@ -290,7 +290,7 @@ function V = reuse_nifti_hdr(fnIn, fnOut, Y, iVolArray)
 % Author: Lars Kasper
 % Created: 2013-11-12
 % Copyright (C) 2013 Institute for Biomedical Engineering, ETH/Uni Zurich.
-% $Id: tapas_physio_sort_images_by_respiratory_phase.m 509 2014-07-03 21:59:03Z kasperla $
+% $Id$
 W = spm_vol(fnIn);
 nVols = length(W);
 if nargin < 4

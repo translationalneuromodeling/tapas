@@ -31,7 +31,7 @@ function [cardiac_phase, verbose] = tapas_physio_get_cardiac_phase(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_cardiac_phase.m 753 2015-07-05 20:03:43Z kasperla $
+% $Id$
 %
 
 
@@ -39,25 +39,46 @@ function [cardiac_phase, verbose] = tapas_physio_get_cardiac_phase(...
 % point. Where points are missing, fill with NaNs and set to zero later.
 
 isVerbose = verbose.level >=3;
+nPulses = numel(pulset);
+
+% number of cycles to average for heart beat duration guess
+nAverage = min(20, nPulses/2);
+
+% add pulses in beginning, if first onset time of scan before recorded
+% pulses - use guess based on average heart rate
+if scannert(1) < pulset(1)
+    verbose = tapas_physio_log(...
+        'Guessed additional cardiac pulse at time series start for phase estimation', ...
+        verbose, 1);
+    meanCycleDur = mean(diff(pulset(1:nAverage)));
+    nAddPulses = ceil((pulset(1) - scannert(1))/meanCycleDur);
+    pulset = [pulset(1) - meanCycleDur*(1:nAddPulses)';pulset];
+end
+
+% add pulses in the end, if last onset time of scan after last recorded
+% pulses - use guess based on average heart rate
+if scannert(end) > pulset(end)
+    verbose = tapas_physio_log(...
+        'Guessed additional cardiac pulse at time series end for phase estimation', ...
+        verbose, 1);
+    % add more pulses before first one, using same average heartbeat
+    % duration as in first nAverage cycles
+    meanCycleDur = mean(diff(pulset((end-nAverage+1):end)));
+    nAddPulses = ceil((scannert(end) - pulset(end))/meanCycleDur);
+    pulset = [pulset; pulset(end) + meanCycleDur*(1:nAddPulses)'];
+end
 
 scannertpriorpulse = zeros(1,length(scannert));
 scannertafterpulse = scannertpriorpulse;
 for i=1:length(scannert)
+    % check for prior heartbeat
     n = find(pulset < scannert(i), 1, 'last');
-    if ~isempty(n) && (n+1)<=size(pulset,1)
-        scannertpriorpulse(i) = pulset(n);
-        scannertafterpulse(i) = pulset(n+1);
-    else
-        scannert(i)=NaN;
-        scannertafterpulse(i) = NaN;
-        scannertpriorpulse(i)= 0;
-    end
+    scannertpriorpulse(i) = pulset(n);
+    scannertafterpulse(i) = pulset(n+1);
 end
 
 % Calculate cardiac phase at each slice (from Glover et al, 2000).
 cardiac_phase=(2*pi*(scannert'-scannertpriorpulse)./(scannertafterpulse-scannertpriorpulse))';
-
-
 
 if isVerbose
     % 1. plot chosen slice start event
@@ -80,31 +101,4 @@ if isVerbose
     xlabel('t (seconds)');
     %stem(scannertpriorpulse,ones(size(scannertpriorpulse))*2,'g');
     %stem(scannertafterpulse,ones(size(scannertafterpulse))*2,'b');
-end
-
-
-
-%cardiac_phase=cardiac_phase((nslices*ndummies)+slicenum:nslices:end);
-n=find(isnan(cardiac_phase));
-
-if ~isempty(n) % probably no heartbeat after last scan found
-    Nvol = length(svolpulse);
-    Nsli = length(scannert)/Nvol;
-    
-    iVolPhaseNaN = ceil(n/Nsli);
-    
-    [iVolExamples, iVolinN] = unique(iVolPhaseNaN'); % show only first occurence
-    
-    if min(iVolExamples) < Nvol
-        verbose = tapas_physio_log(sprintf('Zero-padding for non-existent pulse data in %d slice(s)',size(n,1)), ...
-            verbose, 1);
-        
-        for iVol = setdiff(iVolExamples, Nvol)
-            iSli = Nsli - mod(Nsli - n(iVolinN(iVol)),Nsli);
-            verbose = tapas_physio_log(sprintf('Volume %d, first occurence in slice %d\n', iVol, iSli), ...
-                verbose);  
-        end
-        verbose = tapas_physio_log(sprintf('NOTE: cardiac phase regressors might be mis-estimated for these volumes\n'), ...
-            verbose);
-    end
 end

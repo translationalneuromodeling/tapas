@@ -24,7 +24,7 @@ function R = tapas_physio_scaleorthmean_regressors(cardiac_sess)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_scaleorthmean_regressors.m 354 2013-12-02 22:21:41Z kasperla $
+% $Id$
 
 if isempty(cardiac_sess)
     R = [];

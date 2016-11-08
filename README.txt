@@ -1,4 +1,4 @@
-Version 2.3.0.0
+Version 2.4.0.0
 
 ________________________________________________________________________
 
@@ -38,7 +38,8 @@ TAPAS is a collection of toolboxes written in MATLAB (Version R2012b). The key
 requirement is the installation of MATLAB (produced by The MathWorks, Inc.  
 Natick, MA, USA. http://www.mathworks.com/).
 
-To add the TAPAS directory to the MATLAB path, run the script tapas_init.m in the directory where tapas is installed/extracted. 
+To add the TAPAS directory to the MATLAB path, run the script tapas_init.m in 
+the directory where tapas is installed/extracted. 
 
 -------------
 DOCUMENTATION
@@ -48,7 +49,8 @@ The TNU website contains all the necessary documentation, user manuals,
 publications relevant to the software. 
            http://www.translationalneuromodeling.org/tapas-documentation/
 
-For queries and discussions please join the mailing list at http://sympa.ethz.ch/sympa/info/tapas 
+For queries and discussions please join the mailing list at
+http://sympa.ethz.ch/sympa/info/tapas 
 Bugs in the software can be emailed directly to: tapas-bugs@biomed.ee.ethz.ch
 
 
@@ -56,66 +58,17 @@ Bugs in the software can be emailed directly to: tapas-bugs@biomed.ee.ethz.ch
 Changes in this version
 ------------------------
 
-HGF v4.10 released:
+Major Release Notes:
 
-v4.10
-~~~~~
-- Added hgf_categorical_norm
-- Added Boltzmann distribution (i.e., softmax normalization) as tapas_boltzmann()
-
-
-v4.9
-~~~~
-- Set implied learning rate at first level to 0 if update is zero
-
-v4.8
-~~~~
-- Give choice of using predictions or posteriors with softmax_binary
-
-v4.7
-~~~~
-- Added cdfgaussian_obs model
-- Added hgf_binary_pu (perceptual uncertainty) model
-- Improvements for beta_obs with hgf_whichworld
-
-v4.6
-~~~~
-- Adapted beta_obs to deal with ph_binary
-- Added Pearce-Hall in ph_binary
-- Clarified the role of default settings in comments of fitModel
-- Brought softmax_binary_sim up to date
-
-v4.5
-~~~~
-- Improved comments in softmax_binary_sim
-- Improved comments in tapas_beta_obs.m
-- Added tapas_beta_obs_{sim,namep}.m
-
-v4.4
-~~~~
-- Added tapas_hgf_ar1_binary_namep.m
-- Improved rw_binary
-
-v4.3
-~~~~
-- Added bayes_optimal_categorical
-- Improved hgf_categorical_plotTraj
-
-v4.2
-~~~~
-- Adapted softmax_sim to hgf_categorical
-- Added hgf_categorical
-- Added datagen_categorical and categorical data example
-
-v4.1
-~~~~
-- Improved hgf_jget
-
-v4.0
-~~~~
-- Added PDF manual
-- Added interactive demo in hgf_demo
-
+    -Software version for PhysIO Toolbox Paper: 
+     doi:10.1016/j.jneumeth.2016.10.019
+    -Tested and expanded versions of examples
+    -Improved stability by bugfixes and compatibility to Matlab R2016
+    -Slice-wise regressor creation
+    -Detection of constant physiological time series (detachment, clipping)
+    -Refactoring of report_contrasts and compute_tsnr_gains as standalone 
+     functionality
+    -Improved Read-in capabilities (Siemens respiration data, BioPac .mat)
 
 -------
 LICENSE                            

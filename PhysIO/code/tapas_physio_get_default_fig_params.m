@@ -15,11 +15,11 @@ function [fh, prop, MyColors] = tapas_physio_get_default_fig_params(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_default_fig_params.m 790 2015-08-03 11:49:43Z kasperla $
+% $Id$
 %
 if nargin < 1
-%   convfac = 2; % conversion factor
-    convfac = 4;
+    convfac = 2; % conversion factor for figure scaling; for laptop display
+    % convfac = 4; % for prints in paper
 end
 
 if nargin < 2

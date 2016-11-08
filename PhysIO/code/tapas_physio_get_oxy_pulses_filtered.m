@@ -36,7 +36,7 @@ function [cpulse, verbose] = tapas_physio_get_oxy_pulses_filtered(c, t, ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_oxy_pulses_filtered.m 524 2014-08-13 16:21:56Z kasperla $
+% $Id$
 dt = t(2) - t(1);
 c = c-mean(c); c = c./max(c); % normalize time series
 

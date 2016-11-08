@@ -33,5 +33,5 @@ function crf = tapas_physio_crf(t)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_crf.m 354 2013-12-02 22:21:41Z kasperla $
+% $Id$
 crf = 0.6*t.^2.7.*exp(-t/1.6) - 16/sqrt(2*pi*9).*exp(-1/2.*(t-12).^2/9);

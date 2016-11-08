@@ -50,7 +50,7 @@ function [c, r, t, cpulse, verbose] = tapas_physio_read_physlogfiles_siemens_tic
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_read_physlogfiles_siemens_tics.m 763 2015-07-14 11:28:57Z kasperla $
+% $Id$
 
 %% read out values
 DEBUG = verbose.level >= 3;

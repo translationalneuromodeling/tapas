@@ -1,23 +1,28 @@
-function [cpulse, verbose] = tapas_physio_findpeaks_template_correlation(...
+function [cpulse, verbose, plotData] = tapas_physio_findpeaks_template_correlation(...
     c, pulseCleanedTemplate, cpulseSecondGuess, averageHeartRateInSamples, ...
     verbose, varargin)
 % Finds peaks of a time series via pre-determined template via maxima of
 % correlations via going backward from search starting point in time
 % series, and afterwards forward again
 %
-%   [cpulse, verbose] = tapas_physio_findpeaks_template_correlation(...
+%   [cpulse, verbose, plotData] = tapas_physio_findpeaks_template_correlation(...
 %       c, pulseCleanedTemplate, cpulseSecondGuess, averageHeartRateInSamples, verbose)
 %
 % IN
 %   varargin    property name/value pairs for additional options
 %
-%   'idxStartPeakSearch' [1,2] indices of cpulseSecondGuess 
+%   'idxStartPeakSearch' [1,2] indices of cpulseSecondGuess
 %                       giving start and end point of search range for
 %                       detection of representative starting cycle, from
 %                       which both cycles before and after will be
 %                       determined via the pulseCleanedTemplate
 %
 % OUT
+%   cpulse
+%   verbose
+%   plotData        structure of plot-relevant data for algorithm depiction
+%                   fields: searchedAt, amplitudeWeight, locationWeight,
+%                   similarityToTemplate
 %
 % EXAMPLE
 %   tapas_physio_findpeaks_template_correlation
@@ -26,7 +31,7 @@ function [cpulse, verbose] = tapas_physio_findpeaks_template_correlation(...
 %
 % Author: Steffen Bollmann, merged in this function: Lars Kasper
 % Created: 2014-08-05
-% Copyright (C) 2014 TNU, Institute for Biomedical Engineering, 
+% Copyright (C) 2014 TNU, Institute for Biomedical Engineering,
 %                         University of Zurich and ETH Zurich.
 %
 % This file is part of the TAPAS PhysIO Toolbox, which is released under the terms of the GNU General Public
@@ -59,6 +64,8 @@ halfTemplateWidthInSamples = floor(numel(pulseCleanedTemplate)/2);
     pulseCleanedTemplate);
 isZTransformed = [0 1];
 
+%% Find best (representative) R-peak within first 20(=idxStartPeakSearch)
+% cycles to start backwards search
 % start and end point of search for representative start cycle
 centreSampleStart = round(2*halfTemplateWidthInSamples+1);
 
@@ -68,6 +75,7 @@ if idxStartPeakSearch(1) > 0
 end
 centreSampleEnd = cpulseSecondGuess(idxStartPeakSearch(2));
 
+
 similarityToTemplate = zeros(1, ceil(centreSampleEnd));
 for n=centreSampleStart:centreSampleEnd
     startSignalIndex    = n - halfTemplateWidthInSamples;
@@ -76,16 +84,6 @@ for n=centreSampleStart:centreSampleEnd
     signalPart = c(startSignalIndex:endSignalIndex);
     similarityToTemplate(n) = tapas_physio_corrcoef12(signalPart, ...
         zTransformedTemplate, isZTransformed);
-    
-    %Debug
-    if debug && ~mod(n, 100)
-        figure(2);clf;
-        plot(signalPart);
-        hold all;
-        plot(pulseCleanedTemplate);
-    end
-    % Debug
-    
 end
 
 [C_bestMatch, I_bestMatch] = max(similarityToTemplate);
@@ -98,57 +96,60 @@ clear similarityToTemplate
 % decreasing weighting for higher distance) for highest
 % correlation with template heartbeat
 
-n = I_bestMatch;
-bestPosition = n; % to capture case where 1st R-peak is best
+plotData.searchedAt = zeros(size(c));
+plotData.locationWeight  = zeros(size(c));
+plotData.amplitudeWeight  = zeros(size(c));
 
 peakNumber = 1;
 similarityToTemplate = zeros(nSamples,1);
 
 searchStepsTotal = round(0.5*averageHeartRateInSamples);
+
+% zero-pad phys time course to allow computing correlations for first heartbeat
+nSamplesPadded = halfTemplateWidthInSamples + searchStepsTotal + 1;
+cPadded = [zeros(nSamplesPadded,1); c; zeros(nSamplesPadded, 1)];
+n = I_bestMatch + nSamplesPadded; % index update for padded c
+
+if debug
+    set(0,'defaultFigureWindowStyle','normal')
+    figure(997);clf
+    plot(cPadded)
+    xlim([0 1000]);
+end
+
+% Stepping backwards through heartbeat intervals
 while n > 1+searchStepsTotal+halfTemplateWidthInSamples
+    
+    % search samples within current heartbeat interval
     for searchPosition = -searchStepsTotal:1:searchStepsTotal
+        
+        % compute current index
         startSignalIndex    = n - halfTemplateWidthInSamples+searchPosition;
         endSignalIndex      = n + halfTemplateWidthInSamples+searchPosition;
         
-        signalPart          = c(startSignalIndex:endSignalIndex);
+        signalPart          = cPadded(startSignalIndex:endSignalIndex);
+        
+        if debug
+            figure(997); hold all;
+            plot(startSignalIndex:endSignalIndex, cPadded(startSignalIndex:endSignalIndex));
+            xlim([0 1000]);
+        end
+        
         correlation = tapas_physio_corrcoef12(signalPart,zTransformedTemplate, ...
             isZTransformed);
-        
-        %DEBUG
-        if debug && ~mod(n, 100)
-            figure(1);
-            subplot 212;
-            plot(signalPart);
-            hold all;
-            plot(pulseCleanedTemplate);
-            hold off;
-            title('Correlating current window with template wave');
-        end
-        %DEBUG
         
         % weight correlations far away from template center
         % less; since heartbeat to be expected in window center
         % gaussianWindow = gausswin(2*searchStepsTotal+1);
         %                     currentWeight = gaussianWindow(searchPosition+searchStepsTotal+1);
         
-        currentWeight = abs(c(n+searchPosition+1));
+        currentWeight = abs(cPadded(n+searchPosition+1));
         correlationWeighted =  currentWeight .* correlation;
         similarityToTemplate(n+searchPosition) = correlationWeighted;
         
-    end
+    end % search within heartbeat  
     
-    %DEBUG
-    if debug
-        if (n>100) && (n< nSamples-100)
-            figure(1);subplot 211;plot(t,similarityToTemplate,'b-');
-            title('Finding first peak (heartbeat/max inhale), backwards');
-            xlim([t(n-100) t(n+100)]);
-        end
-    end
-    %DEBUG
-    
-    
-    %find biggest correlation-peak from the last search
+    %find largest correlation-peak from all the different search positions
     indexSearchStart=n-searchStepsTotal;
     indexSearchEnd=n+searchStepsTotal;
     
@@ -156,16 +157,16 @@ while n > 1+searchStepsTotal+halfTemplateWidthInSamples
     searchRangeValues=similarityToTemplate(indexSearchRange);
     [C_bestMatch,I_bestMatch] = max(searchRangeValues);
     bestPosition = indexSearchRange(I_bestMatch);
-    
-    cpulse(peakNumber) = bestPosition;
-    peakNumber = peakNumber+1;
-    
-    
+    if debug
+        figure(997);
+        stem(bestPosition, 2);
+    end
     n=bestPosition-averageHeartRateInSamples;
 end % END: going backwards to beginning of time course
 
 %% Now go forward through the whole time series
-n           = bestPosition; % 1st R-peak
+% 1st R-peak, correct for index change with zero-padding
+n           = bestPosition;
 peakNumber  = 1;
 clear cpulse;
 
@@ -178,58 +179,49 @@ searchStepsTotal = round(0.5*averageHeartRateInSamples);
 % for weighted searching of max correlation
 gaussianWindow = gausswin(2*searchStepsTotal+1);
 
-n = max(n, searchStepsTotal + halfTemplateWidthInSamples + 1);
+if debug
+    set(0,'defaultFigureWindowStyle','normal')
+    figure(997);clf
+    plot(cPadded)
+    xlim([0 1000]);
+end
 
-% zero-pad c at end to allow for detection of last peak by
-% template-matching up to the last sample of c
-c = [c; zeros(searchStepsTotal + halfTemplateWidthInSamples + 1, 1)];
+nLimit = numel(cPadded)-halfTemplateWidthInSamples-searchPosition;
 
-while n < nSamples % -searchStepsTotal - halfTemplateWidthInSamples
-    
+while n <= nLimit
     %search around peak
     for searchPosition = -searchStepsTotal:1:searchStepsTotal
         startSignalIndex = ...
             max(1, n-halfTemplateWidthInSamples+searchPosition);
         endSignalIndex = n+halfTemplateWidthInSamples+searchPosition;
         
-        signalPart = c(startSignalIndex:endSignalIndex);
-            
+        signalPart = cPadded(startSignalIndex:endSignalIndex);
+          
+        if debug
+            figure(997); hold all;
+            plot(startSignalIndex:endSignalIndex, cPadded(startSignalIndex:endSignalIndex));
+            xlim([0 1000]);
+        end
         
         correlation = tapas_physio_corrcoef12(signalPart, ...
             zTransformedTemplate, isZTransformed);
-        
-        %DEBUG
-        if debug && ~mod(n, 100)
-            figure(1);
-            subplot 212;
-            plot(signalPart);
-            hold all;
-            plot(pulseCleanedTemplate);
-            hold off;
-        end
-        %  DEBUG
-        
+
         locationWeight = gaussianWindow(searchPosition+searchStepsTotal+1);
-        %                     locationWeight = 1;
-        amplitudeWeight = abs(c(n+searchPosition+1));
-        %                     amplitudeWeight = 1;
+        amplitudeWeight = abs(cPadded(n+searchPosition+1));
         correlationWeighted =  locationWeight .* amplitudeWeight .* correlation;
         similarityToTemplate(n+searchPosition) = correlationWeighted;
         
+        % collect plot Data
+        plotData.locationWeight(n+searchPosition) = locationWeight;
+        plotData.amplitudeWeight(n+searchPosition) = amplitudeWeight;
+        
+        if searchPosition==0
+            plotData.searchedAt(n+searchPosition) = 1;
+        end
         
     end
     
-    %DEBUG
-    if debug
-        if (n>100) && (n< nSamples-100)
-            figure(1);subplot 211;plot(t,similarityToTemplate,'b-')
-            xlim([t(n-100) t(n+100)])
-        end
-    end
-    %DEBUG
-    
-    
-    %find biggest correlation-peak from the last search
+    %find largest correlation-peak from all the different search positions
     indexSearchStart=n-searchStepsTotal;
     indexSearchEnd=n+searchStepsTotal;
     
@@ -239,10 +231,11 @@ while n < nSamples % -searchStepsTotal - halfTemplateWidthInSamples
     bestPosition = indexSearchRange(I_bestMatch);
     
     if debug
+        figure(997); hold all;
         stem(t(bestPosition),4,'g');
     end
     
-    cpulse(peakNumber) = bestPosition;
+    cpulse(peakNumber) = bestPosition-nSamplesPadded;
     peakNumber = peakNumber+1;
     
     %only take the last 20 cpulses to compute the current HeartRate
@@ -273,3 +266,5 @@ while n < nSamples % -searchStepsTotal - halfTemplateWidthInSamples
         n=bestPosition+averageHeartRateInSamples;
     end
 end
+
+plotData.similarityToTemplate = similarityToTemplate;

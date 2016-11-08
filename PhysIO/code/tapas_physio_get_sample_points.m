@@ -24,7 +24,7 @@ function sample_points = tapas_physio_get_sample_points(ons_secs, sqpar, slicenu
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_sample_points.m 413 2014-01-21 01:26:20Z kasperla $
+% $Id$
 
 % slicenum should be field of onset_slice
 if nargin<3

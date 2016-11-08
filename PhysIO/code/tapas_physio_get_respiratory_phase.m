@@ -39,7 +39,7 @@ function [rphase, fh] = tapas_physio_get_respiratory_phase(pulset, rsampint,...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 %
-% $Id: tapas_physio_get_respiratory_phase.m 534 2014-08-28 18:05:58Z kasperla $
+% $Id$
 
 %% get histogram of amplitudes of breathing belt signal
 if nargin < 3
