@@ -1,0 +1,26 @@
+def p_{0:s}_model_{2:s}_{1:s}(np.ndarray[np.float64_t, ndim=1, mode="c"] t,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] a,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] u,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+
+    cdef int nd = t.size
+    cdef int nt = theta.size/DIM_{3:s}_THETA
+
+    cdef np.ndarray[np.float64_t, ndim=1] llh = np.empty(nd, dtype=np.float64)
+    cdef ANTIS_INPUT svals
+
+    assert len(t) == len(a), 'Arrays t, a, and u should have the same size.'
+    assert len(a) == len(u), 'Arrays t, a, and u should have the same size.'
+    assert len(theta) == nt * DIM_{3:s}_THETA, 'Please check len(theta)'
+
+    svals.t = <np.float64_t *> t.data
+    svals.a = <np.float64_t *> a.data
+    svals.u = <np.float64_t *> u.data
+    svals.np = nt
+    svals.theta = <np.float64_t *> theta.data
+    svals.nt = nd
+
+    {0:s}_model_{2:s}(svals, {0:s}_llh_{1:s}, <np.float64_t *> llh.data)
+
+    return llh
+

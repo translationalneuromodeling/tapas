@@ -1,1 +1,14 @@
+*.o
+*Makefile
+config.log
+config.status
+autom4te.cache
+lib
+*.swp
+*~
 *.mexa64
+*aux.cu
+*lib
+*.a
+*.pyc
+*.so
