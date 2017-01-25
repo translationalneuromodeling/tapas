@@ -15,15 +15,18 @@ ptheta = struct();
     tapas_sem_unified_gaussian_priors();
 
 mu = [repmat([mmu, vmu], 1, 3) 0 0];
-ptheta.mu = [mu, mu, me, ml, ml p0m]';
+ptheta.mu = [mu, me, ml, p0m]';
 
 pm = [repmat([mvu, vvu], 1, 3), 1, 1];
-ptheta.pm = 1./[pm, pm, ve, vl, vl p0v]';
+ptheta.pm = 1./[pm, ve, vl, p0v]';
 
 ptheta.p0 = ptheta.mu;
+% Eta is beta distributed
+ptheta.bdist = [11];
 ptheta.alpha_eta = p0v;
 
-ptheta.uniform_parameters = [7, 8, 15, 16, 20];
+% Don't look at eta like a normal distributed variable
+ptheta.uniform_parameters = [7, 8, 11];
 
 end
 

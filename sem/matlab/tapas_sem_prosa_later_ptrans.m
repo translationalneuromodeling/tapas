@@ -1,28 +1,30 @@
 function [ntheta] = tapas_sem_prosa_later_ptrans(theta)
-%% Transforms the parameters to their native space 
+%% Transform the parameters to the their native space
 %
 % Input
-%   theta       Matrix with parameters 
+%   theta       --  Matrix with the paramers
 %
 % Output
-%   ntheta      Transformation of the parameters
-
+%   ntheta      --  Matrix with transformed parameters
+%
 % aponteeduardo@gmail.com
-% copyright (C) 2015
+% copyright (C) 2016
 %
 
-DIM_THETA = tapas_sem_prosa_ndims();
+dtheta = sooner_prosa_ndims();
+nt = numel(theta)/dtheta;
 
 ntheta = theta;
-for i = 1:(size(theta, 1)/DIM_THETA)
-    offset = DIM_THETA * (i - 1);
-    it = DIM_THETA * (i - 1) + [1 3 5 7 9 11];
-    
-    ntheta(it + 1) = exp(0.5 * ntheta(it + 1));
 
-    it = offset + [16];
-    ntheta(it) = atan(theta(it))/pi + 0.5;
+% log variance to sigma parameter of a truncated normal distribution
+it = kron(0:nt-1, dtheta * ones(1, 3)) + kron(ones(1, nt), [1, 3, 5]);
+ntheta(it + 1) = exp(0.5 * theta(it + 1));
+it = kron(0:nt-1, dtheta * ones(1, 3)) + kron(ones(1, nt), [7, 8]);
+ntheta(it) = exp(theta(it));
+
+% The other parameters
+it = kron(0:nt-1, dtheta * ones(1, 3)) + kron(ones(1, nt), [9]);
+ntheta(it) = atan(theta(it))./pi + 0.5;
+
 end
-
-end % tapas_sem_prosa_gamma_ptrans 
 

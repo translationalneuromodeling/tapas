@@ -25,11 +25,11 @@ ptheta.jm = eye(DIM_THETA);
 
 % Likelihood function and priors
 
-ptheta.name = 'invware';
+ptheta.name = 'ser_invware';
 ptheta.llh = @tapas_sem_seri_llh;
 ptheta.lpp = @tapas_sem_seri_lpp;
 ptheta.ptrans = @tapas_sem_seri_invware_ptrans; 
-ptheta.method = @c_seri_model_two_states_invware;
+ptheta.method = @c_seri_model_two_states_invgamma;
 ptheta.prepare = @tapas_sem_seri_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
 

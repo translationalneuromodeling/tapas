@@ -11,23 +11,27 @@ function [ntheta] = tapas_sem_prosa_mixedgamma_ptrans(theta)
 % copyright (C) 2015
 %
 
-DIM_THETA = tapas_sem_prosa_ndims();
+dtheta = tapas_sem_prosa_ndims();
+nt = numel(theta)/dtheta;
 
 etheta = exp(theta);
 ntheta = etheta;
-for i = 1:(size(theta, 1)/DIM_THETA)
-    offset = DIM_THETA * (i - 1);
-    it = offset + [3 9];
-    ntheta(it) = tapas_trans_mv2igk(etheta(it), etheta(it + 1));
-    ntheta(it + 1) = tapas_trans_mv2igt(etheta(it), etheta(it + 1));
-    
-    it = offset + [1 5 7 11];
-    ntheta(it) = tapas_trans_mv2gk(etheta(it), etheta(it + 1)) + 2;
-    ntheta(it + 1) = tapas_trans_mv2gt(etheta(it), etheta(it + 1));
 
-   it = offset + [16];
-   ntheta(it) = atan(theta(it))/pi + 0.5;
-end
+% Units
+% invgamma
+it = kron(0:nt-1, dtheta * ones(1, 2)) + kron(ones(1, nt), [1, 5]);
 
-end % tapas_sem_prosa_ware_ptrans 
+ntheta(it) = tapas_trans_mv2gk(etheta(it), etheta(it + 1)) + 2;
+ntheta(it + 1) = tapas_trans_mv2gt(etheta(it), etheta(it + 1));
+
+%gamma
+it = kron(0:nt-1, dtheta * ones(1, 1)) + kron(ones(1, nt), [3]);
+ntheta(it) = tapas_trans_mv2igk(etheta(it), etheta(it + 1));
+ntheta(it + 1) = tapas_trans_mv2igt(etheta(it), etheta(it + 1));
+
+%other units
+it = kron(0:nt-1, dtheta * ones(1, 3)) + kron(ones(1, nt), [9]);
+ntheta(it) = atan(theta(it))./pi + 0.5;
+
+end % tapas_sem_prosa_mixedgamma_ptrans 
 
