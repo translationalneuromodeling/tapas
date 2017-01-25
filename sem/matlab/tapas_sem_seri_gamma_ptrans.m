@@ -12,7 +12,7 @@ function [ntheta] = tapas_sem_seri_gamma_ptrans(theta)
 % copyright (C) 2015
 %
 
-dtheta = sooner_seri_ndims();
+dtheta = tapas_sem_seri_ndims();
 nt = numel(theta)/dtheta;
 
 % THe delays are implicitely transformed

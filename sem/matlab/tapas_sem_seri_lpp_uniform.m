@@ -20,7 +20,7 @@ DIM_THETA = tapas_sem_seri_ndims();
 lpp = zeros(1, numel(theta));
 
 np = size(ptheta.jm, 2);
-njm = sooner_zeromat(ptheta.jm);
+njm = tapas_zeromat(ptheta.jm);
 njm = sum(njm, 2);
 
 const = sum(njm .* -ptheta.uc);

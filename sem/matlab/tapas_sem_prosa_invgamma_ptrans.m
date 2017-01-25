@@ -11,7 +11,7 @@ function [ntheta] = tapas_sem_prosa_invgamma_ptrans(theta)
 % copyright (C) 2015
 %
 
-dtheta = sooner_prosa_ndims();
+dtheta = tapas_sem_prosa_ndims();
 nt = numel(theta)/dtheta;
 
 etheta = exp(theta);
@@ -19,8 +19,8 @@ ntheta = etheta;
 
 % Units
 it = kron(0:nt-1, dtheta * ones(1, 3)) + kron(ones(1, nt), [1, 3, 5]);
-ntheta(it) = sooner_trans_mv2gk(etheta(it), etheta(it + 1)) + 2;
-ntheta(it + 1) = sooner_trans_mv2gt(etheta(it), etheta(it + 1));
+ntheta(it) = tapas_trans_mv2gk(etheta(it), etheta(it + 1)) + 2;
+ntheta(it + 1) = tapas_trans_mv2gt(etheta(it), etheta(it + 1));
 
 % The other parameters
 it = kron(0:nt-1, dtheta * ones(1, 3)) + kron(ones(1, nt), [9]);

@@ -11,7 +11,7 @@ function [ntheta] = tapas_sem_seri_later_ptrans(theta)
 % copyright (C) 2016
 %
 
-dtheta = sooner_seri_ndims();
+dtheta = tapas_sem_seri_ndims();
 nt = numel(theta)/dtheta;
 
 ntheta = theta;

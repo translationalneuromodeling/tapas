@@ -16,9 +16,6 @@ ptheta = struct();
 [mmu, mvu, vmu, vvu, me, ve, ml, vl, p0m, p0v] = ...
     tapas_sem_unified_gaussian_priors();
 
-[mmu, mvu, vmu, vvu, me, ve, ml, vl, p0m, p0v] = ...
-    sooner_unified_gaussian_priors();
-
 mu = repmat([mmu, vmu], 1, 3);
 ptheta.mu = [mu, me, ml, p0m]';
 

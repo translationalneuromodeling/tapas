@@ -25,7 +25,7 @@ ptheta.jm = eye(DIM_THETA);
 
 % Likelihood function and priors
 
-ptheta.name = 'later';
+ptheta.name = 'seri_later';
 ptheta.llh = @tapas_sem_seri_llh;
 ptheta.lpp = @tapas_sem_seri_lpp;
 ptheta.ptrans = @tapas_sem_seri_later_ptrans; 

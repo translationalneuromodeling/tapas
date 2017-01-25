@@ -13,4 +13,4 @@ function [gt] = tapas_trans_mv2igt(mu, sigma)
 
 gt = 1./((mu .^ 3  ./ sigma ) + mu);
 
-end % sooner_gamma_ptrans 
+end 

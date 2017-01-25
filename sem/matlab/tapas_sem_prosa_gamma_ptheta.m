@@ -22,7 +22,7 @@ function [ptheta] = tapas_sem_prosa_gamma_ptheta()
 
 % Likelihood function and priors
 
-ptheta.name = 'gamma';
+ptheta.name = 'prosa_gamma';
 ptheta.llh = @tapas_sem_prosa_llh;
 ptheta.lpp = @tapas_sem_prosa_lpp;
 ptheta.method = @c_prosa_model_two_states_gamma;

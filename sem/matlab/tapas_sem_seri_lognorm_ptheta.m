@@ -25,7 +25,7 @@ ptheta.jm = eye(DIM_THETA);
 
 % Likelihood function and priors
 
-ptheta.name = 'lognorm';
+ptheta.name = 'seri_lognorm';
 ptheta.llh = @tapas_sem_seri_llh;
 ptheta.lpp = @tapas_sem_seri_lpp;
 ptheta.ptrans = @tapas_sem_seri_lognorm_ptrans; 

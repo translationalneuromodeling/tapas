@@ -1,5 +1,5 @@
 function [ndims] = tapas_sem_seri_ndims()
-%% Return the number of dimensions of the ware family of models. 
+%% Return the number of dimensions of the seri family of models. 
 %
 % Input
 %
@@ -11,8 +11,7 @@ function [ndims] = tapas_sem_seri_ndims()
 % copyright (C) 2016
 %
 
-[ndims] = c_ware_ndims();
+[ndims] = c_seri_ndims();
 
 
 end % tapas_sem_seri_ndims 
-

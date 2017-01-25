@@ -24,7 +24,7 @@ ptheta.jm = eye(DIM_THETA);
 
 % Likelihood function and priors
 
-ptheta.name = 'invgamma';
+ptheta.name = 'prosa_invgamma';
 ptheta.llh = @tapas_sem_prosa_llh;
 ptheta.lpp = @tapas_sem_prosa_lpp;
 ptheta.method = @c_prosa_model_two_states_invgamma;

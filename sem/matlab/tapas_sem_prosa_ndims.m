@@ -11,7 +11,7 @@ function [ndims] = tapas_sem_prosa_ndims()
 % copyright (C) 2016
 %
 
-ndims = 16;%c_gamma_ndims();
+ndims = c_prosa_ndims();
 
 end % tapas_sem_prosa_ndims 
 
