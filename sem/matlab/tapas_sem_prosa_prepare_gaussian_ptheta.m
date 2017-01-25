@@ -24,6 +24,7 @@ njm = tapas_zeromat(ptheta.jm);
 % Compute the values that are beta distributed
 bdist = zeros(dtheta * nprosa, 1);
 bdist(ptheta.bdist) = 1; 
+
 ptheta.vbdist =  njm * njm' * bdist;
 ptheta.vbdist = find(ptheta.vbdist);
 
@@ -35,6 +36,10 @@ njm = njm(:, any(njm, 1));
 np = sum(njm(:));
 
 kjm = njm * njm';
+
+ptheta.pm = kron(ones(dtheta, 1), ptheta.pm);
+ptheta.mu = kron(ones(dtheta, 1), ptheta.mu);
+ptheta.p0 = kron(ones(dtheta, 1), ptheta.p0);
 
 ptheta.pconst = sum(log(njm' * ptheta.pm)) - 0.5 * np * LN2PI;
 

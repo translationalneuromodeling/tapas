@@ -276,7 +276,13 @@ end %
 
 function [nhtheta] = init_htheta(ptheta, htheta)
 
+[np] = size(ptheta.jm, 1);
+
 nhtheta = htheta;
+% TODO
+np = np/size(htheta.pk, 1);
+nhtheta.pk = kron(eye(np), htheta.pk);
+nhtheta.mixed = kron(ones(np, 1), htheta.mixed);
 
 % It is better not to adapt certain parameteres
 if ~isfield(htheta, 'mixed')
@@ -284,7 +290,7 @@ if ~isfield(htheta, 'mixed')
 end
 
 nhtheta.nmixed = abs(nhtheta.mixed - 1);
-nhtheta.knmixed = chol(htheta.pk)' * ptheta.jm;
+nhtheta.knmixed = chol(nhtheta.pk)' * ptheta.jm;
 
 end
 

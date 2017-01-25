@@ -27,7 +27,7 @@ ptheta.jm = eye(DIM_THETA);
 ptheta.name = 'prosa_invgamma';
 ptheta.llh = @tapas_sem_prosa_llh;
 ptheta.lpp = @tapas_sem_prosa_lpp;
-ptheta.method = @c_prosa_model_two_states_invgamma;
+ptheta.method = @c_prosa_two_states_invgamma;
 ptheta.prepare = @tapas_sem_prosa_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
 

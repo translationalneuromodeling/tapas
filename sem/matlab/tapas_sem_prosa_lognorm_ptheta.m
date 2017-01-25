@@ -16,18 +16,18 @@ function [ptheta] = tapas_sem_prosa_lognorm_ptheta()
 % copyright (C) 2015
 %
 
-DIM_THETA = tapas_sem_prosa_ndims();
+dim_theta = tapas_sem_prosa_ndims();
 [ptheta] = tapas_sem_prosa_gaussian_priors();
 
 % Projection matrix
-ptheta.jm = eye(DIM_THETA);
+ptheta.jm = eye(dim_theta);
 
 % Likelihood function and priors
 
 ptheta.name = 'prosa_lognorm';
 ptheta.llh = @tapas_sem_prosa_llh;
 ptheta.lpp = @tapas_sem_prosa_lpp;
-ptheta.method = @c_prosa_model_two_states_lognorm;
+ptheta.method = @c_prosa_two_states_lognorm;
 ptheta.ptrans = @tapas_sem_prosa_lognorm_ptrans;
 ptheta.prepare = @tapas_sem_prosa_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
