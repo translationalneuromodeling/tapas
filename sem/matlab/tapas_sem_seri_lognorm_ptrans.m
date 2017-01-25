@@ -18,7 +18,7 @@ ntheta = exp(theta);
 
 % Units
 it = kron(0:nt-1, dtheta * ones(1, 3)) + kron(ones(1, nt), [1, 3, 5]);
-ntheta(it + 1) = log((ntheta(it + 1) ./ (ntheta(i).^2) + 1);
+ntheta(it + 1) = log(ntheta(it + 1) ./ (ntheta(it).^2) + 1);
 ntheta(it) = -(theta(it) - 0.5 * ntheta(it + 1));
 ntheta(it + 1) = sqrt(ntheta(it + 1));
 

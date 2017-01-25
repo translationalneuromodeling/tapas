@@ -29,7 +29,7 @@ ptheta.name = 'seri_lognorm';
 ptheta.llh = @tapas_sem_seri_llh;
 ptheta.lpp = @tapas_sem_seri_lpp;
 ptheta.ptrans = @tapas_sem_seri_lognorm_ptrans; 
-ptheta.method = @c_seri_model_two_states_lognorm;
+ptheta.method = @c_seri_two_states_lognorm;
 ptheta.prepare = @tapas_sem_seri_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
 

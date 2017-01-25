@@ -19,27 +19,57 @@ fprintf(fp, '================\n Test %s\n================\n', fname);
 
 [y, u] = prepare_data();
 
-ptheta = sooner_ware_ptheta(); % Choose at convinience.
-htheta = sooner_ware_htheta(); % Choose at convinience.
+if 0
+
+ptheta = tapas_sem_prosa_invgamma_ptheta(); % Choose at convinience.
+htheta = tapas_sem_prosa_htheta(); % Choose at convinience.
+
+% Insert a parametrization matrix
+
+% Assume all the delays are equal but otherwise have free parameters
+
+% 12 unit parameters and 2 delays and rate of outliers.
+ptheta.jm = [eye(15) 
+    zeros(3, 6) eye(3) zeros(3, 6)]; % Share the parameters across trial types
 
 pars = struct();
 
-pars.T = linspace(0.0001, 1, 10).^5;
-pars.nburnin = 1000;
+pars.T = linspace(0.1, 1, 10).^5;
+pars.nburnin = 2000;
 pars.niter = 500;
-pars.mc3 = 0;
+pars.mc3 = 16;
 pars.verbose = 1;
 
-% Test whether there is any clear bug
-try
-    tic
-    sooner_estimate(y, u, ptheta, htheta, pars);
-    toc
-    fprintf(fp, '       Passed\n');
-catch err
-    fprintf(fp, '   Not passed at line %d\n', err.stack(end).line);
-    fprintf(fp, getReport(err, 'extended'));
+tapas_sem_estimate(y, u, ptheta, htheta, pars);
+
 end
+
+if 1
+
+ptheta = tapas_sem_seri_gamma_ptheta(); % Choose at convinience.
+htheta = tapas_sem_seri_htheta(); % Choose at convinience.
+
+% Insert a parametrization matrix
+
+% The same parameters are used in pro and antisaccade trials
+ptheta.jm = [...
+    eye(11) zeros(11, 2)
+    eye(6) zeros(6, 7)
+    zeros(2, 11) eye(2)
+    zeros(3, 8) eye(3) zeros(3, 2)];
+
+pars = struct();
+
+pars.T = linspace(0.1, 1, 10).^5;
+pars.nburnin = 2000;
+pars.niter = 500;
+pars.mc3 = 16;
+pars.verbose = 1;
+
+tapas_sem_estimate(y, u, ptheta, htheta, pars);
+
+end
+
 
 
 end

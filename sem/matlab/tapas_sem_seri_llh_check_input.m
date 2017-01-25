@@ -19,8 +19,8 @@ if np > 1
         'Number fo parameters should be %d, instead %d', ns, np);
 end
 
-check_matrix(theta, [DIM_THETA, np], 'theta');
-check_probabilities(theta);
+check_matrix(theta, [2 * DIM_THETA, np], 'theta');
+%check_probabilities(theta);
 %check_delays(t, a, u, theta);
 
 end

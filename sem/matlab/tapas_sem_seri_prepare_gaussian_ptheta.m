@@ -36,6 +36,10 @@ np = sum(njm(:));
 
 kjm = njm * njm';
 
+ptheta.pm = kron(ones(dtheta, 1), ptheta.pm);
+ptheta.mu = kron(ones(dtheta, 1), ptheta.mu);
+ptheta.p0 = kron(ones(dtheta, 1), ptheta.p0); 
+
 ptheta.pconst = sum(log(njm' * ptheta.pm)) - 0.5 * np * LN2PI;
 
 % Better to keep a sparse representation

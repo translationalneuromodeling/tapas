@@ -14,6 +14,6 @@ function [lpp] = tapas_sem_seri_lpp(theta, ptheta)
 % copyright (C) 2015
 %
 
-[lpp] = tapas_sem_seri_lpp(theta, ptheta);
+[lpp] = tapas_sem_prosa_lpp(theta, ptheta);
 
 end
