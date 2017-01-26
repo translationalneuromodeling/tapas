@@ -124,7 +124,7 @@ for i = 1 : nburnin + niter
     nansv = isnan(v) | v == inf; 
     v(nansv) = -inf;
 
-    v = rand(size(v)) < exp(bsxfun(@min, v, 0));
+    v = rand(size(v)) < exp(v);
 
     ollh(v) = nllh(v);
     olpp(v) = nlpp(v);
@@ -147,8 +147,8 @@ for i = 1 : nburnin + niter
 
     for l = 1:pars.mc3it
         s = ceil(rand()*(nt-1));
-        p = min(1, exp(ollh(s) * T(s+1) + ollh(s+1) * T(s) ...
-            - ollh(s) * T(s) - ollh(s+1) * T(s+1)));
+        p = exp(ollh(s) * T(s+1) + ollh(s+1) * T(s) ...
+            - ollh(s) * T(s) - ollh(s+1) * T(s+1));
         if rand() < p
             ollh([s, s+1]) = ollh([s+1, s]);
             olpp([s, s+1]) = olpp([s+1, s]);
@@ -281,12 +281,14 @@ function [nhtheta] = init_htheta(ptheta, htheta)
 nhtheta = htheta;
 % TODO
 np = np/size(htheta.pk, 1);
+
 nhtheta.pk = kron(eye(np), htheta.pk);
-nhtheta.mixed = kron(ones(np, 1), htheta.mixed);
 
 % It is better not to adapt certain parameteres
 if ~isfield(htheta, 'mixed')
     nhtheta.mixed = ones(size(ptheta.jm, 1), 1);
+else
+    nhtheta.mixed = kron(ones(np, 1), htheta.mixed);
 end
 
 nhtheta.nmixed = abs(nhtheta.mixed - 1);
@@ -352,7 +354,8 @@ for i = 1:numel(ok)
         nk(i).S = chol(nk(i).S);
     catch
         warning('Cholesky decomposition failed.')
-        nk(i).s = nk(i).s / 2;
+        nk(i).S = chol(ok(i).S);
+        nk(i).s = ok(i).s / 2;
         nk(i).k = ptheta.jm * nk(i).s * nk(i).S;
         continue
     end

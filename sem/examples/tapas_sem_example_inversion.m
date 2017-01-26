@@ -34,10 +34,11 @@ ptheta.jm = [eye(15)
 
 pars = struct();
 
-pars.T = linspace(0.1, 1, 10).^5;
-pars.nburnin = 2000;
-pars.niter = 500;
-pars.mc3 = 16;
+pars.T = linspace(0.1, 1, 16).^5;
+pars.nburnin = 10000;
+pars.niter = 10000;
+pars.kup = 1000;
+pars.mc3it = 16;
 pars.verbose = 1;
 
 tapas_sem_estimate(y, u, ptheta, htheta, pars);
@@ -53,17 +54,16 @@ htheta = tapas_sem_seri_htheta(); % Choose at convinience.
 
 % The same parameters are used in pro and antisaccade trials
 ptheta.jm = [...
-    eye(11) zeros(11, 2)
-    eye(6) zeros(6, 7)
-    zeros(2, 11) eye(2)
-    zeros(3, 8) eye(3) zeros(3, 2)];
+    eye(19)
+    zeros(3, 8) eye(3) zeros(3, 8)];
 
 pars = struct();
 
-pars.T = linspace(0.1, 1, 10).^5;
-pars.nburnin = 2000;
-pars.niter = 500;
-pars.mc3 = 16;
+pars.T = linspace(0.1, 1, 16).^5;
+pars.nburnin = 10000;
+pars.niter = 10000;
+pars.kup = 1000;
+pars.mc3it = 16;
 pars.verbose = 1;
 
 tapas_sem_estimate(y, u, ptheta, htheta, pars);
@@ -77,7 +77,7 @@ end
 function [y, u] = prepare_data()
 %% Prepares the test data
 
-NDTIME = 120;
+NDTIME = 100;
 
 f = mfilename('fullpath');
 [tdir, ~, ~] = fileparts(f);
@@ -122,4 +122,12 @@ t0 = u.tt == 0;
 t1 = u.tt == 1;
                       
 
+y.a = y.a(~y.i);
+y.t = y.t(~y.i);
+
+u.s = u.s(~y.i);
+u.b = u.b(~y.i);
+u.tt = u.tt(~y.i);
+
+y.i = y.i(~y.i);
 end
