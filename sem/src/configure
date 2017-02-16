@@ -2074,7 +2074,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-am__api_version='1.14'
+am__api_version='1.15'
 
 ac_aux_dir=
 for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
@@ -2275,8 +2275,8 @@ test "$program_suffix" != NONE &&
 ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
 program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
 
-# expand $ac_aux_dir to an absolute path
-am_aux_dir=`cd $ac_aux_dir && pwd`
+# Expand $ac_aux_dir to an absolute path.
+am_aux_dir=`cd "$ac_aux_dir" && pwd`
 
 if test x"${MISSING+set}" != xset; then
   case $am_aux_dir in
@@ -2295,7 +2295,7 @@ else
 $as_echo "$as_me: WARNING: 'missing' script is too old or missing" >&2;}
 fi
 
-if test x"${install_sh}" != xset; then
+if test x"${install_sh+set}" != xset; then
   case $am_aux_dir in
   *\ * | *\	*)
     install_sh="\${SHELL} '$am_aux_dir/install-sh'" ;;
@@ -2623,8 +2623,8 @@ MAKEINFO=${MAKEINFO-"${am_missing_run}makeinfo"}
 # <http://lists.gnu.org/archive/html/automake/2012-07/msg00014.html>
 mkdir_p='$(MKDIR_P)'
 
-# We need awk for the "check" target.  The system "awk" is bad on
-# some platforms.
+# We need awk for the "check" target (and possibly the TAP driver).  The
+# system "awk" is bad on some platforms.
 # Always define AMTAR for backward compatibility.  Yes, it's still used
 # in the wild :-(  We should find a proper way to deprecate it ...
 AMTAR='$${TAR-tar}'
@@ -4159,29 +4159,17 @@ fi
 done
 
 
-for ac_header in gsl/gsl_sf_gamma.h
-do :
-  ac_fn_c_check_header_mongrel "$LINENO" "gsl/gsl_sf_gamma.h" "ac_cv_header_gsl_gsl_sf_gamma_h" "$ac_includes_default"
+ac_fn_c_check_header_mongrel "$LINENO" "gsl/gsl_sf_gamma.h" "ac_cv_header_gsl_gsl_sf_gamma_h" "$ac_includes_default"
 if test "x$ac_cv_header_gsl_gsl_sf_gamma_h" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_GSL_GSL_SF_GAMMA_H 1
-_ACEOF
 
 fi
 
-done
 
-for ac_header in gsl/gsl_sys.h
-do :
-  ac_fn_c_check_header_mongrel "$LINENO" "gsl/gsl_sys.h" "ac_cv_header_gsl_gsl_sys_h" "$ac_includes_default"
+ac_fn_c_check_header_mongrel "$LINENO" "gsl/gsl_sys.h" "ac_cv_header_gsl_gsl_sys_h" "$ac_includes_default"
 if test "x$ac_cv_header_gsl_gsl_sys_h" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_GSL_GSL_SYS_H 1
-_ACEOF
 
 fi
 
-done
 
 
 
@@ -4250,9 +4238,8 @@ $as_echo "$ac_cv_prog_c_openmp" >&6; }
   fi
 
 
-
-LDFLAGS="-L/opt/local/lib/ ${LDFLAGS}"
-
+# In mac omp is compiled through iomp5. TODO If the compiler is found but the
+# library is not it will fail.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for omp_get_thread_num in -lgomp" >&5
 $as_echo_n "checking for omp_get_thread_num in -lgomp... " >&6; }
 if ${ac_cv_lib_gomp_omp_get_thread_num+:} false; then :
@@ -4296,13 +4283,57 @@ _ACEOF
 
   LIBS="-lgomp $LIBS"
 
+else
+  \
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for omp_get_thread_num in -liomp5" >&5
+$as_echo_n "checking for omp_get_thread_num in -liomp5... " >&6; }
+if ${ac_cv_lib_iomp5_omp_get_thread_num+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-liomp5  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char omp_get_thread_num ();
+int
+main ()
+{
+return omp_get_thread_num ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_iomp5_omp_get_thread_num=yes
+else
+  ac_cv_lib_iomp5_omp_get_thread_num=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_iomp5_omp_get_thread_num" >&5
+$as_echo "$ac_cv_lib_iomp5_omp_get_thread_num" >&6; }
+if test "x$ac_cv_lib_iomp5_omp_get_thread_num" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBIOMP5 1
+_ACEOF
+
+  LIBS="-liomp5 $LIBS"
+
+fi
+
 fi
 
 
-LDFLAGS="-L/opt/local/lib/ ${LDFLAGS}"
-
 # ME OF THE FUTURE: This looks redundant but needs to be done like that.
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for cos in -lm" >&5
 $as_echo_n "checking for cos in -lm... " >&6; }
 if ${ac_cv_lib_m_cos+:} false; then :
@@ -4391,6 +4422,9 @@ _ACEOF
 
   LIBS="-lgslcblas $LIBS"
 
+else
+  \
+     as_fn_error $? " unable to find gsl " "$LINENO" 5
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsl_blas_dgemm in -lgsl" >&5
@@ -4436,6 +4470,9 @@ _ACEOF
 
   LIBS="-lgsl $LIBS"
 
+else
+  \
+     as_fn_error $? " unable to find gsl " "$LINENO" 5
 fi
 
 

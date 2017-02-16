@@ -86,11 +86,11 @@ following:
 
 Has config found gls's header? If not type 
 
-export CFLAGS=$CFLAGS:'-I/opt/local/include
+export CFLAGS="$CFLAGS -I/opt/local/include"
 
 Has config found gls's libraries? If not type
 
-export LDFLAGS=$LDFLAGS:'-L/opt/local/lib/
+export LDFLAGS="$LDFLAGS -L/opt/local/lib/"
 
 Has config found matlab? If not find the path of matlab and type
 

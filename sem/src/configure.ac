@@ -13,22 +13,21 @@ AC_CHECK_HEADERS(matrix.h)
 AC_CHECK_HEADERS(mex.h)
 AC_CHECK_HEADERS(math.h)
 
-AC_CHECK_HEADERS(gsl/gsl_sf_gamma.h)
-AC_CHECK_HEADERS(gsl/gsl_sys.h)
+AC_CHECK_HEADER(gsl/gsl_sf_gamma.h)
+AC_CHECK_HEADER(gsl/gsl_sys.h)
 
 AC_OPENMP
-
-LDFLAGS="-L/opt/local/lib/ ${LDFLAGS}"
-
-AC_CHECK_LIB(gomp, omp_get_thread_num)
-
-LDFLAGS="-L/opt/local/lib/ ${LDFLAGS}"
+# In mac omp is compiled through iomp5. TODO If the compiler is found but the 
+# library is not it will fail.
+AC_CHECK_LIB(gomp, omp_get_thread_num, , \
+    AC_CHECK_LIB(iomp5, omp_get_thread_num))
 
 # ME OF THE FUTURE: This looks redundant but needs to be done like that.
-
 AC_CHECK_LIB([m],[cos])
-AC_CHECK_LIB([gslcblas],[cblas_dgemm])
-AC_CHECK_LIB([gsl],[gsl_blas_dgemm])
+AC_CHECK_LIB([gslcblas],[cblas_dgemm], , \
+    [ AC_MSG_ERROR([ unable to find gsl ]) ])
+AC_CHECK_LIB([gsl],[gsl_blas_dgemm], , \
+    [ AC_MSG_ERROR([ unable to find gsl ]) ])
 
 # Find matlab
 matlabhome=$(matlab -nodisplay -nosplash -r "fprintf(1, matlabroot); fprintf(1, '\n'); exit;"| tail -n 1)
