@@ -25,10 +25,12 @@ for i = 1:numel(theta)
         err = (ptheta.mu - theta{i})' * ptheta.kjm * (ptheta.mu - theta{i});
     end
 
-    p0 = atan(theta{i}(end))/pi + 0.5;
-
-    lpp(i) = nconst - 0.5 * err + ...
-        log((ptheta.alpha_eta + 1) * (1 - p0).^(ptheta.alpha_eta));
+    p0 = atan(theta{i}(ptheta.bdist))/pi + 0.5;
+    alpha = ptheta.mu(ptheta.bdist);
+    beta = ptheta.pm(ptheta.bdist);
+    lpp(i) = nconst - 0.5 * err; + ...
+        sum(betaln(alpha, beta) + ...
+            (alpha - 1) .* log(p0) + (beta - 1) .* log(1 - p0));
 end
 
 end

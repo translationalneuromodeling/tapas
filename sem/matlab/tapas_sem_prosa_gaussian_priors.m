@@ -25,10 +25,6 @@ ptheta.pm = 1./[pm, ve, vl, p0v]';
 ptheta.p0 = ptheta.mu;
 % Eta is beta distributed
 ptheta.bdist = [9];
-ptheta.alpha_eta = p0v;
-
-% Don't look at eta like a normal distributed variable
-ptheta.uniform_parameters = [9];
 
 end
 

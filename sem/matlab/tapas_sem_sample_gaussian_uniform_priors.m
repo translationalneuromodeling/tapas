@@ -24,7 +24,7 @@ theta(~sample_pars) = ptheta.p0(~sample_pars);
 rates = ptheta.jm * tan(pi * (rand(np, 1) - 0.5));
 rates(~sample_pars) = ptheta.p0(~sample_pars);
 
-index = ptheta.uniform_parameters;
+index = ptheta.bdist;
 theta(index) = rates(index);
 
 end

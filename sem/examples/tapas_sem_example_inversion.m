@@ -19,7 +19,7 @@ fprintf(fp, '================\n Test %s\n================\n', fname);
 
 [y, u] = prepare_data();
 
-if 0
+if 1
 
 ptheta = tapas_sem_prosa_invgamma_ptheta(); % Choose at convinience.
 htheta = tapas_sem_prosa_htheta(); % Choose at convinience.
@@ -34,11 +34,11 @@ ptheta.jm = [eye(15)
 
 pars = struct();
 
-pars.T = linspace(0.1, 1, 16).^5;
-pars.nburnin = 10000;
-pars.niter = 10000;
-pars.kup = 1000;
-pars.mc3it = 16;
+pars.T = linspace(0.1, 1, 2).^5;
+pars.nburnin = 200;
+pars.niter = 400;
+pars.kup = 200;
+pars.mc3it = 1;
 pars.verbose = 1;
 
 tapas_sem_estimate(y, u, ptheta, htheta, pars);
@@ -59,11 +59,11 @@ ptheta.jm = [...
 
 pars = struct();
 
-pars.T = linspace(0.1, 1, 16).^5;
-pars.nburnin = 10000;
-pars.niter = 10000;
-pars.kup = 1000;
-pars.mc3it = 16;
+pars.T = linspace(0.1, 1, 2).^5;
+pars.nburnin = 200;
+pars.niter = 400;
+pars.kup = 200;
+pars.mc3it = 1;
 pars.verbose = 1;
 
 tapas_sem_estimate(y, u, ptheta, htheta, pars);

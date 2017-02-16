@@ -14,19 +14,17 @@ ptheta = struct();
 [mmu, mvu, vmu, vvu, me, ve, ml, vl, p0m, p0v] = ...
     tapas_sem_unified_gaussian_priors();
 
-mu = [repmat([mmu, vmu], 1, 3) 0 0];
-ptheta.mu = [mu, me, ml, p0m]';
+mu = repmat([mmu, vmu], 1, 3);
+ptheta.mu = [mu, 1, 1, me, ml, p0m]';
 
-pm = [repmat([mvu, vvu], 1, 3), 1, 1];
-ptheta.pm = 1./[pm, ve, vl, p0v]';
+pm = repmat([mvu, vvu], 1, 3);
+ptheta.pm = [[1./pm']; 1; 1; 1/ve ; 1/vl ; p0v];
 
 ptheta.p0 = ptheta.mu;
-% Eta is beta distributed
-ptheta.bdist = [11];
-ptheta.alpha_eta = p0v;
 
-% Don't look at eta like a normal distributed variable
-ptheta.uniform_parameters = [7, 8, 11];
+% Eta is beta distributed
+ptheta.bdist = [7, 8, 11];
+ptheta.p0(ptheta.bdist) = tan(pi * ([0.2, 0.2, 0.005] - 0.5));
 
 end
 
