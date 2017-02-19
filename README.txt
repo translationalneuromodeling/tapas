@@ -74,7 +74,15 @@ Major Release Notes:
 
 Minor Relase notes
 
-    - Added a function to print the current version and the links to the citations.
+    - Added a function to print the current version and the links to the 
+        citations.
+	- Substantially improved Siemens interface, both for VB/VD and 3T/7T 
+		releases
+	- Several bugfixes, based on extensive user feedback from Berlin and 
+		Brisbane.
+	- New functionality tapas_physio_overlay_contrasts.m to display non-physio
+		 contrasts automatically as well
+	- Updated Quickstart Manual to include current object structure
 
 -------
 LICENSE                            
