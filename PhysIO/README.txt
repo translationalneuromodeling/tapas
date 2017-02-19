@@ -117,19 +117,26 @@ DOWNLOADS & RELEASE INFORMATION
 
 - Current Release: 
 
-PhysIO_Toolbox_16 (Code | Examples)
-October 10, 2016
+PhysIO_Toolbox_R2017.1
 
-revision: $Rev$
+February 19, 2017
 
-Major Release Notes (r904):
-- Software version for revised PhysIO Toolbox Paper 
+Minor Release Notes (R2017.1)
+* Substantially improved Siemens interface, both for VB/VD and 3T/7T releases
+** several bugfixes
+** based on extensive user feedback from Berlin and Brisbane
+* New functionality tapas_physio_overlay_contrasts.m to display non-physio 
+  contrasts automatically as well
+
+Major Release Notes (r904 / R2016.1):
+- Software version for accepted PhysIO Toolbox Paper: doi:10.1016/j.jneumeth.2016.10.019
 - Tested and expanded versions of examples
 - Improved stability by bugfixes and compatibility to Matlab R2016
 - Slice-wise regressor creation
 - Detection of constant physiological time series (detachment, clipping)
 - Refactoring of report_contrasts and compute_tsnr_gains as standalone functionality
 - Improved Read-in capabilities (Siemens respiration data, BioPac .mat)
+- Migration from svn (r904) to git (tnurepository) for version control
 
 Major Release Notes (r835):
 - Software version for Toolbox Paper submission
@@ -203,6 +210,8 @@ See subdirectory "manual"
 
 
 REFERENCES
+
+Kasper, L., Bollmann, S., Diaconescu, A.O., Hutton, C., Heinzle, J., Iglesias, S., Hauser, T.U., Sebold, M., Manjaly, Z.-M., Pruessmann, K.P., Stephan, K.E., 2016. The PhysIO Toolbox for Modeling Physiological Noise in fMRI Data. Journal of Neuroscience Methods accepted. doi:10.1016/j.jneumeth.2016.10.019
 
 Birn, Rasmus M., Jason B. Diamond, Monica A. Smith, and Peter A. Bandettini. 2006. Separating Respiratory-variation-related Fluctuations from Neuronal-activity-related Fluctuations in fMRI. NeuroImage 31 (4) (July 15): 1536?1548. 	doi:10.1016/j.neuroimage.2006.02.048.
 

@@ -54,6 +54,9 @@ logFooter.LogStartTimeSeconds =   str2num(char(regexprep(linesFooter(~cellfun(@i
 logFooter.LogStopTimeSeconds =    str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
     'LogStopMDHTime'))),'\D',''))) / 1000;
 
+% MPCU  = Computer who controls the scanner
+% MDH   = Compute who is the host; console
+
 % This is just a different time-scale, I presume, it does definitely
 % NOT match with the Acquisition time in the DICOM-headers
 logFooter.ScanStartTimeSeconds = str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...

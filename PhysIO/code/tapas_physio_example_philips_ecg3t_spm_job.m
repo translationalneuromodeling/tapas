@@ -5,7 +5,7 @@
 %-----------------------------------------------------------------------
 matlabbatch{1}.spm.tools.physio.save_dir = {''};
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'Philips';
-matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'/Users/kasperla/Documents/code/matlab/smoothing_trunk/PhysIOToolbox/examples/Philips/ECG3T/SCANPHYSLOG.log'};
+matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'SCANPHYSLOG.log'};
 matlabbatch{1}.spm.tools.physio.log_files.respiration = {'SCANPHYSLOG.log'};
 matlabbatch{1}.spm.tools.physio.log_files.scan_timing = {'SCANPHYSLOG.log'};
 matlabbatch{1}.spm.tools.physio.log_files.sampling_interval = [];

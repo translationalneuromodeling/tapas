@@ -50,28 +50,31 @@ end
 
 %C(i,j)/SQRT(C(i,i)*C(j,j)).
 
-nSamples = numel(x);
-normFactor = 1/(nSamples-1);
-
-% make column vectors
-if size(x,1) ~= nSamples
-    x = x(:);
-    y = y(:);
-end
-
-if ~isZtransformed(1) % perform z-transformation
-    x = x - sum(x)/nSamples;
-    x = x./sqrt(x'*x*normFactor);
-end
-if ~isZtransformed(2) % perform z-transformation
-    y = y - sum(y)/nSamples;
-    y = y./sqrt(y'*y*normFactor);
-end
-
-if numel(x) == numel(y)
-    correlation = x'*y*normFactor;
-else
-    correlation = [];
+correlation = 0;
+if any(x) && any(y) % all-zero vectors result in zero correlation
+    
+    nSamples = numel(x);
+    normFactor = 1/(nSamples-1);
+    
+    % make column vectors
+    if size(x,1) ~= nSamples
+        x = x(:);
+        y = y(:);
+    end
+    
+    if ~isZtransformed(1) % perform z-transformation
+        x = x - sum(x)/nSamples;
+        x = x./sqrt(x'*x*normFactor);
+    end
+    if ~isZtransformed(2) % perform z-transformation
+        y = y - sum(y)/nSamples;
+        y = y./sqrt(y'*y*normFactor);
+    end
+    
+    if numel(x) == numel(y)
+        correlation = x'*y*normFactor;
+        % otherwise, correlation stays zero
+    end
 end
 
 %end % else doUseSlow

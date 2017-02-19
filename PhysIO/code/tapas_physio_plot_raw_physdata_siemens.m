@@ -25,7 +25,7 @@ function fh = tapas_physio_plot_raw_physdata_siemens(dataCardiac)
 %
 % $Id$
 
-strip_fields(dataCardiac);
+tapas_physio_strip_fields(dataCardiac);
 
 stringTitle = 'Raw Siemens physlog data';
 fh = tapas_physio_get_default_fig_params();

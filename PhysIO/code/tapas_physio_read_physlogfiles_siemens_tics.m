@@ -76,12 +76,29 @@ dtRespiration = dtTics;
 if hasRespirationFile
     fid = fopen(log_files.respiration);
     C = textscan(fid, '%d %d %d', 'HeaderLines', 1);
+    
+    % check whether textscan worked, otherwise try different format with 4
+    % columns
+    if ~isempty(C{2})
+        r           = double(C{2});
+        rSignals    = double(C{3});
+    else
+        C           = textscan(fid, '%d %s %d %s', 'HeaderLines', 8);
+        r           = double(C{3});
+        rSignals    = ~cellfun(@isempty, C{4});
+    end
+    
     rTics           = double(C{1});
     tRespiration    = rTics*dtRespiration ...
         - log_files.relative_start_acquisition;
-    r               = double(C{2});
-    rSignals        = double(C{3});
+    
+    rpulse          = find(rSignals);
+    
+    if ~isempty(rpulse)
+        rpulse = tRespiration(rpulse);
+    end
 else
+    rpulse          = [];
     r               = [];
     tRespiration    = [];
 end
@@ -89,14 +106,31 @@ end
 if hasCardiacFile
     fid = fopen(log_files.cardiac);
     C = textscan(fid, '%d %d %d', 'HeaderLines', 1);
+    
+    % check whether textscan worked, otherwise try different format with 4
+    % columns
+    if ~isempty(C{2})
+        c           = double(C{2});
+        cSignals    = double(C{3});
+    else
+        C           = textscan(fid, '%d %s %d %s', 'HeaderLines', 8);
+        c           = double(C{3});
+        cSignals    = ~cellfun(@isempty, C{4});
+    end
     cTics           = double(C{1});
     tCardiac        = cTics*dtCardiac ...
         - log_files.relative_start_acquisition;
-    c               = double(C{2});
-    cSignals        = double(C{3});
+    
+    cpulse          = find(cSignals);
+    
+    if ~isempty(cpulse)
+        cpulse = tCardiac(cpulse);
+    end
+    
 else
     c               = [];
     tCardiac        = [];
+    cpulse          = [];
 end
 
 
@@ -105,7 +139,7 @@ end
 
 if DEBUG
     fh = plot_raw_physlogs(tCardiac, c, tRespiration, r, ...
-        hasCardiacFile, hasRespirationFile);
+        hasCardiacFile, hasRespirationFile, cpulse, rpulse);
     verbose.fig_handles(end+1) = fh;
 end
 
@@ -150,12 +184,11 @@ else
         min(dtCardiac, dtRespiration))';
 end
 
-cpulse = [];
 end
 
 % Local function to plot raw read-in data;
 function fh = plot_raw_physlogs(tCardiac, c, tRespiration, r, ...
-    hasCardiacFile, hasRespirationFile)
+    hasCardiacFile, hasRespirationFile, cpulse, rpulse)
 fh = tapas_physio_get_default_fig_params();
 stringTitle = 'Siemens Tics - Read-in cardiac and respiratory logfiles';
 set(gcf, 'Name', stringTitle);
@@ -165,12 +198,25 @@ if hasCardiacFile
     plot(tCardiac-tOffset, c, 'r.-'); hold all;
     stringLegend{1, end+1} =  ...
         sprintf('Cardiac time course, start time %5.2e', tOffset);
+    
+    if ~isempty(cpulse)
+        stem(cpulse-tOffset, max(abs(c))*ones(size(cpulse)));
+        stringLegend{1, end+1} = 'Detected hearbeats';
+    end
+    
 end
 
 if hasRespirationFile
-    plot(tRespiration-tOffset, r, 'g.-');
+    plot(tRespiration-tOffset, r, 'g.-'); hold all;
     stringLegend{1, end+1} =  ...
         sprintf('Respiratory time course, start time %5.2e', tOffset);
+    
+    if ~isempty(rpulse)
+        stem(rpulse-tOffset, max(abs(r))*ones(size(rpulse)));
+        stringLegend{1, end+1} = 'Detected Breath starts';
+    end
+    
+    
 end
 xlabel('t (seconds)');
 legend(stringLegend);

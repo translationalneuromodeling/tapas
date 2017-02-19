@@ -70,12 +70,12 @@ end
 %% Histogram of breathing amplitudes
 
 if hasRespData
-    nBins = min(length(unique(yResp)), floor(length(yResp)/100));
+    nBins = max(50, min(500, min(length(unique(yResp))/10, floor(length(yResp)/1000))));
     [r_hist, bins] = hist(yResp, nBins);
     
     if isVerbose
         subplot(2,1,2);
-        bar(bins, r_hist);
+        bar(bins, r_hist, 1);
         title('Histogram of breathing belt amplitudes');
     end
 else

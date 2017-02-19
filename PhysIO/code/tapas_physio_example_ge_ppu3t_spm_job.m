@@ -5,8 +5,8 @@
 %-----------------------------------------------------------------------
 matlabbatch{1}.spm.tools.physio.save_dir = {''};
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'GE';
-matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'/Users/kasperla/Documents/code/matlab/smoothing_trunk/PhysIOToolbox/examples/GE/PPU3T/ECGData_epiRT_phys_0921201215_38_08'};
-matlabbatch{1}.spm.tools.physio.log_files.respiration = {'/Users/kasperla/Documents/code/matlab/smoothing_trunk/PhysIOToolbox/examples/GE/PPU3T/RespData_epiRT_phys_0921201215_38_08'};
+matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'ECGData_epiRT_phys_0921201215_38_08'};
+matlabbatch{1}.spm.tools.physio.log_files.respiration = {'RespData_epiRT_phys_0921201215_38_08'};
 matlabbatch{1}.spm.tools.physio.log_files.scan_timing = {''};
 matlabbatch{1}.spm.tools.physio.log_files.sampling_interval = 0.025;
 matlabbatch{1}.spm.tools.physio.log_files.relative_start_acquisition = 0;
