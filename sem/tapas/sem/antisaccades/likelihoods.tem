@@ -1,0 +1,14 @@
+
+@fun_factory(p_{0:s}_model_{1:s}_{2:s})
+def {0:s}_{1:s}_{2:s}(rt, ac, tt, theta):
+    ''' Likelihood of the {0:s} model using the {2:s} distribution
+    
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+        
+    '''
+
+    return

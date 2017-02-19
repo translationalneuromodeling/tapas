@@ -1,4 +1,4 @@
-Version 2.4.0.0
+Version 2.5.0.0
 
 ________________________________________________________________________
 
@@ -26,6 +26,7 @@ neurology. Problems that can be addressed by tools in TAPAS presently include:
     - Bayesian mixed-effects inference for classification studies.
     - Variational-Bayes Linear Regression.
     - Efficient integration of the DCMs using massive parallelization.
+    - Modeling of eye movements.
 
 TAPAS is written in MATLAB and distributed as open source code under 
 the GNU General Public License (GPL, Version 3).
@@ -60,15 +61,20 @@ Changes in this version
 
 Major Release Notes:
 
-    -Software version for PhysIO Toolbox Paper: 
-     doi:10.1016/j.jneumeth.2016.10.019
-    -Tested and expanded versions of examples
-    -Improved stability by bugfixes and compatibility to Matlab R2016
-    -Slice-wise regressor creation
-    -Detection of constant physiological time series (detachment, clipping)
-    -Refactoring of report_contrasts and compute_tsnr_gains as standalone 
-     functionality
-    -Improved Read-in capabilities (Siemens respiration data, BioPac .mat)
+    - Here we release a new toolbox for the modeling of antisaccades. Details
+        of the model are explained in Aponte et al. 
+        http://biorxiv.org/content/early/2017/02/17/109090
+    - This toolbox is composed of c code, wrappers for matlab and python and
+        estimation routine written in matlab.
+    - We support compilation in Linux and Mac. For more instruction on the
+        installation please check sem/README.md. This library depends on
+        gls. We have tested it with recent versions (2.3). This library
+        is open source and can be easily install in Linux and Mac.
+    - This is a beta release which has not been tested extensively.
+
+Minor Relase notes
+
+    - Added a function to print the current version and the links to the citations.
 
 -------
 LICENSE                            
