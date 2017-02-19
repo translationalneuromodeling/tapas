@@ -62,7 +62,8 @@ Changes in this version
 Major Release Notes:
 
     - Here we release a new toolbox for the modeling of antisaccades. Details
-        of the model are explained in Aponte et al..
+        of the model are explained in Aponte et al. 
+        http://biorxiv.org/content/early/2017/02/17/109090
     - This toolbox is composed of c code, wrappers for matlab and python and
         estimation routine written in matlab.
     - We support compilation in Linux and Mac. For more instruction on the
@@ -70,6 +71,10 @@ Major Release Notes:
         gls. We have tested it with recent versions (2.3). This library
         is open source and can be easily install in Linux and Mac.
     - This is a beta release which has not been tested extensively.
+
+Minor Relase notes
+
+    - Added a function to print the current version and the links to the citations.
 
 -------
 LICENSE                            

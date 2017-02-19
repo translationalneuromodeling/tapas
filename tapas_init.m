@@ -1,22 +1,19 @@
 function tapas_init()
- 
-% Get the version number
-fileID = fopen('README.txt', 'rt'); 
-firstLine = fgets(fileID);
-fclose(fileID);
+%% Initilizes the toolbox and prints a message in the console.
+%
 
-disp(strcat('Initializing TAPAS',{' '},firstLine,{' '},'...'));
-
-disp( '_________   _____                _____       _____           ____                ');
-disp( '   |       |     |              |_____|     |     |         |          ');
-disp( '   |       |-----|              |           |-----|          ----|        ');
-disp(['   | NU    |     |LGORITHMS for |sychiatry  |     |dvancing  ____|cience      ','']);
-fprintf('\n');
+% aponteeduardo@gmail.com
+% copyright (C) 2017
+%
 
 
 addpath(genpath(pwd));
 
 
+[version, hash] = tapas_version();
+disp(strcat('Initializing TAPAS ...'));
+fprintf(1, 'Version %d.%d.%d.%d\n', version{:});
 
+tapas_print_logo();
 
 end
