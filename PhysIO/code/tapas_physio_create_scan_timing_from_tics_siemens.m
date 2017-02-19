@@ -45,6 +45,12 @@ fid = fopen(log_files.scan_timing);
 
 C = textscan(fid, '%d %d %d', 'HeaderLines', 1);
 
+% check whether textscan worked, otherwise try different format
+if isempty(C{2})
+    C           = textscan(fid, '%d %d %d %d', 'HeaderLines', 8);
+end
+
+
 dtTicSeconds = 2.5e-3;
 
 idVolumes       = C{1};

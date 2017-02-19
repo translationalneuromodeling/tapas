@@ -69,7 +69,7 @@ vendor.help   = {' vendor                Name depending on your MR Scanner syste
     ' NOTE: the sampling interval has to be specified for these files as'
     ' well (s.b.)'
     };
-vendor.labels = {'Philips', 'GE', 'Siemens', 'Siemens_Tics', 'Biopac_Mat', 'Custom'};
+vendor.labels = {'Philips', 'GE', 'Siemens (VB, *.puls/*.ecg/*.resp)', 'Siemens_Tics (VD: *_PULS.log/*_ECG1.log/*_RESP.log/*_AcquisitionInfo*.log)', 'Biopac_Mat', 'Custom'};
 vendor.values = {'Philips', 'GE', 'Siemens', 'Siemens_Tics', 'Biopac_Mat', 'Custom'};
 vendor.val    = {'Philips'};
 
@@ -1215,10 +1215,12 @@ movement_outlier_translation_mm.name    = 'Outlier Translation Threshold (mm)';
 movement_outlier_translation_mm.help    = {
    'Threshold, above which a stick regressor is created for ' 
    'corresponding volume of exceeding shift'
+   ''
+   'Set to Inf to switch off regressor creation'
    };
 movement_outlier_translation_mm.strtype = 'e';
 movement_outlier_translation_mm.num     = [1 1];
-movement_outlier_translation_mm.val     = {1};
+movement_outlier_translation_mm.val     = {Inf};
 
 
 %--------------------------------------------------------------------------
@@ -1231,10 +1233,12 @@ movement_outlier_rotation_deg.name    = 'Outlier Rotation Threshold (degrees)';
 movement_outlier_rotation_deg.help    = {
    'Threshold, above which a stick regressor is created for '
    'corresponding volume of exceeding rotational movement'
+   ''
+   'Set to Inf to switch off regressor creation'
    };
 movement_outlier_rotation_deg.strtype = 'e';
 movement_outlier_rotation_deg.num     = [1 1];
-movement_outlier_rotation_deg.val     = {1};
+movement_outlier_rotation_deg.val     = {Inf};
 
 
 %--------------------------------------------------------------------------

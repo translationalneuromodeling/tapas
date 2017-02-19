@@ -5,7 +5,7 @@
 %-----------------------------------------------------------------------
 matlabbatch{1}.spm.tools.physio.save_dir = {''};
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'Siemens';
-matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'/Users/kasperla/Documents/code/matlab/smoothing_trunk/PhysIOToolbox/examples/Siemens/ECG3T/siemens_PAV.ecg'};
+matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'siemens_PAV.ecg'};
 matlabbatch{1}.spm.tools.physio.log_files.respiration = {''};
 matlabbatch{1}.spm.tools.physio.log_files.scan_timing = {''};
 matlabbatch{1}.spm.tools.physio.log_files.sampling_interval = 0.0025;

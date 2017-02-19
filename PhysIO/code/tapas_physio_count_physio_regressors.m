@@ -1,12 +1,17 @@
 function nPhysioRegressors = tapas_physio_count_physio_regressors(physio)
 % Returns number of physiological regressors created, given model
-% specification
+% specification; 
+% NOTE: only reproducible numbers (data-independent) are
+% returned, i.e. session-specific movement spikes and %-variance explained
+% PCA-components are not included
 %
 % IN
 %   physio  physio-structure, See also tapas_physio_new
 %
 % OUT
-% nPhysioRegressors     number of physiological regressors, e.g.
+% nPhysioRegressors     number of physiological regressors, e.g. motion,
+%                       retroicor, noise_rois
+%                       but: ignores
 %
 % EXAMPLE
 %   tapas_physio_report_contrasts
@@ -26,26 +31,35 @@ function nPhysioRegressors = tapas_physio_count_physio_regressors(physio)
 
 model = physio.model;
 
-hasRetroicor = ~isempty(regexpi(model.type, 'RETROICOR'));
-hasHrv = ~isempty(regexpi(model.type, 'HRV'));
-hasRvt = ~isempty(regexpi(model.type, 'RVT'));
-
 nPhysioRegressors = 0;
 
-if hasHrv
-    nPhysioRegressors = nPhysioRegressors + 1;
+if model.hrv.include
+    nPhysioRegressors = nPhysioRegressors + numel(model.hrv.delays);
 end
 
-if hasRvt
-    nPhysioRegressors = nPhysioRegressors + 1;
+if model.rvt.include
+    nPhysioRegressors = nPhysioRegressors + numel(model.rvt.delays);
 end
 
-if hasRetroicor
-    order = model.order;
+
+if model.retroicor.include
+    order = model.retroicor.order;
     nPhysioRegressors = nPhysioRegressors + ...
         2*order.c + ...
         2*order.r + ...
         4* order.cr;
+end
+
+if model.noise_rois.include
+    % TODO: what if number of components implicit?...shall we save this?
+    nPhysioRegressors = nPhysioRegressors + ...
+        numel(model.noise_rois.roi_files)*ceil(model.noise_rois.n_components+1); % + 1 for mean
+end
+
+if model.movement.include
+    % TODO: what about variable regressors, that should not be
+    % concatenated, e.g. movement outlier censoring
+    nPhysioRegressors = nPhysioRegressors + model.movement.order;
 end
 
 end

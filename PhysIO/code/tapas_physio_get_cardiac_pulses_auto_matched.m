@@ -81,20 +81,26 @@ switch methodPeakDetection
             ECG_min, kRpeak, inp_events);
 end
 
-cpulse = t(cpulse);
-
-if verbose.level >=2
-    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    titstr = 'Peak Detection from Automatically Generated Template';
-    set(gcf, 'Name', titstr);
-    plot(t, c, 'k');
-    hold all;
-    stem(cpulse,4*ones(size(cpulse)), 'r');
-    legend('Raw time course',...
-        'Detected maxima (cardiac pulses / max inhalations)');
-    title(titstr);
+if isempty(cpulse)
+    [verbose, msg] = tapas_physio_log('No super-threshold peaks found by auto_matched algorithm', verbose, 1);  
+else
+    
+    % remove pulses out of range for time vector, convert to time
+    cpulse = cpulse(cpulse>0 & cpulse < numel(t));
+    cpulse = t(cpulse);
+    
+    if verbose.level >=2
+        verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
+        titstr = 'Peak Detection from Automatically Generated Template';
+        set(gcf, 'Name', titstr);
+        plot(t, c, 'k');
+        hold all;
+        stem(cpulse,4*ones(size(cpulse)), 'r');
+        legend('Raw time course',...
+            'Detected maxima (cardiac pulses / max inhalations)');
+        title(titstr);
+    end
+    
 end
-
-
 
 

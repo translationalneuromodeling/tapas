@@ -33,9 +33,24 @@ function data_table = tapas_physio_siemens_line2table(lineData)
 %
 % $Id$
 
-iTrigger = regexpi(lineData, '6002'); % signals start of data logging
-lineData = lineData((iTrigger(end)+4):end);
+% signals start of data logging
+iTrigger = regexpi(lineData, '6002'); 
+
+if ~isempty(iTrigger)
+    % crop string after trigger
+    lineData = lineData((iTrigger(end)+4):end);
+    doCropLater = false;
+else
+    % crop first 4 values as in UPenn manual after conversion
+    doCropLater = true;
+end
+
 data = textscan(lineData, '%d', 'Delimiter', ' ', 'MultipleDelimsAsOne',1);
+
+if doCropLater
+    % crop first 4 values;
+    data{1} = data{1}(5:end);
+end
 
 % Remove the systems own evaluation of triggers.
 cpulse  = find(data{1} == 5000);  % System uses identifier 5000 as trigger ON
