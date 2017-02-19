@@ -78,7 +78,7 @@ Minor Relase notes
     - Added a function to print the current version and the links to the 
         citations.
 
-    Physio:
+    PHYSIO:
     - Substantially improved Siemens interface, both for VB/VD and 3T/7T 
         releases
     - Several bugfixes, based on extensive user feedback from Berlin and 
