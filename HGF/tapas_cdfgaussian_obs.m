@@ -1,4 +1,4 @@
-function logp = tapas_cdfgaussian_obs(r, infStates, ptrans)
+function [logp, yhat, res] = tapas_cdfgaussian_obs(r, infStates, ptrans)
 % Calculates the log-probability of response y under a cumulative Gaussian distribution. This
 % model has no free parameters.
 %
@@ -12,7 +12,10 @@ function logp = tapas_cdfgaussian_obs(r, infStates, ptrans)
 
 % Initialize returned log-probabilities as NaNs so that NaN is
 % returned for all irregualar trials
-logp = NaN(length(infStates(:,2,3)),1);
+n = size(infStates,1);
+logp = NaN(n,1);
+yhat = NaN(n,1);
+res  = NaN(n,1);
 
 % Weed irregular trials out from inferred states and responses
 mu2 = infStates(:,2,3);
@@ -31,6 +34,10 @@ probc = y.*(1 -x2lt0) +(1 -y).*x2lt0;
 % Calculate log-probabilities for non-irregular trials
 % Note: 8*atan(1) == 2*pi (this is used to guard against
 % errors resulting from having used pi as a variable).
-logp(~ismember(1:length(logp),r.irr)) = log(probc);
+reg = ~ismember(1:n,r.irr);
+logp(reg) = log(probc);
+yh = 1 -x2lt0;
+yhat(reg) = yh;
+res(reg) = (y -yh)./sqrt(yh.*(1 -yh));
 
 return;

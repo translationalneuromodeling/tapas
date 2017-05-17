@@ -1,4 +1,4 @@
-function logp = tapas_rs_precision(r, infStates, ptrans)
+function [logp, yhat, res] = tapas_rs_precision(r, infStates, ptrans)
 % Calculates the log-probability of response speed y (in units of ms^-1) according to the precision
 % model introduced in:
 %
@@ -20,9 +20,13 @@ ze1i = exp(ptrans(2));
 ze2  = exp(ptrans(3));
 ze3  = exp(ptrans(4));
 
-% Initialize returned log-probabilities as NaNs so that NaN is
-% returned for all irregualar trials
-logp = NaN(length(infStates(:,1,1)),1);
+% Initialize returned log-probabilities, predictions,
+% and residuals as NaNs so that NaN is returned for all
+% irregualar trials
+n = size(infStates,1);
+logp = NaN(n,1);
+yhat = NaN(n,1);
+res  = NaN(n,1);
 
 % Weed irregular trials out from inferred states, responses, and inputs
 mu2hat = infStates(:,2,1);
@@ -47,6 +51,9 @@ rs = u.*(ze1v + ze2*alpha) + (1-u).*(ze1i + ze2*(1-alpha));
 % Calculate log-probabilities for non-irregular trials
 % Note: 8*atan(1) == 2*pi (this is used to guard against
 % errors resulting from having used pi as a variable).
-logp(~ismember(1:length(logp),r.irr)) = -1/2.*log(8*atan(1).*ze3) -(y-rs).^2./(2.*ze3);
+reg = ~ismember(1:n,r.irr)
+logp(reg) = -1/2.*log(8*atan(1).*ze3) -(y-rs).^2./(2.*ze3);
+yhat(reg) = rs;
+res(reg) = y-rs;
 
 return;

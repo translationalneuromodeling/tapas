@@ -164,7 +164,7 @@ for i = 1:maxIter
         continue
     else
         disp(' ')
-        disp('Warning: optimization terminated because the maximum number of resets is reached.')
+        disp('Warning: optimization terminated because the maximum number of resets was reached.')
         break
     end
     
@@ -219,7 +219,7 @@ for i = 1:maxIter
     % Warn if termination is only due to maximum of iterations being reached
     if i == maxIter
         disp(' ')
-        disp('Warning: optimization terminated because the maximum number of iterations is reached.')
+        disp('Warning: optimization terminated because the maximum number of iterations was reached.')
     end
 end
 

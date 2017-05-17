@@ -1,10 +1,13 @@
-HGF Toolbox - Release ID: 97534d3  (HEAD -> master, tag: v4.10, googledrive/master)
+# HGF Toolbox
+Release ID: $Format:%h %d$
 
-************************************************************************
-Copyright (C) 2012-2015 Christoph Mathys <chmathys@ethz.ch>
+--- 
+
+Copyright (C) 2012-2017 Christoph Mathys <chmathys@ethz.ch>
 Translational Neuromodeling Unit (TNU)
 University of Zurich and ETH Zurich
-------------------------------------------------------------------------
+
+---
 
 The HGF toolbox is free software: you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -19,83 +22,104 @@ General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program (see the file COPYING).  If not, see
 <http://www.gnu.org/licenses/>.
-************************************************************************
 
-INSTALLATION
+---
+
+## Installation
 
 Move this folder to a location of your choice and add it to your Matlab
 path.
 
 
-DOCUMENTATION AND CONFIGURATION
+## Documentation and configuration
 
 Documentation can be found in the manual contained in the Manual.pdf
 file. This will point you to the relevant configuration files. Further
 documentation is available throughout the source code.
 
 
-TUTORIAL DEMO
+## Tutorial demo
 
-There is a tutorial demo that can be launched with the command
-tapas_hgf_demo().
+There is a Matlab LiveScript tutorial demo that can be launched by
+opening hgf_demo.mlx in Matlab. A PDF version is available in
+hgf_demo.pdf.
 
-RELEASE NOTES
+## Release notes
 
-v4.10
-~~~~~
+### v5.0
+- Ported interactive demo to Matlab LiveScript
+- Various additional small improvements
+- Updated manual
+- Updated and renamed README to README.md
+
+### v4.17
+- Improvements to logrt_linear_binary_minimal
+
+### v4.16
+- Added the binary HGF with trial-by-trial perceptual uncertainty as hgf_binary_pu_tbt
+
+### v4.15
+- Added the Kalman filter as kf
+
+### v4.14
+- Improved the beta_obs model
+- Improved calculation of implied 1st-level learning rate
+
+### v4.13
+- Corrected sign of update trajectories
+- Added option to base responses on predictions or posteriors in
+  the beta_obs model
+
+### v4.12
+- Added tapas_autocorr.m
+
+### v4.11
+- Predictions and residuals returned by all observations models
+- Added tapas_fit_plotResidualDiagnostics()
+
+### v4.10
 - Added hgf_categorical_norm
 - Added Boltzmann distribution (i.e., softmax normalization) as tapas_boltzmann()
 
-
-v4.9
-~~~~
+### v4.9
 - Set implied learning rate at first level to 0 if update is zero
 
-v4.8
-~~~~
+### v4.8
 - Give choice of using predictions or posteriors with softmax_binary
 
-v4.7
-~~~~
+### v4.7
 - Added cdfgaussian_obs model
 - Added hgf_binary_pu (perceptual uncertainty) model
 - Improvements for beta_obs with hgf_whichworld
 
-v4.6
-~~~~
+### v4.6
 - Adapted beta_obs to deal with ph_binary
 - Added Pearce-Hall in ph_binary
 - Clarified the role of default settings in comments of fitModel
 - Brought softmax_binary_sim up to date
 
-v4.5
-~~~~
+### v4.5
 - Improved comments in softmax_binary_sim
 - Improved comments in tapas_beta_obs.m
 - Added tapas_beta_obs_{sim,namep}.m
 
-v4.4
-~~~~
+### v4.4
 - Added tapas_hgf_ar1_binary_namep.m
 - Improved rw_binary
 
-v4.3
-~~~~
+### v4.3
 - Added bayes_optimal_categorical
 - Improved hgf_categorical_plotTraj
 
-v4.2
-~~~~
+### v4.2
 - Adapted softmax_sim to hgf_categorical
 - Added hgf_categorical
 - Added datagen_categorical and categorical data example
 
-v4.1
-~~~~
+### v4.1
 - Improved hgf_jget
 
-v4.0
-~~~~
+### v4.0
 - Added PDF manual
 - Added interactive demo in hgf_demo
 - Added file of raw commands from hgf_demo in hgf_demo_commands
@@ -142,8 +166,7 @@ v4.0
 - Improved documentation for hgf_ar1_mab model
 - Added error IDs for all errors
 
-v3.0
-~~~~
+### v3.0
 - Improved error handling in tapas_fitModel()
 - Prefixed all function names with “tapas_”
 - Added rs_precision
@@ -155,15 +178,13 @@ v3.0
 - Improved checking of trajectory validity in HGF models
 - Debugged input handling in softmax_binary
 
-v2.1
-~~~~
+### v2.1
 - Introduced Bayesian parameter averaging
 - Amended calculation of log-priors in fitModel.m
 - Debugged construction of time axis in hgf_plotTraj
 - Debugged removal of placeholder field in estimate structure
 
-v2.0
-~~~~
+### v2.0
 - Estimation of Bayes optimal parameters added
 - infStates the same 3-dim array in hgf_binary as in hgf
 - Changes to softmax_binary: trial-by-trial rewards read from input matrix
@@ -178,6 +199,5 @@ v2.0
 - Support for AR(1) processes in new hgf_ar1
 - quasinewton_optim: improved resetting after exhaustion of regularizations
 
-v1.0
-~~~~
+### v1.0
 - Original release

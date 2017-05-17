@@ -1,4 +1,4 @@
-function logp = tapas_bayes_optimal(r, infStates, ptrans)
+function [logp, yhat, res] = tapas_bayes_optimal(r, infStates, ptrans)
 % Calculates the log-probabilities of the inputs given the current prediction
 % and its precision
 %
@@ -12,7 +12,10 @@ function logp = tapas_bayes_optimal(r, infStates, ptrans)
 
 % Initialize returned log-probabilities as NaNs so that NaN is
 % returned for all irregualar trials
-logp = NaN(length(infStates(:,1,1)),1);
+n = size(infStates,1);
+logp = NaN(n,1);
+yhat = NaN(n,1);
+res  = NaN(n,1);
 
 % Weed irregular trials out from inputs and predictions
 %
@@ -31,6 +34,9 @@ sa1hat(r.irr) = [];
 % Calculate log-probabilities for non-irregular trials
 % Note: 8*atan(1) == 2*pi (this is used to guard against
 % errors resulting from having used pi as a variable).
-logp(~ismember(1:length(logp),r.irr)) = -1/2.*log(8*atan(1).*sa1hat) -(u-mu1hat).^2./(2.*sa1hat);
+reg = ~ismember(1:n,r.irr);
+logp(reg) = -1/2.*log(8*atan(1).*sa1hat) -(u-mu1hat).^2./(2.*sa1hat);
+yhat(reg) = mu1hat;
+res(reg) = u-mu1hat;
 
 return;

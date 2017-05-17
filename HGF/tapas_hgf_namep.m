@@ -21,6 +21,6 @@ pstruct.sa_0      = pvec(l+1:2*l);
 pstruct.rho       = pvec(2*l+1:3*l);
 pstruct.ka        = pvec(3*l+1:4*l-1);
 pstruct.om        = pvec(4*l:5*l-1);
-pstruct.al        = pvec(5*l);
+pstruct.pi_u      = pvec(5*l);
 
 return;

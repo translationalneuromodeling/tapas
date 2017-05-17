@@ -75,11 +75,15 @@ plot(0, tapas_sgm(r.p_prc.mu_0(2), 1), 'or', 'LineWidth', 2); % prior
 plot(ts(2:end), r.u(:,1), '.', 'Color', [0 0.6 0]); % inputs
 plot(ts(2:end), r.traj.wt(:,1), 'k') % implied learning rate 
 if (ploty == true) && ~isempty(find(strcmp(fieldnames(r),'y'))) && ~isempty(r.y)
-    y = r.y(:,1) -0.5; y = 1.16 *y; y = y +0.5; % stretch
-    if ~isempty(find(strcmp(fieldnames(r),'irr')))
-        y(r.irr) = NaN; % weed out irregular responses
-        plot(ts(r.irr),  1.08.*ones([1 length(r.irr)]), 'x', 'Color', [1 0.7 0], 'Markersize', 11, 'LineWidth', 2); % irregular responses
-        plot(ts(r.irr), -0.08.*ones([1 length(r.irr)]), 'x', 'Color', [1 0.7 0], 'Markersize', 11, 'LineWidth', 2); % irregular responses
+    if ~isempty(find(strcmp(fieldnames(r),'c_sim'))) && strcmp(r.c_sim.obs_model,'tapas_beta_obs')
+        y = r.y(:,1);
+    else
+        y = r.y(:,1) -0.5; y = 1.16 *y; y = y +0.5; % stretch
+        if ~isempty(find(strcmp(fieldnames(r),'irr')))
+            y(r.irr) = NaN; % weed out irregular responses
+            plot(ts(r.irr),  1.08.*ones([1 length(r.irr)]), 'x', 'Color', [1 0.7 0], 'Markersize', 11, 'LineWidth', 2); % irregular responses
+            plot(ts(r.irr), -0.08.*ones([1 length(r.irr)]), 'x', 'Color', [1 0.7 0], 'Markersize', 11, 'LineWidth', 2); % irregular responses
+        end
     end
     plot(ts(2:end), y, '.', 'Color', [1 0.7 0]); % responses
     title(['Response y (orange), input u (green), learning rate (fine black), and posterior expectation of input s(\mu_2) ', ...

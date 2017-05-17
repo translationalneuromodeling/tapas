@@ -1,9 +1,9 @@
-function logp = tapas_logrt_linear_binary(r, infStates, ptrans)
+function [logp, yhat, res] = tapas_logrt_linear_binary(r, infStates, ptrans)
 % Calculates the log-probability of log-reaction times y (in units of log-ms) according to the
 % linear log-RT model developed with Louise Marshall and Sven Bestmann
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2014 Christoph Mathys, UCL
+% Copyright (C) 2014-2016 Christoph Mathys, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -18,9 +18,13 @@ be3  = ptrans(4);
 be4  = ptrans(5);
 ze   = exp(ptrans(6));
 
-% Initialize returned log-probabilities as NaNs so that NaN is
-% returned for all irregualar trials
-logp = NaN(size(infStates,1),1);
+% Initialize returned log-probabilities, predictions,
+% and residuals as NaNs so that NaN is returned for all
+% irregualar trials
+n = size(infStates,1);
+logp = NaN(n,1);
+yhat = NaN(n,1);
+res  = NaN(n,1);
 
 % Weed irregular trials out from responses and inputs
 y = r.y(:,1);
@@ -65,6 +69,9 @@ logrt = be0 +be1.*surp +be2.*bernv +be3.*inferv +be4.*pv;
 % Calculate log-probabilities for non-irregular trials
 % Note: 8*atan(1) == 2*pi (this is used to guard against
 % errors resulting from having used pi as a variable).
-logp(~ismember(1:length(logp),r.irr)) = -1/2.*log(8*atan(1).*ze) -(y-logrt).^2./(2.*ze);
+reg = ~ismember(1:n,r.irr);
+logp(reg) = -1/2.*log(8*atan(1).*ze) -(y-logrt).^2./(2.*ze);
+yhat(reg) = logrt;
+res(reg) = y-logrt;
 
 return;

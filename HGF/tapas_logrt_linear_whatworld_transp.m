@@ -1,6 +1,6 @@
 function [pvec, pstruct] = tapas_logrt_linear_whatworld_transp(r, ptrans)
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2014 Christoph Mathys, UCL
+% Copyright (C) 2014 Christoph Mathys, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL

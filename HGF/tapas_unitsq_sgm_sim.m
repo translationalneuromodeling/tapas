@@ -16,7 +16,7 @@ ze = p;
 prob = mu1hat.^ze./(mu1hat.^ze+(1-mu1hat).^ze);
 
 % Initialize random number generator
-RandStream.setGlobalStream(RandStream('mt19937ar','Seed',rem(now,1)*1000000));
+rng('shuffle');
 
 % Simulate
 y = binornd(1, prob);

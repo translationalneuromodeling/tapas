@@ -9,10 +9,19 @@ function y = tapas_gaussian_obs_sim(r, infStates, p)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
-mu = infStates(:,1,1);
+% Get parameter
 ze = p;
-n = length(mu);
 
-y = mu+sqrt(ze)*randn(n, 1);
+% Get observation prediction trajectory
+muhat = infStates(:,1,1);
+
+% Number of trials
+n = length(muhat);
+
+% Initialize random number generator
+rng('shuffle');
+
+% Simulate
+y = muhat +sqrt(ze)*randn(n, 1);
 
 return;

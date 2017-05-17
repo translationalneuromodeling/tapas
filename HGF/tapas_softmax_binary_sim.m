@@ -25,7 +25,7 @@ else
 end
 
 % Initialize random number generator
-RandStream.setGlobalStream(RandStream('mt19937ar','Seed',rem(now,1)*1000000));
+rng('shuffle');
 
 % Simulate
 y = binornd(1, prob);

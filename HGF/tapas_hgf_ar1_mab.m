@@ -235,7 +235,7 @@ traj.da     = da;
 traj.dau    = dau;
 
 % Updates with respect to prediction
-traj.ud = muhat -mu;
+traj.ud = mu -muhat;
 
 % Psi (precision weights on prediction errors)
 psi      = NaN(n-1,l);
