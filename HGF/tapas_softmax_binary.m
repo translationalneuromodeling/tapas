@@ -1,8 +1,8 @@
-function logp = tapas_softmax_binary(r, infStates, ptrans)
+function [logp, yhat, res] = tapas_softmax_binary(r, infStates, ptrans)
 % Calculates the log-probability of response y=1 under the binary softmax model
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2012-2016 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -18,9 +18,13 @@ end
 % Transform zeta to its native space
 be = exp(ptrans(1));
 
-% Initialize returned log-probabilities as NaNs so that NaN is
-% returned for all irregualar trials
-logp = NaN(length(infStates(:,1,1)),1);
+% Initialize returned log-probabilities, predictions,
+% and residuals as NaNs so that NaN is returned for all
+% irregualar trials
+n = size(infStates,1);
+logp = NaN(n,1);
+yhat = NaN(n,1);
+res  = NaN(n,1);
 
 % Check input format
 if size(r.u,2) ~= 1 && size(r.u,2) ~= 3
@@ -40,17 +44,23 @@ if size(r.u,2) == 3
     r1(r.irr) = [];
 end
 
+% Calculate log-probabilities for non-irregular trials
 % If input matrix has only one column, assume the weight (reward value)
 % of both options is equal to 1
 if size(r.u,2) == 1
-    % Calculate log-probabilities for non-irregular trials
-    logp(not(ismember(1:length(logp),r.irr))) = -log(1+exp(-be.*(2.*x-1).*(2.*y-1)));
+    % Probability of observed choice
+    probc = 1./(1+exp(-be.*(2.*x-1).*(2.*y-1)));
 end
 % If input matrix has three columns, the second contains the weights of
 % outcome 0 and the third contains the weights of outcome 1
 if size(r.u,2) == 3
-    % Calculate log-probabilities for non-irregular trials
-    logp(not(ismember(1:length(logp),r.irr))) = -log(1+exp(-be.*(r1.*x-r0.*(1-x)).*(2.*y-1)));
+    % Probability of observed choice
+    probc = 1./(1+exp(-be.*(r1.*x-r0.*(1-x)).*(2.*y-1)));
 end
+reg = ~ismember(1:n,r.irr);
+logp(reg) = log(probc);
+yh = y.*probc +(1-y).*(1-probc);
+yhat(reg) = yh;
+res(reg) = (y -yh)./sqrt(yh.*(1 -yh));
 
 return;

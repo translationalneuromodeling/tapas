@@ -204,7 +204,8 @@ end
 
 % Implied learning rate at the first level
 sgmmu2 = tapas_sgm(mu(:,2), 1);
-lr1    = diff(sgmmu2)./da(2:n,1);
+dasgmmu2 = u -sgmmu2;
+lr1    = diff(sgmmu2)./dasgmmu2(2:n,1);
 lr1(da(2:n,1)==0) = 0;
 
 % Remove representation priors
@@ -248,7 +249,7 @@ traj.w      = w;
 traj.da     = da;
 
 % Updates with respect to prediction
-traj.ud = muhat -mu;
+traj.ud = mu -muhat;
 
 % Psi (precision weights on prediction errors)
 psi        = NaN(n-1,l);

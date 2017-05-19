@@ -1,4 +1,4 @@
-function sqpe = tapas_squared_pe(r, infStates, ptrans)
+function [sqpe, yhat, res] = tapas_squared_pe(r, infStates, ptrans)
 % Calculates squared prediction errors (pe) with zeta as a weight on pe's
 % relative to perceptual priors
 %
@@ -13,9 +13,13 @@ function sqpe = tapas_squared_pe(r, infStates, ptrans)
 % Transform zeta to its native space
 ze = exp(ptrans(1));
 
-% Initialize returned log-probabilities as NaNs so that NaN is
-% returned for all irregualar trials
-sqpe = NaN(length(infStates(:,1,1)),1);
+% Initialize returned log-probabilities, predictions,
+% and residuals as NaNs so that NaN is returned for all
+% irregualar trials
+n = size(infStates,1);
+sqpe = NaN(n,1);
+yhat = NaN(n,1);
+res = NaN(n,1);
 
 % Weed irregular trials out from inputs and predictions
 %
@@ -30,6 +34,9 @@ mu1hat(r.irr) = [];
 % Calculate log-probabilities for non-irregular trials
 % Note: 8*atan(1) == 2*pi (this is used to guard against
 % errors resulting from having used pi as a variable).
-sqpe(~ismember(1:length(sqpe),r.irr)) = -1/2.*log(8*atan(1).*ze) -(u-mu1hat).^2./(2.*ze);
+reg = ~ismember(1:n,r.irr);
+sqpe(reg) = -1/2.*log(8*atan(1).*ze) -(u-mu1hat).^2./(2.*ze);
+yhat(reg) = mu1hat;
+res(reg) = u-mu1hat;
 
 return;

@@ -10,10 +10,7 @@ function y = tapas_beta_obs_sim(r, infStates, p)
 % COPYING or <http://www.gnu.org/licenses/>.
 
 % Inferred states
-mu = infStates(:,1);
-if size(infStates,2) >= 3
-    mu = mu + infStates(:,3);
-end
+mu = tapas_sgm(infStates(:,2,3), 1);
 if strcmp(r.c_prc.model,'hgf_whichworld')
     mu = tapas_sgm(infStates(:,2,1,3), 1);
 end
@@ -33,7 +30,7 @@ al = mu.*nu;
 be = nu - al;
 
 % Initialize random number generator
-RandStream.setGlobalStream(RandStream('mt19937ar','Seed',rem(now,1)*1000000));
+rng('shuffle');
 
 % Simulate
 y = betarnd(al, be);

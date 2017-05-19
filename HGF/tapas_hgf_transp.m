@@ -23,7 +23,7 @@ pvec(3*l+1:4*l-1) = exp(ptrans(3*l+1:4*l-1));              % ka
 pstruct.ka        = pvec(3*l+1:4*l-1);
 pvec(4*l:5*l-1)   = ptrans(4*l:5*l-1);                     % om
 pstruct.om        = pvec(4*l:5*l-1);
-pvec(5*l)         = exp(ptrans(5*l));                      % al
-pstruct.al        = pvec(5*l);
+pvec(5*l)         = exp(ptrans(5*l));                      % pi_u
+pstruct.pi_u      = pvec(5*l);
 
 return;

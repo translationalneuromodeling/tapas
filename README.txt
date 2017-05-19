@@ -1,4 +1,4 @@
-Version 2.5.0.0
+Version 2.6.0.0
 
 ________________________________________________________________________
 
@@ -61,31 +61,19 @@ Changes in this version
 
 Major Release Notes:
 
-    - Here we release a new toolbox for the modeling of antisaccades. Details
-        of the model are explained in Aponte et al. 
-        http://biorxiv.org/content/early/2017/02/17/109090
-    - This toolbox is composed of c code, wrappers for matlab and python and
-        estimation routine written in matlab.
-    - We support compilation in Linux and Mac. For more instruction on the
-        installation please check sem/README.md. This library depends on
-        gls. We have tested it with recent versions (2.3). This library
-        is open source and can be easily install in Linux and Mac.
-    - This is a beta release which has not been tested extensively.
+This release includes the HGF Toolbox version 5.0.0.
 
-Minor Relase notes
+Highlights:
 
-    Miscelaneuous:
-    - Added a function to print the current version and the links to the 
-        citations.
+	-	The interactive demo is now a Matlab LiveScript, with a PDF version 
+		also included.
+	-	Residual diagnostics are calculated and can be plotted for all
+		response models.
+	-	Many models added.
+	-	Compatible with the latest releases of Matlab.
 
-    PHYSIO:
-    - Substantially improved Siemens interface, both for VB/VD and 3T/7T 
-        releases
-    - Several bugfixes, based on extensive user feedback from Berlin and 
-        Brisbane.
-    - New functionality tapas_physio_overlay_contrasts.m to display non-physio
-        contrasts automatically as well
-    - Updated Quickstart Manual to include current object structure
+
+Detailed release notes can be found in tapas/HGF/README.md
 
 -------
 LICENSE                            

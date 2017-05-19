@@ -117,6 +117,7 @@ for i=1:n
 end
 
 Sigma = inv(H);
+Sigma = (Sigma' + Sigma)./2;
 Corr = tapas_Cov2Corr(Sigma);
 
 % Record results

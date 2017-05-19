@@ -1,9 +1,9 @@
-function logp = tapas_softmax_2beta(r, infStates, ptrans)
+function [logp, yhat, res] = tapas_softmax_2beta(r, infStates, ptrans)
 % Calculates the log-probability of responses under the softmax model with different betas for
 % rewards and punishments
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2013 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2013-2016 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -17,9 +17,13 @@ predorpost = r.c_obs.predorpost;
 % be(1): rewards, be(2): punishments
 be = exp(ptrans(1:2));
 
-% Initialize returned log-probabilities as NaNs so that NaN is
-% returned for all irregualar trials
-logp = NaN(size(infStates,1),1);
+% Initialize returned log-probabilities, predictions,
+% and residuals as NaNs so that NaN is returned for all
+% irregualar trials
+n = size(infStates,1);
+logp = NaN(n,1);
+yhat = NaN(n,1);
+res  = NaN(n,1);
 
 % Weed irregular trials out from inferred states, inputs, and responses
 states = squeeze(infStates(:,1,:,1,predorpost));
@@ -51,6 +55,9 @@ probc2 = prob2(sub2ind(size(prob2), 1:length(y), y'));
 probc = probc1'.*(u==1) +probc2'.*(u==0);
 
 % Calculate log-probabilities for non-irregular trials
-logp(not(ismember(1:length(logp),r.irr))) = log(probc);
+reg = ~ismember(1:n,r.irr);
+logp(reg) = log(probc);
+yhat(reg) = probc;
+res(reg) = -log(probc);
 
 return;

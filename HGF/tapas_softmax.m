@@ -1,4 +1,4 @@
-function logp = tapas_softmax(r, infStates, ptrans)
+function [logp, yhat, res] = tapas_softmax(r, infStates, ptrans)
 % Calculates the log-probability of responses under the softmax model
 %
 % --------------------------------------------------------------------------------------------------
@@ -18,12 +18,21 @@ end
 % Transform beta to its native space
 be = exp(ptrans(1));
 
-% Initialize returned log-probabilities as NaNs so that NaN is
-% returned for all irregualar trials
-logp = NaN(size(infStates,1),1);
+% Initialize returned log-probabilities, predictions,
+% and residuals as NaNs so that NaN is returned for all
+% irregualar trials
+n = size(infStates,1);
+logp = NaN(n,1);
+yhat = NaN(n,1);
+res  = NaN(n,1);
 
 % Weed irregular trials out from inferred states and responses
 states = squeeze(infStates(:,1,:,pop));
+% Assumed structure of infStates:
+% dim 1: time (ie, input sequence number)
+% dim 2: HGF level
+% dim 3: choice number
+% dim 4: 1: muhat, 2: sahat, 3: mu, 4: sa
 states(r.irr,:) = [];
 y = r.y(:,1);
 y(r.irr) = [];
@@ -42,6 +51,9 @@ prob = exp(be*states)./Z;
 probc = prob(sub2ind(size(prob), 1:length(y), y'));
 
 % Calculate log-probabilities for non-irregular trials
-logp(not(ismember(1:length(logp),r.irr))) = log(probc);
+reg = ~ismember(1:n,r.irr);
+logp(reg) = log(probc);
+yhat(reg) = probc;
+res(reg) = -log(probc);
 
 return;

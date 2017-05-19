@@ -1,4 +1,4 @@
-function logp = tapas_bayes_optimal_whatworld(r, infStates, ptrans)
+function [logp, yhat, res] = tapas_bayes_optimal_whatworld(r, infStates, ptrans)
 % Calculates the log-probability of the inputs given the current predictions
 %
 % --------------------------------------------------------------------------------------------------
@@ -11,7 +11,10 @@ function logp = tapas_bayes_optimal_whatworld(r, infStates, ptrans)
 
 % Initialize returned log-probabilities as NaNs so that NaN is
 % returned for all irregualar trials
-logp = NaN(length(infStates(:,1,1,1,1,1)),1);
+n = size(infStates,1);
+logp = NaN(n,1);
+yhat = NaN(n,1);
+res  = NaN(n,1);
 
 % Number of states whose contingencies have to be learned
 ns = r.c_prc.n_states;
@@ -41,6 +44,9 @@ for k = 1:length(u)
 end
 
 % Calculate log-probabilities for non-irregular trials
-logp(not(ismember(1:length(logp),r.irr))) = log(p);
+reg = ~ismember(1:n,r.irr);
+logp(reg) = log(p);
+yhat(reg) = p;
+res(reg) = -log(p);
 
 return;

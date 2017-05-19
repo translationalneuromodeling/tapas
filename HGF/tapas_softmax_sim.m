@@ -24,6 +24,9 @@ Z = repmat(Z,1,no);
 % Softmax probabilities
 prob = exp(be*states)./Z;
 
+% Initialize random number generator
+rng('shuffle');
+
 % Draw responses
 n = size(infStates,1);
 y = NaN(n,1);

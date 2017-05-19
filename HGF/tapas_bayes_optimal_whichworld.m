@@ -1,4 +1,4 @@
-function logp = tapas_bayes_optimal_whichworld(r, infStates, ptrans)
+function [logp, yhat, res] = tapas_bayes_optimal_whichworld(r, infStates, ptrans)
 % Calculates the log-probability of the inputs given the current predictions
 %
 % --------------------------------------------------------------------------------------------------
@@ -11,7 +11,10 @@ function logp = tapas_bayes_optimal_whichworld(r, infStates, ptrans)
 
 % Initialize returned log-probabilities as NaNs so that NaN is
 % returned for all irregualar trials
-logp = NaN(length(infStates(:,1,1,1,1)),1);
+n = size(infStates,1);
+logp = NaN(n,1);
+yhat = NaN(n,1);
+res  = NaN(n,1);
 
 % Number of worlds
 nw = 4;
@@ -44,6 +47,9 @@ mllhm = llh.*pred;
 mllh = sum(mllhm,2);
 
 % Calculate log-probabilities for non-irregular trials
-logp(not(ismember(1:length(logp),r.irr))) = log(mllh);
+reg = ~ismember(1:n,r.irr);
+logp(reg) = log(mllh);
+yhat(reg) = mllh;
+res(reg) = -log(mllh);
 
 return;

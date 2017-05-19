@@ -1,4 +1,4 @@
-function logp = tapas_unitsq_sgm_mu3(r, infStates, ptrans)
+function [logp, yhat, res] = tapas_unitsq_sgm_mu3(r, infStates, ptrans)
 % Calculates the log-probability of response y=1 under the unit-square sigmoid model
 %
 % --------------------------------------------------------------------------------------------------
@@ -11,7 +11,10 @@ function logp = tapas_unitsq_sgm_mu3(r, infStates, ptrans)
 
 % Initialize returned log-probabilities as NaNs so that NaN is
 % returned for all irregualar trials
-logp = NaN(length(infStates(:,1,1)),1);
+n = size(infStates,1);
+logp = NaN(n,1);
+yhat = NaN(n,1);
+res  = NaN(n,1);
 
 % Weed irregular trials out from inferred states and responses
 mu1hat = infStates(:,1,1);
@@ -35,6 +38,9 @@ log1pmx = log1p(-x);
 log1mx(x<1e-4) = log1pmx(x<1e-4);
 
 % Calculate log-probabilities for non-irregular trials
-logp(not(ismember(1:length(logp),r.irr))) = y.*ze.*(logx -log1mx) +ze.*log1mx -log((1-x).^ze +x.^ze);
+reg = ~ismember(1:n,r.irr);
+logp(reg) = y.*ze.*(logx -log1mx) +ze.*log1mx -log((1-x).^ze +x.^ze);
+yhat(reg) = x;
+res(reg) = (y-x)./sqrt(x.*(1-x));
 
 return;

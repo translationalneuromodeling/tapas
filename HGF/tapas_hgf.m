@@ -40,7 +40,7 @@ rho  = p(2*l+1:3*l);
 ka   = p(3*l+1:4*l-1);
 om   = p(4*l:5*l-2);
 th   = exp(p(5*l-1));
-al   = p(5*l);
+al   = 1/p(5*l);
 
 % Add dummy "zeroth" trial
 u = [0; r.u(:,1)];
@@ -226,7 +226,7 @@ traj.da     = da;
 traj.dau    = dau;
 
 % Updates with respect to prediction
-traj.ud = muhat -mu;
+traj.ud = mu -muhat;
 
 % Psi (precision weights on prediction errors)
 psi        = NaN(n-1,l);

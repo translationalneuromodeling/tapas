@@ -40,7 +40,7 @@ function c = tapas_hgf_config
 %         est.p_prc.rho        row vector of rhos (representing drift; in ascending order of levels)
 %         est.p_prc.ka         row vector of kappas (in ascending order of levels)
 %         est.p_prc.om         row vector of omegas (in ascending order of levels)
-%         est.p_prc.al         alpha
+%         est.p_prc.pi_u       pi_u (input precision = 1/alpha)
 %
 %         est.traj.mu          mu (rows: trials, columns: levels)
 %         est.traj.sa          sigma (rows: trials, columns: levels)
@@ -116,8 +116,9 @@ c.irregular_intervals = false;
 % 99992   Variance of the first 20 inputs
 %         Usually a good choice for mu_0sa(1)
 % 99993   Log-variance of the first 20 inputs
-%         Usually a good choice for logsa_0mu(1)
-%         and logalmu
+%         Usually a good choice for logsa_0mu(1), and
+%         its negative, ie the log-precision of the
+%         first 20 inputs, for logpiumu
 % 99994   Log-variance of the first 20 inputs minus two
 %         Usually a good choice for ommu(1)
 
@@ -146,15 +147,15 @@ c.logkasa = [     0];
 
 % Omegas
 % Format: row vector of length n_levels
-c.ommu = [99994,  -4];
+c.ommu = [99993,  -4];
 c.omsa = [  4^2, 4^2];
 
-% Alpha
+% Pi_u
 % Format: scalar
 % Fix this to zero (no percpeptual uncertainty) by setting
-% logalmu = -Inf; logalsa = 0;
-c.logalmu = 99993;
-c.logalsa = 2^2;
+% logpiumu = -Inf; logpiusa = 0;
+c.logpiumu = -99993;
+c.logpiusa = 2^2;
 
 % Gather prior settings in vectors
 c.priormus = [
@@ -163,7 +164,7 @@ c.priormus = [
     c.rhomu,...
     c.logkamu,...
     c.ommu,...
-    c.logalmu,...
+    c.logpiumu,...
          ];
 
 c.priorsas = [
@@ -172,7 +173,7 @@ c.priorsas = [
     c.rhosa,...
     c.logkasa,...
     c.omsa,...
-    c.logalsa,...
+    c.logpiusa,...
          ];
 
 % Check whether we have the right number of priors

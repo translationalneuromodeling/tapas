@@ -129,8 +129,8 @@ fprintf('\n>> tapas_hgf_plotTraj(bopars2)\n')
 tapas_hgf_plotTraj(bopars2)
 input('\n(press ENTER)')
 
-fprintf('\n>> sim2 = tapas_simModel(usdchf, ''tapas_hgf'', [1.04 1 0.0001 0.1 0 0 1 -13  -2 0.0001], ''tapas_gaussian_obs'', 0.00002);\n')
-sim2 = tapas_simModel(usdchf, 'tapas_hgf', [1.04 1 0.0001 0.1 0 0 1 -13  -2 0.0001], 'tapas_gaussian_obs', 0.00002);
+fprintf('\n>> sim2 = tapas_simModel(usdchf, ''tapas_hgf'', [1.04 1 0.0001 0.1 0 0 1 -13  -2 1e4], ''tapas_gaussian_obs'', 0.00002);\n')
+sim2 = tapas_simModel(usdchf, 'tapas_hgf', [1.04 1 0.0001 0.1 0 0 1 -13  -2 1e4], 'tapas_gaussian_obs', 0.00002);
 input('\n(press ENTER)')
 
 fprintf('\n>> tapas_hgf_plotTraj(sim2)\n')
@@ -140,8 +140,8 @@ input('\n(press ENTER)')
 fprintf('\nBefore proceeding to recover the parameters we''ve\nput into the simulation, let''s look at a simulation\nthat uses three levels:\n')
 input('\n(press ENTER)')
 
-fprintf('\n>> sim2a = tapas_simModel(usdchf, ''tapas_hgf'', [1.04 1 1 0.0001 0.1 0.1 0 0 0 1 1 -13  -2 -2 0.0001], ''tapas_gaussian_obs'', 0.00005);\n')
-sim2a = tapas_simModel(usdchf, 'tapas_hgf', [1.04 1 1 0.0001 0.1 0.1 0 0 0 1 1 -13  -2 -2 0.0001], 'tapas_gaussian_obs', 0.00005);
+fprintf('\n>> sim2a = tapas_simModel(usdchf, ''tapas_hgf'', [1.04 1 1 0.0001 0.1 0.1 0 0 0 1 1 -13  -2 -2 1e4], ''tapas_gaussian_obs'', 0.00005);\n')
+sim2a = tapas_simModel(usdchf, 'tapas_hgf', [1.04 1 1 0.0001 0.1 0.1 0 0 0 1 1 -13  -2 -2 1e4], 'tapas_gaussian_obs', 0.00005);
 input('\n(press ENTER)')
 
 fprintf('\n>> tapas_hgf_plotTraj(sim2a)\n')
@@ -150,6 +150,17 @@ input('\n(press ENTER)')
 
 fprintf('\nAs a rule of thumb, adding levels makes sense as long\nas the topmost trajectory is not flat. When estimating\nmodels, the log-model evidence can be used as a criterion\nfor whether adding levels leads to an improvement.\n')
 input('\n(press ENTER)')
+
+fprintf('\nTo show the magic of precision weighting, let''s\nplot the trajectories of the precision weights at all three\nlevels. These are the factors (i.e., weights) that are\napplied to the prediction errors to update beliefs.\nThe weights shoot up in situations of high uncertainty,\nwhere learning rates need to be increased.\n')
+input('\n(press ENTER)')
+
+figure
+plot(sim2a.traj.wt)
+xlim([1, length(sim2a.traj.wt)])
+legend('1st level', '2nd level', '3rd level')
+xlabel('Trading days from Jan 1, 2010')
+ylabel('Weights')
+title('Precision weights')
 
 fprintf('\nNow, let''s again try to recover the parameters\nthat went into our simulation:\n')
 input('\n(press ENTER)')
@@ -168,8 +179,8 @@ input('\n(press ENTER)')
 
 fprintf('\nIt is often useful to average parameters from several estimations, for\ninstance to compare groups of subjects. This can be achieved by using\nthe function tapas_bayesian_parameter_average(...) which takes into\naccount the covariance structure between the parameters and weights\nindividual estimates according to their precision:\n')
 
-fprintf('\n>> sim2b = tapas_simModel(usdchf, ''tapas_hgf'', [1.04 1 0.0001 0.1 0 0 1 -15  -2.5 0.0001], ''tapas_gaussian_obs'', 0.00002);\n')
-sim2b = tapas_simModel(usdchf, 'tapas_hgf', [1.04 1 0.0001 0.1 0 0 1 -15 -2.5 0.0001], 'tapas_gaussian_obs', 0.00002);
+fprintf('\n>> sim2b = tapas_simModel(usdchf, ''tapas_hgf'', [1.04 1 0.0001 0.1 0 0 1 -15  -2.5 1e4], ''tapas_gaussian_obs'', 0.00002);\n')
+sim2b = tapas_simModel(usdchf, 'tapas_hgf', [1.04 1 0.0001 0.1 0 0 1 -15 -2.5 1e4], 'tapas_gaussian_obs', 0.00002);
 input('\n(press ENTER)')
 
 fprintf('\n>> tapas_hgf_plotTraj(sim2b)\n')
