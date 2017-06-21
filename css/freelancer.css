@@ -3,14 +3,9 @@
  * Copyright 2013-2016 Start Bootstrap
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
-/*body {
-  font-family: ;'Source Sans Pro','Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  overflow-x: hidden;
-}
-*/
 body {
-    font-family: "Source Sans Pro","Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 100;
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
 }
 p {
   font-size: 20px;
