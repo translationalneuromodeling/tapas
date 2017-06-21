@@ -10,7 +10,6 @@ body {
 }
 p {
   font-size: 40px;
-  text-transform: uppercase;
 }
 p.small {
   font-size: 20px;
