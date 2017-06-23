@@ -4,7 +4,7 @@
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
 body {
-  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "Source Sans Pro","Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif; /*'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
   overflow-x: hidden;
 }
 p {
