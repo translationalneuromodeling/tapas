@@ -122,7 +122,7 @@ header .intro-text .skills {
   /* background: #2C3E50; */
   background: #336699;
   font-family: "Source Sans Pro", "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
   font-weight: 700;
   border: none;
 }
