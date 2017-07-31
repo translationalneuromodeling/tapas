@@ -143,10 +143,10 @@ configure && make
 
 Has config found matlab? If not, find the path of matlab and type
 
-~~~
+~~~~
 export PATH=$PATH:your-matlab-path
 configure && make
-~~~
+~~~~
 
 ## Python Package
 
