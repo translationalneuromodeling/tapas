@@ -1,4 +1,4 @@
-Version 2.6.0.0
+Version 2.7.0.0
 
 ________________________________________________________________________
 
@@ -61,19 +61,17 @@ Changes in this version
 
 Major Release Notes:
 
-This release includes the HGF Toolbox version 5.0.0.
+This release includes the SERIA model as described in 
+
+http://www.biorxiv.org/content/early/2017/06/08/109090
 
 Highlights:
 
-	-	The interactive demo is now a Matlab LiveScript, with a PDF version 
-		also included.
-	-	Residual diagnostics are calculated and can be plotted for all
-		response models.
-	-	Many models added.
-	-	Compatible with the latest releases of Matlab.
+	- The SERIA late race model is implemented.
+    - The underlying algorithm for computing the likelihood has been updated.
+    - Includes examples to run the model.
 
-
-Detailed release notes can be found in tapas/HGF/README.md
+Detailed release notes can be found in sem/README.md
 
 -------
 LICENSE                            
