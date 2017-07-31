@@ -1,4 +1,4 @@
-function [ptheta] = tapas_sem_prosa_prepare_gaussian_ptheta(ptheta);
+function [ptheta] = tapas_sem_prepare_gaussian_ptheta(ptheta);
 %% Precomputes things that might be needed afterwards.
 %
 % Input
@@ -10,17 +10,18 @@ function [ptheta] = tapas_sem_prosa_prepare_gaussian_ptheta(ptheta);
 % copyright (C) 2016
 %
 
-np = tapas_sem_prosa_ndims();
-dtheta = 2; % Number of parameter sets.
+np = ptheta.ndims;
+dtheta = ptheta.npars; % Number of parameter sets.
 
 LN2PI = log(2 * pi);
 
+njm = tapas_zeromat(ptheta.jm);
+
+% Compute the values that are beta distributed
 bdist = zeros(np, 1);
 bdist(ptheta.bdist) = 1;
 bdist = kron(ones(dtheta, 1), bdist);
-ptheta.bdist = find(bdist);
-
-njm = tapas_zeromat(ptheta.jm);
+ptheta.bdist = find(bdist);      
 
 % Compute the values that are beta distributed
 njm = bsxfun(@times, njm, 1 - bdist);

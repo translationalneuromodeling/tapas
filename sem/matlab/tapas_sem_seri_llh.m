@@ -20,7 +20,7 @@ function [llh] = tapas_sem_seri_llh(y, u, theta, ptheta)
 
 % Compute the likelihood of antisaccades and prosaccades
 
-llh = zeros(1, numel(theta));
+llh = zeros(size(theta));
 it = y.i;
 
 method = ptheta.method;
@@ -29,7 +29,7 @@ ptrans = ptheta.ptrans;
 for i = 1:numel(theta)
     ttheta = ptrans(theta{i});
     llh(i) = sum(tapas_sem_seri_cllh(y.t(~it), y.a(~it), u.tt(~it), ttheta, ...
-        method), 1);
+        method, 1), 1);
 end
 
 

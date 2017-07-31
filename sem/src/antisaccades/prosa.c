@@ -18,6 +18,7 @@ prosa_llh_gamma(double t, int a, PROSA_PARAMETERS params)
     double ts = params.ts;
 
     double da = params.da;
+    double cumint = params.cumint;
 
     double llh;
 
@@ -28,13 +29,15 @@ prosa_llh_gamma(double t, int a, PROSA_PARAMETERS params)
     {
         switch ( a ){
             case PROSACCADE:
-                return LN_P_OUTLIER_PRO + log(p0 / t0 );
+                return LN_P_OUTLIER_PRO +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
             case ANTISACCADE:
-                return LN_P_OUTLIER_ANTI + log(p0/t0);
+                return LN_P_OUTLIER_ANTI +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
         }
-    }
+    }  
 
     switch ( a ){
         case PROSACCADE:
@@ -55,7 +58,11 @@ prosa_llh_gamma(double t, int a, PROSA_PARAMETERS params)
                 llh = -INFINITY;
             } else
             {
-                llh = ngamma_gslint(t, kp, ks, tp, ts);
+                // Check if the value has not been inititlized yet.
+                if ( cumint == CUMINT_NO_INIT )
+                    cumint = ngamma_gslint(ZERO_DISTS, t, kp, ks, tp, ts);
+
+                llh = cumint;
                 llh += gsl_sf_gamma_inc_Q(kp, t /tp );
                 llh = log(llh);
 
@@ -63,8 +70,13 @@ prosa_llh_gamma(double t, int a, PROSA_PARAMETERS params)
             }
             break;
     }
+    llh += -p0/2 - M_LN2 - log(cosh(p0/2));
+    // Guard against odd values
+    if ( llh == INFINITY )
+        llh = NAN;
 
-    return log( 1 - p0 ) + llh;
+    return llh;
+
 }
 
 double 
@@ -81,26 +93,29 @@ prosa_llh_invgamma(double t, int a, PROSA_PARAMETERS params)
     double ts = params.ts;
 
     double da = params.da;
+    double cumint = params.cumint;
 
     double llh;
 
     t -= t0;
+
     // Take care of the outliers
     if ( t < 0 )
     {
         switch ( a ){
             case PROSACCADE:
-                return LN_P_OUTLIER_PRO + log(p0 / t0 );
+                return LN_P_OUTLIER_PRO +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
             case ANTISACCADE:
-                return LN_P_OUTLIER_ANTI + log(p0/t0);
+                return LN_P_OUTLIER_ANTI +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
         }
-    }
+    } 
 
     switch ( a ){
         case PROSACCADE:
-
             llh = invgamma_lpdf(t, kp, tp) +  
                 log(gsl_sf_gamma_inc_P(ks, ts/t ));
             // If the saccade happened before the antisaccade delay, the 
@@ -114,8 +129,12 @@ prosa_llh_invgamma(double t, int a, PROSA_PARAMETERS params)
             if ( t < da )
             {
                 llh = -INFINITY;
-            }  else {
-                llh = ninvgamma_gslint(t, kp, ks, tp, ts);
+            }  else 
+            {
+                // Check if the value has not been inititlized yet.
+                if ( cumint == CUMINT_NO_INIT )
+                    cumint = ninvgamma_gslint(ZERO_DISTS, t, kp, ks, tp, ts);
+                llh = cumint;
                 llh += gsl_sf_gamma_inc_P(kp, tp / t );
                 llh = log(llh);
 
@@ -123,8 +142,12 @@ prosa_llh_invgamma(double t, int a, PROSA_PARAMETERS params)
             }
             break;
     }
+    llh += -p0/2 - M_LN2 - log(cosh(p0/2));
+    // Guard against odd values
+    if ( llh == INFINITY )
+        llh = NAN;
 
-    return log( 1 - p0 ) + llh;
+    return llh;
 }
 
 double 
@@ -141,6 +164,8 @@ prosa_llh_mixedgamma(double t, int a, PROSA_PARAMETERS params)
     double ts = params.ts;
 
     double da = params.da;
+    double cumint = params.cumint;
+
     double llh;
     
     t -= t0;
@@ -149,13 +174,16 @@ prosa_llh_mixedgamma(double t, int a, PROSA_PARAMETERS params)
     {
         switch ( a ){
             case PROSACCADE:
-                return LN_P_OUTLIER_PRO + log(p0 / t0 );
+                return LN_P_OUTLIER_PRO +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
             case ANTISACCADE:
-                return LN_P_OUTLIER_ANTI + log(p0/t0);
+                return LN_P_OUTLIER_ANTI +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
         }
-    }
+    }  
+
 
     switch ( a ){
         case PROSACCADE:
@@ -175,7 +203,9 @@ prosa_llh_mixedgamma(double t, int a, PROSA_PARAMETERS params)
             } 
             else 
             { 
-                llh = ninvgamma_gslint(t, kp, ks, tp, ts);
+                if ( cumint == CUMINT_NO_INIT )
+                    cumint = ninvgamma_gslint(ZERO_DISTS, t, kp, ks, tp, ts);
+                llh = cumint;
                 llh += gsl_sf_gamma_inc_P(kp, tp / t );
                 llh = log(llh);
 
@@ -183,8 +213,14 @@ prosa_llh_mixedgamma(double t, int a, PROSA_PARAMETERS params)
             }
             break;
     }
+    
+    llh += -p0/2 - M_LN2 - log(cosh(p0/2));
 
-    return log(1 - p0) + llh;
+    // Guard against odd values
+    if ( llh == INFINITY )
+        llh = NAN;
+
+    return llh;
 }
 
 // From here one is code included by Jakob for the lognormal model.
@@ -201,51 +237,64 @@ prosa_llh_lognorm(double t, int a, PROSA_PARAMETERS params)
     double mus = params.ks;
     double sigs = params.ts;
 
+    double cumint = params.cumint;
     double da = params.da;
+
     double llh;
 
     t -= t0;
+
     // Take care of the outliers
     if ( t < 0 )
     {
         switch ( a ){
             case PROSACCADE:
-                return LN_P_OUTLIER_PRO + log(p0 / t0 );
+                return LN_P_OUTLIER_PRO +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
             case ANTISACCADE:
-                return LN_P_OUTLIER_ANTI + log(p0 / t0);
+                return LN_P_OUTLIER_ANTI +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
         }
-    }
+    } 
 
     switch ( a ){
-        case PROSACCADE:
+    case PROSACCADE:
 
-            llh = lognorm_lpdf(t, mup, sigp) +  
-                log(gsl_cdf_lognormal_Q(t, mus, sigs));
-            // If the saccade happened before the antisaccade delay, the 
-            // probability of the antisaccade arriving after one is one and 
-            // thus doesn't enter the expresion.
-            if ( t > da )
-                llh += log(gsl_cdf_lognormal_Q(t - da, mua, siga));
-            break;
+        llh = lognorm_lpdf(t, mup, sigp) +  
+            log(gsl_cdf_lognormal_Q(t, mus, sigs));
+        // If the saccade happened before the antisaccade delay, the 
+        // probability of the antisaccade arriving after one is one and 
+        // thus doesn't enter the expresion.
+        if ( t > da )
+            llh += log(gsl_cdf_lognormal_Q(t - da, mua, siga));
+        break;
 
-        case ANTISACCADE:
-            // a > p > s
-            if  ( t < da )
-               llh = -INFINITY;
-            else 
-            { 
-                llh = nlognorm_gslint(t, mup, mus, sigp, sigs);
-                llh += gsl_cdf_lognormal_Q(t, mup, sigp );
-                llh = log(llh);
+    case ANTISACCADE:
+        // a > p > s
+        if  ( t < da )
+           llh = -INFINITY;
+        else 
+        {
+            if ( cumint == CUMINT_NO_INIT )
+                cumint = nlognorm_gslint(ZERO_DISTS, t, mup, mus, sigp, sigs);
+            llh = cumint;
+            llh += gsl_cdf_lognormal_Q(t, mup, sigp );
+            llh = log(llh);
 
-                llh += lognorm_lpdf(t - da, mua, siga);
-            }
-            break;
+            llh += lognorm_lpdf(t - da, mua, siga);
+        }
+        break;
     }
+
+    llh += -p0/2 - M_LN2 - log(cosh(p0/2));
     
-    return log(1 - p0) + llh;
+    // Guard against odd values
+    if ( llh == INFINITY )
+        llh = NAN;
+
+    return llh;
 }
 
 double 
@@ -261,35 +310,35 @@ prosa_llh_later(double t, int a, PROSA_PARAMETERS params)
     double mus = params.ks;
     double sigs = params.ts;
 
+    double cumint = params.cumint;
     double da = params.da;
     double llh = 0;
     
-    t -= t0;
     // Take care of the outliers
     if ( t < 0 )
     {
         switch ( a ){
             case PROSACCADE:
-                return LN_P_OUTLIER_PRO + log(p0 / t0 );
+                return LN_P_OUTLIER_PRO +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
             case ANTISACCADE:
-                return LN_P_OUTLIER_ANTI + log(p0/t0);
+                return LN_P_OUTLIER_ANTI +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
         }
-    }
+    } 
 
     switch ( a ){
         case PROSACCADE:
-            llh += later_lpdf(t, mup, sigp);
-            llh += log(1 - later_cdf(t, mus, sigs));
+            llh = later_lpdf(t, mup, sigp);
+            llh += log(later_sf(t, mus, sigs));
 
             // If the saccade happened before the antisaccade delay, the 
             // probability of the antisaccade arriving after one is one and 
             // thus doesn't enter the expresion.
             if ( t > da )
-            {
-                llh += log(1 - later_cdf(t - da, mua, siga));
-            }
+                llh += log(later_sf(t - da, mua, siga));
             break;
         case ANTISACCADE:
 
@@ -297,9 +346,14 @@ prosa_llh_later(double t, int a, PROSA_PARAMETERS params)
                 llh = -INFINITY;
             else
             {
-                llh = nlater_gslint(t, mup, mus, sigp, sigs);
-                llh += 1 - later_cdf(t, mup, sigp); 
+                // Check if the value has not been inititlized yet.                                                                                           
+                if ( cumint == CUMINT_NO_INIT )
+                    cumint = nlater_gslint(ZERO_DISTS, t, mup, mus, sigp, 
+                            sigs);
 
+                llh = cumint;
+                
+                llh += later_sf(t, mup, sigp); 
                 llh = log(llh);
      
                 llh += later_lpdf(t - da, mua, siga);
@@ -307,7 +361,15 @@ prosa_llh_later(double t, int a, PROSA_PARAMETERS params)
             }
             break;
     }
-    return log(1 - p0) + llh;
+
+    p0 = -p0/2 - M_LN2 - log(cosh(p0/2)); 
+    llh += p0; 
+
+    // Guard against odd values
+    if ( llh == INFINITY )
+        llh = NAN;
+
+    return llh;
 }
 
 double 
@@ -324,52 +386,66 @@ prosa_llh_wald(double t, int a, PROSA_PARAMETERS params)
     double sigs = params.ts;
 
     double da = params.da;
+    double cumint = params.cumint;
+
     double llh = 0;
     
     t -= t0;
+
     // Take care of the outliers
     if ( t < 0 )
     {
         switch ( a ){
             case PROSACCADE:
-                return LN_P_OUTLIER_PRO + log(p0 / t0 );
+                return LN_P_OUTLIER_PRO +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
             case ANTISACCADE:
-                return LN_P_OUTLIER_ANTI + log(p0/t0);
+                return LN_P_OUTLIER_ANTI +
+                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
                 break;
         }
-    }
+    } 
 
     switch ( a ){
-        case PROSACCADE:
-            llh += wald_lpdf(t, mup, sigp);
-            llh += log(1 - wald_cdf(t, mus, sigs));
+    case PROSACCADE:
+        llh += wald_lpdf(t, mup, sigp);
+        llh += log(1 - wald_cdf(t, mus, sigs));
 
-            // If the saccade happened before the antisaccade delay, the 
-            // probability of the antisaccade arriving after one is one and 
-            // thus doesn't enter the expresion.
-            if ( t > da )
-            {
-                llh += log(1 - wald_cdf(t - da, mua, siga));
-            }
-            break;
-        case ANTISACCADE:
+        // If the saccade happened before the antisaccade delay, the 
+        // probability of the antisaccade arriving after one is one and 
+        // thus doesn't enter the expresion.
+        if ( t > da )
+        {
+            llh += log(1 - wald_cdf(t - da, mua, siga));
+        }
+        break;
+    case ANTISACCADE:
 
-            if ( t <= da )
-                llh = -INFINITY;
-            else
-            {
-                llh = wald_gslint(t, mup, mus, sigp, sigs);
-                llh += 1 - wald_cdf(t, mup, sigp); 
-
-                llh = log(llh);
-     
-                llh += wald_lpdf(t - da, mua, siga);
-                // Normalization constant
-            }
-            break;
+        if ( t <= da )
+            llh = -INFINITY;
+        else
+        {
+            // Check if the value has not been inititlized yet. 
+            if ( cumint == CUMINT_NO_INIT )
+                cumint = nwald_gslint(ZERO_DISTS, t, mup, mus, sigp, sigs);
+            
+            llh = cumint;
+            llh += 1 - wald_cdf(t, mup, sigp);
+            llh = log(llh);
+ 
+            llh += wald_lpdf(t - da, mua, siga);
+            // Normalization constant
+        }
+        break;
     }
-    return log(1 - p0) + llh;
+
+    p0 = -p0/2 - M_LN2 - log(cosh(p0/2)); 
+    llh += p0; 
+    
+    // Guard against odd values
+    if ( llh == INFINITY)
+        llh = NAN;
+
+    return llh;
 }
-
-

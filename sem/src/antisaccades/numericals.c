@@ -3,6 +3,15 @@
 
 #include "antisaccades.h"
 
+// Log of cosh
+
+double
+lcosh(double x)
+{
+    return gsl_sf_lncosh(x); 
+}
+
+
 double
 wald_pdf(double x, double mu, double lambda)
 {
@@ -27,18 +36,32 @@ wald_cdf(double x, double mu, double lambda)
     SOONER_GSLERROR( mu <= 0 );
     //SOONER_GSLERROR( );
 
-    double lx = sqrt(lambda / x);
+    double lx = sqrt(lambda / (2.0 * x));
     double xm = x / mu;
     double f;
 
     //gsl_sf_result gr;
 
-    f = gsl_cdf_ugaussian_P(lx * (xm - 1.0));
+    f = 1.0 + gsl_sf_erf(lx * (xm - 1.0));
 
-    f += exp(2.0 * lambda / mu) * gsl_cdf_ugaussian_P(-lx * (xm + 1.0));
+    f += exp(2.0 * lambda / mu) * (1 - gsl_sf_erf(lx * (xm + 1.0)));
 
-    return f;
+    return f * 0.5;
 
+}
+
+double
+wald_sf(double x, double mu, double lambda)
+{
+
+    return 1 - wald_cdf(x, mu, lambda);
+}
+
+double
+wald_lsf(double x, double mu, double lambda)
+{
+
+    return log1p(-wald_cdf(x, mu, lambda));
 }
 
 double
@@ -57,7 +80,8 @@ dt_wald(double x, void *vpars)
 }
 
 double
-wald_gslint(double x, double mu1, double mu2, double sig1, double sig2)
+nwald_gslint(double t0, double x, double mu1, double mu2, double sig1, 
+    double sig2)
 {
     gsl_function af;
 
@@ -74,17 +98,18 @@ wald_gslint(double x, double mu1, double mu2, double sig1, double sig2)
     af.function = &dt_wald;
     af.params = pars;
        
-    gsl_integration_qng(&af, 0.00001, x, 0.001, 0.01, &v, &aberr, &neval);
+    gsl_integration_qng(&af, t0, x, SEM_TOL, SEM_RTOL, &v, &aberr, &neval);
 
     return v;
 }
-
 
 
 double
 invgamma_lpdf(double x, double k, double t)
 {
     // Gamma log pdf
+    if ( k > SEM_GAMMA_MAX_SHAPE )
+        return NAN;
 
     gsl_sf_result gr;
 
@@ -97,12 +122,53 @@ invgamma_lpdf(double x, double k, double t)
     return -gr.val - ((k + 1) * log(x)) - (t/x ) + (k * log(t));
 }
 
+double
+invgamma_cdf(double x, double k, double t)
+{
+    // Gamma log pdf
+    if ( k > SEM_GAMMA_MAX_SHAPE )
+        return NAN;
+
+    return gsl_sf_gamma_inc_Q(k, t / x);
+
+}
+
+double
+invgamma_lcdf(double x, double k, double t)
+{
+    // Gamma log pdf
+    if ( k > SEM_GAMMA_MAX_SHAPE )
+        return NAN;
+
+    return log(gsl_sf_gamma_inc_Q(k, t / x));
+
+}
+
+double
+invgamma_sf(double x, double k, double t)
+{
+    // Gamma log pdf
+    if ( k > SEM_GAMMA_MAX_SHAPE )
+        return NAN;
+
+    return gsl_sf_gamma_inc_P(k, t / x); 
+}
+
+double
+invgamma_lsf(double x, double k, double t)
+{
+    // Gamma log pdf
+    if ( k > SEM_GAMMA_MAX_SHAPE )
+        return NAN;
+
+    return log(gsl_sf_gamma_inc_P(k, t / x)); 
+}
 
 double
 later_lpdf(double x, double mu, double sigma)
 {
     
-    double tt = ((( 1 / x) - mu)/sigma);
+    double tt = ( 1 - x * mu)/ (sigma * x);
 
     return -2 * log(x) - 0.5 * tt * tt - 0.5 * LOG2PI - 
         log( gsl_cdf_gaussian_Q(-mu, sigma) ) - log(sigma);
@@ -113,10 +179,10 @@ double
 later_pdf(double x, double mu, double sigma)
 {
 
-    double tt = ((( 1 / x) - mu)/sigma);
+    double tt = ( 1 - x * mu)/ (sigma * x);
 
-    return exp(-0.5 * tt * tt )/(gsl_cdf_gaussian_Q(-mu, sigma) 
-        * sigma * SQRT2PI * x * x);
+    return exp(-0.5 * tt * tt - 2 * log(x) )/(gsl_cdf_gaussian_Q(-mu, sigma) 
+        * sigma * SQRT2PI);
 
 }
 
@@ -124,15 +190,44 @@ double
 later_cdf(double x, double mu, double sigma)
 {
 
-    return gsl_cdf_gaussian_Q(1/x - mu, sigma) / 
+    return gsl_cdf_gaussian_Q((1/x) - mu, sigma) / 
         gsl_cdf_gaussian_Q(-mu, sigma); 
 
 }
 
+double
+later_lcdf(double x, double mu, double sigma)
+{
+
+    return log(gsl_cdf_gaussian_Q(1/x - mu, sigma)) - 
+        log(gsl_cdf_gaussian_Q(-mu, sigma)); 
+
+}
+
+double
+later_sf(double x, double mu, double sigma)
+{
+
+    return 1 - (gsl_cdf_gaussian_Q(1/x - mu, sigma) / 
+        gsl_cdf_gaussian_Q(-mu, sigma)); 
+
+}
+
+double
+later_lsf(double x, double mu, double sigma)
+{
+    return log(1 - (gsl_cdf_gaussian_Q(1/x - mu, sigma) / 
+        gsl_cdf_gaussian_Q(-mu, sigma))); 
+
+}
+    
 double 
 gamma_lpdf(double x, double k, double t)
 {
     // Gamma log pdf
+    // Gamma log pdf
+    if ( k > SEM_GAMMA_MAX_SHAPE )
+        return NAN;
 
     gsl_sf_result gr;
 
@@ -145,14 +240,93 @@ gamma_lpdf(double x, double k, double t)
     return -gr.val + (k - 1) * log(x) - x/t - k * log(t);
 }
 
+double
+gamma_cdf(double x, double k, double t)
+{
+    // Gamma log pdf
+    if ( k > SEM_GAMMA_MAX_SHAPE )
+        return NAN;
+
+    return gsl_sf_gamma_inc_P(k, x / t);
+}
+
+double
+gamma_lcdf(double x, double k, double t)
+{
+    // Gamma log pdf
+    if ( k > SEM_GAMMA_MAX_SHAPE )
+        return NAN;
+
+    return log(gsl_sf_gamma_inc_P(k, x / t));
+}
+
+double
+gamma_sf(double x, double k, double t)
+{
+    // Gamma log pdf
+    if ( k > SEM_GAMMA_MAX_SHAPE )
+        return NAN;
+
+    return gsl_sf_gamma_inc_Q(k, x / t);
+}
+
+double 
+gamma_lsf(double x, double k, double t)
+{
+    // Gamma log pdf
+    if ( k > SEM_GAMMA_MAX_SHAPE )
+        return NAN;
+
+    return log(gsl_sf_gamma_inc_Q(k, x / t));
+}
 
 double 
 lognorm_lpdf(double x, double mu, double sigma)
 {
 
     double tv = (log(x) - mu)/sigma;
-    
-    return - log(x * sigma) - 0.5 * LOG2PI - 0.5 * tv * tv;
+  
+    if ( sigma < 1e-2 )
+        return NAN;
+
+    // Provide a bit of numerical stability to the data. 
+    return  - log(x * sigma) - 0.5 * LOG2PI - 0.5 * tv * tv;
+}
+
+double
+lognorm_cdf(double x, double k, double t)
+{
+    if ( t < 1e-2 )
+        return NAN;
+
+    return gsl_cdf_lognormal_P(x, k, t);
+}
+
+double
+lognorm_lcdf(double x, double k, double t)
+{
+    if ( t < 1e-2 )
+        return NAN;
+
+    return log(gsl_cdf_lognormal_P(x, k, t));
+}
+
+double
+lognorm_sf(double x, double k, double t)
+{
+    if ( t < 1e-2 )
+        return NAN;
+
+    return gsl_cdf_lognormal_Q(x, k, t);
+}
+
+double
+lognorm_lsf(double x, double k, double t)
+{
+    if ( t < 1e-2 )
+        return NAN;
+
+    return log(gsl_cdf_lognormal_Q(x, k, t));
 }
 
 double 
@@ -338,21 +512,18 @@ dngamma(double x, void *vpars)
     double b = pars[1];
     double c0 = pars[2];
     double c1 = pars[3];
-    double nv = pars[4];
     double r;
 
     gsl_sf_result gr;
 
     SOONER_GSLERROR( gsl_sf_gamma_inc_P_e(b, x / c1, &gr) );
-    r = pow(x, a - 1) * exp(-x / c0) * gr.val;
-
-    r *= nv;
+    r = exp(-x / c0 + (a - 1) * log(x) + log(gr.val));
 
     return r;
 }
 
 double
-ngamma_gslint(double x, double a, double b, double c0, double c1)
+ngamma_gslint(double t0, double x, double a, double b, double c0, double c1)
 {
     gsl_function af;
     gsl_sf_result gr;
@@ -368,13 +539,12 @@ ngamma_gslint(double x, double a, double b, double c0, double c1)
     pars[1] = b;
     pars[2] = c0;
     pars[3] = c1;
-    pars[4] = gr.val * pow(c0, -a);
 
     af.function = &dngamma;
     af.params = pars;
-    gsl_integration_qng(&af, 0.00001, x, 0.001, 0.01, &v, &aberr, &neval);
+    gsl_integration_qng(&af, t0, x, SEM_TOL, SEM_RTOL, &v, &aberr, &neval);
 
-    return v;
+    return v * gr.val * pow(c0, -a);
 }
 
     
@@ -386,20 +556,23 @@ dninvgamma(double x, void *vpars)
     double b = pars[1];
     double c0 = pars[2];
     double c1 = pars[3];
-    double nv = pars[4];
     double r;
 
     gsl_sf_result gr;
 
     SOONER_GSLERROR( gsl_sf_gamma_inc_Q_e(b, c1 / x, &gr) );
-    r = nv * pow(x, -a - 1) * exp(-c0 / x) * gr.val;
+    r = exp(-c0 / x - (a + 1) * log(x) + log(gr.val));
 
     return r;
 }
 
 double
-ninvgamma_gslint(double x, double a, double b, double c0, double c1)
+ninvgamma_gslint(double xs, double xe, double a, double b, double c0, 
+        double c1)
 {
+    // Zero mass if the start is bellow zero.
+    if ( xe < 0.00001)
+        return 0;
     gsl_function af;
     gsl_sf_result gr;
 
@@ -414,13 +587,12 @@ ninvgamma_gslint(double x, double a, double b, double c0, double c1)
     pars[1] = b;
     pars[2] = c0;
     pars[3] = c1;
-    pars[4] = gr.val * pow(c0, a);
 
     af.function = &dninvgamma;
     af.params = pars;
-    gsl_integration_qng(&af, 0.00001, x, 0.001, 0.01, &v, &aberr, &neval);
+    gsl_integration_qng(&af, xs, xe, SEM_TOL, SEM_RTOL, &v, &aberr, &neval);
 
-    return v;
+    return v * gr.val * pow(c0, a);
 }
 
 
@@ -459,14 +631,17 @@ dnlognorm(double x, void *vpars)
     double sig2 = pars[3];
     double r;
     	
-    r = gsl_ran_lognormal_pdf(x, mu1, sig1) * 
-        gsl_cdf_lognormal_P(x, mu2, sig2);
+    r = exp(
+            lognorm_lpdf(x, mu1, sig1) +
+        log(gsl_cdf_lognormal_P(x, mu2, sig2)));
+    //r = gsl_cdf_lognormal_P(x, mu2, sig2);
 
     return r;
 }
 
 double
-nlognorm_gslint(double x, double mu1, double mu2, double sig1, double sig2)
+nlognorm_gslint(double t0, double x, double mu1, double mu2, double sig1, 
+        double sig2)
 {
     gsl_function af;
 
@@ -482,10 +657,11 @@ nlognorm_gslint(double x, double mu1, double mu2, double sig1, double sig2)
 
     af.function = &dnlognorm;
     af.params = pars;
-    gsl_integration_qng(&af, 0.00001, x, 0.001, 0.01, &v, &aberr, &neval);
+    gsl_integration_qng(&af, t0, x, SEM_TOL, SEM_RTOL, &v, &aberr, &neval);
 
     return v;
 }
+
 
 double
 dnlater(double x, void *vpars)
@@ -495,15 +671,15 @@ dnlater(double x, void *vpars)
     double mu2 = pars[1];
     double sig1 = pars[2];
     double sig2 = pars[3];
-    double r;
-    
-    r = later_pdf(x, mu1, sig1) * later_cdf(x, mu2, sig2);
-    
-    return r;
+    double tt = ( 1 - x * mu1)/ (sig1 * x);
+
+    return exp(-0.5 * tt * tt - 2 * log(x)) *
+        gsl_cdf_gaussian_Q(1/x - mu2, sig2);
 }
 
 double
-nlater_gslint(double x, double mu1, double mu2, double sig1, double sig2)
+nlater_gslint(double t0, double x, double mu1, double mu2, double sig1,
+       double sig2)
 {
     gsl_function af;
 
@@ -520,9 +696,10 @@ nlater_gslint(double x, double mu1, double mu2, double sig1, double sig2)
     af.function = &dnlater;
     af.params = pars;
        
-    gsl_integration_qng(&af, 0.00001, x, 0.001, 0.01, &v, &aberr, &neval);
+    gsl_integration_qng(&af, t0, x, SEM_TOL, SEM_RTOL, &v, &aberr, &neval);
 
-    return v;
+    return v / ( gsl_cdf_gaussian_Q(-mu1, sig1) * sig1 * SQRT2PI * 
+            gsl_cdf_gaussian_Q(-mu2, sig2));
 }
 
 

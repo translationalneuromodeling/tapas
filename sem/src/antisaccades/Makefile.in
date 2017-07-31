@@ -13,6 +13,8 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
+#aponteeduardo@gmail.com
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -92,6 +94,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
+CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -142,8 +145,7 @@ AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
-CFLAGS = @CFLAGS@ $(OPENMP_CFLAGS) -I$(IDIR) -std=c99 -DTAPAS_MATLAB \
-	-fPIC
+CFLAGS = @CFLAGS@ $(OPENMP_CFLAGS) $(IDIR) -std=c99 -fPIC
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
@@ -229,7 +231,7 @@ top_srcdir = @top_srcdir@
 MEXCC = @matlabhome@/bin/mex
 # Choose with compiler to use
 MEXFLAGS = -v -largeArrayDims -O CC=$(CC)
-IDIR = $(abs_top_srcdir)/src
+IDIR = -I$(abs_top_srcdir)
 LIBDIR = $(abs_top_srcdir)/lib
 LIBSOONER = $(LIBDIR)/libantisaccades.a
 SOURCES = $(wildcard *.c)

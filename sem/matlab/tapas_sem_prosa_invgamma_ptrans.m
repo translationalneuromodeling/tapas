@@ -26,6 +26,5 @@ ntheta(it + 1) = tapas_trans_mv2gt(etheta(it), etheta(it + 1));
 it = kron(0:nt-1, dtheta * ones(1, 1)) + kron(ones(1, nt), [9]);
 ntheta(it) = atan(theta(it))./pi + 0.5;
 
-
 end % tapas_sem_prosa_invgamma_ptrans 
 

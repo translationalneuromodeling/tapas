@@ -35,8 +35,8 @@ me = log(0.5) - ve/2;
 vl = log(1.25/(0.75 * 0.75) + 1); % Mean is 0.75 and variance is 1.25
 ml = log(0.75) - vl/2;
 
-p0m = 1;
-p0v = 5;
+p0m = 0.5;
+p0v = 0.5;
 
 end
 

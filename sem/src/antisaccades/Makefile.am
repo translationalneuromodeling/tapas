@@ -1,16 +1,16 @@
-
+#aponteeduardo@gmail.com
 
 MEXCC = @matlabhome@/bin/mex
 # Choose with compiler to use
 MEXFLAGS = -v -largeArrayDims -O CC=$(CC)
 
-IDIR = $(abs_top_srcdir)/src
+IDIR = -I$(abs_top_srcdir)
 LIBDIR = $(abs_top_srcdir)/lib
 
 LIBSOONER = $(LIBDIR)/libantisaccades.a
 SOURCES = $(wildcard *.c)
 OBJS = $(SOURCES:%.c=%.o)
-CFLAGS += $(OPENMP_CFLAGS) -I$(IDIR) -std=c99 -DTAPAS_MATLAB -fPIC
+CFLAGS += $(OPENMP_CFLAGS) $(IDIR) -std=c99 -fPIC
 
 all: $(LIBSOONER)
 

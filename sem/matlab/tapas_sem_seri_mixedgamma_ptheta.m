@@ -16,21 +16,23 @@ function [ptheta] = tapas_sem_seri_mixedgamma_ptheta()
 % copyright (C) 2015
 %
 
-DIM_THETA = tapas_sem_seri_ndims();
+dim_theta = tapas_sem_seri_ndims();
 
 [ptheta] = tapas_sem_seri_gaussian_priors();
 
 % Projection matrix
-ptheta.jm = eye(DIM_THETA);
+ptheta.jm = eye(dim_theta);
 
 % Likelihood function and priors
 
 ptheta.name = 'seri_mixedgamma';
-ptheta.llh = @tapas_sem_seri_llh;
+ptheta.llh = @tapas_sem_seri_no_transform_llh;
 ptheta.lpp = @tapas_sem_seri_lpp;
 ptheta.ptrans = @tapas_sem_seri_mixedgamma_ptrans; 
-ptheta.method = @c_seri_two_states_mixedgamma;
-ptheta.prepare = @tapas_sem_seri_prepare_gaussian_ptheta;
+ptheta.method = @c_seri_two_states_mixedgamma_no_transform;
+ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
+ptheta.ndims = dim_theta;
+ptheta.npars = 2;
 
 end

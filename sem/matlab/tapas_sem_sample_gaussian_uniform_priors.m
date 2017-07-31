@@ -17,15 +17,17 @@ end
 
 lt = chol(pm);
 theta = ptheta.mu +  lt \ ptheta.jm * randn(np, 1);
+
+% Beta parameters.
+bdist = zeros(size(ptheta.pm));
+bdist(ptheta.bdist) = 1;
+bdist = logical(bdist .* sample_pars);
+vals = betarnd(abs(ptheta.mu), abs(ptheta.pm));
+vals = ptheta.jm * ptheta.sm' * vals;
+theta(bdist) = log(vals(bdist) ./ ( 1 - vals(bdist)));
+
 theta(~sample_pars) = ptheta.p0(~sample_pars);
 
-% Uniform parameters
-
-rates = ptheta.jm * tan(pi * (rand(np, 1) - 0.5));
-rates(~sample_pars) = ptheta.p0(~sample_pars);
-
-index = ptheta.bdist;
-theta(index) = rates(index);
 
 end
 
