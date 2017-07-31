@@ -1,7 +1,7 @@
 # README
 
 aponteeduardo@gmail.com
-copyright (C) 2015
+copyright (C) 2015-2017
 
 # The SERIA model
 
@@ -44,10 +44,12 @@ This contains all the models described in the SERIA paper.
 
 ## Supported platforms
 
-Mac and linux platforms are supported. We have tested in a variaty of setups
-and it worked so far. If you have any issue please contact us.
+Mac and linux platforms are supported. We have tested a variaty of setups
+and it has worked so far. If you have any issue please contact us.
 
-In OSX, currently we do not support openmp as clang doesn't support it.
+In OSX, currently we do not support openmp as clang doesn't directly support
+it. Although it is possible to use openmp it is not trivial. If you are
+interested please contact us.
 
 We do not support Windows but most likely it can be installed as a python 
 package.
@@ -55,7 +57,6 @@ package.
 ## Dependencies
 
 * gsl/1.16
-
 
 In Ubuntu, it can be install as 
 
@@ -76,48 +77,30 @@ Or alternatively using mac ports.
 sudo port install gsl
 ~~~~
 
-## Python Package
-
-This toolbox can be install as an usual python package using
-
-~~~~
-python setup.py install 
-~~~~
-
-If you lack sudo rights or prefer not install it this ways use
-
-~~~~
-python setup.py install --user
-~~~~
-
-Requirements can be install using
-
-~~~~
-pip install -r requirements.txt
-~~~~
-
-
 ## Matlab package
 
-We support the installation of this toolbox in Linux and OSX. We have tested 
-in a few platforms and it has always worked. You will need a running matlab 
-installation. In particular, the command line matlab should be able
+You will need a running matlab 
+installation. In particular, the command line command  `matlab` should be able
 to trigger matlab. The reason is that matlab is used to find out the 
-matlabroot directory during the configuration of the project. Make sure
+matlabroot directory during the configuration. Make sure
 that matlab can be triggered from the command line AND that it is not an
 alias.
 
 To install the package it should be enough to go to
 
+~~~~
 tapas/sem/src/
+~~~~
 
 and type
 
+~~~~
 ./configure && make
+~~~~
 
 The most likely problems you could face are the following:
 
-Something with automake or aclocal. In that case please install automake,
+* Something with automake or aclocal. In that case please install automake,
 f.e.,
 
 ~~~~
@@ -132,31 +115,58 @@ autoreconf -ifv
 
 Then try again
 
-./configure && make
+~~~~
+configure && make
+~~~~
 
 ### Mac
 
 This follows the same process than linux.
 
-Most likely config will fail for on of the following reasons. Please check the 
-following:
+Most likely config will fail for one of the following reasons.
 
-Has config found gls's header? If not type 
+Has config found gls's header? Often after installation, the compiler will
+fail to find the headers. 
 
 ~~~~
 export C_INCLUDE_PATH="$C_INCLUDE_PATH:/opt/local/include"
 export CFLAGS="-I:/opt/local/include $CFLAGS"
+configure && make
 ~~~~
 
 Has config found gls's libraries? If not type
 
 ~~~~
 export LDFLAGS="$LDFLAGS -L/opt/local/lib/ -L/usr/local/lib"
+configure && make
 ~~~~
 
 Has config found matlab? If not, find the path of matlab and type
 
 ~~~
 export PATH=$PATH:your-matlab-path
+configure && make
 ~~~
+
+## Python Package
+
+This toolbox can be install as an usual python package using
+
+~~~~
+sudo python setup.py install 
+~~~~
+
+If you lack sudo rights or prefer not install it this way use
+
+~~~~
+python setup.py install --user
+~~~~
+
+Requirements can be installed using
+
+~~~~
+pip install -r requirements.txt
+~~~~
+
+If you have any question please contact us.
 
