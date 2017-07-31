@@ -105,7 +105,7 @@ f.e.,
 
 ~~~~
 sudo apt-get install automake
-~~~
+~~~~
 
 Then type
 
