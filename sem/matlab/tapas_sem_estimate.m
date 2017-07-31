@@ -71,6 +71,7 @@ sample_priors = ptheta.sample_priors;
 nt = numel(T);
 
 % Prepare ptheta
+[y, u] = init_data(y, u);
 htheta = init_htheta(ptheta, htheta);
 ptheta = init_ptheta(ptheta, htheta);
 otheta = init_theta(y, u, T, ptheta);
@@ -94,7 +95,6 @@ os = zeros(numel(otheta{1}), nt, pars.kup);
 t = 1;
 
 for i = 1 : nburnin + niter
-
     if i > 1 && mod(i-1, pars.kup) == 0
         diagnostics = diagnostics/pars.kup;
         if pars.verbose
@@ -111,9 +111,9 @@ for i = 1 : nburnin + niter
             ok = update_kernel(t, ok, os, diagnostics, ptheta, htheta);
         end
         diagnostics(:) = 0;
-        %t = t + 1;
     end
     ntheta = propose_sample(otheta, ptheta, htheta, ok);
+    %ntheta = tapas_sem_seri_gibbs_eta(y, u, ntheta, ptheta, T);
     nllh = llh(y, u, ntheta, ptheta);
 
     nllh = sum(nllh, 1);
@@ -138,32 +138,33 @@ for i = 1 : nburnin + niter
 
     if i > nburnin
         ps_theta(:, i - nburnin) = otheta{end};
-        pp_theta(:, i - nburnin) = otheta{1};
         ellh(:, i - nburnin) = ollh;
         elps(1, i - nburnin) = ollh(end) + olpp(end);
     else
         os(:, :, mod(i-1, pars.kup) + 1) = cell2mat(otheta);
     end
 
+    if nt > 1
+    tswap = 1:nt;
     for l = 1:pars.mc3it
-        s = ceil(rand()*(nt-1));
+        s = ceil(rand() * ( nt - 1));
         p = exp(ollh(s) * T(s+1) + ollh(s+1) * T(s) ...
             - ollh(s) * T(s) - ollh(s+1) * T(s+1));
         if rand() < p
             ollh([s, s+1]) = ollh([s+1, s]);
             olpp([s, s+1]) = olpp([s+1, s]);
-            otheta(:, [s, s+1]) = otheta(:, [s+1, s]);       
+            tswap([s, s+1]) = tswap([s+1, s]);
         end
     end
-
-
+    otheta(:, :) = otheta(:, tswap);
+    end
 end
 
 % If only one chain don't compute the free energy
 if nt > 1
     fe = trapz(T, mean(ellh, 2));
 else
-    fe = Nan;
+    fe = nan;
 end
 
 % =============================================================================
@@ -182,7 +183,7 @@ ps.ps_theta = [];
 pa.llh = [];
 if pars.samples
     ps.ps_theta = ps_theta;
-    ps.llh = ellh(end, :);
+    ps.llh = ellh;
 end
 % Free energy
 ps.F = fe;
@@ -193,6 +194,20 @@ ps.u = u;
 ps.ptheta = ptheta;
 ps.htheta = htheta;
 ps.pars = pars;
+
+end
+
+function [y, u] = init_data(y, u);
+% Sort the data
+
+[~, indexes] = sort(y.t);
+
+y.t = y.t(indexes);
+y.a = y.a(indexes);
+y.i = y.i(indexes);
+
+u.tt = u.tt(indexes);
+u.b = u.b(indexes);
 
 end
 
@@ -207,15 +222,18 @@ np = size(htheta.pk, 1);
 njm = tapas_zeromat(ptheta.jm);
 
 c = njm' * htheta.pk * njm;
+c = c/eigs(c, 1);
 c = chol(c);
 
 nk = cell(numel(theta), 1);
 nk(:) = {c};
 
-k =  0.05 * chol(htheta.pk)' * ptheta.jm;
+s = 0.05;
+
+k =  s * chol(htheta.pk)' * ptheta.jm;
 tk = cell(numel(theta), 1);
 tk(:) = {k};
-nk = struct('S', nk, 's', 0.05, 'k', tk);
+nk = struct('S', nk, 's', s, 'k', tk);
 
 end
 
@@ -288,11 +306,8 @@ nhtheta.pk = kron(eye(np), htheta.pk);
 if ~isfield(htheta, 'mixed')
     nhtheta.mixed = ones(size(ptheta.jm, 1), 1);
 else
-    nhtheta.mixed = kron(ones(np, 1), htheta.mixed);
+    nhtheta.mixed = kron(ones(np, 1), logical(htheta.mixed));
 end
-
-nhtheta.nmixed = abs(nhtheta.mixed - 1);
-nhtheta.knmixed = chol(nhtheta.pk)' * ptheta.jm;
 
 end
 
@@ -324,11 +339,12 @@ function [nk] = update_kernel(t, ok, os, ar, ptheta, htheta)
 % See Exploring an adaptative Metropolis Algorithm
 % 
 
+t = 3;
 c0 = 1.0;
 c1 = 0.8;
 
 gammaS = t^-c1;
-gammas = c0*gammaS; 
+gammas = c0 * gammaS; 
 
 ns = size(os, 3);
 nd = size(os, 1);
@@ -341,31 +357,46 @@ sm = ptheta.sm;
 
 for i = 1:numel(ok)
     % From Cholesky form to covariance form
-    ok(i).S = ok(i).S * ok(i).S';
+    tS = ok(i).S;
+    tC = tS' * tS;
     % Empirical variance
     ts = squeeze(os(:, i, :));
     ts = bsxfun(@minus, ts, mean(ts, 2));
     ts = sm' * ts;
     ek = (ts * ts')./(ns - 1);
     % Set new kernel
-    nk(i).S = ok(i).S + gammaS * ( ek - ok(i).S);
+    nC = tC + gammaS * ( ek - tC );
     % Compute the Cholesky decomposition 
+    if ar(i) < 0.009
+        nk(i).S = tS; 
+        nk(i).s = ok(i).s / 2;
+        nk(i).k = ptheta.jm * sqrt(nk(i).s) * tS';
+        % Don't mixed this states.
+        nk(i).k(~htheta.mixed, :) = ok(i).k(~htheta.mixed, :);
+        nk(i).k = sparse(nk(i).k);
+        continue
+    end 
     try
-        nk(i).S = chol(nk(i).S);
+        nk(i).S = chol(nC);
     catch
         warning('Cholesky decomposition failed.')
-        nk(i).S = chol(ok(i).S);
+        nk(i).S = tS; 
         nk(i).s = ok(i).s / 2;
-        nk(i).k = ptheta.jm * nk(i).s * nk(i).S;
+        nk(i).k = sparse(ptheta.jm * sqrt(nk(i).s) * nk(i).S');
+        % Don't mixed these states.
+        nk(i).k(~htheta.mixed, :) = ok(i).k(~htheta.mixed, :);
+        nk(i).k = sparse(nk(i).k);
         continue
     end
     % Set new scaling
     nk(i).s = exp(log(ok(i).s) + gammas * (ar(i) - ropt));
-    nk(i).k = ptheta.jm * nk(i).s * nk(i).S; 
+    nk(i).k = ptheta.jm * sqrt(nk(i).s) * nk(i).S';
+    % Don't mixed this states.
+    nk(i).k(~htheta.mixed, :) = ok(i).k(~htheta.mixed, :);
+    nk(i).k = sparse(nk(i).k);
 end
     
 end
-
 
 function [ntheta] = propose_sample(otheta, ptheta, htheta, kn)
 %% Draws a new sample from a Gaussian proposal distribution.
@@ -397,10 +428,11 @@ ntheta = cell(size(otheta));
 
 % Sample and project to a possibly higher dimensional space
 for i = 1:nt
-    rprop = randn(size(kn(i).S, 1), 1);
-    rprop = htheta.mixed .* (kn(i).k * rprop) + ...
-        htheta.nmixed .* (htheta.knmixed * rprop);
+    rprop = randn(size(kn(i).k, 2), 1);
+    rprop = kn(i).k * rprop;
     ntheta{i} = full(otheta{i} + rprop);
 end
  
 end
+
+

@@ -10,60 +10,126 @@ Graphical tools
 
 '''
 
+
 from pdb import set_trace as _
+from copy import deepcopy
 import numpy as np
+from scipy.integrate import cumtrapz
+from scipy import stats
 
-def gen_llh(theta, model, maxt=8.0, ns=100):
-    ''' Generate the likelihood of a model. '''
+import containers
+import reparametrize as reparam
+import likelihoods 
+       
+class Fits(containers.TimeSeries):
+    ''' An object containing the fits. '''
 
-    if len(theta) == 16:
-        t0 = theta[12]
-    if len(theta) == 20:
-        t0 = theta[16]
-    if len(theta) == 22:
-        t0 = theta[8]
+    fields = ['pp', 'pa', 'ap', 'aa']
 
-    # Time offset
+    def __init__(self, *args, **kargs):
+
+        super(Fits, self).__init__(*args, **kargs)
+
+        return
+
+
+    def scale(self, nnp, nna):
+        '''Scale only by trial type. '''
+
+        nobj = deepcopy(self)
+
+        nobj.pp = self.pp * nnp
+        nobj.ap = self.ap * nna
+        nobj.pa = self.pa * nnp
+        nobj.aa = self.aa * nna
+
+        return nobj
+
+def generate_llh_no_outliers(theta, model, time, t0):
+    ''' Generate the likelihood of a model but zero everything below t0. 
     
+    theta       -- Array of double
+    model       -- likelihood function
+    time        -- A vector of time points. 
+
+    '''
+
+    results = generate_llh(theta, model, time)
+    v = time < t0
+
+    results['aa'][v] = -np.inf
+    results['ap'][v] = -np.inf
+    results['pp'][v] = -np.inf
+    results['pa'][v] = -np.inf
+
+
+    return Fits(results)
+
+
+def generate_llh(theta, model, time):
+    ''' Generate the likelihood of a model. 
+    
+    theta       -- Array of double
+    model       -- likelihood function
+    time        -- A vector of time points. 
+
+
+    '''
+
+    ns = len(time)
+
     a = np.zeros((ns, 1))
     tt = np.zeros((ns, 1)) 
-    t = np.linspace(0.0, maxt, ns)
 
-    results = {'t': t}
+    results = {'time': time}
 
     # Prosaccades in prosaccade trial
-    results['pp'] = model(t, a, tt, theta)
-    
+    results['pp'] = model(time, a, tt, theta)
+        
     # Prosaccade in antisccade trial
     tt[:] = 1
-    results['ap'] = model(t, a, tt, theta)
+    results['ap'] = model(time, a, tt, theta)
 
     # Antisaccade in prosaccade trial
     
     a[:] = 1
     tt[:] = 0
     
-    results['pa'] = model(t, a, tt, theta)
+    results['pa'] = model(time, a, tt, theta)
 
     # Antisaccad in antisaccade trial
 
     a[:] = 1
     tt[:] = 1
 
-    results['aa'] = model(t, a, tt, theta)
+    results['aa'] = model(time, a, tt, theta)
 
-    ip = np.zeros((ns))
-    ip[:] = -np.inf
-
-    results['ip'] = ip
-    results['ip'][t < t0] = results['pp'][t < t0]
-    results['pp'][t < t0] = -np.inf
-    results['ap'][t < t0] = -np.inf
-    results['pa'][t < t0] = -np.inf
-    results['aa'][t < t0] = -np.inf
-    
     return results
+
+
+
+def gen_llh(theta, model, maxt=8.0, ns=100):
+    ''' Generate the likelihood of a model. 
     
+    theta       -- Array of double
+    model       -- likelihood function
+    maxt        -- Limit of integration
+    ns          -- Grid size
+
+
+    '''
+
+    # Time offset
+    
+    t = np.linspace(0.0, maxt, ns)
+ 
+    return generate_llh(theta, model, t)
+    
+def generate_fits(theta, model, maxt=8.0, ns=100):
+
+    results = gen_llh(theta, model, maxt, ns)
+
+    return Fits(results)
 
 
 if __name__ == '__main__':

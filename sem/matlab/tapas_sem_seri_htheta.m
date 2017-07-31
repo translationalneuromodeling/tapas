@@ -15,7 +15,7 @@ dim_theta = tapas_sem_seri_ndims();
 % Precision kernel
 htheta.pk = eye(dim_theta);
 
-UPS = 2.0;
+UPS = 3.0;
 
 htheta.pk(7, 7) = UPS;
 htheta.pk(8, 8) = UPS;
@@ -23,7 +23,7 @@ htheta.pk(8, 8) = UPS;
 htheta.pk(11, 11) = 3.0;
 
 htheta.mixed = ones(dim_theta, 1);
-htheta.mixed([7, 8, 11]) = 0;
+%htheta.mixed([7, 8]) = 0;
 
 end
 

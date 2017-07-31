@@ -1,4 +1,4 @@
-function tapas_sem_example_inversion(fp)
+function tapas_sem_example_inversion(model, fp)
 %% Test 
 %
 % fp -- Pointer to a file for the test output, defaults to 1
@@ -7,22 +7,30 @@ function tapas_sem_example_inversion(fp)
 % copyright (C) 2015
 %
 
-if nargin < 1
+n = 0;
+
+n = n + 1;
+if nargin < n
+    model = 2;
+end
+
+n = n + 1;
+if nargin < n
     fp = 1;
 end
 
 fname = mfilename();
 fname = regexprep(fname, 'test_', '');
 
-
 fprintf(fp, '================\n Test %s\n================\n', fname);
 
 [y, u] = prepare_data();
 
-if 1
+if model == 1
 
 ptheta = tapas_sem_prosa_invgamma_ptheta(); % Choose at convinience.
 htheta = tapas_sem_prosa_htheta(); % Choose at convinience.
+ptheta.ptrans = @(vtheta) vtheta;
 
 % Insert a parametrization matrix
 
@@ -34,20 +42,22 @@ ptheta.jm = [eye(15)
 
 pars = struct();
 
-pars.T = linspace(0.1, 1, 2).^5;
-pars.nburnin = 200;
-pars.niter = 400;
-pars.kup = 200;
-pars.mc3it = 1;
+pars.T = linspace(0.1, 1, 16).^5;
+pars.nburnin = 3000;
+pars.niter = 3000;
+pars.kup = 1000;
+pars.mc3it = 16;
 pars.verbose = 1;
 
 tapas_sem_estimate(y, u, ptheta, htheta, pars);
 
 end
 
-if 1
+if model == 2
 
-ptheta = tapas_sem_seri_gamma_ptheta(); % Choose at convinience.
+fprintf(1, 'Seri inversion\n')
+
+ptheta = tapas_sem_seri_wald_ptheta(); % Choose at convinience.
 htheta = tapas_sem_seri_htheta(); % Choose at convinience.
 
 % Insert a parametrization matrix
@@ -59,17 +69,43 @@ ptheta.jm = [...
 
 pars = struct();
 
-pars.T = linspace(0.1, 1, 2).^5;
-pars.nburnin = 200;
-pars.niter = 400;
-pars.kup = 200;
-pars.mc3it = 1;
+pars.T = linspace(0.1, 1, 16).^5;
+pars.nburnin = 2000;
+pars.niter = 2000;
+pars.kup = 1000;
+pars.mc3it = 16;
 pars.verbose = 1;
 
 tapas_sem_estimate(y, u, ptheta, htheta, pars);
 
 end
 
+if model == 3
+
+fprintf(1, 'Dora inversion\n');
+
+ptheta = tapas_sem_dora_invgamma_ptheta(); 
+htheta = tapas_sem_dora_htheta(); % Choose at convinience.
+
+% Insert a parametrization matrix
+
+% The same parameters are used in pro and antisaccade trials
+ptheta.jm = [...
+    eye(19)
+    zeros(3, 8) eye(3) zeros(3, 8)];
+
+pars = struct();
+
+pars.T = linspace(0.1, 1, 16).^5;
+pars.nburnin = 3000;
+pars.niter = 3000;
+pars.kup = 1000;
+pars.mc3it = 16;
+pars.verbose = 1;
+
+tapas_sem_estimate(y, u, ptheta, htheta, pars);
+
+end
 
 
 end

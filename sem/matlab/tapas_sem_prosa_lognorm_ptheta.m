@@ -16,7 +16,6 @@ function [ptheta] = tapas_sem_prosa_lognorm_ptheta()
 % copyright (C) 2015
 %
 
-dim_theta = tapas_sem_prosa_ndims();
 [ptheta] = tapas_sem_prosa_gaussian_priors();
 
 % Projection matrix
@@ -29,7 +28,9 @@ ptheta.llh = @tapas_sem_prosa_llh;
 ptheta.lpp = @tapas_sem_prosa_lpp;
 ptheta.method = @c_prosa_two_states_lognorm;
 ptheta.ptrans = @tapas_sem_prosa_lognorm_ptrans;
-ptheta.prepare = @tapas_sem_prosa_prepare_gaussian_ptheta;
+ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
+ptheta.ndims = tapas_sem_prosa_ndims();                                                                                                                        
+ptheta.npars = 2; % It has two sets of parameters.
 
 end

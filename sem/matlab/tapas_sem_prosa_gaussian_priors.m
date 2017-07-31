@@ -20,11 +20,11 @@ mu = repmat([mmu, vmu], 1, 3);
 ptheta.mu = [mu, me, ml, p0m]';
 
 pm = repmat([mvu, vvu], 1, 3);
-ptheta.pm = 1./[pm, ve, vl, p0v]';
+ptheta.pm = [1./[pm, ve, vl] p0v]';
 
 ptheta.p0 = ptheta.mu;
+ptheta.p0(9) = tan(pi * (-0.4));
 % Eta is beta distributed
 ptheta.bdist = [9];
 
 end
-

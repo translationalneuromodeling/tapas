@@ -15,16 +15,16 @@ ptheta = struct();
     tapas_sem_unified_gaussian_priors();
 
 mu = repmat([mmu, vmu], 1, 3);
-ptheta.mu = [mu, 1, 1, me, ml, p0m]';
+ptheta.mu = [mu, 0.5, 0.5, me, ml, p0m]';
 
 pm = repmat([mvu, vvu], 1, 3);
-ptheta.pm = [[1./pm']; 1; 1; 1/ve ; 1/vl ; p0v];
+ptheta.pm = [[1./pm']; 0.5; 0.5; 1/ve ; 1/vl ; p0v];
 
 ptheta.p0 = ptheta.mu;
 
 % Eta is beta distributed
 ptheta.bdist = [7, 8, 11];
-ptheta.p0(ptheta.bdist) = tan(pi * ([0.2, 0.2, 0.005] - 0.5));
+ptheta.p0(ptheta.bdist) = tan(pi * ([0.005, 1 - 0.005, 0.005] - 0.5));
 
 end
 

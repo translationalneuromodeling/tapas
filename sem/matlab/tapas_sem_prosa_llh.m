@@ -29,7 +29,7 @@ ptrans = ptheta.ptrans;
 
 for i = 1:numel(theta)
     llh(i) = sum(tapas_sem_prosa_cllh(y.t(~it), y.a(~it), u.tt(~it), ...
-        ptrans(theta{i}), method), 1);
+        ptrans(theta{i}), method, 1), 1);
 end
 
 

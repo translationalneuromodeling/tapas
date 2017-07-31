@@ -8,7 +8,7 @@ MEXCC = $(BDDM_MATLAB)/bin/mex
 MEXFLAGS = -v -largeArrayDims -O CC=$(CC)
 MEXEXT = @mexext@
 
-IDIR = -I$(abs_top_srcdir)/antisaccades
+IDIR = -I$(abs_top_srcdir)/antisaccades -I$(abs_top_srcdir)
 LDIR = $(abs_top_srcdir)/lib
 BINDIR = $(abs_top_srcdir)/bin
 
@@ -17,7 +17,6 @@ OBJS = $(SOURCES:.c=.o)
 MBINS = $(addprefix $(BINDIR)/,$(SOURCES:.c=.$(MEXEXT)))
 
 LDFLAGS += -L$(LDIR)
-
 CFLAGS += $(OPENMP_CFLAGS) -std=c99 -fPIC $(IDIR)
 
 all: $(MBINS)
@@ -29,7 +28,7 @@ $(OBJS) : %.o : %.c
 	$(MEXCC) $(MEXFLAGS) -c -outdir ./ -output $@ CFLAGS="$(CFLAGS)" $^
 
 $(MBINS) : $(BINDIR)/%.$(MEXEXT) : %.o | $(BINDIR) 
-	$(MEXCC) $(MEXFLAGS) $(LDFLAGS) CFLAGS="$(CFLAGS)" -outdir $(BINDIR) $^ $(LIBS) -lantisaccades 
+	$(MEXCC) $(MEXFLAGS) $(LDFLAGS) CFLAGS="$(CFLAGS)" -outdir $(BINDIR) $^ $(LIBS) -lantisaccades
 
 $(MBINS) : $(abs_top_srcdir)/lib/libantisaccades.a
 

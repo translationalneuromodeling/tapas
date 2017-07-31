@@ -14,13 +14,8 @@ dim_theta = tapas_sem_prosa_ndims();
 
 % Precision kernel
 htheta.pk = eye(dim_theta);
-UPS = 3.0;
 
-htheta.pk(9, 9) = UPS;
-
+htheta.pk(9, 9) = 3.0;
 htheta.mixed = ones(dim_theta, 1);
-htheta.mixed([9]) = 0;  
-
 
 end
-

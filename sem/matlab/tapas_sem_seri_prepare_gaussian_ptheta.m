@@ -10,18 +10,17 @@ function [ptheta] = tapas_sem_seri_prepare_gaussian_ptheta(ptheta);
 % copyright (C) 2016
 %
 
-nseri = tapas_sem_seri_ndims();
-dtheta = 2; % Number of parameter sets.
+nseri = ptheta.ndims;
+dtheta = ptheta.npars; % Number of parameter sets.
 
 LN2PI = log(2 * pi);
 
 njm = tapas_zeromat(ptheta.jm);
 
 % Compute the values that are beta distributed
-bdist = zeros(nseri, 1);
-bdist(ptheta.bdist) = 1;
-bdist = kron(ones(dtheta, 1), bdist);
-ptheta.bdist = find(bdist);
+
+bdist = zeros(dtheta * nseri, 1);
+bdist(ptheta.bdist) = 1; 
 
 % Compute the values that are beta distributed
 njm = bsxfun(@times, njm, 1 - bdist);
@@ -32,8 +31,8 @@ np = sum(njm(:));
 
 kjm = njm * njm';
 
-ptheta.pm = kron(ones(dtheta, 1), ptheta.pm);
 ptheta.mu = kron(ones(dtheta, 1), ptheta.mu);
+ptheta.pm = kron(ones(dtheta, 1), ptheta.pm);
 ptheta.p0 = kron(ones(dtheta, 1), ptheta.p0); 
 
 ptheta.pconst = sum(log(njm' * ptheta.pm)) - 0.5 * np * LN2PI;

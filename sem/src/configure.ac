@@ -1,7 +1,7 @@
 # aponteeduardo@gmail.com
 # copyright (c) 2015
 
-AC_INIT(sooner, version-0.1)
+AC_INIT(sem, version-1.0)
 AC_PREREQ(2.5)
 
 AM_INIT_AUTOMAKE(1.1)
@@ -9,18 +9,23 @@ AC_CONFIG_MACRO_DIR(m4)
 
 AC_PROG_CC
 
+AC_CONFIG_SRCDIR(antisaccades/antisaccades.h)
+AC_CONFIG_HEADERS([config.h])
+
 AC_CHECK_HEADERS(matrix.h)
 AC_CHECK_HEADERS(mex.h)
 AC_CHECK_HEADERS(math.h)
 
-AC_CHECK_HEADER(gsl/gsl_sf_gamma.h)
-AC_CHECK_HEADER(gsl/gsl_sys.h)
+AC_CHECK_HEADERS(gsl/gsl_sf_gamma.h)
+AC_CHECK_HEADERS(gsl/gsl_sys.h)
 
 AC_OPENMP
 # In mac omp is compiled through iomp5. TODO If the compiler is found but the 
 # library is not it will fail.
 AC_CHECK_LIB(gomp, omp_get_thread_num, , \
     AC_CHECK_LIB(iomp5, omp_get_thread_num))
+
+AC_CHECK_HEADERS(omp.h)
 
 # ME OF THE FUTURE: This looks redundant but needs to be done like that.
 AC_CHECK_LIB([m],[cos])
@@ -34,7 +39,6 @@ matlabhome=$(matlab -nodisplay -nosplash -r "fprintf(1, matlabroot); fprintf(1, 
 
 # Get the platform
 mexext=$($matlabhome/bin/mexext)
-
 
 AC_SUBST(matlabhome)
 AC_SUBST(major)

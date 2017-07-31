@@ -45,17 +45,17 @@ populate_parameters_seri(const double *theta, SERI_PARAMETERS *stheta)
 int
 populate_parameters_dora(const double *theta, DORA_PARAMETERS *stheta)
 {
-    stheta->kinv = theta[0];
-    stheta->tinv = theta[1];
+    stheta->kp = theta[0];
+    stheta->tp = theta[1];
 
-    stheta->kva = theta[2];
-    stheta->tva = theta[3];
+    stheta->ka = theta[2];
+    stheta->ta = theta[3];
 
-    stheta->kvp = theta[4];
-    stheta->tvp = theta[5];
+    stheta->ks = theta[4];
+    stheta->ts = theta[5];
 
-    stheta->ks = theta[6];
-    stheta->ts = theta[7];
+    stheta->kl = theta[6];
+    stheta->tl = theta[7];
 
     stheta->t0 = theta[8];
     stheta->da = theta[9];

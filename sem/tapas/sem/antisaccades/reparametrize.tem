@@ -1,0 +1,6 @@
+def p_reparametrize_{0:s}_{1:s}(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+
+    ntheta = wrapper_reparametrize_{0:s}(theta, reparametrize_{0:s}_{1:s})
+
+    return ntheta
