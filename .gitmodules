@@ -1,0 +1,3 @@
+[submodule "PhysIO"]
+	path = PhysIO
+	url = git@tnurepository.ethz.ch:physio/physio-public.git
