@@ -1,10 +1,7 @@
-Version 2.7.0.0
+*Version 2.7.0.0*
 
-________________________________________________________________________
-
-     T  A  P  A  S - TNU Algorithms for Psychiatry-Advancing Science.
-________________________________________________________________________
-
+T  A  P  A  S - TNU Algorithms for Psychiatry-Advancing Science.
+========================================================================
 
 This file describes the installation and usage of the software.
 Full details can be found on the TNU website:
@@ -21,12 +18,12 @@ particularly concerning the application of neuroimaging and
 computational modeling to research questions in psychiatry and 
 neurology. Problems that can be addressed by tools in TAPAS presently include:
 
-    - Correction of physiological noise in fMRI data.
-    - Bayesian inference on computational processes from observed behaviour.
-    - Bayesian mixed-effects inference for classification studies.
-    - Variational-Bayes Linear Regression.
-    - Efficient integration of the DCMs using massive parallelization.
-    - Modeling of eye movements.
+- Correction of physiological noise in fMRI data.
+- Bayesian inference on computational processes from observed behaviour.
+- Bayesian mixed-effects inference for classification studies.
+- Variational-Bayes Linear Regression.
+- Efficient integration of the DCMs using massive parallelization.
+- Modeling of eye movements.
 
 TAPAS is written in MATLAB and distributed as open source code under 
 the GNU General Public License (GPL, Version 3).
@@ -39,7 +36,7 @@ TAPAS is a collection of toolboxes written in MATLAB (Version R2012b). The key
 requirement is the installation of MATLAB (produced by The MathWorks, Inc.  
 Natick, MA, USA. http://www.mathworks.com/).
 
-To add the TAPAS directory to the MATLAB path, run the script tapas_init.m in 
+To add the TAPAS directory to the MATLAB path, run the script `tapas_init.m` in 
 the directory where tapas is installed/extracted. 
 
 -------------
@@ -67,11 +64,11 @@ http://www.biorxiv.org/content/early/2017/06/08/109090
 
 Highlights:
 
-	- The SERIA late race model is implemented.
-    - The underlying algorithm for computing the likelihood has been updated.
-    - Includes examples to run the model.
+- The SERIA late race model is implemented.
+- The underlying algorithm for computing the likelihood has been updated.
+- Includes examples to run the model.
 
-Detailed release notes can be found in sem/README.md
+Detailed release notes can be found in [sem/README.md]
 
 -------
 LICENSE                            
