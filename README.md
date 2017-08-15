@@ -29,27 +29,43 @@ TAPAS is written in MATLAB and distributed as open source code under
 the GNU General Public License (GPL, Version 3).
 
 ------------
-INSTRUCTIONS                                                            
+INSTALLATION                                                        
 ------------
 
-TAPAS is a collection of toolboxes written in MATLAB (Version R2012b). The key 
+TAPAS is a collection of toolboxes written in MATLAB (Version R2016b). The key 
 requirement is the installation of MATLAB (produced by The MathWorks, Inc.  
 Natick, MA, USA. http://www.mathworks.com/).
 
 To add the TAPAS directory to the MATLAB path, run the script `tapas_init.m` in 
 the directory where tapas is installed/extracted. 
 
+For the individual toolboxes included in TAPAS, please refer to their 
+documentation (s.b.) for specific installation instructions.
+
 -------------
 DOCUMENTATION
 -------------
 
-The TNU website contains all the necessary documentation, user manuals,
-publications relevant to the software. 
+For now, the documentation of TAPAS can be found on 
+- GitHub (latest TAPAS versions)
+- the TNU website (previous TAPAS versions)
+
+### GitHub ###
+- The [Wiki](https://github.com/translationalneuromodeling/tapas/wiki) on the 
+  [TAPAS GitHub page](https://github.com/translationalneuromodeling/tapas) contains 
+  the latest documentation about TAPAS. 
+
+- If you have a GitHub account, please report bugs or feature requests via the  
+  [Issues](https://github.com/translationalneuromodeling/tapas/issues) page there.
+
+### TNU-Website ###
+- The TNU website contains all the necessary documentation, user manuals,
+  publications relevant to the previous versions of this software (<= 2.7.0.0)
            http://www.translationalneuromodeling.org/tapas-documentation/
 
-For queries and discussions please join the mailing list at
-http://sympa.ethz.ch/sympa/info/tapas 
-Bugs in the software can be emailed directly to: tapas-bugs@biomed.ee.ethz.ch
+- For queries and discussions please join the mailing list at
+  http://sympa.ethz.ch/sympa/info/tapas 
+- Bugs in the software can also be emailed directly to: [tapas-bugs@biomed.ee.ethz.ch]
 
 
 ------------------------
