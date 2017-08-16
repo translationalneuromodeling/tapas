@@ -51,7 +51,7 @@ For now, the documentation of TAPAS can be found on
 - the TNU website (previous TAPAS versions)
 
 ### GitHub ###
-- The [Wiki](https://github.com/translationalneuromodeling/tapas/wiki) on the 
+- The [Wiki](/../wikis/home) on the 
   [TAPAS GitHub page](https://github.com/translationalneuromodeling/tapas) contains 
   the latest documentation about TAPAS. 
 
