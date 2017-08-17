@@ -28,9 +28,9 @@ if verbose
     fprintf(1, 'Please cite the corresponding masucript according to:\n')
     fprintf(1, 'PhysIO: https://www.ncbi.nlm.nih.gov/pubmed/27832957\n')
     fprintf(1, 'HGF:    https://www.ncbi.nlm.nih.gov/pubmed/21629826\n')
-    fprintf(1, '        https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4237059\n');
+    fprintf(1, '        https://www.ncbi.nlm.nih.gov/pubmed/25477800\n');
     fprintf(1, 'MPDCM:  https://www.ncbi.nlm.nih.gov/pubmed/26384541\n');
-    fprintf(1, 'SERIA:  https://doi.org/10.1371/journal.pcbi.1005692\n');
+    fprintf(1, 'SERIA:  https://www.ncbi.nlm.nih.gov/pubmed/28767650\n');
 end
 
 end
