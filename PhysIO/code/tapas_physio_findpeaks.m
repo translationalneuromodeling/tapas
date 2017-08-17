@@ -70,12 +70,24 @@ if (M < 3)
 end
 
 %#function dspopts.findpeaks
-hopts = tapas_physio_uddpvparse('dspopts.findpeaks',varargin{:});
-Ph  = hopts.MinPeakHeight;
-Pd  = hopts.MinPeakDistance;
-Th  = hopts.Threshold;
-Np  = hopts.NPeaks;
-Str = hopts.SortStr;
+%hopts = tapas_physio_uddpvparse('dspopts.findpeaks',varargin{:});
+if nargin
+    varargin(1:2:end) = lower(varargin(1:2:end));
+end
+
+defaults.minpeakheight = -Inf;
+defaults.minpeakdistance = [];
+defaults.threshold = 0;
+defaults.npeaks = [];
+defaults.sortstr = 'none';
+
+hopts = tapas_physio_propval(varargin, defaults);
+
+Ph  = hopts.minpeakheight;
+Pd  = hopts.minpeakdistance;
+Th  = hopts.threshold;
+Np  = hopts.npeaks;
+Str = hopts.sortstr;
 
 % Validate MinPeakDistance 
 if ~isempty(Pd) && (~isnumeric(Pd) || ~isscalar(Pd) ||any(rem(Pd,1)) || (Pd < 1))

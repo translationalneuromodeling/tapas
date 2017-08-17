@@ -43,6 +43,11 @@ if isempty(physio.log_files.scan_timing)
     physio.log_files.scan_timing = {''};
 end
 
+if strcmpi(physio.preproc.cardiac.initial_cpulse_select.method, 'auto_matched') && ...
+    isempty(physio.preproc.cardiac.initial_cpulse_select.min)
+    physio.preproc.cardiac.initial_cpulse_select.min = 0.4;
+end
+
 if isempty(physio.log_files.sampling_interval)
     switch lower(physio.log_files.vendor)
         case 'philips'
@@ -55,7 +60,7 @@ if isempty(physio.log_files.sampling_interval)
             end
         case 'ge'
             physio.log_files.sampling_interval = 25e-3;
-        case {'biopac_mat', 'siemens', 'siemens_tics'} % will be read from file later
+        case {'biopac_mat', 'siemens', 'siemens_tics', 'brainproducts'} % will be read from file later
             physio.log_files.sampling_interval = [];
         otherwise % e.g. custom
             error('Please specify sampling interval for custom text data');

@@ -110,7 +110,7 @@ for k = 2:1:n
         % 1st level
         % ~~~~~~~~~
         % Prediction
-        muhat(k,1) = tapas_sgm(muhat(k,2), 1);
+        muhat(k,1) = tapas_sgm(ka(1) *muhat(k,2), 1);
         
         % Precision of prediction
         pihat(k,1) = 1/(muhat(k,1)*(1 -muhat(k,1)));
@@ -132,11 +132,11 @@ for k = 2:1:n
         pihat(k,2) = 1/(1/pi(k-1,2) +exp(ka(2) *mu(k-1,3) +om(2)));
 
         % Updates
-        pi(k,2) = pihat(k,2) +1/pihat(k,1);
-        mu(k,2) = muhat(k,2) +1/pi(k,2) *da(k,1);
+        pi(k,2) = pihat(k,2) +ka(1)^2/pihat(k,1);
+        mu(k,2) = muhat(k,2) +ka(1)/pi(k,2) *da(k,1);
 
         % Implied posterior precision at first level
-        sgmmu2 = tapas_sgm(mu(k,2), 1);
+        sgmmu2 = tapas_sgm(ka(1) *mu(k,2), 1);
         pi(k,1) = pi(k,2)/(sgmmu2*(1-sgmmu2));
 
         % Volatility prediction error
@@ -210,7 +210,7 @@ for k = 2:1:n
 end
 
 % Implied learning rate at the first level
-sgmmu2 = tapas_sgm(mu(:,2), 1);
+sgmmu2 = tapas_sgm(ka(1) *mu(:,2), 1);
 lr1    = diff(sgmmu2)./da(2:n,1);
 lr1(da(2:n,1)==0) = 0;
 

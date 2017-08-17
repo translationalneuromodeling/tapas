@@ -56,13 +56,23 @@ if nargin < 3
 end
 
 switch lower(log_files.vendor)
-    case 'philips'
+    case 'biopac_mat'
         [c, r, t, cpulse, acq_codes] = ...
-            tapas_physio_read_physlogfiles_philips(log_files, cardiac_modality);
+            tapas_physio_read_physlogfiles_biopac_mat(log_files, cardiac_modality, verbose);
+    case 'custom'
+        [c, r, t, cpulse] = ...
+            tapas_physio_read_physlogfiles_custom(log_files, verbose);
+        acq_codes = [];
+    case 'brainproducts'
+        [c, r, t, cpulse, acq_codes] = ...
+            tapas_physio_read_physlogfiles_brainproducts(log_files, cardiac_modality, verbose);
     case 'ge'
         [c, r, t, cpulse] = ...
             tapas_physio_read_physlogfiles_GE(log_files, verbose);
         acq_codes = [];
+    case 'philips'
+        [c, r, t, cpulse, acq_codes] = ...
+            tapas_physio_read_physlogfiles_philips(log_files, cardiac_modality);
     case 'siemens'
         [c, r, t, cpulse, verbose] = ...
             tapas_physio_read_physlogfiles_siemens(log_files, verbose);
@@ -70,13 +80,6 @@ switch lower(log_files.vendor)
     case 'siemens_tics'
         [c, r, t, cpulse, verbose] = ...
             tapas_physio_read_physlogfiles_siemens_tics(log_files, verbose);
-        acq_codes = [];
-    case 'biopac_mat'
-        [c, r, t, cpulse, acq_codes] = ...
-            tapas_physio_read_physlogfiles_biopac_mat(log_files, cardiac_modality, verbose);
-    case 'custom'
-        [c, r, t, cpulse] = ...
-            tapas_physio_read_physlogfiles_custom(log_files, verbose);
         acq_codes = [];
 end
 
