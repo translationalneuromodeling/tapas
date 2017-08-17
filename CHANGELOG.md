@@ -1,8 +1,17 @@
 # Changelog
 TAPAS toolbox 
 
-## [2.7.2] 2017-08-17
 
+
+## [2.7.3] 2017-08-17
+
+## Added
+- Added condhalluc_obs and condhalluc_obs2 models.
+
+## Changed
+- Introduced kappa1 in all binary HGF models.
+
+## [2.7.2] 2017-08-17
 ## Added
 - New PhysIO CHANGELOG.md specific file.
 
