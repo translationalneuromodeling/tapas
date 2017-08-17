@@ -67,24 +67,19 @@ For now, the documentation of TAPAS can be found on
   http://sympa.ethz.ch/sympa/info/tapas 
 - Bugs in the software can also be emailed directly to: [tapas-bugs@biomed.ee.ethz.ch]
 
+### Cite me ###
 
-------------------------
-Changes in this version
-------------------------
+Information about citations and current version can be printed from matlab with
+the command: 
 
-Major Release Notes:
+~~~
+tapas_version(1);
+~~~
 
-This release includes the SERIA model as described in 
+### Current release ###
 
-http://www.biorxiv.org/content/early/2017/06/08/109090
-
-Highlights:
-
-- The SERIA late race model is implemented.
-- The underlying algorithm for computing the likelihood has been updated.
-- Includes examples to run the model.
-
-Detailed release notes can be found in [sem/README.md]
+Information about changes in the current release can be found in the CHANGELOG.md
+file.
 
 -------
 LICENSE                            
