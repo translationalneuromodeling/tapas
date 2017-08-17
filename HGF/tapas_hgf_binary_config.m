@@ -9,6 +9,15 @@ function c = tapas_hgf_binary_config
 % Mathys C, Daunizeau J, Friston, KJ, and Stephan KE. (2011). A Bayesian foundation
 % for individual learning under uncertainty. Frontiers in Human Neuroscience, 5:39.
 %
+% The binary HGF model has since been augmented with a positive factor kappa1 which
+% scales the second level with respect to the first, i.e., the relation between the
+% first and second level is
+%
+% p(x1=1|x2) = s(kappa1*x2), where s(.) is the logistic sigmoid.
+%
+% By default, kappa1 is fixed to 1, leading exactly to the model introduced in
+% Mathys et al. (2011).
+%
 % This file refers to BINARY inputs (Eqs 1-3 in Mathys et al., (2011));
 % for continuous inputs, refer to tapas_hgf_config.
 %
@@ -86,7 +95,7 @@ function c = tapas_hgf_binary_config
 %   the LME increased, so you had a better model.
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2012-2017 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -133,11 +142,12 @@ c.rhosa = [NaN, 0, 0];
 
 % Kappas
 % Format: row vector of length n_levels-1.
-% Undefined (therefore NaN) at the first level.
-% This should be fixed (preferably to 1) if the observation model
-% does not use mu_i+1 (kappa then determines the scaling of x_i+1).
-c.logkamu = [NaN, log(1)];
-c.logkasa = [NaN,      0];
+% Fixing log(kappa1) to log(1) leads to the original HGF model.
+% Higher log(kappas) should be fixed (preferably to log(1)) if the
+% observation model does not use mu_i+1 (kappa then determines the
+% scaling of x_i+1).
+c.logkamu = [log(1), log(1)];
+c.logkasa = [     0,      0];
 
 % Omegas
 % Format: row vector of length n_levels.

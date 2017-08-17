@@ -14,7 +14,7 @@ function [traj, infStates] = tapas_hgf_binary_mab(r, p, varargin)
 %     transformed space, and 'trans' is a flag indicating this.
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2013 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2017 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -120,7 +120,7 @@ for k = 2:1:n
         % 1st level
         % ~~~~~~~~~
         % Prediction
-        muhat(k,1,:) = tapas_sgm(muhat(k,2,:), 1);
+        muhat(k,1,:) = tapas_sgm(ka(1) *muhat(k,2,:), 1);
         
         % Precision of prediction
         pihat(k,1,:) = 1/(muhat(k,1,:).*(1 -muhat(k,1,:)));
@@ -144,10 +144,10 @@ for k = 2:1:n
 
         % Updates
         pi(k,2,:) = pihat(k,2,:);
-        pi(k,2,y(k)) = pihat(k,2,y(k)) +1/pihat(k,1,y(k));
+        pi(k,2,y(k)) = pihat(k,2,y(k)) +ka(1)^2/pihat(k,1,y(k));
 
         mu(k,2,:) = muhat(k,2,:);
-        mu(k,2,y(k)) = muhat(k,2,y(k)) +1/pi(k,2,y(k)) *da(k,1);
+        mu(k,2,y(k)) = muhat(k,2,y(k)) +ka(1)/pi(k,2,y(k)) *da(k,1);
 
         % Volatility prediction error
         da(k,2) = (1/pi(k,2,y(k)) +(mu(k,2,y(k)) -muhat(k,2,y(k)))^2) *pihat(k,2,y(k)) -1;
@@ -262,7 +262,7 @@ mu2       = squeeze(mu(:,2,:));
 mu2obs    = mu2(sub2ind(size(mu2), (1:size(mu2,1))', y));
 mu1hat    = squeeze(muhat(:,1,:));
 mu1hatobs = mu1hat(sub2ind(size(mu1hat), (1:size(mu1hat,1))', y));
-upd1      = tapas_sgm(mu2obs,1) -mu1hatobs;
+upd1      = tapas_sgm(ka(1)*mu2obs,1) -mu1hatobs;
 lr1       = upd1./da(:,1);
 
 % Create result data structure
