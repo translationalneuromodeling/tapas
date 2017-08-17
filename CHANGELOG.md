@@ -1,7 +1,15 @@
 # Changelog
 TAPAS toolbox 
 
-## [2.7.1.0] 2017-08-17
+## [2.7.2] 2017-08-17
+
+## Added
+- New PhysIO CHANGELOG.md specific file.
+
+## Changed
+- Specified in PhysIO/CHANGELOG.md.
+
+## [2.7.1] 2017-08-17
 
 ### Added
 - Added a CHANGELOG.md file
