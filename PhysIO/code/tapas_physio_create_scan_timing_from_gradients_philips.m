@@ -259,15 +259,15 @@ if verbose.level>=1
     xlabel('t(s)');
     
     % Plot gradient thresholding for slice timing determination
-    
-    
     if ~isempty(VOLLOCS)
-        hp(end+1) = stem(t(VOLLOCS), 1.25*ones(size(VOLLOCS))); hold all
+        heightStem = median(gradient_choice(VOLLOCS));
+        hp(end+1) = stem(t(VOLLOCS), 1.25*heightStem*ones(size(VOLLOCS))); hold all
         lg{end+1} = sprintf('Found volume events (N = %d)', numel(VOLLOCS));
     end
     
     if ~isempty(LOCS)
-        hp(end+1) = stem(t(LOCS), ones(size(LOCS))); hold all
+        heightStem = median(gradient_choice(LOCS));
+        hp(end+1) = stem(t(LOCS), heightStem*ones(size(LOCS))); hold all
         lg{end+1} = sprintf('Found slice events (N = %d)', numel(LOCS));
         
         dLocsSecs = diff(LOCS)*dt*1000;

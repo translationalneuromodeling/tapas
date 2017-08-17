@@ -13,7 +13,7 @@ function [G, gainArray, normFactor] = tapas_physio_rescale_gradient_gain_fluctua
 %                   max 1 after rescaling; 
 %                   if false: gain of last interval chosen for all other
 % OUT
-%   G               normlized gain gradient time course
+%   G               normalized gain gradient time course
 %   gainArray       [nSteps+1,1] vector of detected gains (i.e. maxima in
 %                   multiple TR interval) in gradient time course
 %   normFactor      max value to which all intervals are scaled in this
@@ -42,7 +42,7 @@ doPlot = verbose.level >= 3;
 defaults.doNormalize = true;
 
 % since gain changes happen for whole slice-waveform, look where slice
-% waveform ends, i.e. a bit earlier for step-up, and a bit later for
+% waveform ends, i.e., a bit earlier for step-up, and a bit later for
 % step-down events of gain
 defaults.doExtendStepToSliceRange = true;
 
@@ -51,7 +51,7 @@ tapas_physio_strip_fields(args);
 
 minPeakHeight           = 1000; % TODO: remove this heuristic!
 ignoreBoundaryPercent   = 30; % for gain estimation in interval margin 
-                             % is ignored in case of a slow change
+                              % is ignored in case of a slow change
 normFactor              = 1;  % gradients normalized to this value                     
                             
 n   = minStepDistanceSamples;
@@ -69,9 +69,7 @@ warning off tapas_physio_findpeaks:largeMinPeakHeight
 warning on tapas_physio_findpeaks:largeMinPeakHeight
 
 % plus gains refer to max-changes in the future
-
-
-    idxGainPlus     = idxGainPlus + n;
+idxGainPlus     = idxGainPlus + n;
 % + 1 because of diff
 idxGainMinus    = idxGainMinus + 1;
 
@@ -107,7 +105,8 @@ if nGainSwitches > 0
         set(gcf, 'Name', stringTitle);
         hs(1) = subplot(2,1,1);
         hp(1) = plot(G); hold all;
-        hp(2) = plot(mG);
+        hp(2) = plot(mG, 'k.-');
+        hp(2) = plot(-mG, 'k.-');
         hp(3) = plot(dmG);
         hp(4) = stem(idxGainPlus, mG(idxGainPlus));
         hp(5) = stem(idxGainMinus, mG(idxGainMinus));

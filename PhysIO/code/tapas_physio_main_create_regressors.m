@@ -200,7 +200,7 @@ if ~hasPhaseLogfile
                 minConstantIntervalAlertSamples);
         end
         
-        [ons_secs, scan_timging.sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_window(...
+        [ons_secs, scan_timing.sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_window(...
             ons_secs, scan_timing.sqpar, verbose);
         sqpar = scan_timing.sqpar;
         
