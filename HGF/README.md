@@ -46,6 +46,10 @@ hgf_demo.pdf.
 
 ## Release notes
 
+### v5.1
+- Added condhalluc_obs and condhalluc_obs2 models
+- Introduced kappa1 in all binary HGF models
+
 ### v5.0
 - Ported interactive demo to Matlab LiveScript
 - Various additional small improvements

@@ -2,7 +2,7 @@ function verbose = tapas_physio_review(physio, newVerboseLevel)
 % Reviews performance of PhysIO (recreating output plots and text)
 % after running tapas_physio_main_create_regressors
 %
-%   fhArray = tapas_physio_review(input)
+%   verbose = tapas_physio_review(physio, newVerboseLevel)
 %
 % NOTE: Change physio.verbose.level before running this function to get
 %       additonal output plots not seen during executing of the main-function

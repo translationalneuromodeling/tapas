@@ -1,13 +1,19 @@
 function y = tapas_physio_read_physlogfiles_philips_matrix(fileNamePhyslog)
-% reads out complete [nSamples,10] numerical matrix from SCANPHYSLOG-file
+% reads out complete numerical matrix from SCANPHYSLOG-file
+% Physlog file version 1: [nSamples,10]
+% Physlog file version 2: [nSamples,11]
+%
 % IN
 %   fileNamePhyslog 
 %           string, filename of SCANPHYSLOG-file
 % OUT
-%   y       [nSamples, 10] SCANPHYSLOG-file matrix with the following
+%   y       [nSamples, 10 or 11] SCANPHYSLOG-file matrix with the following
 %           columns:
+%           Version 1: 
 %           v1raw v2raw v2 v2 PPU Pneumatic_belt Gradient_x Gradient_y
 %           Gradient_z acq_codes(scan/ECG trigger etc.)
+%           Version 2:
+%           v1raw v2raw  v1 v2  ppu resp  gx gy gz mark mark2
 %
 % EXAMPLE
 %   y = tapas_physio_read_physlogfiles_philips_matrix('SCANPHYSLOG.log')
@@ -28,19 +34,47 @@ function y = tapas_physio_read_physlogfiles_philips_matrix(fileNamePhyslog)
 % $Id: tapas_physio_read_physlogfiles_philips_matrix.m 632 2015-01-09 12:36:12Z kasperla $
 
 % use textread as long as it exists, for it is much faster (factor 4) than
-% textscan; TODO: use fread ans sscanf to make it even faster...
+% textscan; TODO: use fread and sscanf to make it even faster...
+
+%% check log file version by header line
+fid  = fopen(fileNamePhyslog, 'r');
+stringFirstLine = fgetl(fid);
+fclose(fid);
+
+if any(strfind(stringFirstLine, 'Physlog file version = 2'))
+    versionLogfile = 2;
+else
+    versionLogfile = 1;
+end
+
+switch versionLogfile
+    case 1
+        parseString = '%d %d %d %d %d %d %d %d %d %s';
+        nColumns = 10;
+    case 2
+        parseString = '%d %d %d %d %d %d %d %d %d %s %s';
+        nColumns = 11;
+end
+
+
+%% Read decimal value colums
 if exist('textread')
-    [z{1:10}]   = textread(fileNamePhyslog,'%d %d %d %d %d %d %d %d %d %s','commentstyle', 'shell');
+    [z{1:nColumns}]   = textread(fileNamePhyslog, parseString,'commentstyle', 'shell');
 else
     fid     = fopen(fileNamePhyslog, 'r');
-    z       = textscan(fid, '%d %d %d %d %d %d %d %d %d %s', 'commentstyle', '#');
+    z       = textscan(fid, parseString, 'commentstyle', '#');
     z(1:9)  = cellfun(@double, z(1:9), 'UniformOutput', false);
     fclose(fid);
 end
 
-z{10}       = hex2dec(z{10}); % hexadecimal acquisition codes converted;
 
-% account for incomplete rows
+%% Convert hexadecimal acquisition codes
+for iCol = 10:nColumns
+    z{iCol}       = hex2dec(z{iCol}); 
+end
+
+
+%% Account for incomplete rows
 nMinRows    = min(cellfun(@numel,z));
 z           = cellfun(@(x) x(1:nMinRows), z, 'UniformOutput', false);
 y           = cell2mat(z);

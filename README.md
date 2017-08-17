@@ -1,10 +1,7 @@
-Version 2.7.0.0
+*Version 2.7.3.0*
 
-________________________________________________________________________
-
-     T  A  P  A  S - TNU Algorithms for Psychiatry-Advancing Science.
-________________________________________________________________________
-
+T  A  P  A  S - TNU Algorithms for Psychiatry-Advancing Science.
+========================================================================
 
 This file describes the installation and usage of the software.
 Full details can be found on the TNU website:
@@ -21,57 +18,68 @@ particularly concerning the application of neuroimaging and
 computational modeling to research questions in psychiatry and 
 neurology. Problems that can be addressed by tools in TAPAS presently include:
 
-    - Correction of physiological noise in fMRI data.
-    - Bayesian inference on computational processes from observed behaviour.
-    - Bayesian mixed-effects inference for classification studies.
-    - Variational-Bayes Linear Regression.
-    - Efficient integration of the DCMs using massive parallelization.
-    - Modeling of eye movements.
+- Correction of physiological noise in fMRI data.
+- Bayesian inference on computational processes from observed behaviour.
+- Bayesian mixed-effects inference for classification studies.
+- Variational-Bayes Linear Regression.
+- Efficient integration of the DCMs using massive parallelization.
+- Modeling of eye movements.
 
 TAPAS is written in MATLAB and distributed as open source code under 
 the GNU General Public License (GPL, Version 3).
 
 ------------
-INSTRUCTIONS                                                            
+INSTALLATION                                                        
 ------------
 
-TAPAS is a collection of toolboxes written in MATLAB (Version R2012b). The key 
+TAPAS is a collection of toolboxes written in MATLAB (Version R2016b). The key 
 requirement is the installation of MATLAB (produced by The MathWorks, Inc.  
 Natick, MA, USA. http://www.mathworks.com/).
 
-To add the TAPAS directory to the MATLAB path, run the script tapas_init.m in 
+To add the TAPAS directory to the MATLAB path, run the script `tapas_init.m` in 
 the directory where tapas is installed/extracted. 
+
+For the individual toolboxes included in TAPAS, please refer to their 
+documentation (s.b.) for specific installation instructions.
 
 -------------
 DOCUMENTATION
 -------------
 
-The TNU website contains all the necessary documentation, user manuals,
-publications relevant to the software. 
+For now, the documentation of TAPAS can be found on 
+- GitHub (latest TAPAS versions)
+- the TNU website (previous TAPAS versions)
+
+### GitHub ###
+- The [Wiki](/../wikis/home) on the 
+  [TAPAS GitHub page](https://github.com/translationalneuromodeling/tapas) contains 
+  the latest documentation about TAPAS. 
+
+- If you have a GitHub account, please report bugs or feature requests via the  
+  [Issues](https://github.com/translationalneuromodeling/tapas/issues) page there.
+
+### TNU-Website ###
+- The TNU website contains all the necessary documentation, user manuals,
+  publications relevant to the previous versions of this software (<= 2.7.0.0)
            http://www.translationalneuromodeling.org/tapas-documentation/
 
-For queries and discussions please join the mailing list at
-http://sympa.ethz.ch/sympa/info/tapas 
-Bugs in the software can be emailed directly to: tapas-bugs@biomed.ee.ethz.ch
+- For queries and discussions please join the mailing list at
+  http://sympa.ethz.ch/sympa/info/tapas 
+- Bugs in the software can also be emailed directly to: [tapas-bugs@biomed.ee.ethz.ch]
 
+### Cite me ###
 
-------------------------
-Changes in this version
-------------------------
+Information about citations and current version can be printed from matlab with
+the command: 
 
-Major Release Notes:
+~~~
+tapas_version(1);
+~~~
 
-This release includes the SERIA model as described in 
+### Current release ###
 
-http://www.biorxiv.org/content/early/2017/06/08/109090
-
-Highlights:
-
-	- The SERIA late race model is implemented.
-    - The underlying algorithm for computing the likelihood has been updated.
-    - Includes examples to run the model.
-
-Detailed release notes can be found in sem/README.md
+Information about changes in the current release can be found in the CHANGELOG.md
+file.
 
 -------
 LICENSE                            

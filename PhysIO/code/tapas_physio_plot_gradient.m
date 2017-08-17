@@ -46,7 +46,7 @@ stringSubplotArray = {
     'G_x'
     'G_y'
     'G_z'
-    '|G|_2'
+    '|G|^2'
     };
 
 for m = 1:4
