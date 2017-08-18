@@ -28,37 +28,34 @@ as a template to run your analysis.
 ## As a python package
 
 This toolbox can be installed as python package. Although no inference
-algorithm is currently included, it can be potentially used in combination
+algorithm is currently implemented, it can be potentially used in combination
 with packages implementing maximum likelihood estimators or the 
 Metropolis-Hasting algorithm. After installation it can be imported as
 ~~~~
-from tapas/sem/antisaccades import likelihoods as seria
+from tapas.sem.antisaccades import likelihoods as seria
 ~~~~
 This contains all the models described in the original
-[SERIA paper](http://www.biorxiv.org/content/early/2017/06/08/109090).
+[SERIA paper](https://doi.org/10.1371/journal.pcbi.1005692).
 
 # Installation
 
 ## Supported platforms
 
-Mac and linux platforms are supported. We have tested a variaty of setups
+Mac OSX and linux are supported. We have tested in a variaty of setups
 and it has worked so far. If you have any issue please contact us.
-
-In OSX, currently we do not support openmp as clang doesn't directly support
-it. Although it is still possible to use openmp, it is not trivial.
 
 We do not support Windows but most likely it can be installed as a python 
 package.
 
 ## Dependencies
 
-* gsl/1.16
+* gsl/1.16>
 
 In Ubuntu, it can be install as 
 ~~~~
 sudo apt-get install libgsl0-dev
 ~~~~
-To install in mac you will need to install gsl
+To install in Mac
 ~~~~
 brew install gsl
 brew install clang-omp 

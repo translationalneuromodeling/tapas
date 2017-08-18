@@ -1,4 +1,4 @@
-*Version 2.7.3.0*
+*Version 2.7.3.1*
 
 T  A  P  A  S - TNU Algorithms for Psychiatry-Advancing Science.
 ========================================================================
@@ -51,9 +51,9 @@ For now, the documentation of TAPAS can be found on
 - the TNU website (previous TAPAS versions)
 
 ### GitHub ###
-- The [Wiki](/../wikis/home) on the 
+- The [Wiki](https://github.com/translationalneuromodeling/tapas/wiki) on the 
   [TAPAS GitHub page](https://github.com/translationalneuromodeling/tapas) contains 
-  the latest documentation about TAPAS. 
+  the latest released documentation about TAPAS. 
 
 - If you have a GitHub account, please report bugs or feature requests via the  
   [Issues](https://github.com/translationalneuromodeling/tapas/issues) page there.
@@ -65,7 +65,11 @@ For now, the documentation of TAPAS can be found on
 
 - For queries and discussions please join the mailing list at
   http://sympa.ethz.ch/sympa/info/tapas 
-- Bugs in the software can also be emailed directly to: [tapas-bugs@biomed.ee.ethz.ch]
+- Bugs in the software can also be emailed directly to: [tapas-bugs@biomed.ee.ethz.ch](mailto:tapas-bugs@biomed.ee.ethz.ch)
+
+### GitLab (TNU-internal) ###
+- The current Wiki under development is found here: [GitLab Wiki](/../wikis/home)
+    - *Note that this link only works within the TNU GitLab*
 
 ### Cite me ###
 
