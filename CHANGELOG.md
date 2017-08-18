@@ -7,7 +7,8 @@ TAPAS toolbox
 - CHANGELOG.md includes value for hot fixes.
 
 ### Fixed
-- Repar links to the wiki in the readme file.
+- Repair links to the wiki in the readme file.
+- Typos in SEM documentation.
 
 ## [2.7.3.0] 2017-08-17
 
