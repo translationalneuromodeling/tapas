@@ -15,7 +15,7 @@ function [version, hash] = tapas_version(verbose)
 %
 
 version = {2, 7, 3, 1};
-hash = ''; % In a future implementation
+[branch, hash] = tapas_get_tapas_revision(0);
 
 if nargin < 1
     verbose = 0;
@@ -24,6 +24,7 @@ end
 if verbose
     tapas_print_logo();
     fprintf(1, '\n\nVersion %d.%d.%d.%d\n', version{:});
+    fprintf(1, 'Branch & revision %s %s\n', branch, hash);
     fprintf(1, 'In your citation please include the current version.\n');
     fprintf(1, 'Please cite the corresponding masucript according to:\n')
     fprintf(1, 'PhysIO: https://www.ncbi.nlm.nih.gov/pubmed/27832957\n')
