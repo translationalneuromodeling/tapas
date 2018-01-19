@@ -1,32 +1,35 @@
 *Version 2.7.3.1*
 
-T  A  P  A  S - TNU Algorithms for Psychiatry-Advancing Science.
+T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================
 
 This file describes the installation and usage of the software.
 Full details can be found on the TNU website:
                  http://www.translationalneuromodeling.org/tapas/
 
+
 -----------
 DESCRIPTION
 -----------
 
-TAPAS is a collection of algorithms and software tools that are 
-developed by the Translational Neuromodeling Unit (TNU) at Zurich. 
-These tools have been developed to support translational neuroscience, 
-particularly concerning the application of neuroimaging and 
-computational modeling to research questions in psychiatry and 
-neurology. Problems that can be addressed by tools in TAPAS presently include:
+TAPAS is a collection of algorithms and software tools developed by the 
+Translational Neuromodeling Unit (TNU, Zurich) and collaborators. The goal of 
+these tools is to support clinical neuromodeling, particularly computational 
+psychiatry, computational neurology, and computational psychosomatics.
 
-- Correction of physiological noise in fMRI data.
-- Bayesian inference on computational processes from observed behaviour.
-- Bayesian mixed-effects inference for classification studies.
-- Variational-Bayes Linear Regression.
-- Efficient integration of the DCMs using massive parallelization.
-- Modeling of eye movements.
+Currently, TAPAS includes the following packages:
+
+- [GPO](gpo/README.md): Gaussian Process Optimization
+- [HGF](HGF/README.md): Hierarchical Gaussian Filter
+- [MICP](MICP/Readme%20for%20MATLAB.pdf): Mixed-effects Inference for Classification Studies
+- [MPDCM](mpdcm/README.md): Massively Parallel DCM
+- [PhysIO](PhysIO/README.md): Physiological Noise Correction for fMRI 
+- [SEM](sem/README.md): SERIA Model for Eye Movements (saccades and anti-saccades) and Reaction Times
+- [VBLM](VBLM/README.txt): Variational Bayesian Linear Regression
 
 TAPAS is written in MATLAB and distributed as open source code under 
 the GNU General Public License (GPL, Version 3).
+
 
 ------------
 INSTALLATION                                                        
@@ -42,36 +45,36 @@ the directory where tapas is installed/extracted.
 For the individual toolboxes included in TAPAS, please refer to their 
 documentation (s.b.) for specific installation instructions.
 
+
 -------------
 DOCUMENTATION
 -------------
 
-For now, the documentation of TAPAS can be found on 
-- GitHub (latest TAPAS versions)
-- the TNU website (previous TAPAS versions)
+- The latest documentation of TAPAS can be found in this README and on the 
+  [GitHub Wiki](https://github.com/translationalneuromodeling/tapas/wiki) of the 
+  [TAPAS GitHub page](https://github.com/translationalneuromodeling/tapas)
+- In general, each toolbox comes with their own documentation as Wiki, PDF, 
+  matlab tutorials etc.
+- Documentation for older versions (<= 2.7.0.0) is provided on the 
+  [TNU page](https://www.tnu.ethz.ch/de/software/tapas/documentations.html)
 
-### GitHub ###
-- The [Wiki](https://github.com/translationalneuromodeling/tapas/wiki) on the 
-  [TAPAS GitHub page](https://github.com/translationalneuromodeling/tapas) contains 
-  the latest released documentation about TAPAS. 
 
-- If you have a GitHub account, please report bugs or feature requests via the  
-  [Issues](https://github.com/translationalneuromodeling/tapas/issues) page there.
+-------
+SUPPORT
+-------
 
-### TNU-Website ###
-- The TNU website contains all the necessary documentation, user manuals,
-  publications relevant to the previous versions of this software (<= 2.7.0.0)
-           http://www.translationalneuromodeling.org/tapas-documentation/
+- Please submit bug reports, feature requests, code improvements etc. via the  
+  [Issues](https://github.com/translationalneuromodeling/tapas/issues) Forum pages 
+  on GitHub (you will need a GitHub account.
+- This issue forum is searchable, so please have a look if your question has 
+  been asked before
+- For older versions or more general questions, please also have a look at our 
+  now deprecated E-Mail List, which has a searchable [Archive](https://sympa.ethz.ch/sympa/arc/tapas)
 
-- For queries and discussions please join the mailing list at
-  http://sympa.ethz.ch/sympa/info/tapas 
-- Bugs in the software can also be emailed directly to: [tapas-bugs@biomed.ee.ethz.ch](mailto:tapas-bugs@biomed.ee.ethz.ch)
 
-### GitLab (TNU-internal) ###
-- The current Wiki under development is found here: [GitLab Wiki](/../wikis/home)
-    - *Note that this link only works within the TNU GitLab*
-
-### Cite me ###
+-------
+Cite Me
+-------
 
 Information about citations and current version can be printed from matlab with
 the command: 
@@ -80,15 +83,18 @@ the command:
 tapas_version(1);
 ~~~
 
-### Current release ###
 
-Information about changes in the current release can be found in the CHANGELOG.md
+---------------
+Current release
+---------------
+
+Information about changes in the current release can be found in the [CHANGELOG.md]
 file.
+
 
 -------
 LICENSE                            
 -------
-
 
 This software is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this software. If not, see http://www.gnu.org/licenses/.
 
