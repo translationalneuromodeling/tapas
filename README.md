@@ -19,7 +19,6 @@ psychiatry, computational neurology, and computational psychosomatics.
 
 Currently, TAPAS includes the following packages:
 
-- [GPO](gpo/README.md): Gaussian Process Optimization
 - [HGF](HGF/README.md): The Hierarchical Gaussian Filter; Bayesian inference 
   on computational processes from observed behaviour
 - [MICP](MICP/Readme%20for%20MATLAB.pdf): Bayesian Mixed-effects Inference for Classification Studies
