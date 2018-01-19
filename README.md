@@ -1,4 +1,4 @@
-*Version 2.7.3.1*
+*Version 2.7.3.2*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================
@@ -20,9 +20,10 @@ psychiatry, computational neurology, and computational psychosomatics.
 Currently, TAPAS includes the following packages:
 
 - [GPO](gpo/README.md): Gaussian Process Optimization
-- [HGF](HGF/README.md): Hierarchical Gaussian Filter
-- [MICP](MICP/Readme%20for%20MATLAB.pdf): Mixed-effects Inference for Classification Studies
-- [MPDCM](mpdcm/README.md): Massively Parallel DCM
+- [HGF](HGF/README.md): The Hierarchical Gaussian Filter; Bayesian inference 
+  on computational processes from observed behaviour
+- [MICP](MICP/Readme%20for%20MATLAB.pdf): Bayesian Mixed-effects Inference for Classification Studies
+- [MPDCM](mpdcm/README.md): Massively Parallel DCM; Efficient integration of DCMs using massive parallelization 
 - [PhysIO](PhysIO/README.md): Physiological Noise Correction for fMRI 
 - [SEM](sem/README.md): SERIA Model for Eye Movements (saccades and anti-saccades) and Reaction Times
 - [VBLM](VBLM/README.txt): Variational Bayesian Linear Regression
@@ -67,7 +68,7 @@ SUPPORT
   [Issues](https://github.com/translationalneuromodeling/tapas/issues) Forum pages 
   on GitHub (you will need a GitHub account.
 - This issue forum is searchable, so please have a look if your question has 
-  been asked before
+  been asked before.
 - For older versions or more general questions, please also have a look at our 
   now deprecated E-Mail List, which has a searchable [Archive](https://sympa.ethz.ch/sympa/arc/tapas)
 
@@ -88,7 +89,7 @@ tapas_version(1);
 Current release
 ---------------
 
-Information about changes in the current release can be found in the [CHANGELOG.md]
+Information about changes in the current release can be found in the [CHANGELOG.md](CHANGELOG.md)
 file.
 
 
