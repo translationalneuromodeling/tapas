@@ -1,3 +1,5 @@
+![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
+
 *Version 2.7.4.1*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
@@ -38,6 +40,9 @@ INSTALLATION
 TAPAS is a collection of toolboxes written in MATLAB (Version R2016b). The key 
 requirement is the installation of MATLAB (produced by The MathWorks, Inc.  
 Natick, MA, USA. http://www.mathworks.com/).
+
+Please download TAPAS from our 
+[Github Release Page](github.com/translationalneuromodeling/tapas/releases).
 
 To add the TAPAS directory to the MATLAB path, run the script `tapas_init.m` in 
 the directory where tapas is installed/extracted. 
@@ -90,6 +95,9 @@ Current release
 
 Information about changes in the current release can be found in the [CHANGELOG.md](CHANGELOG.md)
 file.
+
+All recent stables releases can be downloaded from our
+[TAPAS Github Release Page](github.com/translationalneuromodeling/tapas/releases).
 
 
 -------
