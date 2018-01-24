@@ -1,0 +1,10 @@
+Please cite this software as follows:
+
+Kasper, L., Bollmann, S., Diaconescu, A.O., Hutton, C., Heinzle, J., 
+Iglesias, S., Hauser, T.U., Sebold, M., Manjaly, Z.-M., Pruessmann, K.P., 
+Stephan, K.E., 2017. The PhysIO Toolbox for Modeling Physiological Noise 
+in fMRI Data. 
+Journal of Neuroscience Methods 276, 56–72. 
+doi:10.1016/j.jneumeth.2016.10.019
+
+For a detailed snippet to be included in the methods section of your manuscript, see the FAQ in the documentation.
