@@ -25,7 +25,7 @@ if verbose
     tapas_print_logo();
     fprintf(1, '\n\nVersion %d.%d.%d.%d\n', version{:});
     fprintf(1, 'In your citation please include the current version.\n');
-    fprintf(1, 'Please cite the corresponding masucript according to:\n')
+    fprintf(1, 'Please cite the corresponding publications according to the toolboxes used:\n')
     fprintf(1, 'PhysIO: https://www.ncbi.nlm.nih.gov/pubmed/27832957\n')
     fprintf(1, 'HGF:    https://www.ncbi.nlm.nih.gov/pubmed/21629826\n')
     fprintf(1, '        https://www.ncbi.nlm.nih.gov/pubmed/25477800\n');

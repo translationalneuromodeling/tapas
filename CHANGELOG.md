@@ -1,6 +1,15 @@
 # Changelog
 TAPAS toolbox 
 
+## [2.7.3.2] 2018-01-19
+
+### Changed
+- README.md includes references to github, new support policy, links to toolbox documentation
+
+### Fixed
+- tapas_version typo
+- tapas_print_logo with T=Translational instead of TNU
+
 ## [2.7.3.1] 2017-08-18
 
 ### Changed
