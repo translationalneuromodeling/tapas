@@ -553,6 +553,7 @@ else
     
     % read-in data
     ons_secs.t              	 = [];  % time vector corresponding to c and r
+    ons_secs.t_start             = [];  % offset time when logfile started, such that t(1)=0 and t contains relative times
     ons_secs.c              	 = [];  % raw cardiac waveform (ECG or PPU)
     ons_secs.r              	 = [];  % raw respiration amplitude time course
     ons_secs.c_scaling           = 1;   % stores scaling factor for cardiac data
