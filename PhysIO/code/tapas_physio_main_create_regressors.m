@@ -102,6 +102,8 @@ if ~hasPhaseLogfile
     % read and preprocess logfiles only, if model-based physiological noise correction is needed
     if doesNeedPhyslogFiles
         
+        
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% 1. Read in vendor-specific physiological log-files
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,7 +133,7 @@ if ~hasPhaseLogfile
         % nominal:  using entered sequence parameters (nSlices, nScans etc)
         % Philips:  via gradient time-course or existing acq_codes in logfile
         % GE:       nominal
-        % Siemens:  from tics (Release D), from .resp/.ecg files (Release B)
+        % Siemens:  from tics (Release VD/E), from .resp/.ecg files (Release VB)
         % Biopac:   using triggers from Digital input (mat file)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -186,8 +188,9 @@ if ~hasPhaseLogfile
             end
             
             % label constant samples as unreliable (clipping/detachment)
-            ons_secs.c_is_reliable = 1 - tapas_physio_detect_constants(ons_secs.c, ...
-                minConstantIntervalAlertSamples);
+            [ons_secs.c_is_reliable, ~, verbose] = tapas_physio_detect_constants(ons_secs.c, ...
+                minConstantIntervalAlertSamples, [], verbose);
+            ons_secs.c_is_reliable = 1 - ons_secs.c_is_reliable;
         end
         
         if hasRespData
@@ -196,8 +199,9 @@ if ~hasPhaseLogfile
                 ons_secs.dt, doNormalize);
             
             % label constant samples as unreliable (clipping/detachment)
-            ons_secs.r_is_reliable = 1 - tapas_physio_detect_constants(ons_secs.fr, ...
-                minConstantIntervalAlertSamples);
+            [ons_secs.r_is_reliable, ~, verbose]  = tapas_physio_detect_constants(ons_secs.fr, ...
+                minConstantIntervalAlertSamples, [], verbose);
+            ons_secs.r_is_reliable = 1 - ons_secs.r_is_reliable;
         end
         
         [ons_secs, scan_timing.sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_window(...
@@ -318,6 +322,7 @@ for onset_slice = onset_slices
     
     
     %% 4.7. Load and manipulate movement parameters as confound regressors
+    
     if model.movement.include && ~isempty(model.movement.file_realignment_parameters)
         [movement_R, verbose] = tapas_physio_create_movement_regressors(...
             model.movement, verbose);
@@ -386,6 +391,7 @@ for onset_slice = onset_slices
     end
     
 end % onset_slices
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

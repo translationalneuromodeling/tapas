@@ -1,5 +1,5 @@
 function [VOLLOCS, LOCS, verbose] = ...
-    tapas_physio_create_scan_timing_from_tics_siemens(t, log_files, verbose)
+    tapas_physio_create_scan_timing_from_tics_siemens(t, t_start, log_files, verbose)
 % Creates locations of scan volume and slice events in physiological time series vector from Siemens Tics-file
 % (<date>_<time>_AcquisitionInfo*.log)
 %
@@ -8,6 +8,7 @@ function [VOLLOCS, LOCS, verbose] = ...
 %
 % IN
 %   t           - timing vector of physiological logfiles
+%   t_start       offset to t indicating start of phys log file
 %   log_files   - structure holding log-files, here:
 %                 .scan_timing - <date>_<time>_AcquisitionInfo*.log
 %                                Siemens Acquisition info logfile, e.g.
@@ -25,7 +26,7 @@ function [VOLLOCS, LOCS, verbose] = ...
 %           LOCS            - locations in time vector, when slice or volume scan
 %                             events started
 % EXAMPLE
-%   [VOLLOCS, LOCS] = tapas_physio_create_nominal_scan_timing(t, sqpar);
+%   [VOLLOCS, LOCS] = tapas_physio_create_scan_timing_from_tics_siemens(t, sqpar);
 %
 %   See also
 %
@@ -41,30 +42,34 @@ function [VOLLOCS, LOCS, verbose] = ...
 % $Id$
 DEBUG = verbose.level >=3;
 
-fid = fopen(log_files.scan_timing);
 
-C = textscan(fid, '%d %d %d', 'HeaderLines', 1);
-
-% check whether textscan worked, otherwise try different format
-if isempty(C{2})
-    C           = textscan(fid, '%d %d %d %d', 'HeaderLines', 8);
-end
-
+C = tapas_physio_read_files_siemens_tics(log_files.scan_timing, 'INFO');
 
 dtTicSeconds = 2.5e-3;
 
 idVolumes       = C{1};
 idSlices        = C{2};
 
-% HACK: take care of interleaved acquisition:
+% HACK: take care of interleaved acquisition; multiband?
 ticsAcq         = sort(double(C{3}));
-tAcqSeconds     = ticsAcq*dtTicSeconds;
+tAcqSeconds     = ticsAcq*dtTicSeconds - t_start; % relative timing to start of phys logfile
 
 % find time in physiological log time closest to time stamp of acquisition
 % for each time
-LOCS = zeros(size(idSlices));
-for iLoc = 1:numel(LOCS)
-    [tmp, LOCS(iLoc)] = min(abs(t - tAcqSeconds(iLoc)));
+if exist('knnsearch', 'file')
+    LOCS = knnsearch(t, tAcqSeconds); % Matlab stats toolbox next neighbor search
+else
+    % slower linear search, without the need for knnsearch
+    LOCS = zeros(size(idSlices));
+    iSearchStart = 1;
+    for iLoc = 1:numel(LOCS)
+        if ~mod(iLoc,1000), fprintf('%d/%d\n',iLoc,numel(LOCS));end
+        [~, iClosestTime] = min(abs(t(iSearchStart:end) - tAcqSeconds(iLoc)));
+        
+        % only works for ascendingly sorted ticsAcq!
+        LOCS(iLoc) = iSearchStart - 1 + iClosestTime;
+        iSearchStart = LOCS(iLoc);
+    end
 end
 
 % extract start times of volume by detecting index change volume id

@@ -1,7 +1,7 @@
 function physio = tapas_physio_save_batch_mat_script(fileBatchM)
 % Saves .m-matlabbatch-file as .mat and as spm-independent matlab-script
 %
-%   output = tapas_physio_save_batch_mat_script(matlabbatch)
+%   physio = tapas_physio_save_batch_mat_script(fileBatchM)
 %
 % IN
 %   fileBatchM      either .m-file of batch job or matlabbatch structure
@@ -46,6 +46,10 @@ end
 
 fileBatchMat = regexprep(fileBatchM, '\.m', '\.mat');
 fileScript = regexprep(fileBatchM, {'spm_job', 'job'}, 'matlab_script');
+
+if isequal(fileScript,fileBatchM)
+    fileScript = regexprep(fileBatchM, '\.m', '_matlab_script\.m');
+end
 
 if ~exist('cfg_files', 'file')
     spm_jobman('initcfg');

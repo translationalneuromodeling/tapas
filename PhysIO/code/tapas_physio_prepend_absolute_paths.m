@@ -1,5 +1,6 @@
 function physio = tapas_physio_prepend_absolute_paths(physio)
-%prepend absolute paths for file names, in particular save_dir
+%prepend absolute paths for file names, in particular save_dir; creates
+% save_dir, if necessary
 %
 %   physio = tapas_physio_prepend_absolute_paths(physio)
 %
@@ -24,6 +25,10 @@ function physio = tapas_physio_prepend_absolute_paths(physio)
 % $Id: teditRETRO.m 464 2014-04-27 11:58:09Z kasperla $
 
 save_dir = physio.save_dir;
+
+if ~exist(save_dir, 'dir') && ~isempty(save_dir)
+    [~,~] = mkdir(save_dir);
+end
 
 if ~isequal(save_dir, fileparts(physio.verbose.fig_output_file))
     physio.verbose.fig_output_file = fullfile(save_dir, ...
