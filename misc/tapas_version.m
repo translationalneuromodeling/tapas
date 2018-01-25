@@ -14,7 +14,7 @@ function [version, hash] = tapas_version(verbose)
 % copyright (C) 2017
 %
 
-version = {2, 7, 3, 1};
+version = {2, 7, 4, 1};
 hash = ''; % In a future implementation
 
 if nargin < 1
