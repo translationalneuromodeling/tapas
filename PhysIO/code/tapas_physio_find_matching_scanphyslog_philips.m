@@ -8,6 +8,8 @@ function fnPhysLogArray = tapas_physio_find_matching_scanphyslog_philips(...
 %
 % IN
 %       fnImageArray    cell of image files, e.g. os_20062014_0904060_10_1_wipepitrig1mmtra150dynV42_typ0 
+%                       to be conveniently retrieved from scan id via 
+%                       tapas_physio_get_filename_from_id_philips
 %       pathLogFiles    path with SCANPHYSLOG*.log
 % 
 % OUT
@@ -16,7 +18,7 @@ function fnPhysLogArray = tapas_physio_find_matching_scanphyslog_philips(...
 % EXAMPLE
 %   tapas_physio_find_matching_scanphyslog_philips
 %
-%   See also
+%   See also tapas_physio_get_filename_from_id_philips
 %
 % Author: Lars Kasper
 % Created: 2014-06-19

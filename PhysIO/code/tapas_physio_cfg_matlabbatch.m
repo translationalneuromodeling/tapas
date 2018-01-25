@@ -7,8 +7,6 @@ function physio = tapas_physio_cfg_matlabbatch
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
-%
-% $Id$
 
 
 pathThis = fileparts(mfilename('fullpath')); % TODO: more elegant via SPM!
@@ -38,40 +36,42 @@ save_dir.num     = [0 1];
 vendor        = cfg_menu;
 vendor.tag    = 'vendor';
 vendor.name   = 'vendor';
-vendor.help   = {' vendor                Name depending on your MR Scanner system'
+vendor.help   = {' Vendor Name depending on your MR Scanner/Physiological recording system'
     '                       ''Philips'''
     '                       ''GE'''
     '                       ''Siemens'''
     '                       ''Siemens_Tics'' - new Siemens physiological'
-    '                       logging with time stamps in tics'
-    '                       (= steps of 2.5 ms since midnight) and'
-    '                       extra acquisition (scan_timing) logfile with'
-    '                       time stamps of all volumes and slices'
+    '                           Logging with time stamps in tics'
+    '                           (= steps of 2.5 ms since midnight) and'
+    '                           extra acquisition (scan_timing) logfile with'
+    '                           time stamps of all volumes and slices'
+    '                       ''Siemens_HCP'' - Human Connectome Project (HCP) Physiology Data' 
+    '                           HCP-downloaded files of  name format  *_Physio_log.txt '
+    '                           are already preprocessed into this simple 3-colum text format'
     '                       ''Biopac_Mat'' - exported mat files from Biopac system'
     '                       ''BrainProducts'' - .eeg files from BrainProducts EEG system'
-    ' '
-    '                       or'
     '                       ''Custom'''
-    ' '
-    '  ''Custom'' expects the logfiles (separate files for cardiac and respiratory)'
-    '  to be plain text, with one cardiac (or'
-    '  respiratory) sample per row;'
-    '  If heartbeat (R-wave peak) events are'
-    '  recorded as well, they have to be put'
-    '  as a 2nd column in the cardiac logfile'
-    '  by specifying a 1; 0 in all other rows'
-    '  e.g.:'
-    '      0.2  0'
-    '      0.4  1 <- cardiac pulse event'
-    '      0.2  0'
-    '      -0.3 0'
-    ' '
-    ' '
-    ' NOTE: the sampling interval has to be specified for these files as'
-    ' well (s.b.)'
+    '                           ''Custom'' expects the logfiles (separate files for cardiac and respiratory)'
+    '                           to be plain text, with one cardiac (or'
+    '                           respiratory) sample per row;'
+    '                           If heartbeat (R-wave peak) events are'
+    '                           recorded as well, they have to be put'
+    '                           as a 2nd column in the cardiac logfile'
+    '                           by specifying a 1; 0 in all other rows'
+    '                           e.g.:'
+    '                           0.2  0'
+    '                           0.4  1 <- cardiac pulse event'
+    '                           0.2  0'
+    '                           -0.3 0'
+    '                           NOTE: the sampling interval has to be specified for these files as'
+    '                           well (s.b.)'
     };
-vendor.labels = {'Philips', 'GE', 'Siemens (VB, *.puls/*.ecg/*.resp)', 'Siemens_Tics (VD: *_PULS.log/*_ECG1.log/*_RESP.log/*_AcquisitionInfo*.log)', 'Biopac_Mat', 'BrainProducts', 'Custom'};
-vendor.values = {'Philips', 'GE', 'Siemens', 'Siemens_Tics', 'Biopac_Mat', 'BrainProducts', 'Custom'};
+vendor.labels = {'Philips', 'GE', 'Siemens (VB, *.puls/*.ecg/*.resp)', ...
+    'Siemens_Tics (VD: *_PULS.log/*_ECG1.log/*_RESP.log/*_AcquisitionInfo*.log)', ...
+    'Siemens_HCP (Human Connectome Project, *Physio_log.txt, 3 column format', ...
+    'Biopac_Mat', 'BrainProducts', 'Custom'};
+vendor.values = {'Philips', 'GE', 'Siemens', 'Siemens_Tics', 'Siemens_HCP', ...
+    'Biopac_Mat', 'BrainProducts', 'Custom'};
 vendor.val    = {'Philips'};
 
 %--------------------------------------------------------------------------
@@ -134,8 +134,8 @@ sampling_interval.tag     = 'sampling_interval';
 sampling_interval.name    = 'sampling_interval';
 sampling_interval.help    = {
     'sampling interval of phys log files (in seconds)'
-    ' If empty, default values are used: 2 ms for Philips, 25 ms for GE and others'
-    ' For Biopac, sampling rate is read directly from logfile'
+    ' If empty, default values are used: 2 ms for Philips, 25 ms for GE, 2.5 ms for Siemens Tics and HCP'
+    ' For Biopac and Siemens, sampling rate is read directly from logfile'
     ' If cardiac and respiratory sampling rate differ, enter them as vector'
     ' [sampling_interval_cardiac, sampling_interval_respiratory]'
     ' '
@@ -353,7 +353,8 @@ vol_spacing.tag     = 'vol_spacing';
 vol_spacing.name    = 'vol_spacing';
 vol_spacing.help    = {'time (in seconds) between last slice of n-th volume'
     'and 1st slice of n+1-th volume(overrides .vol-threshold)'
-    'NOTE: Leave empty if .vol shall be used'};
+    'Optional parameter (leave empty if unused) - can be used if volume start indicated by longer delay between slices'
+    'Mutually exclusive with use of vol-parameter'};
 vol_spacing.strtype = 'e';
 vol_spacing.num     = [Inf Inf];
 vol_spacing.val     = {[]};
@@ -364,7 +365,9 @@ vol_spacing.val     = {[]};
 vol         = cfg_entry;
 vol.tag     = 'vol';
 vol.name    = 'vol';
-vol.help    = {'Gradient Amplitude Threshold for Start of new Volume'};
+vol.help    = {'Gradient Amplitude Threshold for Start of new Volume'
+    'Optional parameter (leave empty if unused) - can be used if volume start indicated by higher gradient amplitude'
+    'Mutually exclusive with use of vol_spacing-parameter'};
 vol.strtype = 'e';
 vol.num     = [Inf Inf];
 vol.val     = {[]};
@@ -378,7 +381,7 @@ slice.name    = 'slice';
 slice.help    = {'Gradient Amplitude Threshold for Start of new slice'};
 slice.strtype = 'e';
 slice.num     = [Inf Inf];
-slice.val     = {1800};
+slice.val     = {0.6};
 
 %--------------------------------------------------------------------------
 % zero
@@ -389,7 +392,7 @@ zero.name    = 'zero';
 zero.help    = {'Gradient Amplitude Threshold below which values will be set to 0.'};
 zero.strtype = 'e';
 zero.num     = [Inf Inf];
-zero.val     = {1700};
+zero.val     = {0.5};
 
 
 %--------------------------------------------------------------------------
@@ -621,7 +624,7 @@ initial_cpulse_select_method_load_from_logfile.help = { ...
 initial_cpulse_select      = cfg_choice;
 initial_cpulse_select.tag  = 'initial_cpulse_select';
 initial_cpulse_select.name = 'Initial Detection of Heartbeats';
-initial_cpulse_select.val  = {initial_cpulse_select_method_load_from_logfile};
+initial_cpulse_select.val  = {initial_cpulse_select_method_auto_matched};
 initial_cpulse_select.values  = {
     initial_cpulse_select_method_auto_matched, ...
     initial_cpulse_select_method_auto_template, ...
@@ -1273,7 +1276,7 @@ movement_yes.help = {'Include Movement Model, as described in Friston et al., 19
 movement      = cfg_choice;
 movement.tag  = 'movement';
 movement.name = 'Movement';
-movement.val  = {movement_yes};
+movement.val  = {movement_no};
 movement.values  = {movement_no, movement_yes};
 movement.help = {'Movement Model, as described in Friston et al., 1996'};
 

@@ -140,7 +140,7 @@ while n > 1+searchStepsTotal+halfTemplateWidthInSamples
         
         % weight correlations far away from template center
         % less; since heartbeat to be expected in window center
-        % gaussianWindow = gausswin(2*searchStepsTotal+1);
+        % gaussianWindow = tapas_physio_gausswin(2*searchStepsTotal+1);
         %                     currentWeight = gaussianWindow(searchPosition+searchStepsTotal+1);
         
         currentWeight = abs(cPadded(n+searchPosition+1));
@@ -177,7 +177,7 @@ clear cpulse;
 searchStepsTotal = round(0.5*averageHeartRateInSamples);
 
 % for weighted searching of max correlation
-gaussianWindow = gausswin(2*searchStepsTotal+1);
+gaussianWindow = tapas_physio_gausswin(2*searchStepsTotal+1);
 
 if debug
     set(0,'defaultFigureWindowStyle','normal')

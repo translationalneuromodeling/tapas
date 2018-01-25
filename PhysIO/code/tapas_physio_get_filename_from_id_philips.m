@@ -22,5 +22,10 @@ if nargin < 3
     ext = '.nii';
 end
 
-fn = regexprep(regexprep(ls(fullfile(dirRaw ...
+try
+    fn = regexprep(regexprep(ls(fullfile(dirRaw ...
         ,['*_' num2str(fileID) '_1_*' ext])), [dirRaw filesep], ''),'\n','');
+catch
+    fn = regexprep(regexprep(ls(fullfile(dirRaw ...
+        ,['*_' num2str(fileID) '_2_*' ext])), [dirRaw filesep], ''),'\n','');
+end

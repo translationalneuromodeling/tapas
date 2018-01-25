@@ -4,9 +4,23 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-PhysIO_Toolbox_R2017.2
+PhysIO_Toolbox_R2017.3
 
-August 03, 2017
+January 24, 2018
+
+Minor Release Notes (R2017.3)
+-----------------------------
+
+- Included references to external [ETH gitlab physio-doc repo and wiki](https://gitlab.ethz.ch/physio/physio-doc)
+- New Human Connectome Project reader for preprocessed Siemens 3-column logfiles (`*Physio_log.txt`)
+- Updated Siemens Reader for Multiband patches(CMRR), versions EJA_1
+    - including multi-echo data (4,5 columns)
+    - multi-channel ECG data
+    - significant speed up of read-in
+    - generalized framework for later changes to format
+    - interpolation of different sampling rates RESP/CARDIAC
+- updated README about documentation, new support policy and [TAPAS on GitHub](https://translationalneuromodeling.github.io/tapas)
+- extended FAQ
 
 Minor Release Notes (R2017.2)
 -----------------------------

@@ -26,8 +26,6 @@ function verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose)
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
-%
-% $Id$
 
 if verbose.level >= 2
     
@@ -51,7 +49,7 @@ if verbose.level >= 2
     
     
 if has_scan_triggers
-        plot(ons_secs.t, amp*ons_secs.acq_codes/max(ons_secs.acq_codes), 'b'); hold all;
+        plot(ons_secs.t, amp*ons_secs.acq_codes/max(ons_secs.acq_codes), 'c'); hold all;
         lg{end+1} = 'Scan trigger events';
     else
         verbose = tapas_physio_log('No scan trigger events provided', verbose, 0);
@@ -83,7 +81,7 @@ end
     if ~isempty(lg), legend(lg); end;
     
     title('Raw Physiological Logfile Data');
-    xlabel('t (s)');
+    xlabel(sprintf('t (s) (relative to t_{start} = %.2f s)', ons_secs.t_start));
     
     verbose.fig_handles(end+1) = fh;
     

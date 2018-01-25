@@ -29,6 +29,9 @@ function [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles(
 %   cpulse              time events of R-wave peak in cardiac time series (seconds)
 %   acq_codes           slice/volume start events marked by number <> 0
 %                       for time points in t
+%                       10/20 = scan start/end; 
+%                       1 = ECG pulse; 2 = OXY max; 3 = Resp trigger; 
+%                       8 = scan volume trigger
 %
 % EXAMPLE
 %   [ons_secs.cpulse, ons_secs.rpulse, ons_secs.t, ons_secs.c] =
@@ -44,8 +47,6 @@ function [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles(
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
-%
-% $Id$
 
 if nargin < 2
     cardiac_modality = 'ECG';
@@ -75,12 +76,14 @@ switch lower(log_files.vendor)
             tapas_physio_read_physlogfiles_philips(log_files, cardiac_modality);
     case 'siemens'
         [c, r, t, cpulse, verbose] = ...
-            tapas_physio_read_physlogfiles_siemens(log_files, verbose);
+            tapas_physio_read_physlogfiles_siemens(log_files, cardiac_modality, verbose);
         acq_codes = [];
     case 'siemens_tics'
-        [c, r, t, cpulse, verbose] = ...
-            tapas_physio_read_physlogfiles_siemens_tics(log_files, verbose);
-        acq_codes = [];
+        [c, r, t, cpulse, acq_codes, verbose] = ...
+            tapas_physio_read_physlogfiles_siemens_tics(log_files, cardiac_modality, verbose);
+    case 'siemens_hcp'
+        [c, r, t, cpulse, acq_codes, verbose] = ...
+            tapas_physio_read_physlogfiles_siemens_hcp(log_files, cardiac_modality, verbose);
 end
 
 % Do not prepend for Siemens Tics, since can be as long as a day
