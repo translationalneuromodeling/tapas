@@ -17,7 +17,7 @@ TAPAS Contributors
 ### How to Contribute ###
 - Start a discussion on feature requests or report bugs via GitHub Issues
 - Please provide code for TAPAS exclusively via submitting *Pull Requests* on GitHub
-    - You will be prompted to accept the [Contributor License Agreement](Contributor-License-Agreement)
+    - You will be prompted to accept the [Contributor License Agreement](https://gist.github.com/mrikasper/cf06aab2a03c257aaa60ad1fe469b7d0#file-contributor-license-agreement-md)
     - This procedure ensures the continued legal maintainability of the TAPAS software suite.
     - Have a look at [Wikipedia](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for details on the rationale and legal implications of a CLA. Here is a quote of the essence:
     
