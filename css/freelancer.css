@@ -96,7 +96,7 @@ header .intro-text .skills {
 @media (min-width: 768px) {
   header .container {
     padding-top: 200px;
-    padding-bottom: 200px;
+    padding-bottom: 100px;
   }
   header .intro-text .name {
     font-size: 10em;
@@ -194,7 +194,7 @@ header .intro-text .skills {
   }
 }
 section {
-  padding: 100px 0;
+  padding: 50px 0;
 }
 section h2 {
   margin: 0;

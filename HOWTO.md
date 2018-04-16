@@ -1,4 +1,8 @@
 
 aponteeduardo@gmail.com
 
-# Compile the framework
+# Prepare gulp (?)
+npm gulp
+
+# Update css
+gulp 
