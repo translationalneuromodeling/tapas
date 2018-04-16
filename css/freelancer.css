@@ -543,9 +543,7 @@ div#maincontent {
   outline: none;
 }
 
-
-
-
+.top-buffer { margin-top:20px; }
 
 .sidebar-nav-fixed {
   width:14%;
