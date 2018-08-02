@@ -13,3 +13,4 @@ lib
 *.pyc
 *.so
 *.mexw64
+*.asv
