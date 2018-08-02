@@ -12,3 +12,4 @@ lib
 *.a
 *.pyc
 *.so
+*.mexw64
