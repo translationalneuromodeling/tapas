@@ -93,10 +93,38 @@ counts.nMeasurements = nMeasurements;
 counts.nMeasurementsPerState = nMeasurementsPerState;
 
 
-%% parameters for variational Bayes:
-% load default values for settings
-tapas_huge_default_settings;
+%% default settings
+% variational parameters
+% stopping criterion: minimum increase in free energy
+epsEnergy = 1e-5;
+% stopping cirterion: maximum number of iterations
+nIterations = 1e3;
+% number of clusters
+nClusters = 1;
 
+% computational and technical parameters
+% method for calculating jacobian matrix
+fnJacobian = @tapas_huge_jacobian;
+% small constant to be added to the diagonal of inv(postDcmSigma) for
+% numerical stability
+diagConst = 1e-10;
+% keep history of parameters and important auxiliary variables
+bKeepTrace = false;
+% keep history of response related auxiliary variables
+% has no effect if bKeepTrace is false
+bKeepResp = false;
+bVerbose = false;
+
+% set update schedule
+schedule = struct();
+schedule.dfDcm = 50;
+schedule.dfClusters = 10;
+schedule.itAssignment = 1;
+schedule.itCluster = 1;
+schedule.itReturn = 25;
+schedule.itKmeans = 1;
+
+%% parameters for variational Bayes:
 % overwrite with current values, if supplied
 % maximum number of iterations
 if isfield(DcmResults,'nIterations')
@@ -139,7 +167,9 @@ if isfield(DcmResults,'schedule')
 end
 
 % number of clusters
-nClusters = DcmResults.maxClusters; %%% K
+if isfield(DcmResults,'maxClusters')
+    nClusters = DcmResults.maxClusters; %%% K
+end
 if nClusters > nSubjects
     nClusters = nSubjects;
     DcmResults.maxClusters = nClusters;
