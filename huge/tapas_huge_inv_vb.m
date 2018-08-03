@@ -4,8 +4,10 @@
 % DCM for fMRI using variational Bayes.
 %
 % INPUT:
-%       DcmInfo    - struct containing DCM model specification and BOLD
-%                    time series.
+%       DcmInfo    - EITHER: struct containing DCM model specification and
+%                            BOLD time series in DcmInfo format (see
+%                            tapas_huge_simulate.m for an example)
+%                    OR:     cell array of DCM in SPM format
 %       DcmResults - struct containing prior specification and settings.
 %
 % OUTPUT:
@@ -40,23 +42,19 @@ function [ DcmResults ] = tapas_huge_inv_vb( DcmInfo, DcmResults )
 % save state of random number generator
 DcmResults.rngSeed = rng;
 
-% process input
+% check input format
 if ~isfield(DcmInfo,'listBoldResponse')
     try
         DcmInfo = tapas_huge_import_spm(DcmInfo);
     catch err
         disp(['TAPAS:HUGE: Unsupported format. '...
-              'Use cell array of DCM in SPM format for first input.'])
+              'Use cell array of DCM in SPM format as first input.'])
         rethrow(err);
     end
 end
 
+KMEANS_REP = 10;
 
-try
-    KMEANS_REP = DcmResults.kmeans.kmRep;
-catch
-    KMEANS_REP = 10;
-end
 
 % compile integrator
 if exist('tapas_huge_int_euler','file') ~= 3
@@ -96,8 +94,8 @@ counts.nMeasurementsPerState = nMeasurementsPerState;
 
 
 %% parameters for variational Bayes:
-% load default values
-tapas_huge_default_params;
+% load default values for settings
+tapas_huge_default_settings;
 
 % overwrite with current values, if supplied
 % maximum number of iterations
@@ -136,7 +134,9 @@ if isfield(DcmResults,'bVerbose')
     bVerbose = DcmResults.bVerbose;
 end
 
-schedule = DcmResults.schedule;
+if isfield(DcmResults,'schedule')
+    schedule = DcmResults.schedule;
+end
 
 % number of clusters
 nClusters = DcmResults.maxClusters; %%% K
@@ -156,13 +156,6 @@ dcmParametersDefault = zeros(1,DcmInfo.nParameters);
 
 %% priors
 priors = DcmResults.priors;
-try
-    priors.clustersSigma = DcmResults.init.covFactor*priors.clustersSigma;
-    bCovFactor = true;
-catch
-    bCovFactor = false;
-end
-
 % component weights
 if isscalar(priors.alpha)
     priors.alpha = repmat(priors.alpha,nClusters,1);
@@ -179,12 +172,18 @@ if isscalar(priors.noiseInvScale) %%% b_r: inverse scale
 end
 
 
-
-
 %% initial values
+% initialize posterior covariance of DCM parameters
 bInit = isfield(DcmResults,'init');
 
-% initialize posterior covariance of DCM parameters
+if bInit&&isfield(DcmResults.init,'covFactor')
+    priors.clustersSigma = DcmResults.init.covFactor*priors.clustersSigma;
+    bCovFactor = true;
+else
+    bCovFactor = false;
+end
+
+
 if bInit && isfield(DcmResults.init,'dcmSigma')
     posterior.dcmSigma = DcmResults.init.dcmSigma;
 else
@@ -234,7 +233,8 @@ for iSubject = 1:nSubjects
         error('TAPAS:dcm:fmri:inv:vb:badInit',...
               'Initial values of DCM Parameters cause divergence.');
     end
-    posterior.modifiedSumSqrErr(iSubject,:) = ... %%% epsilon^T*Q_r*epsilon + tr(Q_r*G_n*Sigma_n*G_n^T)
+    %%% epsilon^T*Q_r*epsilon + tr(Q_r*G_n*Sigma_n*G_n^T)
+    posterior.modifiedSumSqrErr(iSubject,:) = ... 
         sum(reshape(...
               respError{iSubject}.^2 + ...
                   sum(...
@@ -689,8 +689,8 @@ DcmResults.itSatClusters = itSatClusters;
 
 % save history of important variables
 if bKeepTrace
-    % note: 'DcmResults.debug.trace' will be an array of structs not a struct of
-    %       arrays
+    % note: 'DcmResults.debug.trace' will be an array of structs not a 
+    %       struct of arrays
     DcmResults.debug.trace = struct(...
         'clustersMean',histClustersMean(1:iIteration), ...
         'clustersSigma',histClustersSigma(1:iIteration), ...

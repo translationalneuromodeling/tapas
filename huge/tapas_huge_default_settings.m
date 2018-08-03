@@ -1,7 +1,6 @@
-%% dcm_vb_parameters_default
+%% tapas_huge_default_settings
 % 
-% script for setting default parameter values for variational Basian
-% inversion of HUGE
+% default settings for variational Bayesian inversion of HUGE
 % 
 
 % Author: Yu Yao (yao@biomed.ee.ethz.ch)
@@ -39,5 +38,15 @@ bKeepTrace = false;
 % has no effect if bKeepTrace is false
 bKeepResp = false;
 bVerbose = false;
+
+
+%% set update schedule
+schedule = struct();
+schedule.dfDcm = 50;
+schedule.dfClusters = 10;
+schedule.itAssignment = 1;
+schedule.itCluster = 1;
+schedule.itReturn = 25;
+schedule.itKmeans = 1;
 
 

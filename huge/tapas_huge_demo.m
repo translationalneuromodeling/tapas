@@ -1,7 +1,10 @@
 %% [ DcmInfo, DcmResults ] = tapas_huge_demo( )
 %
 % An example for using the variational Bayes inversion on HUGE for sythetic
-% data.
+% data. The main function tapas_huge_inv_vb.m accepts as first input either
+% a struct containing model specification and data in DcmInfo format or a
+% cell array of DCM in SPM format. Use tapas_huge_import_spm.m to convert
+% DCM in SPM format to DcmInfo format
 %
 % OUTPUT:
 %       DcmInfo    - struct containing the synthetic dataset
@@ -73,53 +76,18 @@ optionsGen.input.u = circshift(optionsGen.input.u,117,1);
 optionsGen.input.trSteps = 16;
 optionsGen.input.trSeconds = 2;
 
-
 DcmInfo = tapas_huge_simulate(optionsGen);
-
-
 
 
 %% set options for inversion
 DcmResults = struct;
-DcmResults.jacobianStepSize = 1e-3;
-% DcmResults.fnJacobian = @dcm_jacobian_fd;
 DcmResults.nIterations = 2^10;
 DcmResults.epsEnergy = 1e-6;
-DcmResults.bKeepTrace = false;
 DcmResults.maxClusters = 3;
-DcmResults.bVerbose = false;
+DcmResults.priors = tapas_huge_build_prior(DcmInfo);
 
 
-
-%% set priors
-priors.alpha = 1;
-priors.clustersMean = [-.5,1/64/DcmInfo.nStates,1/64/DcmInfo.nStates,...
-    1/64/DcmInfo.nStates,-.5,1/64/DcmInfo.nStates,-.5,0,0]; % SPM prior
-p_c = length(priors.clustersMean);
-priors.clustersTau = 0.1;
-priors.clustersDeg = 100;
-priors.clustersSigma = 0.01*eye(p_c)*(priors.clustersDeg - p_c - 1);
-priors.hemMean = zeros(1,DcmInfo.nStates*2 + 1); % SPM prior
-priors.hemSigma = diag(zeros(1,DcmInfo.nStates*2 + 1)+exp(-6)); % SPM prior
-
-priors.noiseInvScale = .025;
-priors.noiseShape = 1.28;
-
-DcmResults.priors = priors;
-
-
-%% set update schedule
-schedule.dfDcm = 50;
-schedule.dfClusters = 10;
-schedule.itAssignment = 1;
-schedule.itCluster = 1;
-schedule.itReturn = 25;
-schedule.itKmeans = 1;
-
-DcmResults.schedule = schedule;
-
-
-%% set initial values
+%% randomize initial values
 init.dcmMean = repmat([DcmResults.priors.clustersMean,...
     DcmResults.priors.hemMean],DcmInfo.nSubjects,1);
 init.dcmMean = init.dcmMean + randn(size(init.dcmMean))*.1;
@@ -136,14 +104,15 @@ DcmResults.init = init;
 DcmResults.bVerbose = true;
 
 currentTimer = tic;
+% In order to apply HUGE to data in SPM format, replace DcmInfo by a cell
+% array of DCM in SPM format
 DcmResults = tapas_huge_inv_vb(DcmInfo,DcmResults);
 toc(currentTimer)
 
 disp(['Negative free energy: ' num2str(DcmResults.freeEnergy)])
 
+
 %% plot result
-
-
 figure
 % subject assignment
 subplot(2,2,1)
@@ -194,9 +163,6 @@ plot(pred(:),'r')
 title('black: measurement - blue: posterior samples');
 ylabel('BOLD')
 xlabel('sample index')
-
-
-
 
 
 end
