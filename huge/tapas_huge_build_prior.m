@@ -16,10 +16,9 @@
 %                 series in DcmInfo format
 %
 % REFERENCE:
-%
-% Yao Y, Raman SS, Schiek M, Leff A, Frässle S, Stephan KE (2018).
-% Variational Bayesian Inversion for Hierarchical Unsupervised Generative
-% Embedding (HUGE). NeuroImage, 179: 604-619
+% [1] Yao Y, Raman SS, Schiek M, Leff A, Frässle S, Stephan KE (2018).
+%     Variational Bayesian Inversion for Hierarchical Unsupervised
+%     Generative Embedding (HUGE). NeuroImage, 179: 604-619
 % 
 % https://doi.org/10.1016/j.neuroimage.2018.06.073
 %
@@ -53,21 +52,38 @@ end
 
 %% set priors
 priors = struct();
+
+% parameter of Dirichlet prior (alpha_0 in Figure 1 of REF [1])
 priors.alpha = 1;
+
 tmp = DcmInfo.adjacencyA/64/DcmInfo.nStates;
 tmp = tmp - diag(diag(tmp)) - .5*eye(DcmInfo.nStates);
 tmp = [tmp(:); DcmInfo.adjacencyC(:)*0; DcmInfo.adjacencyB(:)*0; ...
        DcmInfo.adjacencyD(:)*0];
-priors.clustersMean = tmp(DcmInfo.connectionIndicator)'; % SPM 8 prior
+
+% prior mean of clusters (m_0 in Figure 1 of REF [1])
+priors.clustersMean = tmp(DcmInfo.connectionIndicator)';
+%  tau_0 in Figure 1 of REF [1]
 priors.clustersTau = 0.1;
+% degrees of freedom of inverse-Wishart prior (nu_0 in Figure 1 of REF [1])
 priors.clustersDeg = max(100,1.5^DcmInfo.nConnections);
 priors.clustersDeg = min(priors.clustersDeg,realmax('single'));
+
+% scale matrix of inverse-Wishart prior (S_0 in Figure 1 of REF [1])
 priors.clustersSigma = 0.01*eye(DcmInfo.nConnections)*...
                        (priors.clustersDeg - DcmInfo.nConnections - 1);
-priors.hemMean = zeros(1,DcmInfo.nStates*2 + 1); % SPM 8 prior
-priors.hemSigma = diag(zeros(1,DcmInfo.nStates*2 + 1)+exp(-6)); % SPM prior
 
+% prior mean of heamodynamic parameters (mu_h in Figure 1 of REF [1])
+priors.hemMean = zeros(1,DcmInfo.nStates*2 + 1);
+
+% prior Covariance of heamodynamic parameters(Sigma_h in Figure 1 of
+% REF [1]) 
+priors.hemSigma = diag(zeros(1,DcmInfo.nStates*2 + 1)+exp(-6));
+
+% prior inverse scale of observation noise (b_0 in Figure 1 of REF [1])
 priors.noiseInvScale = .025;
+
+% prior shape parameter of observation noise (a_0 in Figure 1 of REF [1])
 priors.noiseShape = 1.28;
 
 

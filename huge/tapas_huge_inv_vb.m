@@ -14,10 +14,9 @@
 %       DcmResults - struct used for storing the results from VB
 %
 % REFERENCE:
-%
-% Yao Y, Raman SS, Schiek M, Leff A, Frässle S, Stephan KE (2018).
-% Variational Bayesian Inversion for Hierarchical Unsupervised Generative
-% Embedding (HUGE). NeuroImage, 179: 604-619
+% [1] Yao Y, Raman SS, Schiek M, Leff A, Frässle S, Stephan KE (2018).
+%     Variational Bayesian Inversion for Hierarchical Unsupervised
+%     Generative Embedding (HUGE). NeuroImage, 179: 604-619
 % 
 % https://doi.org/10.1016/j.neuroimage.2018.06.073
 %
@@ -129,10 +128,14 @@ schedule.itKmeans = 1;
 % maximum number of iterations
 if isfield(DcmResults,'nIterations')
     nIterations = DcmResults.nIterations;
+else
+    DcmResults.nIterations = nIterations;
 end
 % free energy threshold
 if isfield(DcmResults,'epsEnergy')
     epsEnergy = DcmResults.epsEnergy;
+else
+    DcmResults.epsEnergy = epsEnergy;
 end
 % parameters for jacobian calculation
 paramsJacobian.dimOut = nMeasurements;
@@ -142,33 +145,47 @@ end
 % method for calculating the jacobian matrix
 if isfield(DcmResults,'fnJacobian')
     fnJacobian = DcmResults.fnJacobian;
+else
+    DcmResults.fnJacobian = fnJacobian;
 end
 % diagonal constant for numerical stability
 if isfield(DcmResults,'diagConst')
     diagConst = DcmResults.diagConst;
+else
+    DcmResults.diagConst = diagConst;
 end
 diagConst = diagConst*eye(nDcmParamsInfAll);
 % keep history of important variables
 if isfield(DcmResults,'bKeepTrace')
     bKeepTrace = DcmResults.bKeepTrace;
+else
+    DcmResults.bKeepTrace = bKeepTrace;
 end
 % keep history of response related variables
 % note: has no effect if bKeepTrace is false
 if isfield(DcmResults,'bKeepResp')
     bKeepResp = DcmResults.bKeepResp;
+else
+    DcmResults.bKeepResp = bKeepTrace;
 end
 % switch off command line output
 if isfield(DcmResults,'bVerbose')
     bVerbose = DcmResults.bVerbose;
+else
+    DcmResults.bVerbose = bVerbose;
 end
 
 if isfield(DcmResults,'schedule')
     schedule = DcmResults.schedule;
+else
+    DcmResults.schedule = schedule;
 end
 
 % number of clusters
 if isfield(DcmResults,'maxClusters')
     nClusters = DcmResults.maxClusters; %%% K
+else
+    DcmResults.maxClusters = nClusters;
 end
 if nClusters > nSubjects
     nClusters = nSubjects;
@@ -260,7 +277,7 @@ for iSubject = 1:nSubjects
     % function
     if fnc_check_response(respError{iSubject},...
                                respJacobian{iSubject})
-        error('TAPAS:dcm:fmri:inv:vb:badInit',...
+        error('TAPAS:HUGE:badInit',...
               'Initial values of DCM Parameters cause divergence.');
     end
     %%% epsilon^T*Q_r*epsilon + tr(Q_r*G_n*Sigma_n*G_n^T)
@@ -315,6 +332,7 @@ if bInit && isfield(DcmResults.init,'logSoftAssign')
 else
     logSoftAssign = ones(nSubjects,nClusters); %%% log(q_nk)
     logSoftAssign(:,1) = 100;
+    DcmResults.init.logSoftAssign = logSoftAssign;
 end
 posterior.softAssign = fnc_exp_norm(logSoftAssign);
 nAssign = sum(posterior.softAssign,1).' + realmin;

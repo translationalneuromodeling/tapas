@@ -11,10 +11,9 @@
 %       DcmResults - struct containing the results of VB inference
 %
 % REFERENCE:
-%
-% Yao Y, Raman SS, Schiek M, Leff A, Frässle S, Stephan KE (2018).
-% Variational Bayesian Inversion for Hierarchical Unsupervised Generative
-% Embedding (HUGE). NeuroImage, 179: 604-619
+% [1] Yao Y, Raman SS, Schiek M, Leff A, Frässle S, Stephan KE (2018).
+%     Variational Bayesian Inversion for Hierarchical Unsupervised
+%     Generative Embedding (HUGE). NeuroImage, 179: 604-619
 % 
 % https://doi.org/10.1016/j.neuroimage.2018.06.073
 %
@@ -81,10 +80,41 @@ DcmInfo = tapas_huge_simulate(optionsGen);
 
 %% set options for inversion
 DcmResults = struct;
+
+% maximum number of iterations
 DcmResults.nIterations = 2^10;
+
+% convergence criterion (convergence when negative free energy difference
+% below this threshold)
 DcmResults.epsEnergy = 1e-6;
+
+% number of clusters in the HUGE model (corresponds to K in Figure 1 of 
+% REF [1])
 DcmResults.maxClusters = 3;
+
 DcmResults.priors = tapas_huge_build_prior(DcmInfo);
+% DcmResults.priors is a struct containing the following fields:
+%   alpha          - parameter of Dirichlet prior (alpha_0 in Figure 1 of
+%                    REF [1]) 
+%   clustersMean   - prior mean of clusters (m_0 in Figure 1 of REF [1])
+%   clustersTau    - tau_0 in Figure 1 of REF [1]
+%   clustersDeg    - degrees of freedom of inverse-Wishart prior (nu_0 in
+%                    Figure 1 of REF [1]) 
+%   clustersSigma  - scale matrix of inverse-Wishart prior (S_0 in Figure 1
+%                    of REF [1]) 
+%   hemMean        - prior mean of heamodynamic parameters (mu_h in 
+%                    Figure 1 of REF [1]) 
+%   hemSigma       - prior covariance of heamodynamic parameters(Sigma_h in
+%                    Figure 1 of REF [1]) 
+%   noiseInvScale  - prior inverse scale of observation noise (b_0 in
+%                    Figure 1 of REF [1]) 
+%   noiseShape     - prior shape parameter of observation noise (a_0 in
+%                    Figure 1 of REF [1]) 
+% 
+
+% activates command line output (prints free energy difference) 
+DcmResults.bVerbose = true;
+
 
 
 %% randomize initial values
@@ -97,18 +127,45 @@ init.clustersMean = repmat(...
 init.clustersMean = init.clustersMean + ...
     randn(size(init.clustersMean))*.1;
 
+% Randomization of starting values is optional. If field 'init' is not
+% present in 'DcmResults', VB inversion will start from the prior values.
 DcmResults.init = init;
 
 
 %% invert HUGE
-DcmResults.bVerbose = true;
-
 currentTimer = tic;
 % In order to apply HUGE to data in SPM format, replace DcmInfo by a cell
 % array of DCM in SPM format
 DcmResults = tapas_huge_inv_vb(DcmInfo,DcmResults);
 toc(currentTimer)
+% The result is stored in DcmResults.posterior, which is a struct
+% containing the following fields:
+%   alpha          - parameter of posterior over cluster weights (alpha_k 
+%                    in Eq.(15) of REF [1]) 
+%   softAssign     - posterior assignment probability of subjects to
+%                    clusters (q_nk in Eq.(18) in REF [1])
+%   clustersMean   - posterior mean of clusters (m_k in Eq.(16) of REF [1])
+%   clustersTau    - tau_k in Eq.(16)of REF [1]
+%   clustersDeg    - posterior degrees of freedom (nu_k in Eq.(16) of
+%                    REF [1])
+%   clustersSigma  - posterior scale matrix (S_k in Eq.(16) of REF [1])
+%   logDetClustersSigma - log-determinant of S_k
+%   dcmMean        - posterior mean of DCM parameters (mu_n in Eq.(19) of
+%                    REF [1])  
+%   dcmSigma       - posterior covariance of heamodynamic parameters
+%                    (Sigma_n in Eq.(19) of REF [1]) 
+%   logDetPostDcmSigma - log-determinant of Sigma_n
+%   noiseInvScale  - posterior inverse scale of observation noise (b_n,r in
+%                    Eq.(21) of REF [1]) 
+%   noiseShape     - posterior shape parameter of observation noise (a_n,r 
+%                    in Eq.(21) of REF [1])
+%   meanNoisePrecision - posterior mean of precision of observation noise
+%                        (lambda_n,r in Eq.(23) of REF [1])
+%   modifiedSumSqrErr - b'_n,r in Eq.(22) of REF [1]
+%
 
+% The negative free energy after convergence is stored in
+% DcmResults.freeEnergy 
 disp(['Negative free energy: ' num2str(DcmResults.freeEnergy)])
 
 
