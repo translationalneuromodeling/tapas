@@ -1,6 +1,15 @@
 # Changelog
 TAPAS toolbox 
 
+## [3.0.0]
+
+### Added
+- Contributor License Agreement (CLA) file
+- CONTRIBUTING.md explaining coding and style guidelines, signing procedure for CLA file
+
+### Changed
+- README.md to include reference to CONTRIBUTING.md and explanation of CLA
+
 ## [2.7.4.1] 2018-01-24
 
 ### Added
