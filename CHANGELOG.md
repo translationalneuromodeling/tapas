@@ -1,7 +1,7 @@
 # Changelog
 TAPAS toolbox 
 
-## [3.0.0]
+## [3.0.0] 2018-09-03
 
 ### Added
 - Contributor License Agreement (CLA) file
