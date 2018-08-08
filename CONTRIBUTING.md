@@ -8,7 +8,7 @@ How to Contribute
     - Please **do not** submit code via the Issue system (e.g., as file attachments or posted snippets), but use *pull requests* (s.b.)
 - Please provide code for TAPAS exclusively via submitting *Pull Requests* on GitHub
     - Please accept the [Contributor License Agreement](Contributor-License-Agreement) by 
-        1. adding your name (and GitHub username / e-mail address / affiliation that serve to identify you unambiguously) to the `CLA.md` file in the `tapas/` main folder and 
+        1. adding your name (and affiliation, plus e-mail/GitHub username that serve to identify you unambiguously) to the `Contributor-License-Agreement.md` file in the `tapas/` main folder and 
         2. submitting this updated file with your pull request.
     - This procedure ensures the continued legal maintainability of the TAPAS software suite.
     - Have a look at [Wikipedia](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for details on the rationale and legal implications of a CLA. Here is a quote of the essence:
