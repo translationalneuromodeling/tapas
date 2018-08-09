@@ -4,7 +4,8 @@
 %
 % INPUT:
 %       options - struct containing information on parameters of the
-%                 generative model to be used in the simulation. 
+%                 generative model to be used in the simulation.
+%                 (see tapas_huge_generate_examples.m for an example)
 %
 % OUTPUT:
 %       DcmInfo - struct containing DCM model specification and BOLD time

@@ -1,7 +1,71 @@
 This toolbox implements variational Bayesian inversion for hierarchical 
-unsupervised generative embedding (HUGE). To get started, run the demo script
-with the following command:
-[DcmInfo, DcmResults] = tapas_huge_demo.m;
+unsupervised generative embedding (HUGE). To get started, read the tutorial
+    open huge_tutorial.html
+or run the demo script:
+    open tapas_huge_demo.m
+
+
+The supported interface is:
+
+[DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize)
+INPUT:
+  DCM       - cell array of DCM in SPM format
+  K         - number of clusters (set K to one for empirical Bayes)
+
+OPTIONAL INPUT:
+  priors    - model priors stored in a struct containing the
+              following fields:
+      alpha:         parameter of Dirichlet prior (alpha_0 in Fig.1 of
+                     REF [1])
+      clustersMean:  prior mean of clusters (m_0 in Fig.1 of REF [1])
+      clustersTau:   tau_0 in Fig.1 of REF [1]
+      clustersDeg:   degrees of freedom of inverse-Wishart prior (nu_0 in
+                     Fig.1 of REF [1]) 
+      clustersSigma: scale matrix of inverse-Wishart prior (S_0 in Fig.1
+                     of REF [1]) 
+      hemMean:       prior mean of heamodynamic parameters (mu_h in Fig.1
+                     of REF [1]) 
+      hemSigma:      prior covariance of heamodynamic parameters(Sigma_h
+                     in Fig.1 of REF [1]) 
+      noiseInvScale: prior inverse scale of observation noise (b_0 in
+                     Fig.1 of REF [1]) 
+      noiseShape:    prior shape parameter of observation noise (a_0 in
+                     Fig.1 of REF [1])
+              (you may use tapas_huge_build_prior(DCM) to generate this
+              struct)
+  verbose   - activates command line output (prints free energy
+              difference, default: false)
+  randomize - randomize starting values (default: false). WARNING:
+              randomizing starting values can cause divergence of DCM.
+
+OUTPUT:
+  DcmResults - struct used for storing the results from VB. Posterior
+               parameters are stored in DcmResults.posterior, which is a
+               struct containing the following fields:
+      alpha:               parameter of posterior over cluster weights
+                           (alpha_k in Eq.(15) of REF [1]) 
+      softAssign:          posterior assignment probability of subjects 
+                           to clusters (q_nk in Eq.(18) in REF [1])
+      clustersMean:        posterior mean of clusters (m_k in Eq.(16) of
+                           REF [1]) 
+      clustersTau:         tau_k in Eq.(16) of REF [1]
+      clustersDeg:         posterior degrees of freedom (nu_k in Eq.(16) 
+                           of REF [1])
+      clustersSigma:       posterior scale matrix (S_k in Eq.(16) of
+                           REF [1]) 
+      logDetClustersSigma: log-determinant of S_k
+      dcmMean:             posterior mean of DCM parameters (mu_n in
+                           Eq.(19) of REF [1])  
+      dcmSigma:            posterior covariance of heamodynamic
+                           parameters (Sigma_n in Eq.(19) of REF [1]) 
+      logDetPostDcmSigma:  log-determinant of Sigma_n
+      noiseInvScale:       posterior inverse scale of observation noise
+                           (b_n,r in Eq.(21) of REF [1]) 
+      noiseShape:          posterior shape parameter of observation noise
+                           (a_n,r in Eq.(21) of REF [1])
+      meanNoisePrecision:  posterior mean of precision of observation
+                           noise (lambda_n,r in Eq.(23) of REF [1])
+      modifiedSumSqrErr:   b'_n,r in Eq.(22) of REF [1]
 
 The toolbox requires compilation of mex files, which is done automatically.
 If you wish to compile manually, use the following command:

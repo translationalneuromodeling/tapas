@@ -4,10 +4,9 @@
 % DCM for fMRI using variational Bayes.
 %
 % INPUT:
-%       DcmInfo    - EITHER: struct containing DCM model specification and
-%                            BOLD time series in DcmInfo format (see
-%                            tapas_huge_simulate.m for an example)
-%                    OR:     cell array of DCM in SPM format
+%       DcmInfo    - struct containing DCM model specification and BOLD
+%                    time series in DcmInfo format
+%                    (see tapas_huge_simulate.m for an example)
 %       DcmResults - struct containing prior specification and settings.
 %
 % OUTPUT:
@@ -40,25 +39,7 @@ function [ DcmResults ] = tapas_huge_inv_vb( DcmInfo, DcmResults )
 %
 % save state of random number generator
 DcmResults.rngSeed = rng;
-
-% check input format
-if ~isfield(DcmInfo,'listBoldResponse')
-    try
-        DcmInfo = tapas_huge_import_spm(DcmInfo);
-    catch err
-        disp(['TAPAS:HUGE: Unsupported format. '...
-              'Use cell array of DCM in SPM format as first input.'])
-        rethrow(err);
-    end
-end
-
 KMEANS_REP = 10;
-
-
-% compile integrator
-if exist('tapas_huge_int_euler','file') ~= 3
-     mex tapas_huge_int_euler.c
-end
 
 
 %% extract DCM information
@@ -92,101 +73,38 @@ counts.nMeasurements = nMeasurements;
 counts.nMeasurementsPerState = nMeasurementsPerState;
 
 
-%% default settings
-% variational parameters
-% stopping criterion: minimum increase in free energy
-epsEnergy = 1e-5;
-% stopping cirterion: maximum number of iterations
-nIterations = 1e3;
-% number of clusters
-nClusters = 1;
-
-% computational and technical parameters
-% method for calculating jacobian matrix
-fnJacobian = @tapas_huge_jacobian;
-% small constant to be added to the diagonal of inv(postDcmSigma) for
-% numerical stability
-diagConst = 1e-10;
-% keep history of parameters and important auxiliary variables
-bKeepTrace = false;
-% keep history of response related auxiliary variables
-% has no effect if bKeepTrace is false
-bKeepResp = false;
-bVerbose = false;
-
-% set update schedule
-schedule = struct();
-schedule.dfDcm = 50;
-schedule.dfClusters = 10;
-schedule.itAssignment = 1;
-schedule.itCluster = 1;
-schedule.itReturn = 25;
-schedule.itKmeans = 1;
-
 %% parameters for variational Bayes:
-% overwrite with current values, if supplied
 % maximum number of iterations
-if isfield(DcmResults,'nIterations')
-    nIterations = DcmResults.nIterations;
-else
-    DcmResults.nIterations = nIterations;
-end
+nIterations = DcmResults.nIterations;
+
 % free energy threshold
-if isfield(DcmResults,'epsEnergy')
-    epsEnergy = DcmResults.epsEnergy;
-else
-    DcmResults.epsEnergy = epsEnergy;
-end
+epsEnergy = DcmResults.epsEnergy;
+
 % parameters for jacobian calculation
 paramsJacobian.dimOut = nMeasurements;
-if isfield(DcmResults,'jacobianStepSize')
-    paramsJacobian.stepSize = DcmResults.jacobianStepSize;
-end
+
 % method for calculating the jacobian matrix
-if isfield(DcmResults,'fnJacobian')
-    fnJacobian = DcmResults.fnJacobian;
-else
-    DcmResults.fnJacobian = fnJacobian;
-end
+fnJacobian = DcmResults.fnJacobian;
+
 % diagonal constant for numerical stability
-if isfield(DcmResults,'diagConst')
-    diagConst = DcmResults.diagConst;
-else
-    DcmResults.diagConst = diagConst;
-end
+diagConst = DcmResults.diagConst;
 diagConst = diagConst*eye(nDcmParamsInfAll);
+
 % keep history of important variables
-if isfield(DcmResults,'bKeepTrace')
-    bKeepTrace = DcmResults.bKeepTrace;
-else
-    DcmResults.bKeepTrace = bKeepTrace;
-end
+bKeepTrace = DcmResults.bKeepTrace;
+
 % keep history of response related variables
 % note: has no effect if bKeepTrace is false
-if isfield(DcmResults,'bKeepResp')
-    bKeepResp = DcmResults.bKeepResp;
-else
-    DcmResults.bKeepResp = bKeepTrace;
-end
-% switch off command line output
-if isfield(DcmResults,'bVerbose')
-    bVerbose = DcmResults.bVerbose;
-else
-    DcmResults.bVerbose = bVerbose;
-end
+bKeepResp = DcmResults.bKeepResp;
 
-if isfield(DcmResults,'schedule')
-    schedule = DcmResults.schedule;
-else
-    DcmResults.schedule = schedule;
-end
+% switch off command line output
+bVerbose = DcmResults.bVerbose;
+
+% update schedule
+schedule = DcmResults.schedule;
 
 % number of clusters
-if isfield(DcmResults,'maxClusters')
-    nClusters = DcmResults.maxClusters; %%% K
-else
-    DcmResults.maxClusters = nClusters;
-end
+nClusters = DcmResults.maxClusters; %%% K    
 if nClusters > nSubjects
     nClusters = nSubjects;
     DcmResults.maxClusters = nClusters;
@@ -198,7 +116,6 @@ counts.nClusters = nClusters;
 
 % set default parameters to zero
 dcmParametersDefault = zeros(1,DcmInfo.nParameters);
-
 
 
 %% priors

@@ -1,13 +1,16 @@
 %% [ DcmInfo ] = tapas_huge_import_spm( DcmSpm )
 % 
-% Convert DCMs from SPM format to HUGE format.
+% Convert DCMs from SPM format to DcmInfo format.
 % 
 % INPUT:
-%       DcmSpm - (cell) array of DCM structs in SPM format
+%       DcmSpm - (cell) array of DCM structs in SPM format. All DCM in
+%                DcmSpm must have same structure (i.e.: same number of
+%                regions and same connections.) They may have different
+%                number of scans.
 % 
 % OUTPUT:
-%       DcmInfo - DCM in TAPAS:HUGE format
-%           
+%       DcmInfo - DCM in DcmInfo format
+%
 
 % Author: Yu Yao (yao@biomed.ee.ethz.ch)
 % Copyright (C) 2018 Translational Neuromodeling Unit
@@ -81,9 +84,9 @@ DcmInfo.hemParam = struct();
 % decay (kappa), transit time (tau), ratio intra/extra (epsilon)
 DcmInfo.hemParam.listHem = [0.64,2,1]; % SPM default values
 DcmInfo.hemParam.scaleC = DcmSpm{1}.Y.dt/DcmSpm{1}.U.dt;
-try
+if isfield(DcmSpm{1},'TE')
     DcmInfo.hemParam.echoTime = DcmSpm{1}.TE;
-catch
+else
     DcmInfo.hemParam.echoTime = 0.04; % default value hard-coded into SPM
 end
 % default value hard-coded into SPM
@@ -95,10 +98,6 @@ DcmInfo.hemParam.rho = 4.3;
 DcmInfo.hemParam.gamma = .32;
 DcmInfo.hemParam.alphainv = 1/.32;
 DcmInfo.hemParam.oxygenExtractionFraction2 = .4;
-
-%%% xY xU???
-
-
 
 % inputs and data
 DcmInfo.trSeconds = zeros(1,N);
@@ -153,17 +152,8 @@ for n = 1:N
     DcmInfo.trSteps(n) = DcmInfo.trSeconds(n)/DcmInfo.timeStep(n);
     DcmInfo.listResponseTimeIndices{n} = ...
         DcmInfo.trSteps(n):DcmInfo.trSteps(n):DcmInfo.trSteps(n)*nScans;
-    % TODO
-    %   Y.name region names
-    %   Y.X0 confounds
-    %   Y.Q
-    %   Y.scale
- 
     
 end
-
-
-
 
 
 end

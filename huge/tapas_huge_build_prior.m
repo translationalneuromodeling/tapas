@@ -47,6 +47,8 @@ if ~isfield(DcmInfo,'listBoldResponse')
               'Use cell array of DCM in SPM format as first input.'])
         rethrow(err);
     end
+else
+    DcmInfo = DCM;
 end
 
 
