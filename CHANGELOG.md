@@ -1,6 +1,20 @@
 # Changelog
 TAPAS toolbox 
 
+## [2.7.5] 2018-08-13
+### Added
+- Include the function tapas\_get\_current\_version.m.
+- Implements download of example data from the server using 
+    tapas_download_example_data.
+- Now there is log file that list the versions of tapas, the download link
+    and the hash of the file that is downloaded.
+- Use the an external file to do the md5 check sum. See external javamd5.
+
+### Changed
+- Dropped 4 digits versioning for 3.
+- The version of tapas is now read from misc/log\_tapas.txt. It is the first
+    line of this file.
+
 ## [2.7.4.1] 2018-01-24
 
 ### Added
