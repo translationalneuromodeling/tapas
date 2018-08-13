@@ -1,5 +1,4 @@
-function [c, r, t, cpulse, verbose] = tapas_physio_read_physlogfiles_siemens(log_files, ...
-    verbose, varargin)
+function [c, r, t, cpulse, verbose] = tapas_physio_read_physlogfiles_siemens(log_files, cardiac_modality, verbose, varargin)
 % reads out physiological time series and timing vector for Siemens
 % logfiles of peripheral cardiac monitoring (ECG/Breathing Belt or
 % pulse oximetry)
@@ -11,6 +10,18 @@ function [c, r, t, cpulse, verbose] = tapas_physio_read_physlogfiles_siemens(log
 %                           for GE: ECGData...
 %       .log_respiration    contains breathing belt amplitude time course
 %                           for GE: RespData...
+%       cardiac_modality    'ECG' or 'PULS'/'PPU'/'OXY' to determine
+%                           which channel data to be returned
+%                           if not given, will be read out from file name
+%                           suffix
+%       verbose
+%       .level              debugging plots are created if level >=3
+%       .fig_handles        appended by handle to output figure
+%
+%       varargin            propertyName/value pairs, as folloes
+%           'ecgChannel'    'v1', 'v2', 'mean' (default)
+%                           determines which ECG channel to use as
+%                           output cardiac curve
 %
 % OUT
 %   cpulse              time events of R-wave peak in cardiac time series (seconds)
@@ -39,22 +50,27 @@ function [c, r, t, cpulse, verbose] = tapas_physio_read_physlogfiles_siemens(log
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
-%
-% $Id: tapas_physio_read_physlogfiles_siemens.m 466 2014-04-27 13:10:48Z kasperla $
 
 %% read out values
 
-if nargin < 2
+if nargin < 3
     verbose.level = 0;
 end
 DEBUG = verbose.level >=2;
 
 % process optional input parameters and overwrite defaults
-defaults.ecgChannel         = 'mean'; % 'mean'; 'v1'; 'v2'
 defaults.endCropSeconds     = 1;
+% used channel depends on cardiac modality
+switch cardiac_modality
+    case 'ECG'
+        defaults.ecgChannel = 'mean'; %'mean'; 'v1'; 'v2'
+    otherwise
+        defaults.ecgChannel = 'v1';
+end
 
-args                = tapas_physio_propval(varargin, defaults);
+args = tapas_physio_propval(varargin, defaults);
 tapas_physio_strip_fields(args);
+
 
 cpulse              = [];
 
@@ -119,7 +135,7 @@ if hasCardiacData
     relative_start_acquisition = relative_start_acquisition + ...
         log_files.relative_start_acquisition;
     
-    data_table = tapas_physio_siemens_line2table(lineData);
+    data_table = tapas_physio_siemens_line2table(lineData, cardiac_modality);
     
     if isempty(dt)
         nSamplesC = size(data_table,1);
@@ -174,7 +190,7 @@ if hasRespData
         %     tStopScan = logFooter.ScanStopTimeSeconds;
         tStartScan = logFooter.LogStartTimeSeconds;
         tStopScan = logFooter.LogStopTimeSeconds;
-      end
+    end
     
     switch log_files.align_scan
         case 'first'
@@ -190,7 +206,7 @@ if hasRespData
     relative_start_acquisition = relative_start_acquisition + ...
         log_files.relative_start_acquisition;
     
-    data_table = tapas_physio_siemens_line2table(lineData);
+    data_table = tapas_physio_siemens_line2table(lineData, 'RESP');
     
     if isempty(dt)
         nSamplesR = size(data_table,1);

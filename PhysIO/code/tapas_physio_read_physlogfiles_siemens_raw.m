@@ -14,6 +14,7 @@ function [lineData, logFooter, linesFooter] = tapas_physio_read_physlogfiles_sie
 %   logFooter       struct() of read-out meta information from log file, i.e. 
 %                   LogStart/StopTimeSeconds
 %                   ScanStart/StopTimeSeconds
+%                   => uses MDH time stamp in log file to sync to DICOMs
 %   linesFooter     all meta-information (e.g. sampling start/stop) is
 %                   saved in remaining lines of log file
 %
@@ -54,11 +55,16 @@ logFooter.LogStartTimeSeconds =   str2num(char(regexprep(linesFooter(~cellfun(@i
 logFooter.LogStopTimeSeconds =    str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
     'LogStopMDHTime'))),'\D',''))) / 1000;
 
-% MPCU  = Computer who controls the scanner
-% MDH   = Compute who is the host; console
+% MPCU  = Computer who controls the scanner => physio logging happens here  
+% MDH   = Compute who is the host; console => DICOM time stamp here!
+%
+% - according to Chris Rorden, PART
+% (http://www.mccauslandcenter.sc.edu/crnl/tools/part) - MDH is the time we
+% should use for phys logging synchronization, since DICOM conversion uses
+% this clock
 
-% This is just a different time-scale, I presume, it does definitely
-% NOT match with the Acquisition time in the DICOM-headers
+% This is just a different time-scale (of the phys log computer), it does 
+% definitely NOT match with the Acquisition time in the DICOM-headers
 logFooter.ScanStartTimeSeconds = str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
     'LogStartMPCUTime'))),'\D','')));
 logFooter.ScanStopTimeSeconds = str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...

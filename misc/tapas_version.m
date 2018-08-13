@@ -14,8 +14,7 @@ function [version, hash] = tapas_version(verbose)
 % copyright (C) 2017
 %
 
-version = {2, 7, 3, 1};
-[branch, hash] = tapas_get_tapas_revision(0);
+version = {2, 7, 4, 1};
 
 if nargin < 1
     verbose = 0;
@@ -26,7 +25,7 @@ if verbose
     fprintf(1, '\n\nVersion %d.%d.%d.%d\n', version{:});
     fprintf(1, 'Branch & revision %s %s\n', branch, hash);
     fprintf(1, 'In your citation please include the current version.\n');
-    fprintf(1, 'Please cite the corresponding masucript according to:\n')
+    fprintf(1, 'Please cite the corresponding publications according to the toolboxes used:\n')
     fprintf(1, 'PhysIO: https://www.ncbi.nlm.nih.gov/pubmed/27832957\n')
     fprintf(1, 'HGF:    https://www.ncbi.nlm.nih.gov/pubmed/21629826\n')
     fprintf(1, '        https://www.ncbi.nlm.nih.gov/pubmed/25477800\n');

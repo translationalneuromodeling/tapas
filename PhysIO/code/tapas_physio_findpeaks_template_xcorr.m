@@ -124,7 +124,7 @@ clear cpulse;
 searchStepsTotal = round(0.5*averageHeartRateInSamples);
 
 % for weighted searching of max correlation
-locationWeight = gausswin(nSamplesSignalPart);
+locationWeight = tapas_physio_gausswin(nSamplesSignalPart);
 
 n = max(n, searchStepsTotal + halfTemplateWidthInSamples + 1);
 

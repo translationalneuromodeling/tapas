@@ -41,7 +41,7 @@ dt = t(2) - t(1);
 c = c-mean(c); c = c./max(c); % normalize time series
 
 % smooth noisy pulse oximetry data to detect peaks
-w = gausswin(dt120,1);
+w = tapas_physio_gausswin(dt120,1);
 sc = conv(c, w, 'same');
 sc = sc-mean(sc); sc = sc./max(sc); % normalize time series
 

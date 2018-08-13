@@ -76,7 +76,7 @@ switch lower(cardiac_modality)
     otherwise % {'oxy','ppu', 'oxy_wifi', 'ppu_wifi','ecg', 'ecg_wifi'} etc., including ecg_raw o
         switch thresh_cardiac.method
             case 'load_from_logfile'
-                tapas_physio_log('How did you end up here? I better do nothing.', ...
+                verbose = tapas_physio_log('How did you end up here? I better do nothing.', ...
                     verbose, 1);
                 cpulse = [];
             case {'manual', 'manual_template', 'load', 'load_template'} % load/determine manual template

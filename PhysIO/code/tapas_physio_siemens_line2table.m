@@ -1,4 +1,4 @@
-function data_table = tapas_physio_siemens_line2table(lineData)
+function data_table = tapas_physio_siemens_line2table(lineData, cardiacModality)
 % transforms data line of Siemens log file into table (sorting amplitude
 % and trigger signals)
 %
@@ -9,13 +9,13 @@ function data_table = tapas_physio_siemens_line2table(lineData)
 %                   of file. See also tapas_physio_read_physlogfiles_siemens_raw
 %
 % OUT
-%   data_table      [nSamples,3] table of channel_1, channels_AVF and trigger 
+%   data_table      [nSamples,3] table of channel_1, channels_AVF and trigger
 %                   signal with trigger codes:
 %                   5000 = cardiac pulse on
 %                   6000 = cardiac pulse off
 %                   6002 = phys recording on
 %                   6003 = phys recording off
-%                   
+%
 % EXAMPLE
 %   tapas_physio_siemens_line2table
 %
@@ -34,7 +34,7 @@ function data_table = tapas_physio_siemens_line2table(lineData)
 % $Id$
 
 % signals start of data logging
-iTrigger = regexpi(lineData, '6002'); 
+iTrigger = regexpi(lineData, '6002');
 
 if ~isempty(iTrigger)
     % crop string after trigger
@@ -78,41 +78,75 @@ iDataStream = 1:numel(data{1});
 iDataStream(iNonEcgSignals) = [];
 
 nSamples = numel(data_stream);
-nRows = ceil(nSamples/2);
 
-% create a table with channel_1, channels_AVF and trigger signal in
-% different Columns
-% - iData_table is a helper table that maps the original indices of the
-% ECG signals in data{1} onto their new positions
-data_table = zeros(nRows,3);
-iData_table = zeros(nRows,3);
-
-data_table(1:nRows,1) = data_stream(1:2:end);
-iData_table(1:nRows,1) = iDataStream(1:2:end);
-
-if mod(nSamples,2) == 1
-    data_table(1:nRows-1,2) = data_stream(2:2:end);
-    iData_table(1:nRows-1,2) = iDataStream(2:2:end);
-else
-    data_table(1:nRows,2) = data_stream(2:2:end);
-    iData_table(1:nRows,2) = iDataStream(2:2:end);
-end
-
-% now fill up 3rd column with trigger data
-% - for each trigger index in data{1}, check where ECG data with closest
-% smaller index ended up in the data_table ... and put trigger code in
-% same row of that table
-nTriggers = numel(iNonEcgSignals);
-
-for iTrigger = 1:nTriggers
-    % find index before trigger event in data stream and
-    % detect it in table
-    iRow = find(iData_table(:,2) == iNonEcgSignals(iTrigger)-1);
-    
-    % look in 1st column as well whether maybe signal detected there
-    if isempty(iRow)
-        iRow = find(iData_table(:,1) == iNonEcgSignals(iTrigger)-1);
-    end
-    
-    data_table(iRow,3) = codeNonEcgSignals(iTrigger);
+switch upper(cardiacModality) % ecg has two channels, resp and puls only one
+    case 'ECG'
+        nRows = ceil(nSamples/2);
+        
+        % create a table with channel_1, channels_AVF and trigger signal in
+        % different Columns
+        % - iData_table is a helper table that maps the original indices of the
+        % ECG signals in data{1} onto their new positions
+        data_table = zeros(nRows,3);
+        iData_table = zeros(nRows,3);
+        
+        data_table(1:nRows,1) = data_stream(1:2:end);
+        iData_table(1:nRows,1) = iDataStream(1:2:end);
+        
+        if mod(nSamples,2) == 1
+            data_table(1:nRows-1,2) = data_stream(2:2:end);
+            iData_table(1:nRows-1,2) = iDataStream(2:2:end);
+        else
+            data_table(1:nRows,2) = data_stream(2:2:end);
+            iData_table(1:nRows,2) = iDataStream(2:2:end);
+        end
+        
+        % now fill up 3rd column with trigger data
+        % - for each trigger index in data{1}, check where ECG data with closest
+        % smaller index ended up in the data_table ... and put trigger code in
+        % same row of that table
+        nTriggers = numel(iNonEcgSignals);
+        
+        for iTrigger = 1:nTriggers
+            % find index before trigger event in data stream and
+            % detect it in table
+            iRow = find(iData_table(:,2) == iNonEcgSignals(iTrigger)-1);
+            
+            % look in 1st column as well whether maybe signal detected there
+            if isempty(iRow)
+                iRow = find(iData_table(:,1) == iNonEcgSignals(iTrigger)-1);
+            end
+            
+            data_table(iRow,3) = codeNonEcgSignals(iTrigger);
+        end
+        
+    case {'RESP', 'PPU'} % only one channel available, fill second row with zeros
+        nRows = nSamples;
+        
+        % create a table with channel_1 and trigger signal in
+        % different Columns
+        % - iData_table is a helper table that maps the original indices of the
+        % ECG signals in data{1} onto their new positions
+        data_table = zeros(nRows,3);
+        iData_table = zeros(nRows,3);
+        
+        data_table(1:nRows,1) = data_stream;
+        iData_table(1:nRows,1) = iDataStream;
+        
+        % now fill up 3rd column with trigger data
+        % - for each trigger index in data{1}, check where ECG data with closest
+        % smaller index ended up in the data_table ... and put trigger code in
+        % same row of that table
+        nTriggers = numel(iNonEcgSignals);
+        
+        for iTrigger = 1:nTriggers
+            % find index before trigger event in data stream and
+            % detect it in table
+            iRow = find(iData_table(:,1) == iNonEcgSignals(iTrigger)-1);
+            if ~isempty(iRow)
+                data_table(iRow,3) = codeNonEcgSignals(iTrigger);
+            end
+        end
+    otherwise
+        error('unknown cardiac/respiratory logging modality: %s', cardiacModality);
 end
