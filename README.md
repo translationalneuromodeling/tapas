@@ -85,8 +85,6 @@ Cite Me
 
 Information about citations and current version can be printed from matlab with
 the command: `tapas_version(1);`
-~~~
-
 
 ---------------
 Current release
