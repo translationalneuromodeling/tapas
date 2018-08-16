@@ -3,7 +3,7 @@ function tapas_rdcm_plot_fft(y, region_id)
 % 
 %	Input:
 %   	y               - data
-%       id              - region index
+%       region_id       - region index
 %
 %   Output:
 %

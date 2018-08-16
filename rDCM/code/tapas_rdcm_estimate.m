@@ -1,4 +1,4 @@
-function [ output ] = tapas_rdcm_estimate(DCM, type, options, methods)
+function [output, options] = tapas_rdcm_estimate(DCM, type, options, methods)
 % Main analysis function, which calls the subfunctions necessary to run a
 % regression DCM (rDCM) analysis.
 % 
@@ -11,6 +11,7 @@ function [ output ] = tapas_rdcm_estimate(DCM, type, options, methods)
 %
 %   Output:
 %       output          - output structure
+%       options         - estimation options
 % 
 %   Reference:
 %       Frässle, S., Lomakina, E.I., Razi, A., Friston, K.J., Buhmann, J.M., 

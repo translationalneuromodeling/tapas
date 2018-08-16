@@ -28,6 +28,24 @@ function [ h ] = tapas_rdcm_get_convolution_bm(options)
 % ----------------------------------------------------------------------
 
 
+% compile integrator
+if ( exist('dcm_euler_integration','file') ~= 3 )
+    
+    % get location of integrator
+    P = mfilename('fullpath');
+    rDCM_ind = strfind(P,'rDCM/code');
+    
+    % store current path
+    old_path = pwd;
+    
+    % compile integrator in folder
+    cd([P(1:rDCM_ind-1) 'rDCM/misc'])
+    mex dcm_euler_integration.c
+    
+    % return to current path
+    cd(old_path)
+end
+
 % get the DCM
 DCM = options.DCM;
 

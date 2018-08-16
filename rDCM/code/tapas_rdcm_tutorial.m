@@ -5,8 +5,6 @@ function tapas_rdcm_tutorial()
 % embedded sparsity constraints. Accuracy of rDCM is then assessed by means 
 % of sensitivity and specificity of recovering the model structure. 
 % 
-% IMPORTANT: RUN THIS SCRIPT FROM WITHIN THE rDCM FOLDER
-% 
 %	Input:
 %
 %   Output: 
@@ -35,8 +33,12 @@ function tapas_rdcm_tutorial()
 rng(2406,'twister')
 
 
-% load the example DCM file
-temp = load([pwd '/test/DCM_LargeScaleSmith_model1.mat']);
+% get path of rDCM toolbox
+P        = mfilename('fullpath');
+rDCM_ind = strfind(P,'rDCM/code');
+    
+% load the example network architecture
+temp = load(fullfile(P(1:rDCM_ind-1),'rDCM','test','DCM_LargeScaleSmith_model1.mat'));
 DCM  = temp.DCM;
 
 
@@ -50,34 +52,21 @@ options.iter    = 100;
 % get time
 currentTimer = tic;
 
-% run the rDCM analysis (generates synthetic data and inverts the DCM)
-output = tapas_rdcm_estimate(DCM, 's', options, 2);
+% run rDCM analysis with sparsity constraints (generates synthetic data and performs model inversion)
+[output, options] = tapas_rdcm_estimate(DCM, 's', options, 2);
 
-% output time
+% output elapsed time
 toc(currentTimer)
 
 
 %% visualize the results
 
-% output and visualize the results
-figure('units','normalized','outerposition',[0 0 1 1])
-subplot(1,2,1)
-imagesc(output.Ep.A)
-title('estimated')
-axis square
-set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
-set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
-xlabel('region (from)')
-ylabel('region (to)')
+% regions for which to plot traces
+plot_regions = [1 12];
 
-subplot(1,2,2)
-imagesc(DCM.Tp.A)
-title('true')
-axis square
-set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
-set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
-xlabel('region (from)')
-ylabel('region (to)')
+% visualize the results
+tapas_rdcm_visualize(output, DCM, options, plot_regions)
+
 
 
 %% evaluate the accuracy of model architecture recovery
@@ -86,12 +75,12 @@ ylabel('region (to)')
 par_true = tapas_rdcm_ep2par(DCM.Tp);
 idx_true = par_true ~= 0;
 
-% get present connections
+% get inferred connections
 Ip_est  = tapas_rdcm_ep2par(output.Ip);
 lb      = log(1/10);
 idx_Ip  = log(Ip_est./(1-Ip_est)) > lb;
 
-% specify which parameters to test
+% specify which parameters to test (driving inputs where fixed)
 temp2.A  = ones(size(DCM.a))-eye(size(DCM.a));
 temp2.B  = zeros(size(DCM.b));
 temp2.C  = zeros(size(DCM.c));
@@ -108,10 +97,11 @@ false_negative  = sum((idx_Ip(vector) == 0) & (idx_true(vector) == 1));
 sensitivity = true_positive/(true_positive + false_negative);
 specificity = true_negative/(true_negative + false_positive);
 
-% output the result
+% summary of the result
 fprintf('\nSummary\n')
 fprintf('-------------------\n\n')
 fprintf('Accuracy of model architecture recovery: \n')
 fprintf('Sensitivity: %.3G - Specificity: %.3G\n',sensitivity,specificity)
+fprintf('Root mean squared error (RMSE): %.3G\n',sqrt(output.mse))
 
 end

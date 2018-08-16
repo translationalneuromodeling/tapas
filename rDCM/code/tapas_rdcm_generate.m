@@ -3,7 +3,7 @@ function [ DCM ] = tapas_rdcm_generate(DCM, options, SNR)
 % with the fixed hemodynamic convolution kernel
 % 
 % 	Input:
-%   	DCM         - either model structure or a file name
+%   	DCM         - model structure
 %       options     - estimation options
 %       SNR         - signal to noise ratio
 %
@@ -29,6 +29,24 @@ function [ DCM ] = tapas_rdcm_generate(DCM, options, SNR)
 % 
 % ----------------------------------------------------------------------
 
+
+% compile integrator
+if ( exist('dcm_euler_integration','file') ~= 3 )
+    
+    % get location of integrator
+    P = mfilename('fullpath');
+    rDCM_ind = strfind(P,'rDCM/code');
+    
+    % store current path
+    old_path = pwd;
+    
+    % compile integrator in respective folder
+    cd([P(1:rDCM_ind-1) 'rDCM/misc'])
+    mex dcm_euler_integration.c
+    
+    % return to current path
+    cd(old_path)
+end
 
 % Setting parameters
 if ~isempty(options) && options.y_dt

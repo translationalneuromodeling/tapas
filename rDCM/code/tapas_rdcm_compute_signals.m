@@ -2,7 +2,7 @@ function [ output ] = tapas_rdcm_compute_signals(DCM, output, options)
 % Computes true and predicted signals
 % 
 % 	Input:
-%   	DCM         - either model structure or a file name
+%   	DCM         - model structure
 %       output      - model inversion results
 %       options     - estimation options
 %
@@ -29,7 +29,7 @@ function [ output ] = tapas_rdcm_compute_signals(DCM, output, options)
 % ----------------------------------------------------------------------
 
 
-% true (measured) signal
+% true or measured signal
 output.signal.y_source = DCM.Y.y(:);
 
 % true (deterministic) signal / VBL signal
@@ -41,6 +41,7 @@ if strcmp(options.type,'s')
     
     % compute the MSE of the noisy data
     output.y_mse_clean = mean((output.signal.y_source - output.signal.y_clean).^2);
+    
 else
     
     % VBL predicted signal
@@ -48,7 +49,7 @@ else
         output.signal.y_pred_vl = DCM.y(:);
         output.y_mse_vl         = mean((output.signal.y_source - output.signal.y_pred_vl).^2);
     elseif ( isfield(DCM,'Ep') )
-        DCM                     = tapas_spm_dcm_generate(DCM,[],Inf);
+        DCM                     = tapas_rdcm_spm_dcm_generate(DCM,Inf);
         output.signal.y_pred_vl = DCM.Y.y(:);
         output.y_mse_vl         = mean((output.signal.y_source - output.signal.y_pred_vl).^2);
     end
@@ -83,7 +84,7 @@ output.signal.y_pred_rdcm = DCM.Y.y(:);
 % compute the MSE of predicted signal
 output.y_mse_rdcm = mean((output.signal.y_source - output.signal.y_pred_rdcm).^2);
 
-% rdcm predicted signal (spm_dcm_generate)
+% rdcm predicted signal (tapas_rdcm_spm_dcm_generate)
 if options.compute_signal_spm
     DCM.Ep = DCM.Tp;
     if ( strcmp(options.type,'r') && isfield(options,'convolution') )
