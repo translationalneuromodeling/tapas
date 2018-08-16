@@ -2,11 +2,10 @@ Regression dynamic causal modeling (rDCM)
 ====================
 
 
+> Authors: Stefan Frässle (<stefanf@biomed.ee.ethz.ch>), Ekaterina I. Lomakina
+
+
 > Copyright (C) 2016-2018 
-
-> Stefan Frässle <stefanf@biomed.ee.ethz.ch>, Ekaterina I. Lomakina
-
-
 
 > Translational Neuromodeling Unit (TNU)
 
@@ -49,6 +48,7 @@ Installation
 1. Unzip the TAPAS archive in your folder of choice
 2. Open Matlab
 3. Add the rDCM Toolbox to your Matlab path
+4. Use the Manual and the tutorial script `tapas_rdcm_tutorial()` as starting points
 
 
 
@@ -62,10 +62,6 @@ meet these conditions, the method might not give reliable results. It remains th
 responsibility of each user to ensure that his/her dataset fulfills these 
 requirements. Please refer to the main toolbox references (see below) for more 
 detailed explanations.
-
-We would also like to highlight and acknowledge that the rDCM toolbox uses some 
-functions that were publised as part of the Statistical Parameteric Mapping (SPM) 
-toolbox. The respective functions are marked with the prefix `tapas_rdcm_spm`.
 
 
 
@@ -108,3 +104,13 @@ General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program (see the file [LICENSE](LICENSE)).  If not, see
 <http://www.gnu.org/licenses/>.
+
+
+
+Acknowledgment
+---------------
+
+We would like to highlight and acknowledge that the rDCM toolbox uses some 
+functions that were publised as part of the Statistical Parameteric Mapping 
+([SPM](https://www.fil.ion.ucl.ac.uk/spm/software/)) toolbox. The respective 
+functions are marked with the prefix `tapas_rdcm_spm_`.
