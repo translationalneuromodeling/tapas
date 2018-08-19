@@ -110,19 +110,11 @@ if nargin < 3
     priors = tapas_huge_build_prior(DcmInfo);
 end
 
-assert(K>0,'TAPAS:HUGE:clusterSize','Cluster size K must to be positive');
+assert(K>0,'TAPAS:HUGE:clusterSize',...
+    'Cluster size K must to be positive integer');
 
 % compile integrator
-if exist('tapas_huge_int_euler','file') ~= 3
-    try
-        mex tapas_huge_int_euler.c
-    catch err
-        disp('tapas_huge_invert: Failed to compile mex function.');
-        disp('Make sure you have selected a c language compiler for mex.');
-        disp('For more information, enter mex -help on the command line.');
-        rethrow(err)
-    end
-end
+tapas_huge_compile();
 
 
 %% settings
@@ -162,11 +154,11 @@ DcmResults.schedule.itKmeans = 1;
 if randomize
     init = struct();
     init.dcmMean = repmat([DcmResults.priors.clustersMean,...
-        DcmResults.priors.hemMean],DcmInfo.nSubjects,1);
+        DcmResults.priors.hemMean], DcmInfo.nSubjects, 1);
     init.dcmMean = init.dcmMean + randn(size(init.dcmMean))*.05;
 
     init.clustersMean = repmat(...
-        DcmResults.priors.clustersMean,DcmResults.maxClusters,1);
+        DcmResults.priors.clustersMean, DcmResults.maxClusters,1);
     init.clustersMean = init.clustersMean + ...
         randn(size(init.clustersMean))*.05;
     DcmResults.init = init;
@@ -174,7 +166,8 @@ end
 
 
 %% call VB inversion
-DcmResults = tapas_huge_inv_vb(DcmInfo,DcmResults);
+DcmResults = tapas_huge_inv_vb(DcmInfo, DcmResults);
+DcmResults.ver = '201809';
 
 end
 

@@ -1,4 +1,4 @@
-This toolbox implements variational Bayesian inversion for hierarchical 
+﻿This toolbox implements variational Bayesian inversion for hierarchical 
 unsupervised generative embedding (HUGE). To get started, read the tutorial
     open huge_tutorial.html
 or run the demo script:
@@ -68,13 +68,15 @@ OUTPUT:
       modifiedSumSqrErr:   b'_n,r in Eq.(22) of REF [1]
 
 The toolbox requires compilation of mex files, which is done automatically.
-If you wish to compile manually, use the following command:
+If you wish to compile manually, set the current directory of your Matlab 
+session to the folder containing the HUGE toolbox and to use the following 
+command:
 mex tapas_huge_int_euler.c
 To choose a compiler, use the command:
 mex -setup
 
 For more information, read following the paper:
-Yao Y, Raman SS, Schiek M, Leff A, Fr�ssle S, Stephan KE (2018). Variational 
+Yao Y, Raman SS, Schiek M, Leff A, Frässle S, Stephan KE (2018). Variational 
 Bayesian Inversion for Hierarchical Unsupervised Generative Embedding (HUGE). 
 NeuroImage, 179: 604-619
 https://doi.org/10.1016/j.neuroimage.2018.06.073

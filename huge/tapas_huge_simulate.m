@@ -39,9 +39,7 @@ function [ DcmInfo ] = tapas_huge_simulate( options )
 %% process input
 rngSeed = rng();
 % compile integrator
-if exist('tapas_huge_int_euler','file') ~= 3
-     mex tapas_huge_int_euler.c
-end
+tapas_huge_compile();
 
 K = numel(options.N_k); % number of clusters
 N = sum(options.N_k);   % number of subjects
