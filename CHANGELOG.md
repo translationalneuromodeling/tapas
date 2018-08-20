@@ -7,6 +7,9 @@ TAPAS toolbox
 - tapas_get_tapas_revision.m outputs the branch and hash of the repository.
 - Revision is printed when initiliazing tapas.
 
+### Removed
+- Deleted the gpo folder.
+
 ## [2.7.4.1] 2018-01-24
 
 ### Added

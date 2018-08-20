@@ -1,5 +1,0 @@
-# README
-
-Gaussian process optimization.
-
-
