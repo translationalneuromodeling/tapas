@@ -8,9 +8,18 @@ TAPAS toolbox
 - Revision is printed when initiliazing tapas.
 - Contributor License Agreement (CLA) file
 - CONTRIBUTING.md explaining coding and style guidelines, signing procedure for CLA file
+- Include the function tapas\_get\_current\_version.m.
+- Implements download of example data from the server using 
+    tapas_download_example_data.
+- Now there is log file that list the versions of tapas, the download link
+    and the hash of the file that is downloaded.
+- Use the an external file to do the md5 check sum. See external javamd5.
 
 ### Changed
 - README.md to include reference to CONTRIBUTING.md and explanation of CLA
+- Dropped 4 digits versioning for 3.
+- The version of tapas is now read from misc/log\_tapas.txt. It is the first
+    line of this file.
 
 ### Removed
 - Deleted the gpo folder.
