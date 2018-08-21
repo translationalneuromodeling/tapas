@@ -1,4 +1,6 @@
 function tapas_rdcm_plot_pred(Ep, Y, X, region_id)
+% tapas_rdcm_plot_pred(Ep, Y, X, region_id)
+% 
 % Plots Yd_fft vs the linear combination of the 'true' (according to the
 % given model) regressors and parameter values for region_id (if it is 
 % specified) in frequency (separate real and imaginary) and time domain.
@@ -12,7 +14,7 @@ function tapas_rdcm_plot_pred(Ep, Y, X, region_id)
 %   Output:
 %       options         - estimation options
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

@@ -1,4 +1,6 @@
 function [ DCM ] = tapas_rdcm_generate(DCM, options, SNR)
+% [ DCM ] = tapas_rdcm_generate(DCM, options, SNR)
+% 
 % Generates synthetic fMRI data under a given signal to noise ratio (SNR) 
 % with the fixed hemodynamic convolution kernel
 % 
@@ -10,7 +12,7 @@ function [ DCM ] = tapas_rdcm_generate(DCM, options, SNR)
 %   Output:
 %       DCM         - model structure with generated synthetic time series
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
@@ -59,24 +61,23 @@ nr     = size(DCM.a,1);
 % specify the array for the data
 y = zeros(N, nr);
 
+% generate fixed hemodynamic response function (HRF)
+if ~isfield(options,'h')
+    options.DCM         = DCM;
+    options.conv_dt     = DCM.U.dt;
+    options.conv_length = size(DCM.U.u,1);
+    options.conv_full   = 'true';
+    options.h           = tapas_rdcm_get_convolution_bm(options);
+end
+
 % get the hemodynamic response function (HRF)
 h = options.h;
-
-% set the driving input
-if ( isfield(options,'scale_u') )
-    DCM.Tp.C = DCM.Tp.C*16;
-end
 
 % Getting neuronal signal (x)
 DCM.U.u = [DCM.U.u; DCM.U.u; DCM.U.u];
 DCM     = tapas_dcm_euler_make_indices(DCM);
 [~, x]  = tapas_dcm_euler_gen(DCM, DCM.Tp);
 DCM.U.u = DCM.U.u(1:N,:);
-
-% set the driving input
-if ( isfield(options,'scale_u') )
-    DCM.Tp.C = DCM.Tp.C/16;
-end
 
 % Convolving neuronal signal with HRF
 for i = 1:nr

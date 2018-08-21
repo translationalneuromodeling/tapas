@@ -1,4 +1,6 @@
 function tapas_rdcm_visualize(output, DCM, options, plot_regions)
+% tapas_rdcm_visualize(output, DCM, options, plot_regions)
+% 
 % Generates a simple graphical output of the rDCM results. 
 % 
 %	Input:
@@ -9,7 +11,7 @@ function tapas_rdcm_visualize(output, DCM, options, plot_regions)
 %
 %   Output: 
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

@@ -1,4 +1,6 @@
 function tapas_rdcm_tutorial()
+% tapas_rdcm_tutorial()
+% 
 % Tutorial script to demonstrate the application of regression DCM (rDCM) on
 % simulated data. In the analysis, we try to recover the data-generating 
 % network architecture by pruning a fully connected network using rDCM with
@@ -9,7 +11,7 @@ function tapas_rdcm_tutorial()
 %
 %   Output: 
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
@@ -44,19 +46,37 @@ DCM  = temp.DCM;
 
 % specify the options for the rDCM analysis
 options.SNR     = 3;
-options.TR      = 0.5;
+options.y_dt	= 0.5;
 options.p0_all  = 0.15;  % single p0 value (for computational efficiency)
 options.iter    = 100;
 
 
+% run a simulation (synthetic) analysis
+type = 's';
+
+
+
+%% generate synthetic data
+
+% generate synthetic data (for simulations)
+if ( strcmp(type,'s') )
+    fprintf('Generate synthetic data\n')
+    DCM = tapas_rdcm_generate(DCM, options, options.SNR);
+end
+
+
+
+%% model estimation
+
 % get time
 currentTimer = tic;
 
-% run rDCM analysis with sparsity constraints (generates synthetic data and performs model inversion)
-[output, options] = tapas_rdcm_estimate(DCM, 's', options, 2);
+% run rDCM analysis with sparsity constraints (performs model inversion)
+[output, options] = tapas_rdcm_estimate(DCM, type, options, 2);
 
 % output elapsed time
 toc(currentTimer)
+
 
 
 %% visualize the results

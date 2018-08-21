@@ -1,4 +1,6 @@
 function [m0, l0, a0, b0] = tapas_rdcm_get_prior(DCM)
+% [m0, l0, a0, b0] = tapas_rdcm_get_prior(DCM)
+% 
 % Returns prior parameters on model parameters (theta) and noise precision
 % (tau) for the particular connectivity pattern
 % 
@@ -11,7 +13,7 @@ function [m0, l0, a0, b0] = tapas_rdcm_get_prior(DCM)
 %       a0              - prior shape parameter
 %       b0              - prior rate parameter
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

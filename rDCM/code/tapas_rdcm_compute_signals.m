@@ -1,4 +1,6 @@
 function [ output ] = tapas_rdcm_compute_signals(DCM, output, options)
+% [ output ] = tapas_rdcm_compute_signals(DCM, output, options)
+% 
 % Computes true and predicted signals
 % 
 % 	Input:
@@ -9,7 +11,7 @@ function [ output ] = tapas_rdcm_compute_signals(DCM, output, options)
 %   Output:
 %   	output      - model inversion results with model fits
 %
-% 
+
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

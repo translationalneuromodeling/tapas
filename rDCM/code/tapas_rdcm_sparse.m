@@ -1,4 +1,6 @@
 function [ output ] = tapas_rdcm_sparse(DCM, X, Y, args)
+% [ output ] = tapas_rdcm_sparse(DCM, X, Y, args)
+% 
 % Variational Bayesian inversion of a linear DCM with regression DCM, 
 % including sparsity constrains on the connectivity parameters. The
 % function implements the VB update equations derived in Frässle et al.
@@ -18,7 +20,7 @@ function [ output ] = tapas_rdcm_sparse(DCM, X, Y, args)
 %       Pruessmann, K.P., Buhmann, J.M., Stephan, K.E., 2018. A generative 
 %       model of whole-brain effective connectivity. NeuroImage 179, 505-529. 
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

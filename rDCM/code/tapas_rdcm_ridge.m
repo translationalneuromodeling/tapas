@@ -1,4 +1,6 @@
 function [ output ] = tapas_rdcm_ridge(DCM, X, Y, args)
+% [ output ] = tapas_rdcm_ridge(DCM, X, Y, args)
+% 
 % Variational Bayesian inversion of a linear DCM with regression DCM. The
 % function implements the VB update equations derived in Frässle et al.
 % (2017).
@@ -16,7 +18,7 @@ function [ output ] = tapas_rdcm_ridge(DCM, X, Y, args)
 %       Frässle, S., Lomakina, E.I., Razi, A., Friston, K.J., Buhmann, J.M., 
 %       Stephan, K.E., 2017. Regression DCM for fMRI. NeuroImage 155, 406?421.
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

@@ -1,4 +1,6 @@
 function [ par ] = tapas_rdcm_ep2par(Ep)
+% [ par ] = tapas_rdcm_ep2par(Ep)
+% 
 % Vectorizes Ep structure
 % 
 % 	Input:
@@ -7,7 +9,7 @@ function [ par ] = tapas_rdcm_ep2par(Ep)
 %   Output:
 %   	par         - vectorized version of parameters
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

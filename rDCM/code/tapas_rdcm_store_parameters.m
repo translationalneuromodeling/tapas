@@ -1,4 +1,6 @@
 function [ output ] = tapas_rdcm_store_parameters(DCM, mN_cut, sN, aN, bN, logF, logF_term, idx_x, z_cut, args)
+% [ output ] = tapas_rdcm_store_parameters(DCM, mN_cut, sN, aN, bN, logF, logF_term, idx_x, z_cut, args)
+% 
 % Wraps parameters to the output structure.
 % 
 %	Input:
@@ -16,7 +18,7 @@ function [ output ] = tapas_rdcm_store_parameters(DCM, mN_cut, sN, aN, bN, logF,
 %   Output:
 %       output          - output structure
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

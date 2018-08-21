@@ -1,4 +1,6 @@
 function [ options ] = tapas_rdcm_set_options(DCM, input_options, type)
+% [ options ] = tapas_rdcm_set_options(DCM, input_options, type)
+% 
 % Sets options for the rDCM analysis to the default settings. Options can
 % also be specified explicitly by the user.
 % 
@@ -11,7 +13,7 @@ function [ options ] = tapas_rdcm_set_options(DCM, input_options, type)
 %   Output:
 %       options         - estimation options
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

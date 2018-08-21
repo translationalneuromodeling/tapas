@@ -1,4 +1,6 @@
 function [ h ] = tapas_rdcm_get_convolution_bm(options)
+% [ h ] = tapas_rdcm_get_convolution_bm(options)
+% 
 % Creates a fixed hemodynamic response function (HRF) by convolving a single 
 % event (impulse) with the standard Balloon model from DCM.
 %
@@ -8,7 +10,7 @@ function [ h ] = tapas_rdcm_get_convolution_bm(options)
 %   Output:
 %       h           - hemodynamic response function (HRF)
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

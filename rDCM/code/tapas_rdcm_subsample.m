@@ -1,4 +1,6 @@
 function [ y ] = tapas_rdcm_subsample(Y, r_dt)
+% [ y ] = tapas_rdcm_subsample(Y, r_dt)
+% 
 % Subsamples signal Y (in frequency domain) with a rate r_dt
 % 
 %   Input:
@@ -8,7 +10,7 @@ function [ y ] = tapas_rdcm_subsample(Y, r_dt)
 %   Output:
 %       y       - subsampled signal
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

@@ -1,4 +1,6 @@
 function [y_fft, idx] = tapas_rdcm_filter(y_fft, u_fft, h_fft, Ny)
+% [y_fft, idx] = tapas_rdcm_filter(y_fft, u_fft, h_fft, Ny)
+% 
 % Specifies informative frequencies and filters the Fourier-transformed 
 % signal
 %
@@ -12,7 +14,7 @@ function [y_fft, idx] = tapas_rdcm_filter(y_fft, u_fft, h_fft, Ny)
 %       y_fft       - filtered Fourier-transformed signal
 %       idx         - frequencies to include in regression
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

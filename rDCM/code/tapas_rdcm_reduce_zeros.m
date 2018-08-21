@@ -1,4 +1,6 @@
 function [ Y ] = tapas_rdcm_reduce_zeros(X, Y)
+% [ Y ] = tapas_rdcm_reduce_zeros(X, Y)
+% 
 % If there are more zero-valued frequencies than informative ones,
 % subsamples those frequencies to balance dataset
 % 
@@ -9,7 +11,7 @@ function [ Y ] = tapas_rdcm_reduce_zeros(X, Y)
 %   Output:
 %       Y           - balanced data
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina

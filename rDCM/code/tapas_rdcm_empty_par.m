@@ -1,4 +1,6 @@
 function [ Ep ] = tapas_rdcm_empty_par(DCM)
+% [ Ep ] = tapas_rdcm_empty_par(DCM)
+% 
 % Creates an empty valid parameter structure for a given DCM
 % 
 % 	Input:
@@ -7,7 +9,7 @@ function [ Ep ] = tapas_rdcm_empty_par(DCM)
 %   Output:
 %   	Ep          - parameter structure
 %
-% 
+ 
 % ----------------------------------------------------------------------
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
