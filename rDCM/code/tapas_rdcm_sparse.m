@@ -328,6 +328,13 @@ end
 % write the results to the output file
 output{1} = tapas_rdcm_store_parameters(DCM, mN, sN, aN, bN, logF, logF_term, idx_x, z, args);
 
+% store the priors
+output{1}.priors.m0 = m0;
+output{1}.priors.l0 = l0;
+output{1}.priors.a0 = a0;
+output{1}.priors.b0 = b0;
+output{1}.priors.p0 = args.p0_temp;
+
 % store the rDCM variant
 output{1}.inversion = 'tapas_rdcm_sparse';
 

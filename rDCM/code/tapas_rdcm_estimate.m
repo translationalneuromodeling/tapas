@@ -129,4 +129,8 @@ fprintf('\nFinalize results\n')
 % evaluate statistics and predicted signal
 output = tapas_rdcm_compute_statistics(DCM, output, options);
 
+% store the random number seed and the version number
+output.rngSeed = rng();
+output.ver     = '2018_v01';
+
 end
