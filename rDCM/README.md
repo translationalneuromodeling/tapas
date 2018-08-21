@@ -17,7 +17,7 @@ Regression dynamic causal modeling (rDCM)
 Download
 -------
 
-- Please download the latest stable versions of the rDCM Toolbox on GitHub as part of the 
+- Please download the latest stable versions of the rDCM toolbox on GitHub as part of the 
   [TAPAS software releases of the TNU](https://github.com/translationalneuromodeling/tapas/releases).
 - Older versions of TAPAS are available on the [TNU website](http://www.translationalneuromodeling.org/tapas).
 - The latest bugfixes can be found in the [GitHub Issue Forum](https://github.com/translationalneuromodeling/tapas/issues) or by request to the authors. 
@@ -32,8 +32,8 @@ Purpose
 
 The regression dynamic causal modeling (rDCM) toobox implements a novel variant 
 of DCM for fMRI that enables extremely efficient inference on effective (i.e.,
-directed) connectivity among brain regions. Due to its
-computational efficiency, inversion of large network models becomes feasible.
+directed) connectivity among brain regions. Due to its computational efficiency, 
+inversion of large network models becomes feasible.
 
 The accompanying technical papers about the toolbox concept and methodology 
 can be found in [Frässle et al., 2017](https://www.sciencedirect.com/science/article/pii/S105381191730201X?via%3Dihub) 
@@ -48,7 +48,7 @@ Installation
 1. Unzip the TAPAS archive in your folder of choice
 2. Open Matlab
 3. Add the rDCM Toolbox to your Matlab path
-4. Use the Manual and the tutorial script `tapas_rdcm_tutorial()` as starting points
+4. Resort to the Manual and the tutorial script `tapas_rdcm_tutorial()` as starting points
 
 
 
@@ -56,10 +56,10 @@ Important Notes
 ----------
 
 Please note that rDCM is a method that is still in it's infancy and thus subject to 
-various limiations. Due to these limitations, requirements of rDCM in terms of 
+various limitations. Due to these limitations, requirements of rDCM in terms of 
 fMRI data quality (i.e., fast TR, high SNR) are high. For data that does not
 meet these conditions, the method might not give reliable results. It remains the 
-responsibility of each user to ensure that his/her dataset fulfills these 
+responsibility of the user to ensure that his/her dataset fulfills the 
 requirements. Please refer to the main toolbox references (see below) for more 
 detailed explanations.
 
@@ -68,7 +68,7 @@ detailed explanations.
 Contact/Support
 ---------------
 
-We are very happy to provide support on how to use the rDCM Toolbox. However, 
+We are very happy to provide support on how to use the rDCM toolbox. However, 
 due to time constraints, we might not provide a detailed answer to your request, 
 but just some general pointers and templates. Before you contact us, please try the following:
 
@@ -91,7 +91,7 @@ References
 Copying/License
 ---------------
 
-The rDCM Toolbox is free software: you can redistribute it and/or
+The rDCM toolbox is free software: you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation, either version 3 of the
 License, or (at your option) any later version.
@@ -101,8 +101,8 @@ WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program (see the file [LICENSE](LICENSE)).  If not, see
+You should have received a copy of the GNU General Public License along with 
+this program (see the file [LICENSE](LICENSE)). If not, see 
 <http://www.gnu.org/licenses/>.
 
 
