@@ -44,25 +44,26 @@ else
     options.padding = 0;
 end
 
-% check for bilinear terms (not included in the current version)
+% check for bilinear terms (not included in the current version of rDCM)
 if ( isfield(DCM, 'b') && any(DCM.b(:)~=0) )
     options.bilinear = 1;
 else 
     options.bilinear = 0;
 end
 
-% circular shift of the input
-if strcmp(type, 's')
-    options.u_shift = 0;
-else
-    options.u_shift = -12;
-end
+% zero-padding of signal in frequency domain (default: none)
+options.padding = 0;
+
+% circular shift of the input (default: none)
+options.u_shift = 0;
 
 % default settings
 options.coef                = 1;
 options.visualize           = 1;
 options.compute_signal      = 1;
 options.compute_signal_spm  = 0;
+
+% create full covariance matrix (only recommended for small DCMs)
 options.evalCp              = 0;
 
 

@@ -102,6 +102,6 @@ fprintf('\nSummary\n')
 fprintf('-------------------\n\n')
 fprintf('Accuracy of model architecture recovery: \n')
 fprintf('Sensitivity: %.3G - Specificity: %.3G\n',sensitivity,specificity)
-fprintf('Root mean squared error (RMSE): %.3G\n',sqrt(output.mse))
+fprintf('Root mean squared error (RMSE): %.3G\n',sqrt(output.statistics.mse))
 
 end

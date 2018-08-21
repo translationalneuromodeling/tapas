@@ -40,18 +40,18 @@ if strcmp(options.type,'s')
     output.signal.y_clean = DCM.Y.y(:);
     
     % compute the MSE of the noisy data
-    output.y_mse_clean = mean((output.signal.y_source - output.signal.y_clean).^2);
+    output.residuals.y_mse_clean = mean((output.signal.y_source - output.signal.y_clean).^2);
     
 else
     
     % VBL predicted signal
     if ( isfield(DCM,'y') )
-        output.signal.y_pred_vl = DCM.y(:);
-        output.y_mse_vl         = mean((output.signal.y_source - output.signal.y_pred_vl).^2);
+        output.signal.y_pred_vl     = DCM.y(:);
+        output.residuals.y_mse_vl   = mean((output.signal.y_source - output.signal.y_pred_vl).^2);
     elseif ( isfield(DCM,'Ep') )
-        DCM                     = tapas_rdcm_spm_dcm_generate(DCM,Inf);
-        output.signal.y_pred_vl = DCM.Y.y(:);
-        output.y_mse_vl         = mean((output.signal.y_source - output.signal.y_pred_vl).^2);
+        DCM                         = tapas_rdcm_spm_dcm_generate(DCM,Inf);
+        output.signal.y_pred_vl     = DCM.Y.y(:);
+        output.residuals.y_mse_vl   = mean((output.signal.y_source - output.signal.y_pred_vl).^2);
     end
 end
 
@@ -82,7 +82,8 @@ DCM = tapas_rdcm_generate(DCM, options, Inf);
 output.signal.y_pred_rdcm = DCM.Y.y(:);
 
 % compute the MSE of predicted signal
-output.y_mse_rdcm = mean((output.signal.y_source - output.signal.y_pred_rdcm).^2);
+output.residuals.y_mse_rdcm = mean((output.signal.y_source - output.signal.y_pred_rdcm).^2);
+output.residuals.R_rdcm     = output.signal.y_source - output.signal.y_pred_rdcm;
 
 % rdcm predicted signal (tapas_rdcm_spm_dcm_generate)
 if options.compute_signal_spm
@@ -98,7 +99,8 @@ if options.compute_signal_spm
     output.signal.y_pred_rdcm_spm = DCM.Y.y(:);
     
     % compute the MSE of predicted signal
-    output.y_mse_rdcm_spm = mean((output.signal.y_source - output.signal.y_pred_rdcm_spm).^2);
+    output.residuals.y_mse_rdcm_spm = mean((output.signal.y_source - output.signal.y_pred_rdcm_spm).^2);
+    output.residuals.R_rdcm_spm     = output.signal.y_source - output.signal.y_pred_rdcm_spm;
 end
 
 % asign the region names

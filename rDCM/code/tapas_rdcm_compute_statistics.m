@@ -30,25 +30,25 @@ function [ output ] = tapas_rdcm_compute_statistics(DCM, output, options)
 
 
 % get rDCM posterior estimates
-output.par_est = tapas_rdcm_ep2par(output.Ep);
+output.allParam.par_est = tapas_rdcm_ep2par(output.Ep);
 
 
 % get true (simulations) or VBL parameters
 try
-    output.par_true = tapas_rdcm_ep2par(DCM.Tp);
+    output.allParam.par_true = tapas_rdcm_ep2par(DCM.Tp);
 catch
-    output.par_true = tapas_rdcm_ep2par(DCM.Ep);
+    output.allParam.par_true = tapas_rdcm_ep2par(DCM.Ep);
 end
 
 
 % get the true present connections
-output.idx = output.par_true~=0;
+output.allParam.idx = output.allParam.par_true~=0;
 
 
 % compute statistics
-output.mse_n = mean((output.par_est(output.idx) - output.par_true(output.idx)).^2)/norm(output.par_true(output.idx));
-output.mse   = mean((output.par_est(output.idx) - output.par_true(output.idx)).^2);
-output.sign  = sum(output.par_est(output.idx).*output.par_true(output.idx)<0);
+output.statistics.mse_n = mean((output.allParam.par_est(output.allParam.idx) - output.allParam.par_true(output.allParam.idx)).^2)/norm(output.allParam.par_true(output.allParam.idx));
+output.statistics.mse   = mean((output.allParam.par_est(output.allParam.idx) - output.allParam.par_true(output.allParam.idx)).^2);
+output.statistics.sign  = sum(output.allParam.par_est(output.allParam.idx).*output.allParam.par_true(output.allParam.idx)<0);
 
 
 % compute signal

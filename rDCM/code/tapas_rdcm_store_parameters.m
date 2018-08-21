@@ -73,7 +73,7 @@ end
 % get the number of potential connections
 D = numel(output.Ep.A) + numel(output.Ep.C);
 
-% create the covariance matrix
+% create the covariance matrix (for computational reasons, only recommended for small DCMs)
 if ( isempty(z_cut) && args.evalCp == 1 )
     
     % empty covariance matrix
@@ -114,7 +114,7 @@ if ( isempty(z_cut) && args.evalCp == 1 )
 end
 
 
-% store the (raw) posterior covariance matrices
+% store the regions-wise posterior covariance matrices
 output.sN = sN;
 
 

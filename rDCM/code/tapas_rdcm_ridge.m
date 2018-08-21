@@ -190,4 +190,7 @@ end
 % store parameters
 output = tapas_rdcm_store_parameters(DCM, mN, sN, aN, bN, real(logF), [], idx, [], args);
 
+% store the rDCM variant
+output.inversion = 'tapas_rdcm_ridge';
+
 end

@@ -133,6 +133,6 @@ DCM.U.u = DCM.U.u(:,1:end-1);
 args.P      = P;
 args.r_dt   = r_dt;
 args.type   = options.type;
-args.evalCp = options.evalCp;
+args.evalCp =  options.evalCp;
 
 end
