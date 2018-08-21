@@ -3,10 +3,12 @@
   PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
-This HTML was auto-generated from MATLAB code.
-To make changes, update the MATLAB code and republish this document.
-      --><title>TAPAS HUGE demo</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-08-08"><meta name="DC.source" content="tapas_huge_demo.m"><style type="text/css">
+<!--
+This file is part of TAPAS (http://www.translationalneuromodeling.org/tapas),
+which is released under the terms of the GNU General Public Licence (GPL), 
+version 3. For further details, see <http://www.gnu.org/licenses/>.
+      -->
+<title>TAPAS HUGE demo</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-08-08"><meta name="DC.source" content="tapas_huge_demo.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -92,7 +94,7 @@ sub {
   </style></head><body><div class="content"><h1>TAPAS HUGE demo</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Introduction</a></li><li><a href="#3">Generate synthetic DCM fMRI datasets</a></li><li><a href="#4">Analyzing first dataset</a></li><li><a href="#15">Analyzing the second dataset</a></li><li><a href="#16">Empirical Bayes analysis</a></li><li><a href="#18">References:</a></li></ul></div><h2 id="1">Introduction</h2><p>This toolbox implements Hierarchical Unsupervised Generative Embedding (HUGE) with variational Bayesian inversion. This demo shows how to call HUGE on two synthetic datasets. For more information, consult REF [1].</p><p>Author: Yu Yao (<a href="mailto:yao@biomed.ee.ethz.ch">yao@biomed.ee.ethz.ch</a>) Copyright (C) 2018 Translational Neuromodeling Unit                    Institute for Biomedical Engineering,                    University of Zurich and ETH Zurich.</p><p>This toolbox is part of TAPAS, which is released under the terms of the GNU General Public Licence (GPL), version 3. For further details, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a></p><p>This software is intended for research only. Do not use for clinical purpose. Please note that this toolbox is in an early stage of development. Considerable changes are planned for future releases. For support please refer to: <a href="https://github.com/translationalneuromodeling/tapas/issues">https://github.com/translationalneuromodeling/tapas/issues</a></p><h2 id="3">Generate synthetic DCM fMRI datasets</h2><p>We generate two synthetic datasets:</p><div><ol><li>A dataset based on a three-region bilinear DCM with 80 subjects divided   into three groups (40, 20, 20).</li><li>A dataset based on a two-region linear DCM with 20 subjects divided   into two groups of 10 subjects each.</li></ol></div><pre class="codeinput">rng(8032,<span class="string">'twister'</span>)
 tapas_huge_generate_examples( <span class="string">'example_data.mat'</span> )
 load( <span class="string">'example_data.mat'</span> );
-</pre><h2 id="4">Analyzing first dataset</h2><p>To perform analysis with HUGE use the following interface:</p><pre>[DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize)</pre><p><tt>DCM</tt>: cell array of DCM in SPM format</p><pre class="codeinput">disp(DCMr3b{1})
+</pre><h2 id="4">Analyzing first dataset</h2><p>To perform analysis with HUGE use the following interface:</p><pre>[DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize, seed)</pre><p><tt>DCM</tt>: cell array of DCM in SPM format</p><pre class="codeinput">disp(DCMr3b{1})
 </pre><pre class="codeoutput">          U: [1&times;1 struct]
           Y: [1&times;1 struct]
           n: 3
@@ -157,7 +159,7 @@ load( <span class="string">'example_data.mat'</span> );
 	</msub>
 </mrow>
 </math> -->
- in Fig.1                    of REF [1])</li><li><tt>hemMean</tt>:       prior mean of heamodynamic parameters (<i>&mu;<sub>0</sub></i>
+ in Fig.1                    of REF [1])</li><li><tt>hemMean</tt>:       prior mean of hemodynamic parameters (<i>&mu;<sub>0</sub></i>
 <!-- <math xmlns="http://www.w3.org/1998/Math/MathML">
 <mrow>
 	<msub>
@@ -166,7 +168,7 @@ load( <span class="string">'example_data.mat'</span> );
 	</msub>
 </mrow>
 </math> -->
-  in Fig.1 of REF [1])</li><li><tt>hemSigma</tt>:      prior covariance of heamodynamic parameters(<i>&Sigma;<sub>0</sub></i>
+  in Fig.1 of REF [1])</li><li><tt>hemSigma</tt>:      prior covariance of hemodynamic parameters(<i>&Sigma;<sub>0</sub></i>
 <!-- <math xmlns="http://www.w3.org/1998/Math/MathML">
 <mrow>
 	<msub>
@@ -216,14 +218,22 @@ disp(priors)
        noiseShape: 1.2800
 
 </pre>
-<p><tt>verbose</tt>: activate command line output</p>
+<p><tt>verbose</tt>: activate command line output (optional).</p>
 <pre class="codeinput">
   verbose = true;
 </pre>
-<p><tt>randomize</tt>: randomize starting values. If randomize is false (default),              VB inversion will start from the prior values.</p><pre class="codeinput">randomize = true;
-
+<p><tt>randomize</tt>: randomize starting values (optional). If randomize is false (default), VB inversion will start from the prior values.</p>
+<pre class="codeinput">
+  randomize = true;
+</pre>
+<p><tt>seed</tt>: seed for random number generator (optional). Use this input to reproduce an earlier result.</p>
+<pre class="codeinput">
+  seed = rng;
+</pre>
+<p>Starting the inversion:</p>
+<pre class="codeinput">
 currentTimer = tic;
-[DcmResults] = tapas_huge_invert(DCMr3b, K, priors, verbose, randomize);
+[DcmResults] = tapas_huge_invert(DCMr3b, K, priors, verbose, randomize, seed);
 toc(currentTimer)
 </pre><pre class="codeoutput">iteration 1, dF: 206273.7158
 iteration 2, dF: 5089.5705
@@ -343,7 +353,7 @@ in Eq.(16) of                          REF [1])</li>
 </mrow>
 </math> -->
  in                          Eq.(19) of REF [1])</li>
- <li><tt>dcmSigma</tt>:            posterior covariance of heamodynamic parameters (<i>&Sigma;<sub>n</sub></i>
+ <li><tt>dcmSigma</tt>:            posterior covariance of hemodynamic parameters (<i>&Sigma;<sub>n</sub></i>
 <!-- <math xmlns="http://www.w3.org/1998/Math/MathML">
 <mrow>
 	<msub>
@@ -579,9 +589,9 @@ K = 3;
 %                    in Fig.1 of REF [1])
 % * |clustersSigma|: scale matrix of inverse-Wishart prior ($S_0$ in Fig.1
 %                    of REF [1])
-% * |hemMean|:       prior mean of heamodynamic parameters ($\mu_h$ in
+% * |hemMean|:       prior mean of hemodynamic parameters ($\mu_h$ in
 %                    Fig.1 of REF [1])
-% * |hemSigma|:      prior covariance of heamodynamic parameters($\Sigma_h$
+% * |hemSigma|:      prior covariance of hemodynamic parameters($\Sigma_h$
 %                    in Fig.1 of REF [1])
 % * |noiseInvScale|: prior inverse scale of observation noise ($b_0$ in
 %                    Fig.1 of REF [1])
@@ -624,7 +634,7 @@ toc(currentTimer)
 % * |logDetClustersSigma|: log-determinant of $S_k$
 % * |dcmMean|:             posterior mean of DCM parameters ($\mu_n$ in
 %                          Eq.(19) of REF [1])
-% * |dcmSigma|:            posterior covariance of heamodynamic parameters
+% * |dcmSigma|:            posterior covariance of hemodynamic parameters
 %                          ($\Sigma_n$ in Eq.(19) of REF [1])
 % * |logDetPostDcmSigma|:  log-determinant of $\Sigma_n$
 % * |noiseInvScale|:       posterior inverse scale of observation noise

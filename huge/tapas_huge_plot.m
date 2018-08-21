@@ -29,7 +29,7 @@ if ~isfield(DCM,'listBoldResponse')
     try
         DcmInfo = tapas_huge_import_spm(DCM);
     catch err
-        disp('tapas_huge_invert: Unsupported format.');
+        disp('tapas_huge_plot: Unsupported format.');
         disp('Use cell array of DCM in SPM format as first input.');
         rethrow(err);
     end

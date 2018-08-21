@@ -1,7 +1,7 @@
 %% [ priors, DcmInfo ] = tapas_huge_build_prior( DcmInfo )
 %
 % Generates values for prior parameters for HUGE. Prior mean of cluster
-% centers and prior mean and covariance of heamodynamic parameters follow
+% centers and prior mean and covariance of hemodynamic parameters follow
 % SPM convention (SPM8 r6313).
 %
 % INPUT:
@@ -73,10 +73,10 @@ priors.clustersDeg = min(priors.clustersDeg,realmax('single'));
 priors.clustersSigma = 0.01*eye(DcmInfo.nConnections)*...
                        (priors.clustersDeg - DcmInfo.nConnections - 1);
 
-% prior mean of heamodynamic parameters (mu_h in Figure 1 of REF [1])
+% prior mean of hemodynamic parameters (mu_h in Figure 1 of REF [1])
 priors.hemMean = zeros(1,DcmInfo.nStates*2 + 1);
 
-% prior Covariance of heamodynamic parameters(Sigma_h in Figure 1 of
+% prior Covariance of hemodynamic parameters(Sigma_h in Figure 1 of
 % REF [1]) 
 priors.hemSigma = diag(zeros(1,DcmInfo.nStates*2 + 1)+exp(-6));
 

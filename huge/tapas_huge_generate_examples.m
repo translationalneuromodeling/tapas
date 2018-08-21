@@ -42,7 +42,7 @@ optionsGen.mu_k.value = [...
     -0.6,-0.2,-0.4, 0.8 , 0.3];
 optionsGen.sigma_k = 0.1;
 
-% heamodynamics
+% hemodynamics
 optionsGen.mu_h = zeros(1,optionsGen.R*2+1);
 optionsGen.sigma_h = 0.01;
 
@@ -89,7 +89,7 @@ optionsGen.mu_k.value = [...
     -0.7,-0.2, 0.3, 0.25,-0.4,-0.1,-0.6,0.6,-0.2];
 optionsGen.sigma_k = 0.1;
 
-% heamodynamics
+% hemodynamics
 optionsGen.mu_h = zeros(1,optionsGen.R*2+1);
 optionsGen.sigma_h = 0.01;
 

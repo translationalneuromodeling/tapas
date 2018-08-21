@@ -7,7 +7,7 @@ or run the demo script:
 
 The supported interface is:
 
-[DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize)
+[DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize, seed)
 INPUT:
   DCM       - cell array of DCM in SPM format
   K         - number of clusters (set K to one for empirical Bayes)
@@ -23,9 +23,9 @@ OPTIONAL INPUT:
                      Fig.1 of REF [1]) 
       clustersSigma: scale matrix of inverse-Wishart prior (S_0 in Fig.1
                      of REF [1]) 
-      hemMean:       prior mean of heamodynamic parameters (mu_h in Fig.1
+      hemMean:       prior mean of hemodynamic parameters (mu_h in Fig.1
                      of REF [1]) 
-      hemSigma:      prior covariance of heamodynamic parameters(Sigma_h
+      hemSigma:      prior covariance of hemodynamic parameters(Sigma_h
                      in Fig.1 of REF [1]) 
       noiseInvScale: prior inverse scale of observation noise (b_0 in
                      Fig.1 of REF [1]) 
@@ -37,6 +37,7 @@ OPTIONAL INPUT:
               difference, default: false)
   randomize - randomize starting values (default: false). WARNING:
               randomizing starting values can cause divergence of DCM.
+  seed      - seed for random number generator
 
 OUTPUT:
   DcmResults - struct used for storing the results from VB. Posterior
@@ -56,7 +57,7 @@ OUTPUT:
       logDetClustersSigma: log-determinant of S_k
       dcmMean:             posterior mean of DCM parameters (mu_n in
                            Eq.(19) of REF [1])  
-      dcmSigma:            posterior covariance of heamodynamic
+      dcmSigma:            posterior covariance of hemodynamic
                            parameters (Sigma_n in Eq.(19) of REF [1]) 
       logDetPostDcmSigma:  log-determinant of Sigma_n
       noiseInvScale:       posterior inverse scale of observation noise
@@ -69,14 +70,14 @@ OUTPUT:
 
 The toolbox requires compilation of mex files, which is done automatically.
 If you wish to compile manually, set the current directory of your Matlab 
-session to the folder containing the HUGE toolbox and to use the following 
+session to the folder containing the HUGE toolbox and use the following 
 command:
 mex tapas_huge_int_euler.c
 To choose a compiler, use the command:
 mex -setup
 
 For more information, read following the paper:
-Yao Y, Raman SS, Schiek M, Leff A, Fr√§ssle S, Stephan KE (2018). Variational 
+Yao Y, Raman SS, Schiek M, Leff A, Fr‰ssle S, Stephan KE (2018). Variational 
 Bayesian Inversion for Hierarchical Unsupervised Generative Embedding (HUGE). 
 NeuroImage, 179: 604-619
 https://doi.org/10.1016/j.neuroimage.2018.06.073

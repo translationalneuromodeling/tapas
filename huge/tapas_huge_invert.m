@@ -1,4 +1,4 @@
-%% [DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize)
+%% [DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize, seed)
 %
 % Invert hierarchical unsupervised generative embedding (HUGE) model.
 %
@@ -17,9 +17,9 @@
 %                      Fig.1 of REF [1]) 
 %       clustersSigma: scale matrix of inverse-Wishart prior (S_0 in Fig.1
 %                      of REF [1]) 
-%       hemMean:       prior mean of heamodynamic parameters (mu_h in Fig.1
+%       hemMean:       prior mean of hemodynamic parameters (mu_h in Fig.1
 %                      of REF [1]) 
-%       hemSigma:      prior covariance of heamodynamic parameters(Sigma_h
+%       hemSigma:      prior covariance of hemodynamic parameters(Sigma_h
 %                      in Fig.1 of REF [1]) 
 %       noiseInvScale: prior inverse scale of observation noise (b_0 in
 %                      Fig.1 of REF [1]) 
@@ -31,6 +31,7 @@
 %               difference, default: false)
 %   randomize - randomize starting values (default: false). WARNING:
 %               randomizing starting values can cause divergence of DCM.
+%   seed      - seed for random number generator
 % 
 % OUTPUT:
 %   DcmResults - struct used for storing the results from VB. Posterior
@@ -50,7 +51,7 @@
 %       logDetClustersSigma: log-determinant of S_k
 %       dcmMean:             posterior mean of DCM parameters (mu_n in
 %                            Eq.(19) of REF [1])  
-%       dcmSigma:            posterior covariance of heamodynamic
+%       dcmSigma:            posterior covariance of hemodynamic
 %                            parameters (Sigma_n in Eq.(19) of REF [1]) 
 %       logDetPostDcmSigma:  log-determinant of Sigma_n
 %       noiseInvScale:       posterior inverse scale of observation noise
@@ -84,8 +85,14 @@
 % support please refer to:
 % https://github.com/translationalneuromodeling/tapas/issues
 %
-function [DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize)
+function [DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize, seed)
 %% check input
+if nargin >= 6
+    rng(seed);
+else
+    seed = rng();
+end
+
 if ~isfield(DCM,'listBoldResponse')
     try
         DcmInfo = tapas_huge_import_spm(DCM);
@@ -146,7 +153,7 @@ DcmResults.schedule.dfDcm = 50;
 DcmResults.schedule.dfClusters = 10;
 DcmResults.schedule.itAssignment = 1;
 DcmResults.schedule.itCluster = 1;
-DcmResults.schedule.itReturn = 25;
+DcmResults.schedule.itReturn = 5;
 DcmResults.schedule.itKmeans = 1;
 
 
@@ -167,6 +174,8 @@ end
 
 %% call VB inversion
 DcmResults = tapas_huge_inv_vb(DcmInfo, DcmResults);
+
+DcmResults.seed = seed;
 DcmResults.ver = '201809';
 
 end

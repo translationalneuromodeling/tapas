@@ -37,8 +37,6 @@
 %
 function [ DcmResults ] = tapas_huge_inv_vb( DcmInfo, DcmResults )
 %
-% save state of random number generator
-DcmResults.rngSeed = rng;
 KMEANS_REP = 10;
 
 
@@ -186,7 +184,7 @@ for iSubject = 1:nSubjects
     respJacobian{iSubject} = fnJacobian(...
                       fnGenerateResponse,...
                       posterior.dcmMean(iSubject,:).',... %%% mu_n and current m_n
-                      paramsJacobian, respError{iSubject},...
+                      paramsJacobian, respCurrent,...
                       dcmParametersDefault, idxParamsInf, ...
                       idxSelfCon, DcmInfo, iSubject);
 

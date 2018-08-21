@@ -39,7 +39,7 @@ load( 'example_data.mat' );
 %% Analyzing first dataset
 % To perform analysis with HUGE use the following interface:
 %
-%  [DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize)
+%  [DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize, seed) 
 %
 
 %%
@@ -62,9 +62,9 @@ K = 3;
 %                    in Fig.1 of REF [1]) 
 % * |clustersSigma|: scale matrix of inverse-Wishart prior ($S_0$ in Fig.1
 %                    of REF [1]) 
-% * |hemMean|:       prior mean of heamodynamic parameters ($\mu_h$ in
+% * |hemMean|:       prior mean of hemodynamic parameters ($\mu_h$ in
 %                    Fig.1 of REF [1]) 
-% * |hemSigma|:      prior covariance of heamodynamic parameters($\Sigma_h$
+% * |hemSigma|:      prior covariance of hemodynamic parameters($\Sigma_h$
 %                    in Fig.1 of REF [1]) 
 % * |noiseInvScale|: prior inverse scale of observation noise ($b_0$ in
 %                    Fig.1 of REF [1]) 
@@ -78,16 +78,24 @@ priors = tapas_huge_build_prior(DCMr3b);
 disp(priors)
 
 %%
-% |verbose|: activate command line output
+% |verbose|: activate command line output (optional).
 verbose = true;
 
 %%
-% |randomize|: randomize starting values. If randomize is false (default),
-%              VB inversion will start from the prior values.
+% |randomize|: randomize starting values (optional). If randomize is false
+%              (default), VB inversion will start from the prior values.
 randomize = true;
 
+%%
+% |seed|: seed for random number generator (optional). Use this input to
+%         reproduce an earlier result.
+seed = rng;
+
+%%
+% Starting the inversion:
+%
 currentTimer = tic;
-[DcmResults] = tapas_huge_invert(DCMr3b, K, priors, verbose, randomize);
+[DcmResults] = tapas_huge_invert(DCMr3b, K, priors, verbose, randomize, seed);
 toc(currentTimer)
 %%
 % The inference result is stored in |DcmResults.posterior|, which is a
@@ -107,7 +115,7 @@ toc(currentTimer)
 % * |logDetClustersSigma|: log-determinant of $S_k$
 % * |dcmMean|:             posterior mean of DCM parameters ($\mu_n$ in 
 %                          Eq.(19) of REF [1])  
-% * |dcmSigma|:            posterior covariance of heamodynamic parameters
+% * |dcmSigma|:            posterior covariance of hemodynamic parameters
 %                          ($\Sigma_n$ in Eq.(19) of REF [1]) 
 % * |logDetPostDcmSigma|:  log-determinant of $\Sigma_n$
 % * |noiseInvScale|:       posterior inverse scale of observation noise

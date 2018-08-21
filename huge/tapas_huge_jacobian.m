@@ -6,6 +6,7 @@
 %       fnFunction - handle to function
 %       argument   - argument at which the jacobian is calculated
 %       params     - struct containing parameters like step-size, etc.
+%       ~          - a dummy input
 %
 % Optional:
 %       varargin   - additional arguments of function

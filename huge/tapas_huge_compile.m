@@ -46,8 +46,8 @@ end
 try
     mex(scPath, '-outdir', tbPath);
 catch err
-    disp('tapas_huge_invert: Failed to compile mex function.');
-    disp('Make sure you have selected a c language compiler for mex.');
+    disp('tapas_huge_compile: Failed to compile mex function.');
+    disp('Make sure you have selected a C language compiler for mex.');
     disp('For more information, enter mex -help on the command line.');
     rethrow(err)
 end
