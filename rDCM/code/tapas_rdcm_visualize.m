@@ -74,11 +74,12 @@ if ( options.visualize )
             % visualize true and predicted BOLD signal
             subplot(2,1,2)
             hold on
-            plot(y_source_reshape(:),'Color',[0.3 0.3 0.3]);
-            plot(y_pred_rdcm_reshape(:),'b');
+            ha(1) = plot(y_source_reshape(:),'Color',[0.3 0.3 0.3]);
+            ha(2) = plot(y_pred_rdcm_reshape(:),'b');
             yl = ylim;
             for int = 1:size(y_pred_rdcm_reshape,2)-1, plot([int*size(y_pred_rdcm_reshape,1) int*size(y_pred_rdcm_reshape,1)],yl,'k.-'), end
             xlim([0 numel(y_source_reshape)])
+            legend(ha,{'true','predicted'},'Location','SE')
             title('true and prediced time series','FontSize',14);
             ylabel('BOLD','FontSize',12)
             xlabel('sample index','FontSize',12)
@@ -130,6 +131,7 @@ if ( options.visualize )
             imagesc(output.Ip.A)
             title('Pp binary indicator','FontSize',14)
             axis square
+            caxis([0 1])
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',12)
@@ -144,11 +146,12 @@ if ( options.visualize )
             % visualize measured and predicted BOLD signal
             subplot(2,1,2);
             hold on
-            plot(y_source_reshape(:),'Color',[0.3 0.3 0.3]);
-            plot(y_pred_rdcm_reshape(:),'b');
+            ha(1) = plot(y_source_reshape(:),'Color',[0.3 0.3 0.3]);
+            ha(2) = plot(y_pred_rdcm_reshape(:),'b');
             yl = ylim;
             for int = 1:size(y_pred_rdcm_reshape,2)-1, plot([int*size(y_pred_rdcm_reshape,1) int*size(y_pred_rdcm_reshape,1)],yl,'k.-'), end
             xlim([0 numel(y_source_reshape)])
+            legend(ha,{'true','predicted'},'Location','SE')
             title('true and prediced time series','FontSize',14);
             ylabel('BOLD','FontSize',12)
             xlabel('sample index','FontSize',12)
