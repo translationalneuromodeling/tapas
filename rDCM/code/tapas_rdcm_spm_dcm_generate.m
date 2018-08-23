@@ -87,7 +87,7 @@ try, M.TE     = DCM.TE;     end
 
 % Integrate and compute hemodynamic response at v sample points
 %--------------------------------------------------------------------------
-y      = feval(M.IS,DCM.Ep,M,U);
+y = feval(M.IS,DCM.Ep,M,U);
 
 
 % Compute required r: standard deviation of additive noise, for all areas

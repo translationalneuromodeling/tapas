@@ -30,23 +30,8 @@ function [ h ] = tapas_rdcm_get_convolution_bm(options)
 % ----------------------------------------------------------------------
 
 
-% compile integrator
-if ( exist('dcm_euler_integration','file') ~= 3 )
-    
-    % get location of integrator
-    P = mfilename('fullpath');
-    rDCM_ind = strfind(P,'rDCM/code');
-    
-    % store current path
-    old_path = pwd;
-    
-    % compile integrator in folder
-    cd([P(1:rDCM_ind-1) 'rDCM/misc'])
-    mex dcm_euler_integration.c
-    
-    % return to current path
-    cd(old_path)
-end
+% compile source code of integrator
+tapas_rdcm_compile()
 
 % get the DCM
 DCM = options.DCM;
@@ -68,11 +53,7 @@ DCM.c    = 1;
 DCM.d    = zeros(1,1,0);
 DCM.Ep   = tapas_rdcm_empty_par(DCM);
 DCM.Ep.A = DCM.a;
-if ( ~isfield(options,'convolution') )
-    DCM.Ep.C = DCM.c*16;
-else
-    DCM.Ep.C = DCM.c;
-end
+DCM.Ep.C = DCM.c*16;
 
 % setting input of the fake DCM
 DCM.U.u = zeros(size(DCM.U.u,1),1);
@@ -85,14 +66,8 @@ DCM.v    = N;
 DCM.ns   = N;
 
 % create the HRF from the dummy DCM
-if ( ~isfield(options,'convolution') )
-    DCM = tapas_dcm_euler_make_indices(DCM);
-    y   = tapas_dcm_euler_gen(DCM, DCM.Ep);
-else
-    DCM.delays = DCM.U.dt;
-    DCM        = tapas_rdcm_spm_dcm_generate(DCM,[],Inf);
-    y          = DCM.Y.y;
-end
+DCM = tapas_dcm_euler_make_indices(DCM);
+y   = tapas_dcm_euler_gen(DCM, DCM.Ep);
 
 % sample the HRF at the sampling rate of the data
 h = y(1:r_dt:end,1);

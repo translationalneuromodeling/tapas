@@ -50,10 +50,8 @@ else
     if ( isfield(DCM,'y') )
         output.signal.y_pred_vl     = DCM.y(:);
         output.residuals.y_mse_vl   = mean((output.signal.y_source - output.signal.y_pred_vl).^2);
-    elseif ( isfield(DCM,'Ep') )
-        DCM                         = tapas_rdcm_spm_dcm_generate(DCM,Inf);
-        output.signal.y_pred_vl     = DCM.Y.y(:);
-        output.residuals.y_mse_vl   = mean((output.signal.y_source - output.signal.y_pred_vl).^2);
+    else
+        output.residuals.y_mse_vl   = [];
     end
 end
 
@@ -86,24 +84,6 @@ output.signal.y_pred_rdcm = DCM.Y.y(:);
 % compute the MSE of predicted signal
 output.residuals.y_mse_rdcm = mean((output.signal.y_source - output.signal.y_pred_rdcm).^2);
 output.residuals.R_rdcm     = output.signal.y_source - output.signal.y_pred_rdcm;
-
-% rdcm predicted signal (tapas_rdcm_spm_dcm_generate)
-if options.compute_signal_spm
-    DCM.Ep = DCM.Tp;
-    if ( strcmp(options.type,'r') && isfield(options,'convolution') )
-        DCM.Ep.C = DCM.Ep.C/16;
-    else
-        DCM.Ep.C = DCM.Ep.C;
-    end
-    DCM.Y.dt = options.y_dt;
-    DCM.v = size(DCM.Y.y,1);
-    DCM = tapas_rdcm_spm_dcm_generate(DCM,Inf);
-    output.signal.y_pred_rdcm_spm = DCM.Y.y(:);
-    
-    % compute the MSE of predicted signal
-    output.residuals.y_mse_rdcm_spm = mean((output.signal.y_source - output.signal.y_pred_rdcm_spm).^2);
-    output.residuals.R_rdcm_spm     = output.signal.y_source - output.signal.y_pred_rdcm_spm;
-end
 
 % asign the region names
 if ( isfield(DCM.Y,'name') )

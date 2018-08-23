@@ -43,6 +43,10 @@ function [output, options] = tapas_rdcm_estimate(DCM, type, options, methods)
 % ----------------------------------------------------------------------
 
 
+% store the seed of the RNG
+rngSeed = rng();
+
+
 % display
 fprintf('\n========================================================\n')
 fprintf('Regression dynamic causal modeling (rDCM) \n')
@@ -125,7 +129,7 @@ fprintf('\nFinalize results\n')
 output = tapas_rdcm_compute_statistics(DCM, output, options);
 
 % store the random number seed and the version number
-output.rngSeed = rng();
+output.rngSeed = rngSeed;
 output.ver     = '2018_v01';
 
 end

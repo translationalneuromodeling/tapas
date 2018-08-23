@@ -32,23 +32,8 @@ function [ DCM ] = tapas_rdcm_generate(DCM, options, SNR)
 % ----------------------------------------------------------------------
 
 
-% compile integrator
-if ( exist('dcm_euler_integration','file') ~= 3 )
-    
-    % get location of integrator
-    P = mfilename('fullpath');
-    rDCM_ind = strfind(P,'rDCM/code');
-    
-    % store current path
-    old_path = pwd;
-    
-    % compile integrator in respective folder
-    cd([P(1:rDCM_ind-1) 'rDCM/misc'])
-    mex dcm_euler_integration.c
-    
-    % return to current path
-    cd(old_path)
-end
+% compile source code of integrator
+tapas_rdcm_compile()
 
 % Setting parameters
 if ~isempty(options) && options.y_dt
@@ -62,7 +47,7 @@ nr     = size(DCM.a,1);
 y = zeros(N, nr);
 
 % generate fixed hemodynamic response function (HRF)
-if ~isfield(options,'h')
+if ( ~isfield(options,'h') || numel(options.h) ~= size(DCM.U.u,1) )
     options.DCM         = DCM;
     options.conv_dt     = DCM.U.dt;
     options.conv_length = size(DCM.U.u,1);

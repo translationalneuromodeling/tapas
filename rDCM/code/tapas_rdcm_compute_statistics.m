@@ -39,7 +39,11 @@ output.allParam.par_est = tapas_rdcm_ep2par(output.Ep);
 try
     output.allParam.par_true = tapas_rdcm_ep2par(DCM.Tp);
 catch
-    output.allParam.par_true = tapas_rdcm_ep2par(DCM.Ep);
+    try
+        output.allParam.par_true = tapas_rdcm_ep2par(DCM.Ep);
+    catch
+        output.allParam.par_true = [];
+    end
 end
 
 
@@ -48,9 +52,15 @@ output.allParam.idx = output.allParam.par_true~=0;
 
 
 % compute statistics
-output.statistics.mse_n = mean((output.allParam.par_est(output.allParam.idx) - output.allParam.par_true(output.allParam.idx)).^2)/norm(output.allParam.par_true(output.allParam.idx));
-output.statistics.mse   = mean((output.allParam.par_est(output.allParam.idx) - output.allParam.par_true(output.allParam.idx)).^2);
-output.statistics.sign  = sum(output.allParam.par_est(output.allParam.idx).*output.allParam.par_true(output.allParam.idx)<0);
+if ( ~isempty(output.allParam.par_true) )
+    output.statistics.mse_n = mean((output.allParam.par_est(output.allParam.idx) - output.allParam.par_true(output.allParam.idx)).^2)/norm(output.allParam.par_true(output.allParam.idx));
+    output.statistics.mse   = mean((output.allParam.par_est(output.allParam.idx) - output.allParam.par_true(output.allParam.idx)).^2);
+    output.statistics.sign  = sum(output.allParam.par_est(output.allParam.idx).*output.allParam.par_true(output.allParam.idx)<0);
+else
+    output.statistics.mse_n = []; 
+    output.statistics.mse   = []; 
+    output.statistics.sign  = [];
+end
 
 
 % compute signal

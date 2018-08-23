@@ -63,7 +63,6 @@ options.u_shift = 0;
 options.coef                = 1;
 options.visualize           = 1;
 options.compute_signal      = 1;
-options.compute_signal_spm  = 0;
 
 % create full covariance matrix (only recommended for small DCMs)
 options.evalCp              = 0;
@@ -85,11 +84,6 @@ if ~isempty(input_options)
         if isfield(input_options,names(i))
             options.(names{i}) = input_options.(names{i});
         end
-    end
-    
-    % define which method is used for creating the HRF
-    if ( isfield(input_options,'convolution') )
-        options.convolution = 1;
     end
 end
 
@@ -118,7 +112,7 @@ end
 %% compute fixed hemodynamic response function (HRF)
 
 % compute only if HRF has not been pre-computed
-if ~isfield(options,'h')
+if ( ~isfield(options,'h') || numel(options.h) ~= size(DCM.U.u,1) )
     options.DCM         = DCM;
     options.conv_dt     = DCM.U.dt;
     options.conv_length = size(DCM.U.u,1);
