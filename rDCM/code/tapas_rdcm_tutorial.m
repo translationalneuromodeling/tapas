@@ -7,7 +7,7 @@ function tapas_rdcm_tutorial()
 % embedded sparsity constraints. Accuracy of rDCM is then assessed by means 
 % of sensitivity and specificity of recovering the model structure. 
 % 
-%	Input:
+%   Input:
 %
 %   Output: 
 %

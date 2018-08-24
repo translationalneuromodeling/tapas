@@ -4,7 +4,7 @@ function [X, Y, DCM, args] = tapas_rdcm_create_regressors(DCM, options)
 % Transforms intial DCM signal into a set of regressors X (design matrix)
 % and Y (data)
 % 
-% 	Input:
+%   Input:
 %   	DCM         - model structure
 %       options     - estimation options
 %

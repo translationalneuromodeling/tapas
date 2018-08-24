@@ -2,10 +2,10 @@ function tapas_rdcm_compile()
 % tapas_rdcm_compile()
 %
 % Compiles integrator for DCM. Assumes that source code file
-% 'dcm_euler_integration.c' is in the same folder as this function and
-% places the compiled mex-file in the same folder.
+% 'dcm_euler_integration.c' is in the same folder as this function
+% and places the compiled mex-file in the same folder.
 % 
-% 	Input:
+%   Input:
 %
 %   Output:
 %

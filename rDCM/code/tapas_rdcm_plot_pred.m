@@ -5,11 +5,11 @@ function tapas_rdcm_plot_pred(Ep, Y, X, region_id)
 % given model) regressors and parameter values for region_id (if it is 
 % specified) in frequency (separate real and imaginary) and time domain.
 % 
-%	Input:
-%   	Ep          - parameter values
-%       Y          	- data
-%       X           - design matrix (predictors)
-%       region_id   - region number to be plotted
+%   Input:
+%   	Ep              - parameter values
+%       Y               - data
+%       X               - design matrix (predictors)
+%       region_id       - region number to be plotted
 %
 %   Output:
 %       options         - estimation options

@@ -4,7 +4,7 @@ function [ Y ] = tapas_rdcm_reduce_zeros(X, Y)
 % If there are more zero-valued frequencies than informative ones,
 % subsamples those frequencies to balance dataset
 % 
-% 	Input:
+%   Input:
 %   	X           - design matrix (predictors)
 %       Y           - data
 %

@@ -3,7 +3,7 @@ function [ output ] = tapas_rdcm_compute_signals(DCM, output, options)
 % 
 % Computes true and predicted signals
 % 
-% 	Input:
+%   Input:
 %   	DCM         - model structure
 %       output      - model inversion results
 %       options     - estimation options

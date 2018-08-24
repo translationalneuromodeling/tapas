@@ -3,7 +3,7 @@ function [ output ] = tapas_rdcm_compute_statistics(DCM, output, options)
 % 
 % Computes statistics for the posterior parameter estimates
 % 
-% 	Input:
+%   Input:
 %   	DCM         - model structure
 %       output      - model inversion results
 %       options     - estimation options

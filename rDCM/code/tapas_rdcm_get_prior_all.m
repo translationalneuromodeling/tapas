@@ -5,7 +5,7 @@ function [m0, l0, a0, b0] = tapas_rdcm_get_prior_all(DCM)
 % (tau) for the full connectivity model. Necessary for the sparse version
 % of rDCM.
 % 
-%	Input:
+%   Input:
 %   	DCM             - model structure
 %
 %   Output:

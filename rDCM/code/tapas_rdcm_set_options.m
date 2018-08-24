@@ -4,7 +4,7 @@ function [ options ] = tapas_rdcm_set_options(DCM, input_options, type)
 % Sets options for the rDCM analysis to the default settings. Options can
 % also be specified explicitly by the user.
 % 
-%	Input:
+%   Input:
 %   	DCM             - model structure
 %       input_options   - estimation options (if empty, set to default)
 %       type            - string which contains either 'r' for empirical data 

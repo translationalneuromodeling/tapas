@@ -1,8 +1,10 @@
 function [y, x] = tapas_dcm_euler_gen(DCM, Ep)
+% [y, x] = tapas_dcm_euler_gen(DCM, Ep)
+% 
 % Generates synthetic fMRI data under a given signal to noise ratio (SNR) 
 % with the fixed hemodynamic convolution kernel
 % 
-% 	Input:
+%   Input:
 %   	DCM         - model structure
 %       Ep          - data-generating parameters
 %
@@ -10,15 +12,22 @@ function [y, x] = tapas_dcm_euler_gen(DCM, Ep)
 %       y           - generated BOLD signal
 %       x           - generated neuronal signal
 %
+
 % ----------------------------------------------------------------------
 % 
-% Author: Stefan Fraessle, Ekaterina I. Lomakina
-% Copyright (C) 2016 TNU, University of Zurich & ETH Zurich
+% Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
+% 
+% Copyright (C) 2016-2018 Translational Neuromodeling Unit
+%                         Institute for Biomedical Engineering
+%                         University of Zurich & ETH Zurich
 %
-% This file is part of the TAPAS rDCM Toolbox, whihc is released under the 
+% This file is part of the TAPAS rDCM Toolbox, which is released under the 
 % terms of the GNU General Public License (GPL), version 3.0 or later. You
 % can redistribute and/or modify the code under the terms of the GPL. For
 % further see COPYING or <http://www.gnu.org/licenses/>.
+% 
+% Please note that this toolbox is in an early stage of development. Changes 
+% are likely to occur in future releases.
 % 
 % ----------------------------------------------------------------------
 

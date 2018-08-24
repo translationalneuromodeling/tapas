@@ -3,7 +3,7 @@ function [ output ] = tapas_rdcm_store_parameters(DCM, mN_cut, sN, aN, bN, logF,
 % 
 % Wraps parameters to the output structure.
 % 
-%	Input:
+%   Input:
 %   	DCM             - model structure
 %       mN_cut          - posterior means of connectivity parameters
 %       sN              - posterior covaraince of connectivity parameters

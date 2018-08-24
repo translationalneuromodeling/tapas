@@ -3,7 +3,7 @@ function tapas_rdcm_visualize(output, DCM, options, plot_regions)
 % 
 % Generates a simple graphical output of the rDCM results. 
 % 
-%	Input:
+%   Input:
 %   	output          - model inversion results
 %   	DCM             - model structure
 %       options         - estimation options

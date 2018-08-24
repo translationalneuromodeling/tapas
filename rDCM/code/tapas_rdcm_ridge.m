@@ -5,7 +5,7 @@ function [ output ] = tapas_rdcm_ridge(DCM, X, Y, args)
 % function implements the VB update equations derived in Frässle et al.
 % (2017).
 % 
-%	Input:
+%   Input:
 %   	DCM             - model structure
 %       X               - design matrix (predictors)
 %       Y               - data
@@ -16,7 +16,8 @@ function [ output ] = tapas_rdcm_ridge(DCM, X, Y, args)
 % 
 %   Reference:
 %       Frässle, S., Lomakina, E.I., Razi, A., Friston, K.J., Buhmann, J.M., 
-%       Stephan, K.E., 2017. Regression DCM for fMRI. NeuroImage 155, 406?421.
+%       Stephan, K.E., 2017. Regression DCM for fMRI. NeuroImage 155, 406-421.
+%       https://doi.org/10.1016/j.neuroimage.2017.02.090
 %
  
 % ----------------------------------------------------------------------

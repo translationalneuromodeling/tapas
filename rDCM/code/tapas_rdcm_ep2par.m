@@ -3,7 +3,7 @@ function [ par ] = tapas_rdcm_ep2par(Ep)
 % 
 % Vectorizes Ep structure
 % 
-% 	Input:
+%   Input:
 %   	Ep          - parameter structure
 %
 %   Output:

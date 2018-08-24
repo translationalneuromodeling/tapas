@@ -6,7 +6,7 @@ function [ output ] = tapas_rdcm_sparse(DCM, X, Y, args)
 % function implements the VB update equations derived in Frässle et al.
 % (2018).
 % 
-%	Input:
+%   Input:
 %   	DCM             - model structure
 %       X               - design matrix (predictors)
 %       Y               - data
@@ -18,7 +18,8 @@ function [ output ] = tapas_rdcm_sparse(DCM, X, Y, args)
 %   Reference:
 %       Frässle, S., Lomakina, E.I., Kasper, L., Manjaly Z.M., Leff, A., 
 %       Pruessmann, K.P., Buhmann, J.M., Stephan, K.E., 2018. A generative 
-%       model of whole-brain effective connectivity. NeuroImage 179, 505-529. 
+%       model of whole-brain effective connectivity. NeuroImage 179, 505-529.
+%       https://doi.org/10.1016/j.neuroimage.2018.05.058
 %
  
 % ----------------------------------------------------------------------

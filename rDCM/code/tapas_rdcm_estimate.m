@@ -4,7 +4,7 @@ function [output, options] = tapas_rdcm_estimate(DCM, type, options, methods)
 % Main analysis function, which calls the subfunctions necessary to run a
 % regression DCM (rDCM) analysis.
 % 
-%	Input:
+%   Input:
 %   	DCM             - either model structure or a filename
 %       type            - 'r' for empirical data or 's' for
 %                         simulated data
@@ -18,10 +18,12 @@ function [output, options] = tapas_rdcm_estimate(DCM, type, options, methods)
 %   Reference:
 %       Frässle, S., Lomakina, E.I., Razi, A., Friston, K.J., Buhmann, J.M., 
 %       Stephan, K.E., 2017. Regression DCM for fMRI. NeuroImage 155, 406-421.
+%       https://doi.org/10.1016/j.neuroimage.2017.02.090
 % 
 %       Frässle, S., Lomakina, E.I., Kasper, L., Manjaly Z.M., Leff, A., 
 %       Pruessmann, K.P., Buhmann, J.M., Stephan, K.E., 2018. A generative 
-%       model of whole-brain effective connectivity. NeuroImage 179, 505-529. 
+%       model of whole-brain effective connectivity. NeuroImage 179, 505-529.
+%       https://doi.org/10.1016/j.neuroimage.2018.05.058
 %
  
 % ----------------------------------------------------------------------

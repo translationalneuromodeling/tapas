@@ -4,7 +4,7 @@ function [ DCM ] = tapas_rdcm_generate(DCM, options, SNR)
 % Generates synthetic fMRI data under a given signal to noise ratio (SNR) 
 % with the fixed hemodynamic convolution kernel
 % 
-% 	Input:
+%   Input:
 %   	DCM         - model structure
 %       options     - estimation options
 %       SNR         - signal to noise ratio

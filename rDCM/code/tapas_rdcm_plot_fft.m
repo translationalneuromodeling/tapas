@@ -3,7 +3,7 @@ function tapas_rdcm_plot_fft(y, region_id)
 % 
 % Plots signals in both frequency and time domains.
 % 
-%	Input:
+%   Input:
 %   	y               - data
 %       region_id       - region index
 %
