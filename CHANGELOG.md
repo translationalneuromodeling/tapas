@@ -6,6 +6,10 @@ TAPAS toolbox
 ### Added
 - tapas_get_tapas_revision.m outputs the branch and hash of the repository.
 - Revision is printed when initiliazing tapas.
+- added HUGE toolbox: hierarchical unsupervised generative embedding 
+    - clustering model for DCM for fMRI
+    - currently supports variational Bayes inversion
+    - https://doi.org/10.1016/j.neuroimage.2018.06.073
 
 ## [2.7.4.1] 2018-01-24
 
