@@ -37,7 +37,7 @@ rng(2406,'twister')
 
 % get path of rDCM toolbox
 P        = mfilename('fullpath');
-rDCM_ind = strfind(P,'rDCM/code');
+rDCM_ind = strfind(P,fullfile('rDCM','code'));
     
 % load the example network architecture
 temp = load(fullfile(P(1:rDCM_ind-1),'rDCM','test','DCM_LargeScaleSmith_model1.mat'));
