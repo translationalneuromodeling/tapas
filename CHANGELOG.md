@@ -1,22 +1,13 @@
 # Changelog
 TAPAS toolbox 
 
-## Unreleased
-
-### Added
-- tapas_get_tapas_revision.m outputs the branch and hash of the repository.
-- Revision is printed when initiliazing tapas.
-- added HUGE toolbox: hierarchical unsupervised generative embedding 
-    - clustering model for DCM for fMRI
-    - currently supports variational Bayes inversion
-    - https://doi.org/10.1016/j.neuroimage.2018.06.073
-
 ## [2.7.4.1] 2018-01-24
 
 ### Added
 - includes PhysIO R2017.3 
     - new Readers: Human Connectome Project (HCP) and Siemens multiband (CMRR) WIP Physlog files
     - extended documentation and FAQ via Wiki
+
 
 ## [2.7.3.2] 2018-01-19
 
@@ -26,6 +17,7 @@ TAPAS toolbox
 ### Fixed
 - tapas_version typo
 - tapas_print_logo with T=Translational instead of TNU
+
 
 ## [2.7.3.1] 2017-08-18
 
