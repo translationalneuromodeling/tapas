@@ -1,13 +1,37 @@
 # Changelog
 TAPAS toolbox 
 
+## Unreleased
+
+### Added
+- tapas\_get\_tapas\_revision.m outputs the branch and hash of the repository.
+- Revision is printed when initiliazing tapas.
+- Contributor License Agreement (CLA) file
+- CONTRIBUTING.md explaining coding and style guidelines, signing procedure for CLA file
+- Include the function tapas\_get\_current\_version.m.
+- Implements download of example data from the server using 
+    tapas_download_example_data.
+- Now there is log file that list the versions of tapas, the download link
+    and the hash of the file that is downloaded.
+- Use the an external file to do the md5 check sum. See external javamd5.
+- HUGE toolbox: hierarchical unsupervised generative embedding 
+    doi:10.1016/j.neuroimage.2018.06.073
+
+### Changed
+- README.md to include reference to CONTRIBUTING.md and explanation of CLA
+- Dropped 4 digits versioning for 3.
+- The version of tapas is now read from misc/log\_tapas.txt. It is the first
+    line of this file.
+
+### Removed
+- Deleted the gpo folder.
+
 ## [2.7.4.1] 2018-01-24
 
 ### Added
 - includes PhysIO R2017.3 
     - new Readers: Human Connectome Project (HCP) and Siemens multiband (CMRR) WIP Physlog files
     - extended documentation and FAQ via Wiki
-
 
 ## [2.7.3.2] 2018-01-19
 
@@ -17,7 +41,6 @@ TAPAS toolbox
 ### Fixed
 - tapas_version typo
 - tapas_print_logo with T=Translational instead of TNU
-
 
 ## [2.7.3.1] 2017-08-18
 

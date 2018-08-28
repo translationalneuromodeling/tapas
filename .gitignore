@@ -14,3 +14,4 @@ lib
 *.so
 *.mexw64
 *.asv
+examples/
