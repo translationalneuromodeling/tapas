@@ -68,18 +68,20 @@ if DcmResults.maxClusters > 1
     xlabel('connection index');
 
     % DCM
-    % plot 25 samples from posterior over (noise free) BOLD response
+    % plot 25 samples from posterior over (noise free) BOLD response 
     subplot(2,1,2)
     hold on
-    n = 1;
+    n = 1; % for first subject
     postMean = DcmResults.posterior.dcmMean(n,:);
-    postCovM = DcmResults.posterior.dcmSigma(:,:,n);
+    postStd = chol(DcmResults.posterior.dcmSigma(:,:,n));
     for iSmp = 1:25
-        postSmp = mvnrnd(postMean,postCovM);
+        % draw a sample from posterior over DCM parameters
+        postSmp = postMean + randn(size(postMean))*postStd;
         tmp = zeros(1,DcmInfo.nParameters);
         tmp(DcmInfo.connectionIndicator) = postSmp(1:DcmInfo.nConnections);
         tmp(end-3*DcmInfo.nStates+1:end-DcmInfo.nStates+1) = ...
             postSmp(DcmInfo.nConnections+1:end);
+        % predict BOLD response for current sample
         pred = tapas_huge_bold(tmp,DcmInfo,n);
         plot(pred(:),'b')
     end

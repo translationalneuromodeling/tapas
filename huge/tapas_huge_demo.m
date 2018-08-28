@@ -173,14 +173,14 @@ randomize = true;
 
 % analysis
 currentTimer = tic;
-[DcmResults] = tapas_huge_invert(DCMr2l, K, priors, verbose, randomize);
+[DcmResultsR2l] = tapas_huge_invert(DCMr2l, K, priors, verbose, randomize);
 toc(currentTimer)
 
-disp(['Negative free energy is ' num2str(DcmResults.freeEnergy) ...
-    ' after ' num2str(DcmResults.nIterationsActual) ' iterations.'])
+disp(['Negative free energy is ' num2str(DcmResultsR2l.freeEnergy) ...
+    ' after ' num2str(DcmResultsR2l.nIterationsActual) ' iterations.'])
 
 % plot the results
-tapas_huge_plot(DCMr2l,DcmResults);
+tapas_huge_plot(DCMr2l,DcmResultsR2l);
 
 
 %% Empirical Bayes analysis
@@ -203,14 +203,14 @@ randomize = true;
 
 % analysis
 currentTimer = tic;
-[DcmResults] = tapas_huge_invert(DCMr2l, K, priors, verbose, randomize);
+[DcmResultsEb] = tapas_huge_invert(DCMr2l, K, priors, verbose, randomize);
 toc(currentTimer)
 
-disp(['Negative free energy is ' num2str(DcmResults.freeEnergy) ...
-    ' after ' num2str(DcmResults.nIterationsActual) ' iterations.'])
+disp(['Negative free energy is ' num2str(DcmResultsEb.freeEnergy) ...
+    ' after ' num2str(DcmResultsEb.nIterationsActual) ' iterations.'])
 
 % plot the results
-tapas_huge_plot(DCMr2l,DcmResults);
+tapas_huge_plot(DCMr2l,DcmResultsEb);
 %%
 % The above figure summarizes the result of empirical Bayes. The top panel
 % shows the posterior group-level mean with 95% marginal credible
