@@ -1,15 +1,17 @@
-RELEASE INFORMATION
-===============================
+# Changelog
+Regression Dynamic Causal Modeling (rDCM) toolbox 
 
-Current Release
----------------
+## [1.0] 2018-09-03
 
-rDCM_Toolbox_v1.0
+### Added
+- Original release of the regression dynamic causal modeling (rDCM) toolbox (v1.0) 
+as part of the open-source software package TAPAS [3.0].
+- MATLAB functions implementing the necessary steps of an rDCM analysis have been added
+- A brief tutorial tapas_rdcm_tutorial.m that demonstrates how to implement an rDCM analysis has been added
+- Documentation has been added in the Manual.pdf, ReadMe.md, and throughout the code 
 
-September 3, 2018
+### Changed
+- none
 
-Major Release Notes (v1.0)
------------------------------
-
-- Original release of the regression dynamic causal modeling (rDCM) Toolbox as part 
-of the open-source software package TAPAS.
+### Removed
+- none
