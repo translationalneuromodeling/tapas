@@ -25,7 +25,6 @@ def wrapper(theta, reparam):
     return vals
 
 
-
 def reparametrize_seri_gamma(theta):
     ''' Reparametrize the seri model using the invgamma distribution
     

@@ -10,7 +10,7 @@ LIBDIR = $(abs_top_srcdir)/lib
 LIBSOONER = $(LIBDIR)/libantisaccades.a
 SOURCES = $(wildcard *.c)
 OBJS = $(SOURCES:%.c=%.o)
-CFLAGS += $(OPENMP_CFLAGS) $(IDIR) -std=c99 -fPIC
+CFLAGS += $(OPENMP_CFLAGS) $(IDIR) -std=c11 -fPIC
 
 all: $(LIBSOONER)
 

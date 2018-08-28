@@ -38,15 +38,11 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
     # likelihood
     llh = '''
-    model.llh = {0:s}_llh_{1:s};'''.format(family, param)
+    model.llh = {0:s}_llh_{1:s};'''.format(family, 'abstract')
 
     # Reparamterization
     
-    if not len(reparam):
-        rpar = '''
-    model.fill_parameters = populate_parameters_{0:s};'''.format(family)
-    else:
-        rpar = '''
+    rpar = '''
     model.fill_parameters = reparametrize_{0:s}_{1:s};'''.format(family, param)
      
     coda = ''' 
@@ -162,26 +158,29 @@ def optimized_code():
         for p in parametric:           
             code = gen_optimized_code(f, gslint[p], p)
             fname = gen_optimized_fname(f, p)
-            with open(fname, 'w') as fp:
-                fp.write(code)
+            print fname 
+            #with open(fname, 'w') as fp:
+            #    fp.write(code)
     return
 
 def gen_other():
 
-    model = ['trial_by_trial', 'two_states']
-    parametric = ['gamma', 'invgamma', 'mixedgamma', 'lognorm', 'later']
-    family = ['prosa', 'seri', 'dora']
+    model = ['n_states']
+    parametric = ['gamma', 'invgamma', 'mixedgamma', 'lognorm', 'later',
+            'wald']
+    family = ['dora']
 
-    repar = ['', '_no_transform']
+    repar = ['']
 
     for f in family:
         for m in model:
             for p in parametric:
                 fname, code = gen_code(f, m, p, repar[0])
+                print code 
                 with open(fname, 'w') as fp:
                     fp.write(code)
                 print fname
-
+    '''
     for f in ['seri']:
         for m in model:
             for p in parametric:
@@ -189,10 +188,11 @@ def gen_other():
                 with open(fname, 'w') as fp:
                     fp.write(code)
                 print fname
-
+    '''
 if __name__ == '__main__':
     
-    optimized_code()
+    gen_other()
+    #optimized_code()
     pass    
 
     

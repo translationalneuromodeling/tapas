@@ -1,5 +1,3 @@
-
-
 /* aponteeduardo@gmail.com */
 /* copyright (C) 2017 */
 
@@ -26,8 +24,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     plhs[0] = mxCreateDoubleMatrix(ns, nc, mxREAL);
     llh = mxGetPr(plhs[0]);
 
-    model.llh = seri_llh_mixedgamma;
-    model.nested_integral = ninvgamma_gslint;
+    model.llh = seri_llh_abstract;
     model.fill_parameters = reparametrize_seri_mixedgamma; 
     gsl_set_error_handler_off();
 
@@ -56,7 +53,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
             
             tllh = (double *) malloc(svals.nt * sizeof(double));
             
-            seri_model_two_states_optimized(svals, model, tllh);
+            seri_model_n_states_optimized(svals, model, tllh);
 
             llh[i + ns * j] = 0;
             for (k = 0; k < svals.nt; k++)

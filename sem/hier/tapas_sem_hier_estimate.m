@@ -31,7 +31,7 @@ if nargin < n
 end
 
 [pars] = tapas_hgf_pars(data, model, pars);
-[data] = tapas_sem_hier_data(data, model, pars);
+[data] = tapas_sem_multiv_data(data, model, pars);
 [model] = tapas_sem_hier_model(data, model, pars);
 [inference] = tapas_sem_hier_inference(inference, pars);
 

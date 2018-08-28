@@ -14,6 +14,23 @@ cdef extern from "src/antisaccades/antisaccades.h":
     cdef int DIM_DORA_THETA
     cdef int DIM_SERI_THETA
 
+    ctypedef double (*NESTED_INTEGRAL)(double x0, double x1, double a,
+        double b, double c0, double c1)
+
+    ctypedef double (*ACCUMULATOR_FUNCTION)(double time, double shape,
+        double scale)
+
+    ctypedef struct ACCUMULATOR:
+
+        ACCUMULATOR_FUNCTION pdf
+        ACCUMULATOR_FUNCTION lpdf
+
+        ACCUMULATOR_FUNCTION cdf
+        ACCUMULATOR_FUNCTION lcdf
+
+        ACCUMULATOR_FUNCTION sf
+        ACCUMULATOR_FUNCTION lsf 
+
     ctypedef struct ANTIS_INPUT:
         double *t
         double *a
@@ -36,6 +53,12 @@ cdef extern from "src/antisaccades/antisaccades.h":
         double ts
 
         double da
+
+        ACCUMULATOR early
+        ACCUMULATOR stop
+        ACCUMULATOR anti
+
+        NESTED_INTEGRAL inhibition_race
         
     ctypedef struct SERI_PARAMETERS:
 
@@ -54,6 +77,13 @@ cdef extern from "src/antisaccades/antisaccades.h":
 
         double da
 
+        ACCUMULATOR early
+        ACCUMULATOR stop
+        ACCUMULATOR anti
+
+        NESTED_INTEGRAL inhibition_race
+
+
     ctypedef struct DORA_PARAMETERS:
 
         double t0
@@ -71,6 +101,13 @@ cdef extern from "src/antisaccades/antisaccades.h":
 
         double da
 
+        ACCUMULATOR early
+        ACCUMULATOR stop
+        ACCUMULATOR anti
+        ACCUMULATOR late
+
+        NESTED_INTEGRAL inhibition_race
+
     ctypedef double ( *PROSA_LLH )(double t, int a, PROSA_PARAMETERS params)
     ctypedef double ( *SERI_LLH )(double t, int a, SERI_PARAMETERS params)
     ctypedef double ( *DORA_LLH )(double t, int a, DORA_PARAMETERS params)
@@ -81,8 +118,6 @@ cdef extern from "src/antisaccades/antisaccades.h":
         *parameters)
     ctypedef int (*FILL_PARAMETERS_DORA)(const double *theta, DORA_PARAMETERS
         *parameters)
-    ctypedef double (*NESTED_INTEGRAL_SERI)(double x0, double x1, double a,
-        double b, double c0, double c1)
 
     ctypedef struct PROSA_MODEL:
         FILL_PARAMETERS_PROSA fill_parameters
@@ -91,66 +126,40 @@ cdef extern from "src/antisaccades/antisaccades.h":
     ctypedef struct SERI_MODEL:
         FILL_PARAMETERS_SERI fill_parameters
         SERI_LLH llh
-        NESTED_INTEGRAL_SERI nested_integral
+        NESTED_INTEGRAL nested_integral
 
     ctypedef struct DORA_MODEL:
         FILL_PARAMETERS_DORA fill_parameters
         DORA_LLH llh
-        NESTED_INTEGRAL_SERI nested_integral
 
     cdef:
-        double prosa_llh_gamma(double t, int a, PROSA_PARAMETERS params)
+        double prosa_llh_abstract(double t, int a, PROSA_PARAMETERS params)
 
-        double prosa_llh_invgamma(double t, int a, PROSA_PARAMETERS params)
+        double seri_llh_abstract(double t, int a, SERI_PARAMETERS params)
 
-        double prosa_llh_mixedgamma(double t, int a, PROSA_PARAMETERS params)
+        double dora_llh_abstract(double t, int a, DORA_PARAMETERS params)
 
-        double prosa_llh_lognorm(double t, int a, PROSA_PARAMETERS params)
-
-        double prosa_llh_later(double t, int a, PROSA_PARAMETERS params)
-
-        double prosa_llh_wald(double t, int a, PROSA_PARAMETERS params)
-
-        double seri_llh_gamma(double t, int a, SERI_PARAMETERS params)
-
-        double seri_llh_invgamma(double t, int a, SERI_PARAMETERS params)
-
-        double seri_llh_mixedgamma(double t, int a, SERI_PARAMETERS params)
-
-        double seri_llh_lognorm(double t, int a, SERI_PARAMETERS params)
-
-        double seri_llh_later(double t, int a, SERI_PARAMETERS params)
-
-        double seri_llh_wald(double t, int a, SERI_PARAMETERS params)
-
-        double dora_llh_gamma(double t, int a, DORA_PARAMETERS params)
-
-        double dora_llh_invgamma(double t, int a, DORA_PARAMETERS params)
-
-        double dora_llh_mixedgamma(double t, int a, DORA_PARAMETERS params)
-
-        double dora_llh_lognorm(double t, int a, DORA_PARAMETERS params)
-
-        double dora_llh_later(double t, int a, DORA_PARAMETERS params)
-
-        double dora_llh_wald(double t, int a, DORA_PARAMETERS params)
+        double dora_early_llh_abstract(double t, int a, DORA_PARAMETERS params)
 
         int prosa_model_trial_by_trial(ANTIS_INPUT svals, PROSA_MODEL fllh, 
-                double *llh)
-        
-        int prosa_model_two_states(ANTIS_INPUT svals, PROSA_MODEL fllh, 
-                double *llh)
+                double *llh)        
+        int prosa_model_n_states_optimized(ANTIS_INPUT svals, 
+                PROSA_MODEL fllh, double *llh)
+        int prosa_model_n_states(ANTIS_INPUT svals, 
+                PROSA_MODEL fllh, double *llh)
 
         int dora_model_trial_by_trial(ANTIS_INPUT svals, DORA_MODEL fllh, 
             double *llh)
-
-        int dora_model_two_states(ANTIS_INPUT svals, DORA_MODEL fllh, 
-            double *llh)
+        int dora_model_n_states_optimized(ANTIS_INPUT svals, 
+                DORA_MODEL fllh, double *llh)
+        int dora_model_n_states(ANTIS_INPUT svals, 
+                DORA_MODEL fllh, double *llh)
 
         int seri_model_trial_by_trial(ANTIS_INPUT svals, SERI_MODEL fllh, 
                 double *llh)
-
-        int seri_model_two_states(ANTIS_INPUT svals, SERI_MODEL fllh, 
+        int seri_model_n_states(ANTIS_INPUT svals, SERI_MODEL fllh, 
+                double *llh)
+        int seri_model_n_states_optimized(ANTIS_INPUT svals, SERI_MODEL fllh, 
                 double *llh)
 
         int populate_parameters_prosa(const double *theta, 
@@ -202,4 +211,11 @@ cdef extern from "src/antisaccades/antisaccades.h":
         int reparametrize_prosa_wald(const double *theta, 
                 PROSA_PARAMETERS *stheta)
 
-
+        double ngamma_gslint(double t0, double x, double a, double b, 
+		double c0, double c1)
+        double ninvgamma_gslint(double x0, double x1, double a, double b, 
+                double c0, double c1)
+        double nlater_gslint(double t0, double x, double mu1, double mu2,
+		double sig1, double sig2)
+        double nwald_gslint(double t0, double x, double mu1, double mu2, 
+		double sig1, double sig2)

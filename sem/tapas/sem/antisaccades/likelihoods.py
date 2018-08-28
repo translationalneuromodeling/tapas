@@ -30,8 +30,8 @@ def wrapper(llh, rt, ac, tt, theta):
     return vals
 
 
-def seri_two_states_gamma(rt, ac, tt, theta):
-    ''' Likelihood of the seri model using the two_states distribution
+def seri_n_states_gamma(rt, ac, tt, theta):
+    ''' Likelihood of the seri model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -41,10 +41,10 @@ def seri_two_states_gamma(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_seri_model_two_states_gamma, rt, ac, tt, theta)
+    return wrapper(p_seri_model_n_states_gamma, rt, ac, tt, theta)
 
-def seri_two_states_invgamma(rt, ac, tt, theta):
-    ''' Likelihood of the seri model using the two_states distribution
+def seri_n_states_invgamma(rt, ac, tt, theta):
+    ''' Likelihood of the seri model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -54,10 +54,10 @@ def seri_two_states_invgamma(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_seri_model_two_states_invgamma, rt, ac, tt, theta)
+    return wrapper(p_seri_model_n_states_invgamma, rt, ac, tt, theta)
 
-def seri_two_states_mixedgamma(rt, ac, tt, theta):
-    ''' Likelihood of the seri model using the two_states distribution
+def seri_n_states_mixedgamma(rt, ac, tt, theta):
+    ''' Likelihood of the seri model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -67,10 +67,10 @@ def seri_two_states_mixedgamma(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_seri_model_two_states_mixedgamma, rt, ac, tt, theta)
+    return wrapper(p_seri_model_n_states_mixedgamma, rt, ac, tt, theta)
 
-def seri_two_states_lognorm(rt, ac, tt, theta):
-    ''' Likelihood of the seri model using the two_states distribution
+def seri_n_states_lognorm(rt, ac, tt, theta):
+    ''' Likelihood of the seri model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -80,10 +80,10 @@ def seri_two_states_lognorm(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_seri_model_two_states_lognorm, rt, ac, tt, theta)
+    return wrapper(p_seri_model_n_states_lognorm, rt, ac, tt, theta)
 
-def seri_two_states_later(rt, ac, tt, theta):
-    ''' Likelihood of the seri model using the two_states distribution
+def seri_n_states_later(rt, ac, tt, theta):
+    ''' Likelihood of the seri model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -93,10 +93,10 @@ def seri_two_states_later(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_seri_model_two_states_later, rt, ac, tt, theta)
+    return wrapper(p_seri_model_n_states_later, rt, ac, tt, theta)
 
-def seri_two_states_wald(rt, ac, tt, theta):
-    ''' Likelihood of the seri model using the two_states distribution
+def seri_n_states_wald(rt, ac, tt, theta):
+    ''' Likelihood of the seri model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -106,10 +106,10 @@ def seri_two_states_wald(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_seri_model_two_states_wald, rt, ac, tt, theta)
+    return wrapper(p_seri_model_n_states_wald, rt, ac, tt, theta)
 
-def dora_two_states_gamma(rt, ac, tt, theta):
-    ''' Likelihood of the dora model using the two_states distribution
+def dora_n_states_gamma(rt, ac, tt, theta):
+    ''' Likelihood of the dora model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -119,10 +119,10 @@ def dora_two_states_gamma(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_dora_model_two_states_gamma, rt, ac, tt, theta)
+    return wrapper(p_dora_model_n_states_gamma, rt, ac, tt, theta)
 
-def dora_two_states_invgamma(rt, ac, tt, theta):
-    ''' Likelihood of the dora model using the two_states distribution
+def dora_n_states_invgamma(rt, ac, tt, theta):
+    ''' Likelihood of the dora model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -132,10 +132,10 @@ def dora_two_states_invgamma(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_dora_model_two_states_invgamma, rt, ac, tt, theta)
+    return wrapper(p_dora_model_n_states_invgamma, rt, ac, tt, theta)
 
-def dora_two_states_mixedgamma(rt, ac, tt, theta):
-    ''' Likelihood of the dora model using the two_states distribution
+def dora_n_states_mixedgamma(rt, ac, tt, theta):
+    ''' Likelihood of the dora model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -145,10 +145,10 @@ def dora_two_states_mixedgamma(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_dora_model_two_states_mixedgamma, rt, ac, tt, theta)
+    return wrapper(p_dora_model_n_states_mixedgamma, rt, ac, tt, theta)
 
-def dora_two_states_lognorm(rt, ac, tt, theta):
-    ''' Likelihood of the dora model using the two_states distribution
+def dora_n_states_lognorm(rt, ac, tt, theta):
+    ''' Likelihood of the dora model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -158,10 +158,10 @@ def dora_two_states_lognorm(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_dora_model_two_states_lognorm, rt, ac, tt, theta)
+    return wrapper(p_dora_model_n_states_lognorm, rt, ac, tt, theta)
 
-def dora_two_states_later(rt, ac, tt, theta):
-    ''' Likelihood of the dora model using the two_states distribution
+def dora_n_states_later(rt, ac, tt, theta):
+    ''' Likelihood of the dora model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -171,10 +171,10 @@ def dora_two_states_later(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_dora_model_two_states_later, rt, ac, tt, theta)
+    return wrapper(p_dora_model_n_states_later, rt, ac, tt, theta)
 
-def dora_two_states_wald(rt, ac, tt, theta):
-    ''' Likelihood of the dora model using the two_states distribution
+def dora_n_states_wald(rt, ac, tt, theta):
+    ''' Likelihood of the dora model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -184,10 +184,10 @@ def dora_two_states_wald(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_dora_model_two_states_wald, rt, ac, tt, theta)
+    return wrapper(p_dora_model_n_states_wald, rt, ac, tt, theta)
 
-def prosa_two_states_gamma(rt, ac, tt, theta):
-    ''' Likelihood of the prosa model using the two_states distribution
+def prosa_n_states_gamma(rt, ac, tt, theta):
+    ''' Likelihood of the prosa model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -197,10 +197,10 @@ def prosa_two_states_gamma(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_prosa_model_two_states_gamma, rt, ac, tt, theta)
+    return wrapper(p_prosa_model_n_states_gamma, rt, ac, tt, theta)
 
-def prosa_two_states_invgamma(rt, ac, tt, theta):
-    ''' Likelihood of the prosa model using the two_states distribution
+def prosa_n_states_invgamma(rt, ac, tt, theta):
+    ''' Likelihood of the prosa model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -210,10 +210,10 @@ def prosa_two_states_invgamma(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_prosa_model_two_states_invgamma, rt, ac, tt, theta)
+    return wrapper(p_prosa_model_n_states_invgamma, rt, ac, tt, theta)
 
-def prosa_two_states_mixedgamma(rt, ac, tt, theta):
-    ''' Likelihood of the prosa model using the two_states distribution
+def prosa_n_states_mixedgamma(rt, ac, tt, theta):
+    ''' Likelihood of the prosa model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -223,10 +223,10 @@ def prosa_two_states_mixedgamma(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_prosa_model_two_states_mixedgamma, rt, ac, tt, theta)
+    return wrapper(p_prosa_model_n_states_mixedgamma, rt, ac, tt, theta)
 
-def prosa_two_states_lognorm(rt, ac, tt, theta):
-    ''' Likelihood of the prosa model using the two_states distribution
+def prosa_n_states_lognorm(rt, ac, tt, theta):
+    ''' Likelihood of the prosa model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -236,10 +236,10 @@ def prosa_two_states_lognorm(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_prosa_model_two_states_lognorm, rt, ac, tt, theta)
+    return wrapper(p_prosa_model_n_states_lognorm, rt, ac, tt, theta)
 
-def prosa_two_states_later(rt, ac, tt, theta):
-    ''' Likelihood of the prosa model using the two_states distribution
+def prosa_n_states_later(rt, ac, tt, theta):
+    ''' Likelihood of the prosa model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -249,10 +249,10 @@ def prosa_two_states_later(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_prosa_model_two_states_later, rt, ac, tt, theta)
+    return wrapper(p_prosa_model_n_states_later, rt, ac, tt, theta)
 
-def prosa_two_states_wald(rt, ac, tt, theta):
-    ''' Likelihood of the prosa model using the two_states distribution
+def prosa_n_states_wald(rt, ac, tt, theta):
+    ''' Likelihood of the prosa model using the n_states distribution
     
     rt      Reaction times
     ac      Action
@@ -262,5 +262,89 @@ def prosa_two_states_wald(rt, ac, tt, theta):
         
     '''
 
-    return wrapper(p_prosa_model_two_states_wald, rt, ac, tt, theta)
+    return wrapper(p_prosa_model_n_states_wald, rt, ac, tt, theta)
+
+def dora_early_llh_n_states_gamma(rt, ac, tt, theta):
+    ''' Likelihood of an early response in the dora model using the n_states
+        distribution.
+    
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+        
+    '''
+
+    return wrapper(p_dora_early_llh_n_states_gamma, rt, ac, tt, theta)
+
+def dora_early_llh_n_states_invgamma(rt, ac, tt, theta):
+    ''' Likelihood of an early response in the dora model using the n_states
+        distribution.
+    
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+        
+    '''
+
+    return wrapper(p_dora_early_llh_n_states_invgamma, rt, ac, tt, theta)
+
+def dora_early_llh_n_states_mixedgamma(rt, ac, tt, theta):
+    ''' Likelihood of an early response in the dora model using the n_states
+        distribution.
+    
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+        
+    '''
+
+    return wrapper(p_dora_early_llh_n_states_mixedgamma, rt, ac, tt, theta)
+
+def dora_early_llh_n_states_lognorm(rt, ac, tt, theta):
+    ''' Likelihood of an early response in the dora model using the n_states
+        distribution.
+    
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+        
+    '''
+
+    return wrapper(p_dora_early_llh_n_states_lognorm, rt, ac, tt, theta)
+
+def dora_early_llh_n_states_later(rt, ac, tt, theta):
+    ''' Likelihood of an early response in the dora model using the n_states
+        distribution.
+    
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+        
+    '''
+
+    return wrapper(p_dora_early_llh_n_states_later, rt, ac, tt, theta)
+
+def dora_early_llh_n_states_wald(rt, ac, tt, theta):
+    ''' Likelihood of an early response in the dora model using the n_states
+        distribution.
+    
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+        
+    '''
+
+    return wrapper(p_dora_early_llh_n_states_wald, rt, ac, tt, theta)
 

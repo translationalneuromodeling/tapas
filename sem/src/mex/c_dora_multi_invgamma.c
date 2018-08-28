@@ -1,9 +1,7 @@
-
-
 /* aponteeduardo@gmail.com */
 /* copyright (C) 2017 */
 
-#include "antisaccades.h"
+#include "./antisaccades/antisaccades.h"
 #ifdef HAVE_OMP_H
 #include <omp.h>
 #endif
@@ -26,12 +24,11 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     plhs[0] = mxCreateDoubleMatrix(ns, nc, mxREAL);
     llh = mxGetPr(plhs[0]);
 
-    model.llh = dora_llh_invgamma;
-    model.nested_integral = ninvgamma_gslint;
+    model.llh = dora_llh_abstract;
     model.fill_parameters = reparametrize_dora_invgamma; 
     gsl_set_error_handler_off();
 
-    #pragma omp parallel for private(i) private(j) collapse(2) schedule(static) 
+    #pragma omp parallel for private(i) private(j) collapse(2) schedule(dynamic) 
     for (j = 0; j < nc; j++) 
     {
         for (i = 0; i < ns; i++)
@@ -43,7 +40,6 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
             mxArray *theta = mxGetCell(prhs[1], i + ns * j);
             double *tllh;
             int k;
-
             
             svals.t = mxGetPr(mxGetField(y, 0, "t"));
             svals.a = mxGetPr(mxGetField(y, 0, "a"));
@@ -52,11 +48,12 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
             svals.theta = mxGetPr(theta);
             
             svals.nt = *mxGetDimensions(mxGetField(y, 0, "t")); 
-            svals.np = mxGetDimensions(theta)[1];
+            svals.np = (mxGetDimensions(theta)[0]
+                * mxGetDimensions(theta)[1])/DIM_DORA_THETA; 
             
             tllh = (double *) malloc(svals.nt * sizeof(double));
             
-            dora_model_two_states_optimized(svals, model, tllh);
+            dora_model_n_states_optimized(svals, model, tllh);
 
             llh[i + ns * j] = 0;
             for (k = 0; k < svals.nt; k++)

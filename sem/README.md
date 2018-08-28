@@ -1,144 +1,115 @@
 # README
 
 aponteeduardo@gmail.com
-copyright (C) 2015-2017
+copyright (C) 2015
 
-# The SERIA model
+# Dependencies
 
-The [SERIA model](http://www.biorxiv.org/content/early/2017/06/08/109090)
-is a formal statistical model of the probability of a 
-pro- or antisaccade and its reaction time. The currente toolbox includes an 
-inference method based on the Metropolis-Hasting algorithm implemented in
-MATLAB.
+tapas/sem depends on 
 
-After installation (see below), you can run an example using
-
-~~~~
-tapas_init();
-tapas_sem_example_invesion(1);
-~~~~
-
-This will load data and estimate parameters. The data consists
-of a list of trials with trial type (pro or antisaccade), the
-action performed (pro or antisaccade) and the reaction time. 
-
-You can use the file `sem/examples/tapas_sem_example_inversion.m`
-as a template to run your analysis.
-
-## As a python package
-
-This toolbox can be installed as python package. Although no inference
-algorithm is currently implemented, it can be potentially used in combination
-with packages implementing maximum likelihood estimators or the 
-Metropolis-Hasting algorithm. After installation it can be imported as
-~~~~
-from tapas.sem.antisaccades import likelihoods as seria
-~~~~
-This contains all the models described in the original
-[SERIA paper](https://doi.org/10.1371/journal.pcbi.1005692).
+gsl/1.16
 
 # Installation
 
-## Supported platforms
+## Python Package
 
-Mac OSX and linux are supported. We have tested in a variaty of setups
-and it has worked so far. If you have any issue please contact us.
+Sooner can be install as an usual python package using
 
-We do not support Windows but most likely it can be installed as a python 
-package.
+python setup.py install 
 
-## Dependencies
+It's dependencies are:
 
-* gsl/1.16>
+* numpy
+* scipy
+* Cython
 
-In Ubuntu, it can be install as 
-~~~~
-sudo apt-get install libgsl0-dev
-~~~~
-To install in Mac
-~~~~
+It should be enough to run
+
+* pip install numpy
+* pip install scipy
+* pip install Cython
+
+
+A further dependecy is gsl. In Ubuntu you woul need the dev version
+
+sudo apt-get install libgsl0-dev 
+
+To install in mac you will need to install gsl
+
 brew install gsl
 brew install clang-omp 
-~~~~
-Or alternatively using mac ports.
-~~~~
-sudo port install gsl
-~~~~
+
+Currently we do not support openmp as clang doesn't support it. Apparently
+it is possible to use openmp with clang. If you manage, then it's only
+a matter to modify the setup.py scrip by deleting the darwin case.
+
+We do not support windows but we suppect that it might work. Or not.
 
 ## Matlab package
 
-You will need a running matlab 
-installation. In particular, the command line command  `matlab` should be able
+We support the installation of sooner in Linux and Mac. We have tested in a few
+platforms and it has always worked. You will need a running matlab 
+installation. In particular, the command line matlab should be able
 to trigger matlab. The reason is that matlab is used to find out the 
-matlabroot directory during the configuration. Make sure
-that matlab can be triggered from the command line AND that it is not an
-alias.
+matlabroot directory. If you don't have the matlab command (for whatever)
+reason, it is still possible to hardcode the path in the configure.ac file.
 
-### Linux
 To install the package it should be enough to go to
-~~~~
-tapas/sem/src/
-~~~~
+
+src/
+
 and type
-~~~~
+
 ./configure && make
-~~~~
+
 The most likely problems you could face are the following:
 
-#### Something with automake or aclocal.
-In that case please install automake,f.e.,
-~~~~
+Something with automake or aclocal. In that case please install automake
+
 sudo apt-get install automake
-~~~~
-Then type
-~~~~
+
+Then in src type
+
 autoreconf -ifv
-~~~~
+
 Then try again
-~~~~
-configure && make
-~~~~
+
+./configure && make
 
 ### Mac
 
-This follows the same process than linux.
+It is possible to compile in mac after installing the gcc compiler that 
+supports openmp. In theory it is enough to write 
 
-Most likely config will fail for one of the following reasons.
+CC=clang-omp ./configure && make
 
-#### Has config found gls's header? 
+Using the llvm installed with mac ports
 
-Often after installation, the compiler fails to find gsl's headeers.
-~~~~
+sudo port install llvm-5.0
+export CC=/usr/local/opt/llvm/bin/clang
+export LDFLAGS="$LDFLAGS -L/usr/local/opt/llvm/lib/"
+./configure
+make
+
+
+Please install first gls using
+
+sudo port install gsl
+
+Most likely config will fail for a number of reason. Please check the 
+following:
+
+Has config found gls's header? If not type 
+
 export C_INCLUDE_PATH="$C_INCLUDE_PATH:/opt/local/include"
 export CFLAGS="-I:/opt/local/include $CFLAGS"
-configure && make
-~~~~
 
-#### Has config found gls's libraries? 
+Has config found gls's libraries? If not type
 
-If not type
-~~~~
 export LDFLAGS="$LDFLAGS -L/opt/local/lib/ -L/usr/local/lib"
-configure && make
-~~~~
-#### Has config found matlab?
-If not, find the path of matlab and type
-~~~~
-export PATH=$PATH:your-matlab-path
-configure && make
-~~~~
 
-## Python Package
+Has config found matlab? If not find the path of matlab and type
 
-This toolbox can be install as an usual python package using
-~~~~
-sudo python setup.py install 
-~~~~
-If you lack sudo rights or prefer not install it this way use
-~~~~
-python setup.py install --user
-~~~~
-Requirements can be installed using
-~~~~
-pip install -r requirements.txt
-~~~~
+export PATH=$PATH:/usr/local/MATLAB/R2010b/bin/
+
+This is an example path, please find the right one.

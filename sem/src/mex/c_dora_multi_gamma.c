@@ -1,5 +1,3 @@
-
-
 /* aponteeduardo@gmail.com */
 /* copyright (C) 2017 */
 
@@ -26,12 +24,11 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     plhs[0] = mxCreateDoubleMatrix(ns, nc, mxREAL);
     llh = mxGetPr(plhs[0]);
 
-    model.llh = dora_llh_gamma;
-    model.nested_integral = ngamma_gslint;
+    model.llh = dora_llh_abstract;
     model.fill_parameters = reparametrize_dora_gamma; 
     gsl_set_error_handler_off();
 
-    #pragma omp parallel for private(i) private(j) collapse(2) schedule(static) 
+    #pragma omp parallel for private(i) private(j) collapse(2) schedule(dynamic) 
     for (j = 0; j < nc; j++) 
     {
         for (i = 0; i < ns; i++)
@@ -52,11 +49,12 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
             svals.theta = mxGetPr(theta);
             
             svals.nt = *mxGetDimensions(mxGetField(y, 0, "t")); 
-            svals.np = mxGetDimensions(theta)[1];
+            svals.np = (mxGetDimensions(theta)[0]
+                * mxGetDimensions(theta)[1])/DIM_DORA_THETA;
             
             tllh = (double *) malloc(svals.nt * sizeof(double));
             
-            dora_model_two_states_optimized(svals, model, tllh);
+            dora_model_n_states_optimized(svals, model, tllh);
 
             llh[i + ns * j] = 0;
             for (k = 0; k < svals.nt; k++)

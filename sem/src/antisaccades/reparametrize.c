@@ -5,6 +5,52 @@
 
 // This is done to reparametrize the code inside c as opposed to matlab
 
+const ACCUMULATOR ACCUMULATOR_INVGAMMA = {
+    .pdf = invgamma_pdf,
+    .lpdf = invgamma_lpdf,
+    .cdf = invgamma_cdf,
+    .lcdf = invgamma_lcdf,
+    .sf = invgamma_sf,
+    .lsf = invgamma_lsf
+};
+
+const ACCUMULATOR ACCUMULATOR_GAMMA = {
+    .pdf = gamma_pdf,
+    .lpdf = gamma_lpdf,
+    .cdf = gamma_cdf,
+    .lcdf = gamma_lcdf,
+    .sf = gamma_sf,
+    .lsf = gamma_lsf
+};
+
+const ACCUMULATOR ACCUMULATOR_WALD = {
+    .pdf = wald_pdf,
+    .lpdf = wald_lpdf,
+    .cdf = wald_cdf,
+    .lcdf = wald_lcdf,
+    .sf = wald_sf,
+    .lsf = wald_lsf
+};
+
+const ACCUMULATOR ACCUMULATOR_LATER = {
+    .pdf = later_pdf,
+    .lpdf = later_lpdf,
+    .cdf = later_cdf,
+    .lcdf = later_lcdf,
+    .sf = later_sf,
+    .lsf = later_lsf
+};
+
+const ACCUMULATOR ACCUMULATOR_LOGNORM = {
+    .pdf = lognorm_pdf,
+    .lpdf = lognorm_lpdf,
+    .cdf = lognorm_cdf,
+    .lcdf = lognorm_lcdf,
+    .sf = lognorm_sf,
+    .lsf = lognorm_lsf
+};
+
+
 
 double
 transform_mv_to_gamma_k(double mu, double sigma2)
@@ -104,6 +150,12 @@ reparametrize_seri_invgamma(const double *theta, SERI_PARAMETERS *stheta)
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
+    stheta->early = ACCUMULATOR_INVGAMMA;
+    stheta->stop = ACCUMULATOR_INVGAMMA;
+    stheta->anti = ACCUMULATOR_INVGAMMA;
+
+    stheta->inhibition_race = ninvgamma_gslint;
+
     return 0;
 }
 
@@ -140,13 +192,18 @@ reparametrize_seri_wald(const double *theta, SERI_PARAMETERS *stheta)
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
+    stheta->early = ACCUMULATOR_WALD;
+    stheta->stop = ACCUMULATOR_WALD;
+    stheta->anti = ACCUMULATOR_WALD;
+
+    stheta->inhibition_race = nwald_gslint;
+
     return 0;
 }
 
 int
 reparametrize_seri_mixedgamma(const double *theta, SERI_PARAMETERS *stheta)
 {
-    double mu, sigma2;
     
     stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]) + 2;
     stheta->tp = transform_log_mv_to_gamma_t(theta[0], theta[1]);
@@ -166,6 +223,12 @@ reparametrize_seri_mixedgamma(const double *theta, SERI_PARAMETERS *stheta)
     stheta->p0 = theta[10]; 
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
+
+    stheta->early = ACCUMULATOR_INVGAMMA;
+    stheta->stop = ACCUMULATOR_INVGAMMA;
+    stheta->anti = ACCUMULATOR_GAMMA;
+
+    stheta->inhibition_race = ninvgamma_gslint;
 
     return 0;
 }
@@ -193,6 +256,12 @@ reparametrize_seri_gamma(const double *theta, SERI_PARAMETERS *stheta)
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
+    stheta->early = ACCUMULATOR_GAMMA;
+    stheta->stop = ACCUMULATOR_GAMMA;
+    stheta->anti = ACCUMULATOR_GAMMA;
+
+    stheta->inhibition_race = ngamma_gslint;
+
     return 0;
 }
 
@@ -219,13 +288,18 @@ reparametrize_seri_later(const double *theta, SERI_PARAMETERS *stheta)
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
+    stheta->early = ACCUMULATOR_LATER;
+    stheta->stop = ACCUMULATOR_LATER;
+    stheta->anti = ACCUMULATOR_LATER;
+
+    stheta->inhibition_race = nlater_gslint;
+
     return 0;
 }
 
 int
 reparametrize_seri_lognorm(const double *theta, SERI_PARAMETERS *stheta)
 {
-    double mu, sigma2;
 
     stheta->tp = log(exp(theta[1] - 2 * theta[0]) + 1);
     stheta->kp = -(theta[0] - 0.5 * stheta->tp);
@@ -248,6 +322,12 @@ reparametrize_seri_lognorm(const double *theta, SERI_PARAMETERS *stheta)
     stheta->p0 = theta[10];
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
+
+    stheta->early = ACCUMULATOR_LOGNORM;
+    stheta->stop = ACCUMULATOR_LOGNORM;
+    stheta->anti = ACCUMULATOR_LOGNORM;
+
+    stheta->inhibition_race = nlognorm_gslint;
 
     return 0;
 }
@@ -274,6 +354,13 @@ reparametrize_dora_invgamma(const double *theta, DORA_PARAMETERS *stheta)
     stheta->p0 = theta[10]; //atan(theta[10])/M_PI + 0.5;
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
+
+    stheta->early = ACCUMULATOR_INVGAMMA;
+    stheta->stop = ACCUMULATOR_INVGAMMA;
+    stheta->anti = ACCUMULATOR_INVGAMMA;
+    stheta->late = ACCUMULATOR_INVGAMMA;
+
+    stheta->inhibition_race = ninvgamma_gslint;
 
     return 0;
 }
@@ -314,6 +401,13 @@ reparametrize_dora_wald(const double *theta, DORA_PARAMETERS *stheta)
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
+    stheta->early = ACCUMULATOR_WALD;
+    stheta->stop = ACCUMULATOR_WALD;
+    stheta->anti = ACCUMULATOR_WALD;
+    stheta->late = ACCUMULATOR_WALD;
+
+    stheta->inhibition_race = nwald_gslint;
+
     return 0;
 }
 
@@ -321,13 +415,13 @@ int
 reparametrize_dora_mixedgamma(const double *theta, DORA_PARAMETERS *stheta)
 {
 
-    stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]) + 2;
+    stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]);
     stheta->tp = transform_log_mv_to_gamma_t(theta[0], theta[1]);
 
     stheta->ka = transform_log_mv_to_invgamma_k(theta[2], theta[3]);
     stheta->ta = transform_log_mv_to_invgamma_t(theta[2], theta[3]);
 
-    stheta->ks = transform_log_mv_to_gamma_k(theta[4], theta[5]) + 2;
+    stheta->ks = transform_log_mv_to_gamma_k(theta[4], theta[5]);
     stheta->ts = transform_log_mv_to_gamma_t(theta[4], theta[5]);
 
     stheta->kl = transform_log_mv_to_invgamma_k(theta[6], theta[7]);
@@ -340,13 +434,19 @@ reparametrize_dora_mixedgamma(const double *theta, DORA_PARAMETERS *stheta)
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
+    stheta->early = ACCUMULATOR_INVGAMMA;
+    stheta->stop = ACCUMULATOR_INVGAMMA;
+    stheta->anti = ACCUMULATOR_GAMMA;
+    stheta->late = ACCUMULATOR_GAMMA;
+
+    stheta->inhibition_race = ninvgamma_gslint;
+
     return 0;
 }
 
 int
 reparametrize_dora_gamma(const double *theta, DORA_PARAMETERS *stheta)
 {
-    double mu, sigma2;
     
     stheta->kp = transform_log_mv_to_invgamma_k(theta[0], theta[1]);
     stheta->tp = transform_log_mv_to_invgamma_t(theta[0], theta[1]);
@@ -366,6 +466,13 @@ reparametrize_dora_gamma(const double *theta, DORA_PARAMETERS *stheta)
     stheta->p0 = theta[10]; //atan(theta[10])/M_PI + 0.5;
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
+
+    stheta->early = ACCUMULATOR_GAMMA;
+    stheta->stop = ACCUMULATOR_GAMMA;
+    stheta->anti = ACCUMULATOR_GAMMA;
+    stheta->late = ACCUMULATOR_GAMMA;
+
+    stheta->inhibition_race = ngamma_gslint;
 
     return 0;
 }
@@ -392,6 +499,13 @@ reparametrize_dora_later(const double *theta, DORA_PARAMETERS *stheta)
     stheta->p0 = theta[10];
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
+
+    stheta->early = ACCUMULATOR_LATER;
+    stheta->stop = ACCUMULATOR_LATER;
+    stheta->anti = ACCUMULATOR_LATER;
+    stheta->late = ACCUMULATOR_LATER;
+
+    stheta->inhibition_race = nlater_gslint;
 
     return 0;
 }
@@ -422,6 +536,13 @@ reparametrize_dora_lognorm(const double *theta, DORA_PARAMETERS *stheta)
     stheta->p0 = theta[10];
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
+
+    stheta->early = ACCUMULATOR_LOGNORM;
+    stheta->stop = ACCUMULATOR_LOGNORM;
+    stheta->anti = ACCUMULATOR_LOGNORM;
+    stheta->late = ACCUMULATOR_LOGNORM;
+
+    stheta->inhibition_race = nlognorm_gslint;
 
     return 0;
 }
@@ -456,6 +577,12 @@ reparametrize_prosa_invgamma(const double *theta, PROSA_PARAMETERS *stheta)
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
+    stheta->early = ACCUMULATOR_INVGAMMA;
+    stheta->stop = ACCUMULATOR_INVGAMMA;
+    stheta->anti = ACCUMULATOR_INVGAMMA;
+
+    stheta->inhibition_race = ninvgamma_gslint;
+
     return 0;
 }
 
@@ -488,6 +615,12 @@ reparametrize_prosa_wald(const double *theta, PROSA_PARAMETERS *stheta)
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
+    stheta->early = ACCUMULATOR_WALD;
+    stheta->stop = ACCUMULATOR_WALD;
+    stheta->anti = ACCUMULATOR_WALD;
+
+    stheta->inhibition_race = nwald_gslint;
+
     return 0;
 }
 
@@ -517,6 +650,12 @@ reparametrize_prosa_mixedgamma(const double *theta, PROSA_PARAMETERS *stheta)
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
+    stheta->early = ACCUMULATOR_INVGAMMA;
+    stheta->stop = ACCUMULATOR_INVGAMMA;
+    stheta->anti = ACCUMULATOR_GAMMA;
+
+    stheta->inhibition_race = ninvgamma_gslint;
+
     return 0;
 }
 
@@ -539,6 +678,12 @@ reparametrize_prosa_gamma(const double *theta, PROSA_PARAMETERS *stheta)
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
+    stheta->early = ACCUMULATOR_GAMMA;
+    stheta->stop = ACCUMULATOR_GAMMA;
+    stheta->anti = ACCUMULATOR_GAMMA;
+
+    stheta->inhibition_race = ngamma_gslint;
+
     return 0;
 }
 
@@ -560,6 +705,12 @@ reparametrize_prosa_later(const double *theta, PROSA_PARAMETERS *stheta)
     stheta->p0 = theta[8];
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
+
+    stheta->early = ACCUMULATOR_LATER;
+    stheta->stop = ACCUMULATOR_LATER;
+    stheta->anti = ACCUMULATOR_LATER;
+
+    stheta->inhibition_race = nlater_gslint;
 
     return 0;
 }
@@ -586,6 +737,12 @@ reparametrize_prosa_lognorm(const double *theta, PROSA_PARAMETERS *stheta)
     stheta->p0 = theta[8]; 
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
+
+    stheta->early = ACCUMULATOR_LOGNORM;
+    stheta->stop = ACCUMULATOR_LOGNORM;
+    stheta->anti = ACCUMULATOR_LOGNORM;
+
+    stheta->inhibition_race = nlognorm_gslint;
 
     return 0;
 }

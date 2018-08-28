@@ -55,9 +55,7 @@ class ParametersSeriGamma(ParametersSeri):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.seri_two_states_gamma(t, a, tt, theta)
-
-    
+        return likelihoods.seri_n_states_gamma(t, a, tt, theta)
 
 class ParametersSeriInvgamma(ParametersSeri):
 
@@ -69,7 +67,7 @@ class ParametersSeriInvgamma(ParametersSeri):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.seri_two_states_invgamma(t, a, tt, theta)
+        return likelihoods.seri_n_states_invgamma(t, a, tt, theta)
 
     
 class ParametersSeriMixedgamma(ParametersSeri):
@@ -82,9 +80,7 @@ class ParametersSeriMixedgamma(ParametersSeri):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.seri_two_states_mixedgamma(t, a, tt, theta)
-
-    
+        return likelihoods.seri_n_states_mixedgamma(t, a, tt, theta)
 
 class ParametersSeriLognorm(ParametersSeri):
 
@@ -96,7 +92,7 @@ class ParametersSeriLognorm(ParametersSeri):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.seri_two_states_lognorm(t, a, tt, theta)
+        return likelihoods.seri_n_states_lognorm(t, a, tt, theta)
 
     
 
@@ -110,7 +106,7 @@ class ParametersSeriLater(ParametersSeri):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.seri_two_states_later(t, a, tt, theta)
+        return likelihoods.seri_n_states_later(t, a, tt, theta)
 
     
 
@@ -124,7 +120,7 @@ class ParametersSeriWald(ParametersSeri):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.seri_two_states_wald(t, a, tt, theta)
+        return likelihoods.seri_n_states_wald(t, a, tt, theta)
 
     
 
@@ -138,9 +134,12 @@ class ParametersDoraGamma(ParametersDora):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.dora_two_states_gamma(t, a, tt, theta)
+        return likelihoods.dora_n_states_gamma(t, a, tt, theta)
 
-    
+    @staticmethod
+    def ler(t, a, tt, theta):
+
+        return likelihoods.dora_early_llh_n_states_gamma(t, a, tt, theta)
 
 class ParametersDoraInvgamma(ParametersDora):
 
@@ -152,9 +151,13 @@ class ParametersDoraInvgamma(ParametersDora):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.dora_two_states_invgamma(t, a, tt, theta)
+        return likelihoods.dora_n_states_invgamma(t, a, tt, theta)
 
-    
+    @staticmethod
+    def ler(t, a, tt, theta):
+
+        return likelihoods.dora_early_llh_n_states_invgamma(t, a, tt, theta)
+   
 
 class ParametersDoraMixedgamma(ParametersDora):
 
@@ -166,9 +169,12 @@ class ParametersDoraMixedgamma(ParametersDora):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.dora_two_states_mixedgamma(t, a, tt, theta)
+        return likelihoods.dora_n_states_mixedgamma(t, a, tt, theta)
 
-    
+    @staticmethod
+    def ler(t, a, tt, theta):
+
+        return likelihoods.dora_early_llh_n_states_mixedgamma(t, a, tt, theta) 
 
 class ParametersDoraLognorm(ParametersDora):
 
@@ -180,9 +186,14 @@ class ParametersDoraLognorm(ParametersDora):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.dora_two_states_lognorm(t, a, tt, theta)
+        return likelihoods.dora_n_states_lognorm(t, a, tt, theta)
 
-    
+    @staticmethod
+    def ler(t, aa, tt, theta):
+
+        return likelihoods.dora_early_llh_n_states_lognorm(t, a, tt, theta) 
+ 
+
 class ParametersDoraLater(ParametersDora):
 
     @staticmethod
@@ -193,9 +204,13 @@ class ParametersDoraLater(ParametersDora):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.dora_two_states_later(t, a, tt, theta)
+        return likelihoods.dora_n_states_later(t, a, tt, theta)
 
-    
+    @staticmethod
+    def ler(t, aa, tt, theta):
+
+        return likelihoods.dora_early_llh_n_states_later(t, a, tt, theta) 
+   
 
 class ParametersDoraWald(ParametersDora):
 
@@ -207,9 +222,12 @@ class ParametersDoraWald(ParametersDora):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.dora_two_states_wald(t, a, tt, theta)
+        return likelihoods.dora_n_states_wald(t, a, tt, theta)
 
-    
+    @staticmethod
+    def ler(t, aa, tt, theta):
+
+        return likelihoods.dora_early_llh_n_states_wald(t, a, tt, theta) 
 
 class ParametersProsaGamma(ParametersProsa):
 
@@ -221,7 +239,7 @@ class ParametersProsaGamma(ParametersProsa):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.prosa_two_states_gamma(t, a, tt, theta)
+        return likelihoods.prosa_n_states_gamma(t, a, tt, theta)
 
     
 
@@ -235,7 +253,7 @@ class ParametersProsaInvgamma(ParametersProsa):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.prosa_two_states_invgamma(t, a, tt, theta)
+        return likelihoods.prosa_n_states_invgamma(t, a, tt, theta)
 
     
 
@@ -249,7 +267,7 @@ class ParametersProsaMixedgamma(ParametersProsa):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.prosa_two_states_mixedgamma(t, a, tt, theta)
+        return likelihoods.prosa_n_states_mixedgamma(t, a, tt, theta)
 
     
 
@@ -263,7 +281,7 @@ class ParametersProsaLognorm(ParametersProsa):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.prosa_two_states_lognorm(t, a, tt, theta)
+        return likelihoods.prosa_n_states_lognorm(t, a, tt, theta)
 
     
 
@@ -277,7 +295,7 @@ class ParametersProsaLater(ParametersProsa):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.prosa_two_states_later(t, a, tt, theta)
+        return likelihoods.prosa_n_states_later(t, a, tt, theta)
 
     
 
@@ -291,7 +309,7 @@ class ParametersProsaWald(ParametersProsa):
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.prosa_two_states_wald(t, a, tt, theta)
+        return likelihoods.prosa_n_states_wald(t, a, tt, theta)
 
 if __name__ == '__main__':
     pass    

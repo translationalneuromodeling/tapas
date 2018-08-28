@@ -22,6 +22,7 @@ fprintf(fp, '================\n Test %s\n================\n', fname);
 if 0
 
 ptheta = tapas_sem_prosa_invgamma_ptheta(); % Choose at convinience.
+ptheta.llh = @c_prosa_multi_invgamma;
 htheta = tapas_sem_prosa_htheta(); % Choose at convinience.
 
 % Insert a parametrization matrix
@@ -48,7 +49,7 @@ end
 if 1
 
 ptheta = tapas_sem_seri_invgamma_ptheta(); % Choose at convinience.
-
+ptheta.llh = @c_seri_multi_invgamma;
 ptheta.jm = [...
     eye(19)
     zeros(3, 8) eye(3) zeros(3, 8)];
@@ -67,8 +68,6 @@ inference = struct();
 tapas_sem_hier_estimate(data, ptheta, inference, pars);
 
 end
-
-
 
 end
 

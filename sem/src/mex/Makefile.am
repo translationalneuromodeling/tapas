@@ -5,7 +5,7 @@
 BDDM_MATLAB = @matlabhome@
 
 MEXCC = $(BDDM_MATLAB)/bin/mex
-MEXFLAGS = -v -largeArrayDims -O CC=$(CC)
+MEXFLAGS = -v -largeArrayDims -O CC=$(CC) CXX=$(CXX)
 MEXEXT = @mexext@
 
 IDIR = -I$(abs_top_srcdir)/antisaccades -I$(abs_top_srcdir)
@@ -17,7 +17,7 @@ OBJS = $(SOURCES:.c=.o)
 MBINS = $(addprefix $(BINDIR)/,$(SOURCES:.c=.$(MEXEXT)))
 
 LDFLAGS += -L$(LDIR)
-CFLAGS += $(OPENMP_CFLAGS) -std=c99 -fPIC $(IDIR)
+CFLAGS += $(OPENMP_CFLAGS) -std=c11 -fPIC $(IDIR)
 
 all: $(MBINS)
 

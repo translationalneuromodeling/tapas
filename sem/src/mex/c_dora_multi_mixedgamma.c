@@ -1,5 +1,3 @@
-
-
 /* aponteeduardo@gmail.com */
 /* copyright (C) 2017 */
 
@@ -13,7 +11,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     double *llh;
     DORA_MODEL model;
-    int i, j;
+    int k;
     int ns = mxGetDimensions(prhs[1])[0];
     int nc = mxGetDimensions(prhs[1])[1];
 
@@ -26,48 +24,48 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     plhs[0] = mxCreateDoubleMatrix(ns, nc, mxREAL);
     llh = mxGetPr(plhs[0]);
 
-    model.llh = dora_llh_mixedgamma;
-    model.nested_integral = ninvgamma_gslint;
+    model.llh = dora_llh_abstract;
     model.fill_parameters = reparametrize_dora_mixedgamma; 
     gsl_set_error_handler_off();
 
-    #pragma omp parallel for private(i) private(j) collapse(2) schedule(static) 
-    for (j = 0; j < nc; j++) 
+    //#pragma omp parallel for private(i) private(j) collapse(2) schedule(dynamic) 
+    #pragma omp parallel for private(k) schedule(dynamic)
+    for (k = 0; k < nc * ns; k++) 
     {
-        for (i = 0; i < ns; i++)
+        int j = k/ns, i = k%ns;
+        double illh = 0;
+        
+        ANTIS_INPUT svals;
+        mxArray *y = mxGetField(prhs[0], i, "y");
+        mxArray *u = mxGetField(prhs[0], i, "u");
+        mxArray *theta = mxGetCell(prhs[1], k);
+        double *tllh;
+        int l;
+
+        svals.t = mxGetPr(mxGetField(y, 0, "t"));
+        svals.a = mxGetPr(mxGetField(y, 0, "a"));
+        svals.u = mxGetPr(mxGetField(u, 0, "tt"));
+        
+        svals.theta = mxGetPr(theta);
+        
+        svals.nt = *mxGetDimensions(mxGetField(y, 0, "t")); 
+        svals.np = (mxGetDimensions(theta)[0]
+            * mxGetDimensions(theta)[1])/DIM_DORA_THETA; 
+        tllh = (double *) malloc(svals.nt * sizeof(double));
+        
+        dora_model_n_states_optimized(svals, model, tllh);
+
+        for (l = 0; l < svals.nt; l++)
         {
-            
-            ANTIS_INPUT svals;
-            mxArray *y = mxGetField(prhs[0], i, "y");
-            mxArray *u = mxGetField(prhs[0], i, "u");
-            mxArray *theta = mxGetCell(prhs[1], i + ns * j);
-            double *tllh;
-            int k;
-
-            
-            svals.t = mxGetPr(mxGetField(y, 0, "t"));
-            svals.a = mxGetPr(mxGetField(y, 0, "a"));
-            svals.u = mxGetPr(mxGetField(u, 0, "tt"));
-            
-            svals.theta = mxGetPr(theta);
-            
-            svals.nt = *mxGetDimensions(mxGetField(y, 0, "t")); 
-            svals.np = mxGetDimensions(theta)[1];
-            
-            tllh = (double *) malloc(svals.nt * sizeof(double));
-            
-            dora_model_two_states_optimized(svals, model, tllh);
-
-            llh[i + ns * j] = 0;
-            for (k = 0; k < svals.nt; k++)
-            {
-                llh[i + ns * j] += tllh[k];
-            }
-            if ( abs(llh[i + ns * j]) == INFINITY || isnan(llh[i + ns * j]))
-                llh[i + ns * j] = -INFINITY;
-            free(tllh);
-            
+            illh += tllh[l];
         }
+
+        if ( abs(illh) == INFINITY || isnan(illh))
+            illh = -INFINITY;
+        
+        llh[k] = illh;
+        free(tllh);
+        
     }
    gsl_set_error_handler(NULL); 
 } 
