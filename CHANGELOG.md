@@ -14,6 +14,7 @@ TAPAS toolbox
 - Now there is log file that list the versions of tapas, the download link
     and the hash of the file that is downloaded.
 - Use the an external file to do the md5 check sum. See external javamd5.
+- Original release of the regression dynamic causal modeling (rDCM) toolbox.
 
 ### Changed
 - README.md to include reference to CONTRIBUTING.md and explanation of CLA
