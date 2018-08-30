@@ -14,12 +14,11 @@ TAPAS toolbox
 - Now there is log file that list the versions of tapas, the download link
     and the hash of the file that is downloaded.
 - Use the an external file to do the md5 check sum. See external javamd5.
-<<<<<<< HEAD
-- Original release of the regression dynamic causal modeling (rDCM) toolbox.
-=======
-- HUGE toolbox: hierarchical unsupervised generative embedding 
+- HUGE toolbox: hierarchical unsupervised generative embedding
     doi:10.1016/j.neuroimage.2018.06.073
->>>>>>> development
+- rDCM toolbox: Regression dynamic causal modeling 
+    https://doi.org/10.1016/j.neuroimage.2017.02.090
+    https://doi.org/10.1016/j.neuroimage.2018.05.058
 
 ### Changed
 - README.md to include reference to CONTRIBUTING.md and explanation of CLA
