@@ -45,10 +45,11 @@ DCM  = temp.DCM;
 
 
 % specify the options for the rDCM analysis
-options.SNR     = 3;
-options.y_dt	= 0.5;
-options.p0_all  = 0.15;  % single p0 value (for computational efficiency)
-options.iter    = 100;
+options.SNR             = 3;
+options.y_dt            = 0.5;
+options.p0_all          = 0.15;  % single p0 value (for computational efficiency)
+options.iter            = 100;
+options.restrictInputs  = 1;
 
 
 % run a simulation (synthetic) analysis

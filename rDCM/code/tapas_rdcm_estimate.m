@@ -93,6 +93,9 @@ elseif ( methods == 2 )
     % for command output
     reverseStr = '';
     
+    % prune driving inputs or not
+    if ( isfield(options,'restrictInputs') ), args.restrictInputs = options.restrictInputs; end
+    
     % iterate over p0 values
     for p0_counter = 1:length(options.p0_all)
         

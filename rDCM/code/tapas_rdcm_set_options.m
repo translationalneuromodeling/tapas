@@ -88,9 +88,10 @@ if ~isempty(input_options)
 end
 
 
-% set iter and p0 (only relevant for rDCM with sparsity constraints)
+% set settings that are only relevant for rDCM with sparsity constraints
 if ( isfield(input_options,'p0_all') ), options.p0_all = input_options.p0_all; end
 if ( isfield(input_options,'iter') ), options.iter = input_options.iter; end
+if ( isfield(input_options,'restrictInputs') ), options.restrictInputs = input_options.restrictInputs; end
 
 
 %% check options consistency
