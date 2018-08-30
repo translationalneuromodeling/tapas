@@ -42,7 +42,7 @@ end
 % simulation (where true parameters are known) or empirical analysis
 if ( options.visualize )
     if ( options.type == 's' )
-        if ( options.compute_signal )
+        if ( options.compute_signal && isfield(output,'signal') )
 
             % visualize estimated connectivity pattern
             figure('units','normalized','outerposition',[0 0 1 1])
@@ -50,6 +50,7 @@ if ( options.visualize )
             imagesc(output.Ep.A)
             title('estimated','FontSize',14)
             axis square
+            caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',12)
@@ -60,6 +61,7 @@ if ( options.visualize )
             imagesc(DCM.Tp.A)
             title('true','FontSize',14)
             axis square
+            caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',12)
@@ -92,6 +94,7 @@ if ( options.visualize )
             imagesc(output.Ep.A)
             title('estimated','FontSize',16)
             axis square
+            caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',14)
@@ -102,6 +105,7 @@ if ( options.visualize )
             imagesc(DCM.Tp.A)
             title('true','FontSize',16)
             axis square
+            caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',14)
@@ -111,7 +115,7 @@ if ( options.visualize )
 
     else
 
-        if ( options.compute_signal )
+        if ( options.compute_signal && isfield(output,'signal') )
 
             % visualize estimated connectivity pattern
             figure('units','normalized','outerposition',[0 0 1 1])
@@ -120,6 +124,7 @@ if ( options.visualize )
             imagesc(output.Ep.A)
             title('estimated','FontSize',14)
             axis square
+            caxis([-1*max(max(abs(output.Ep.A-diag(diag(output.Ep.A))))) max(max(abs(output.Ep.A-diag(diag(output.Ep.A)))))])
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',12)
@@ -160,22 +165,24 @@ if ( options.visualize )
 
             % visualize estimated connectivity pattern
             figure('units','normalized','outerposition',[0 0 1 1])
-            sub1 = subplot(2,2,1);
+            sub1 = subplot(1,2,1);
             colormap(sub1,'parula')
             imagesc(output.Ep.A)
             title('estimated','FontSize',16)
             axis square
+            caxis([-1*max(max(abs(output.Ep.A-diag(diag(output.Ep.A))))) max(max(abs(output.Ep.A-diag(diag(output.Ep.A)))))])
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',14)
             ylabel('region (to)','FontSize',14)
 
             % visualize posterior probability of binary indicator variable
-            sub2 = subplot(2,2,2);
+            sub2 = subplot(1,2,2);
             colormap(sub2,'gray')
             imagesc(output.Ip.A)
             title('Pp binary indicator','FontSize',16)
             axis square
+            caxis([0 1])
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',14)
