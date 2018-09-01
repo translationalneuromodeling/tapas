@@ -3,7 +3,7 @@ Release ID: $Format:%h %d$
 
 --- 
 
-Copyright (C) 2012-2017 Christoph Mathys <chmathys@ethz.ch>
+Copyright (C) 2012-2018 Christoph Mathys <chmathys@ethz.ch>
 Translational Neuromodeling Unit (TNU)
 University of Zurich and ETH Zurich
 
@@ -45,6 +45,26 @@ opening hgf_demo.mlx in Matlab. A PDF version is available in
 hgf_demo.pdf.
 
 ## Release notes
+
+### v5.2
+- Brought hgf_demo.pdf up to date
+- Added gaussian_obs_offset response model
+- Brought example in simModel up to date
+- Added sim and namep files for unitsq_sgm_mu3
+- Fixed typo in softmax_mu3_wld
+- Introduced softmax_mu3_wld decision model
+- Estimate mu0_2 by default in hgf_ar1_binary_mab
+- Improved comment in softmax_mu3_config
+- Change to pi_2 update in hgf_ar1_binary_mab
+- Enabled simulation for hgf_ar1_binary_mab
+- Added softmax_mu3
+- Added hgf_ar1_binary_mab
+- Fixed automatic detection of number of levels in hgf_ar1_binary
+- Fixed documentation of hgf_ar1_binary
+- Fixed hgf_binary_mab_plotTraj
+- Fixed trajectory calculations in hgf_binary_mab
+- Adapted riddersgradient and riddershessian to new Matlab versions
+- Quashed bug in rw_binary_dual found by gbelluc@gmail.com
 
 ### v5.1
 - Added condhalluc_obs and condhalluc_obs2 models

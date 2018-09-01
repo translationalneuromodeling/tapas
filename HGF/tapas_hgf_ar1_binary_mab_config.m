@@ -1,8 +1,8 @@
-function c = tapas_hgf_ar1_binary_config
+function c = tapas_hgf_ar1_binary_mab_config
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Contains the configuration for the Hierarchical Gaussian Filter (HGF) for AR(1) processes
-% for binary inputs in the absence of perceptual uncertainty.
+% Contains the configuration for the Hierarchical Gaussian Filter (HGF) for AR(1) processes in a
+% multi-armded bandit situation for binary inputs in the absence of perceptual uncertainty.
 %
 % The HGF is the model introduced in 
 %
@@ -15,8 +15,8 @@ function c = tapas_hgf_ar1_binary_config
 %
 % p(x1=1|x2) = s(kappa1*x2), where s(.) is the logistic sigmoid.
 %
-% By default, kappa1 is fixed to 1, leading (apart from the AR(1) process) to the
-% model introduced in Mathys et al. (2011).
+% By default, kappa1 is fixed to 1, leading exactly to the model introduced in
+% Mathys et al. (2011).
 %
 % This file refers to BINARY inputs (Eqs 1-3 in Mathys et al., (2011));
 % for continuous inputs, refer to tapas_hgf_config.
@@ -44,7 +44,7 @@ function c = tapas_hgf_ar1_binary_config
 %
 % Fitted trajectories can be plotted by using the command
 %
-% >> tapas_hgf_binary_plotTraj(est)
+% >> tapas_hgf_binary_mab_plotTraj(est)
 % 
 % where est is the stucture returned by tapas_fitModel. This structure contains the estimated
 % perceptual parameters in est.p_prc and the estimated trajectories of the agent's
@@ -53,7 +53,7 @@ function c = tapas_hgf_ar1_binary_config
 %         est.p_prc.mu_0       row vector of initial values of mu (in ascending order of levels)
 %         est.p_prc.sa_0       row vector of initial values of sigma (in ascending order of levels)
 %         est.p_prc.phi        row vector of phis (representing reversion slope to attractor; in ascending order of levels)
-%         est.p_prc.m        row vector of ms (representing attractors; in ascending order of levels)
+%         est.p_prc.m          row vector of ms (representing attractors; in ascending order of levels)
 %         est.p_prc.ka         row vector of kappas (in ascending order of levels)
 %         est.p_prc.om         row vector of omegas (in ascending order of levels)
 %
@@ -61,10 +61,10 @@ function c = tapas_hgf_ar1_binary_config
 % these parameters are either determined by the second level (mu_0 and sa_0) or undefined (rho,
 % kappa, and omega).
 %
-%         est.traj.mu          mu (rows: trials, columns: levels)
-%         est.traj.sa          sigma (rows: trials, columns: levels)
-%         est.traj.muhat       prediction of mu (rows: trials, columns: levels)
-%         est.traj.sahat       precisions of predictions (rows: trials, columns: levels)
+%         est.traj.mu          mu (rows: trials, columns: levels, 3rd dim: bandits)
+%         est.traj.sa          sigma (rows: trials, columns: levels, 3rd dim: bandits)
+%         est.traj.muhat       prediction of mu (rows: trials, columns: levels, 3rd dim: bandits)
+%         est.traj.sahat       precisions of predictions (rows: trials, columns: levels, 3rd dim: bandits)
 %         est.traj.v           inferred variance of random walk (rows: trials, columns: levels)
 %         est.traj.w           weighting factors (rows: trials, columns: levels)
 %         est.traj.da          volatility prediction errors  (rows: trials, columns: levels)
@@ -81,7 +81,7 @@ function c = tapas_hgf_ar1_binary_config
 % Tips:
 % - When analyzing a new dataset, take your inputs u and responses y and use
 %
-%   >> est = tapas_fitModel(y, u, 'tapas_hgf_binary_config', 'tapas_bayes_optimal_binary_config');
+%   >> est = tapas_fitModel(y, u, 'tapas_hgf_ar1_binary_mab_config', 'tapas_bayes_optimal_binary_config');
 %
 %   to determine the Bayes optimal perceptual parameters (given your current priors as defined in
 %   this file here, so choose them wide and loose to let the inputs influence the result). You can
@@ -102,7 +102,7 @@ function c = tapas_hgf_ar1_binary_config
 %   the LME increased, so you had a better model.
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2012-2017 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2013-2017 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -114,10 +114,20 @@ function c = tapas_hgf_ar1_binary_config
 c = struct;
 
 % Model name
-c.model = 'tapas_hgf_ar1_binary';
+c.model = 'hgf_ar1_binary_mab';
 
 % Number of levels (minimum: 3)
 c.n_levels = 3;
+
+% Number of bandits
+c.n_bandits = 3;
+
+% Coupling
+% This may only be set to true if c.n_bandits is set to 2 above. If
+% true, it means that the two bandits' winning probabilities are
+% coupled in the sense that they add to 1 and are both updated on
+% each trial even though only the outcome for one of them is observed.
+c.coupled = false;
 
 % Input intervals
 % If input intervals are irregular, the last column of the input
@@ -135,17 +145,17 @@ c.irregular_intervals = false;
 % and the second implies neutrality between outcomes when it
 % is centered at 0.
 c.mu_0mu = [NaN, 0, 1];
-c.mu_0sa = [NaN, 0, 0];
+c.mu_0sa = [NaN, 1, 1];
 
-c.logsa_0mu = [NaN, log(0.006), log(4)];
+c.logsa_0mu = [NaN,   log(0.1), log(1)];
 c.logsa_0sa = [NaN,          0,      0];
 
 % Phis
 % Format: row vector of length n_levels.
 % Undefined (therefore NaN) at the first level.
 % Fix this to zero (-Inf in logit space) to set to zero.
-c.logitphimu = [NaN, -Inf, tapas_logit(0.1,1)];
-c.logitphisa = [NaN,    0,                  2];
+c.logitphimu = [NaN, tapas_logit(0.4,1), tapas_logit(0.2,1)];
+c.logitphisa = [NaN,               0.25,               0.25];
 
 % ms
 % Format: row vector of length n_levels.
@@ -153,7 +163,7 @@ c.logitphisa = [NaN,    0,                  2];
 % the next lowest level is not fixed because that offers
 % an alternative parametrization of the same model.
 c.mmu = [NaN, c.mu_0mu(2), c.mu_0mu(3)];
-c.msa = [NaN,           0,           1];
+c.msa = [NaN,           0,           0];
 
 % Kappas
 % Format: row vector of length n_levels-1.
@@ -162,13 +172,13 @@ c.msa = [NaN,           0,           1];
 % observation model does not use mu_i+1 (kappa then determines the
 % scaling of x_i+1).
 c.logkamu = [log(1), log(1)];
-c.logkasa = [     0,      0];
+c.logkasa = [     0,    0.1];
 
 % Omegas
 % Format: row vector of length n_levels.
 % Undefined (therefore NaN) at the first level.
-c.ommu = [NaN,  -2,  -6];
-c.omsa = [NaN, 4^2, 4^2];
+c.ommu = [NaN,   -4,   -4];
+c.omsa = [NaN,  0.1,    1];
 
 % Gather prior settings in vectors
 c.priormus = [
@@ -196,10 +206,10 @@ if length([c.priormus, c.priorsas]) ~= 2*expectedLength;
 end
 
 % Model function handle
-c.prc_fun = @tapas_hgf_ar1_binary;
+c.prc_fun = @tapas_hgf_ar1_binary_mab;
 
 % Handle to function that transforms perceptual parameters to their native space
 % from the space they are estimated in
-c.transp_prc_fun = @tapas_hgf_ar1_binary_transp;
+c.transp_prc_fun = @tapas_hgf_ar1_binary_mab_transp;
 
 return;
