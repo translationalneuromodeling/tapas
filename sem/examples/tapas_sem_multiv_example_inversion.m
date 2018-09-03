@@ -11,12 +11,12 @@ n = 0,
 
 n = n + 1;
 if nargin < n
-    model = 'seri';
+    model = 'seria';
 end
 
 n = n + 1;
 if nargin < n
-    param = 'invgamma';
+    param = 'mixedgamma';
 end
 
 n = n + 1;
@@ -33,47 +33,21 @@ fprintf(fp, '================\n Test %s\n================\n', fname);
 [data] = prepare_data();
 
 switch model
-case 'seri'
-    ptheta = tapas_sem_seri_invgamma_ptheta(); % Choose at convinience.
+case 'seria'
+    ptheta = tapas_sem_seria_ptheta(); 
     switch param
-    case 'invgamma'
-        ptheta.llh = @c_seri_multi_invgamma;
-    case 'gamma'
-        ptheta.llh = @c_seri_multi_gamma;
-    case 'mixedgamma'
-        ptheta.llh = @c_seri_multi_mixedgamma;
-    case 'lognorm'
-        ptheta.llh = @c_seri_multi_lognorm;
-    case 'later'
-        ptheta.llh = @c_seri_multi_later;
-    case 'wald'
-        ptheta.llh = @c_seri_multi_wald;
-    end
-
-    ptheta.jm = [...
-        eye(19)
-        zeros(3, 8) eye(3) zeros(3, 8)];
-
-    ptheta.x = ones(4, 1);
-
-    pars = struct();
-
-
-case 'dora'
-    ptheta = tapas_sem_dora_invgamma_ptheta(); 
-    switch param
-    case 'invgamma'
-        ptheta.llh = @c_dora_multi_invgamma;
-    case 'gamma'
-        ptheta.llh = @c_dora_multi_gamma;
-    case 'mixedgamma'
-        ptheta.llh = @c_dora_multi_mixedgamma;
-    case 'lognorm'
-        ptheta.llh = @c_dora_multi_lognorm;
-    case 'later'
-        ptheta.llh = @c_dora_multi_later;
-    case 'wald'
-        ptheta.llh = @c_dora_multi_wald;
+        case 'invgamma'
+            ptheta.llh = @c_seria_multi_invgamma;
+        case 'gamma'
+            ptheta.llh = @c_seria_multi_gamma;
+        case 'mixedgamma'
+            ptheta.llh = @c_seria_multi_mixedgamma;
+        case 'lognorm'
+            ptheta.llh = @c_seria_multi_lognorm;
+        case 'later'
+            ptheta.llh = @c_seria_multi_later;
+        case 'wald'
+            ptheta.llh = @c_seria_multi_wald;
     end
 
     ptheta.jm = [...
@@ -83,7 +57,7 @@ case 'dora'
     ptheta.x = ones(4, 1);
 
 case 'prosa'
-    ptheta = tapas_sem_prosa_invgamma_ptheta(); % Choose at convinience.
+    ptheta = tapas_sem_prosa_ptheta(); % Choose at convinience.
     switch param
     case 'invgamma'
         ptheta.llh = @c_prosa_multi_invgamma;
@@ -116,6 +90,7 @@ pars.ndiag = 1000;
 pars.mc3it = 16;
 pars.verbose = 1;
 
+display(ptheta);
 inference = struct();
 tic
 tapas_sem_multiv_estimate(data, ptheta, inference, pars);
