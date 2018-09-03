@@ -1,4 +1,4 @@
-function tapas_sem_hier_example_inversion(model, param, fp)
+function tapas_sem_multiv_example_inversion(model, param, fp)
 %% Test 
 %
 % fp -- Pointer to a file for the test output, defaults to 1
@@ -54,6 +54,8 @@ case 'seria'
         eye(19)
         zeros(3, 8) eye(3) zeros(3, 8)];
 
+    ptheta.x = ones(4, 1);
+
 case 'prosa'
     ptheta = tapas_sem_prosa_ptheta(); % Choose at convinience.
     switch param
@@ -75,6 +77,8 @@ case 'prosa'
         eye(15)
         zeros(3, 6) eye(3) zeros(3, 6)];
 
+    ptheta.x = ones(4, 1);
+
 end
 
 pars = struct();
@@ -89,8 +93,9 @@ pars.verbose = 1;
 display(ptheta);
 inference = struct();
 tic
-tapas_sem_hier_estimate(data, ptheta, inference, pars);
+tapas_sem_multiv_estimate(data, ptheta, inference, pars);
 toc
+
 
 end
 

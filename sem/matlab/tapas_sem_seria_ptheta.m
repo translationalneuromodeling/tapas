@@ -26,7 +26,7 @@ ptheta.jm = eye(dim_theta);
 % Likelihood function and priors
 
 ptheta.name = 'seria';
-ptheta.llh = [] 
+ptheta.llh = []; 
 ptheta.lpp = @tapas_sem_prosa_lpp;
 ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
