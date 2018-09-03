@@ -31,6 +31,57 @@ as a template to run your analysis.
 
 
 ## Parameters coding
+The parameters of SERIA are organized as 11x1 vector. The table below
+explains the meaning of each parameter.
+
+|\# | Meaning |
+|:----:|-------|
+|1 | log mean hit time early unit|
+|2 | log variance hit time early unit|
+|3 | log mean hit time inhibitory unit|
+|4 | log variance hit time inhibitory unit|
+|5 | log mean hit time anti. unit|
+|6 | log variance hit time anti. unit|
+|7 | log mean hit time late pro. unit|
+|8 | log variance hit time late pro. unit|
+|9 | log no decision time|
+|10 | logit of the probability of an early outlier|
+|11 | log late units delay |
+
+All the parameters are in a scale from \(-\infty\) to \(\infty\). The
+appropriate transformations are implemented internally depending on the
+parametric distribution used for the hit time of the units.
+
+## Constraints
+It is possible to enforce constraints in the model across conditions for 
+a single subject using a projection matrix. This matrix *J* should have
+*M* times 11 rows and *K* columns, where *M* is the number of conditions
+and *K* is the number of free parameters.
+
+As an example, imagine that we want to enforce that the no decision time, 
+the probability of an early outlier and the delay of the late units
+are shared across two conditions (for example, across pro and antisaccade 
+trials). This is implemented by enforcing that in the product of a vector *v* 
+of dimensionality 11x2-3 with matrix *J*, the entries 9 to eleven are 
+equal to the entries 20 to 22. For example:
+
+~~~~
+K>>J = [eye(19);
+    zeros(3, 8) eye(3) zeros(3, 8)];
+K>>v = [1:19]';
+K>>display((J * v)');
+ans =
+
+  Columns 1 through 12
+
+     1     2     3     4     5     6     7     8     9    10    11    12
+
+  Columns 13 through 22
+
+    13    14    15    16    17    18    19     9    10    11
+
+~~~~
+
 
 
 ### A note on the PROSA model
@@ -38,46 +89,49 @@ as a template to run your analysis.
 ## Data coding
 The data entered to the model is encoded as a structure with the fields
 `y` and `u`. This is an structure array, in which the number of rows 
-corresponds to the number of subjects. Prosaccades are encoded
-as 0, and antisaccade as 0.
+corresponds to the number of subjects.
  
-The field `y` represents the responses of subjects in terms of RT (in 
-tenths of a second) and the corresponding action. 
+The field `y` represents the responses of a subjects in terms of RT (in 
+tenths of a second) and the corresponding action. The contents of each
+field is represented by a vector of Nx1 trials.
 
-| Fields *y* | Meaning | Data |
+| Fields `y` | Meaning | Data |
 |:----------:|:-------:|:----:|
-| *t*        | Reaction time | Tenths of second |
-| *a*        | Action        | Pro=0, Anti=1 |
+| `t`        | Reaction time | Seconds x 1/10 |
+| `a`        | Action        | Pro=0, Anti=1 |
 
-The field `u` represents experimental conditions. The field `tt` represents
-different conditions. The coding should go from 0 to the number of 
-conditions.
+The field `u` represents experimental conditions and it has a single 
+subfield `tt`, which is a vector of Nx1 trials. `u.tt` codes the condition
+of the corresponding trial. Conditions should be coded by 
+by integers starting from 0. 
 
 | Fields *u* | Meaning | Data |
 |:----------:|:-------:|:----:|
-|*tt*       | Trial type <br> (condition) | Integer from 0 to N |
+|*tt*       | Trial type <br> (condition) | Integer from 0 to M |
 
 For example, if in an experiment pro- and antisaccade trials are mixed in
-a single block, it is possible to code these two types of trial as 0 and 1.
+a single block, it is possible to code these two types of trials as 0 and 1.
 Note that the consequences of coding two types of trials as two conditions
-is that a set of parameters will be initialize for each condition.
+is that a different set of parameters will be initialized for each condition.
 
 ## Model fitting / inference
-The toolbox includes a variety of approaches to fit models to experimental
+The toolbox includes a variety of methods to fit models to experimental
 data based on the Metropolis-Hastings algorithm. This is a generic method
 to sample from a target distribution (usually the distribution of the 
 model parameters conditioned on experimental data). The results are therefore
 an array of samples from the target distribution, which can be used to 
-compute summary statistics (mean, variance).
+compute summary statistics (mean, variance) of parameters estimates.
 
 There are currently four methods to fit models
 
 | Name | Hier./single subject | Description | Function |
 |:----:|:-------------------:|-------------|----------|
-|Flat  | Single subject     | | `tapas_sem_flat_estimate.m` |
-|Hier.    | Hierarchical     | | `tapas_sem_hier_estimate.m` |
-|Multiv.  | Hierarchical    | | `tapas_sem_multiv_estimate.m` |
-|Mixed    | Hierarchical     | | `tapas_sem_mixed_estimate.m` |
+|Flat  | Single subject     | Fits a single subject at a time. | `tapas_sem_flat_estimate.m` |
+|Hier.    | Hierarchical     | Uses the population mean as prior of the parameters. | `tapas_sem_hier_estimate.m` |
+|Multiv.  | Hierarchical    | Uses a linear model to construct a parametric prior from the population. | `tapas_sem_multiv_estimate.m` |
+|Mixed    | Hierarchical     | Uses a mixed effect model to construct a parametric prior from the population. | `tapas_sem_mixed_estimate.m` |
+
+
 
 ### Single subject inference (tapas_sem_flat_estimate)
 
