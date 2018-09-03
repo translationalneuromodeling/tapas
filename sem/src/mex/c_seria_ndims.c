@@ -20,6 +20,6 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
     arr = mxGetPr(plhs[0]);
 
-    arr[0] = (double ) DIM_DORA_THETA;
+    arr[0] = (double ) DIM_SERIA_THETA;
 
 }

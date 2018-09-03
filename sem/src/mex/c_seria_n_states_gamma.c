@@ -8,7 +8,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     ANTIS_INPUT svals;
     double *llh;
-    DORA_MODEL model;
+    SERIA_MODEL model;
     int i;
     int nd = 0;
     int *np;
@@ -35,19 +35,19 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
          mexErrMsgIdAndTxt("tapas:sem:input", "Empty input."); 
     }
 
-    if ( na % DIM_DORA_THETA != 0)
+    if ( na % DIM_SERIA_THETA != 0)
     {
         mexErrMsgIdAndTxt("tapas:sem:input", "Dimensions are not correct"); 
     }
 
-    svals.np = na / DIM_DORA_THETA;
+    svals.np = na / DIM_SERIA_THETA;
 
     plhs[0] = mxCreateDoubleMatrix(svals.nt, 1, mxREAL);
     llh = mxGetPr(plhs[0]);
    
-    model.llh = dora_llh_abstract;
-    model.fill_parameters = reparametrize_dora_gamma; 
+    model.llh = seria_llh_abstract;
+    model.fill_parameters = reparametrize_seria_gamma; 
     gsl_set_error_handler_off();
-    dora_model_n_states(svals, model, llh);
+    seria_model_n_states(svals, model, llh);
     gsl_set_error_handler(NULL);
 }
