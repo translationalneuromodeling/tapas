@@ -50,8 +50,9 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
             svals.theta = mxGetPr(theta);
             
             svals.nt = *mxGetDimensions(mxGetField(y, 0, "t")); 
-            svals.np = mxGetDimensions(theta)[1];
-            
+            svals.np = (mxGetDimensions(theta)[0]
+                * mxGetDimensions(theta)[1])/DIM_PROSA_THETA;
+   
             tllh = (double *) malloc(svals.nt * sizeof(double));
             
             prosa_model_n_states_optimized(svals, model, tllh);
