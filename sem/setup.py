@@ -10,8 +10,6 @@ Setup for sooner module.
 
 '''
 
-#from distutils.core import setup
-import os
 import glob
 import platform
 from setuptools import setup, Extension, find_packages
@@ -23,26 +21,29 @@ if platform.system().lower() == 'darwin':
     openmp = {}
     extra_libs = []
 else:
-    openmp = {'extra_compile_args': ['-fopenmp'],
+    openmp = {
+        'extra_compile_args': ['-fopenmp'],
         'extra_link_args' : ['-fopenmp']}
     extra_libs = ['gomp']
 
 
-llh = Extension('tapas.sem.antisaccades.wrappers',
+llh = Extension(
+        'tapas.sem.antisaccades.wrappers',
         ['./tapas/sem/antisaccades/wrappers.pyx'] + \
                 glob.glob('./src/antisaccades/*.c'),
         libraries=['gsl', 'gslcblas'] + extra_libs,
-        library_dirs=['/usr/local/lib', '/opt/local/libs'], # For mac
-        include_dirs=[np.get_include(), '/opt/local/include', '.', './src/', 
+        library_dirs=['/usr/local/lib', '/opt/local/libs'],  # For mac
+        include_dirs=[np.get_include(), '/opt/local/include', '.', './src/',
             '/usr/local/opt/llvm/include/clang/'],
         define_macros=[('TAPAS_PYTHON', None)],
         **openmp)
 
 
 if __name__ == '__main__':
-    setup(name='tapas.sem',
+    setup(
+        name='tapas.sem',
         zip_safe=False,
-        version='1.0',
+        version='1.1',
         requires=['cython', 'numpy'],
         install_requirement=['gsl>=1.6.0'],
         description='Python packages for Saccadic Eye movement Models',
@@ -55,7 +56,3 @@ if __name__ == '__main__':
         ext_modules=[llh],
         namespace_packages=['tapas']
         )
-
-if __name__ == '__main__':
-    pass
-
