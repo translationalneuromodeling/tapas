@@ -12,7 +12,7 @@ function [htheta] = tapas_sem_seria_htheta()
 % copyright (C) 2015
 
 
-dim_theta = tapas_sem_seri_ndims();
+dim_theta = tapas_sem_seria_ndims();
 
 % Precision kernel
 htheta.pk = eye(dim_theta);

@@ -31,6 +31,5 @@ ptheta.lpp = @tapas_sem_prosa_lpp;
 ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
 ptheta.ndims = dim_theta;
-ptheta.npars = 2;
 
 end
