@@ -128,212 +128,7 @@ transform_inv_to_wald_mu(double mu, double sigma2)
 
 
 int
-reparametrize_seri_invgamma(const double *theta, SERI_PARAMETERS *stheta)
-{
-
-    stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]) + 2;
-    stheta->tp = transform_log_mv_to_gamma_t(theta[0], theta[1]);
-
-    stheta->ka = transform_log_mv_to_gamma_k(theta[2], theta[3]) + 2;
-    stheta->ta = transform_log_mv_to_gamma_t(theta[2], theta[3]);
-
-    stheta->ks = transform_log_mv_to_gamma_k(theta[4], theta[5]) + 2;
-    stheta->ts = transform_log_mv_to_gamma_t(theta[4], theta[5]);
-
-    stheta->pp = theta[6]; 
-    stheta->ap = theta[7];
-
-    stheta->t0 = exp(theta[8]);
-    stheta->da = exp(theta[9]);
-
-    stheta->p0 = theta[10]; // atan(theta[10])/M_PI + 0.5;
-
-    stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
-
-    stheta->early = ACCUMULATOR_INVGAMMA;
-    stheta->stop = ACCUMULATOR_INVGAMMA;
-    stheta->anti = ACCUMULATOR_INVGAMMA;
-
-    stheta->inhibition_race = ninvgamma_gslint;
-
-    return 0;
-}
-
-int
-reparametrize_seri_wald(const double *theta, SERI_PARAMETERS *stheta)
-{
-    double mu, sigma2;
-    
-    mu = exp(theta[0]);
-    sigma2 = exp(theta[1]);
-
-    stheta->kp = transform_inv_to_wald_mu(mu, sigma2);
-    stheta->tp = transform_inv_to_wald_l(mu, sigma2);
-
-    mu = exp(theta[2]);
-    sigma2 = exp(theta[3]);
-    
-    stheta->ka = transform_inv_to_wald_mu(mu, sigma2);
-    stheta->ta = transform_inv_to_wald_l(mu, sigma2);
-
-    mu = exp(theta[4]);
-    sigma2 = exp(theta[5]);
-    
-    stheta->ks = transform_inv_to_wald_mu(mu, sigma2);
-    stheta->ts = transform_inv_to_wald_l(mu, sigma2);
-
-    stheta->pp = atan(theta[6])/M_PI + 0.5;
-    stheta->ap = atan(theta[7])/M_PI + 0.5;
-
-    stheta->t0 = exp(theta[8]);
-    stheta->da = exp(theta[9]);
-
-    stheta->p0 = atan(theta[10])/M_PI + 0.5;
-
-    stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
-
-    stheta->early = ACCUMULATOR_WALD;
-    stheta->stop = ACCUMULATOR_WALD;
-    stheta->anti = ACCUMULATOR_WALD;
-
-    stheta->inhibition_race = nwald_gslint;
-
-    return 0;
-}
-
-int
-reparametrize_seri_mixedgamma(const double *theta, SERI_PARAMETERS *stheta)
-{
-    
-    stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]) + 2;
-    stheta->tp = transform_log_mv_to_gamma_t(theta[0], theta[1]);
-
-    stheta->ka = transform_log_mv_to_invgamma_k(theta[2], theta[3]);
-    stheta->ta = transform_log_mv_to_invgamma_t(theta[2], theta[3]);
-    
-    stheta->ks = transform_log_mv_to_gamma_k(theta[4], theta[5]) + 2;
-    stheta->ts = transform_log_mv_to_gamma_t(theta[4], theta[5]); 
-
-    stheta->pp = theta[6]; 
-    stheta->ap = theta[7]; 
-
-    stheta->t0 = exp(theta[8]);
-    stheta->da = exp(theta[9]);
-
-    stheta->p0 = theta[10]; 
-
-    stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
-
-    stheta->early = ACCUMULATOR_INVGAMMA;
-    stheta->stop = ACCUMULATOR_INVGAMMA;
-    stheta->anti = ACCUMULATOR_GAMMA;
-
-    stheta->inhibition_race = ninvgamma_gslint;
-
-    return 0;
-}
-
-int
-reparametrize_seri_gamma(const double *theta, SERI_PARAMETERS *stheta)
-{
-    
-    stheta->kp = transform_log_mv_to_invgamma_k(theta[0], theta[1]);
-    stheta->tp = transform_log_mv_to_invgamma_t(theta[0], theta[1]);
-
-    stheta->ka = transform_log_mv_to_invgamma_k(theta[2], theta[3]);
-    stheta->ta = transform_log_mv_to_invgamma_t(theta[2], theta[3]);
-
-    stheta->ks = transform_log_mv_to_invgamma_k(theta[4], theta[5]);
-    stheta->ts = transform_log_mv_to_invgamma_t(theta[4], theta[5]);
-
-    stheta->pp = theta[6]; 
-    stheta->ap = theta[7];
-
-    stheta->t0 = exp(theta[8]);
-    stheta->da = exp(theta[9]);
-
-    stheta->p0 = theta[10];
-
-    stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
-
-    stheta->early = ACCUMULATOR_GAMMA;
-    stheta->stop = ACCUMULATOR_GAMMA;
-    stheta->anti = ACCUMULATOR_GAMMA;
-
-    stheta->inhibition_race = ngamma_gslint;
-
-    return 0;
-}
-
-int
-reparametrize_seri_later(const double *theta, SERI_PARAMETERS *stheta)
-{
-    
-    stheta->kp = theta[0];
-    stheta->tp = exp(0.5 * theta[1]);
-
-    stheta->ka = theta[2]; 
-    stheta->ta = exp(0.5 * theta[3]); 
-
-    stheta->ks = theta[4]; 
-    stheta->ts = exp(0.5 * theta[5]);
-
-    stheta->pp = theta[6];
-    stheta->ap = theta[7];
-
-    stheta->t0 = exp(theta[8]);
-    stheta->da = exp(theta[9]);
-
-    stheta->p0 = theta[10]; 
-
-    stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
-
-    stheta->early = ACCUMULATOR_LATER;
-    stheta->stop = ACCUMULATOR_LATER;
-    stheta->anti = ACCUMULATOR_LATER;
-
-    stheta->inhibition_race = nlater_gslint;
-
-    return 0;
-}
-
-int
-reparametrize_seri_lognorm(const double *theta, SERI_PARAMETERS *stheta)
-{
-
-    stheta->tp = log(exp(theta[1] - 2 * theta[0]) + 1);
-    stheta->kp = -(theta[0] - 0.5 * stheta->tp);
-    stheta->tp = sqrt(stheta->tp);
-    
-    stheta->ta = log(exp(theta[3] - 2 * theta[2]) +  1);
-    stheta->ka = -(theta[2] - 0.5 * stheta->ta);
-    stheta->ta = sqrt(stheta->ta);
-
-    stheta->ts = log(exp(theta[5] - 2 * theta[4]) + 1);
-    stheta->ks = -(theta[4] - 0.5 * stheta->ts);
-    stheta->ts = sqrt(stheta->ts);
-
-    stheta->pp = theta[6]; 
-    stheta->ap = theta[7];
-
-    stheta->t0 = exp(theta[8]);
-    stheta->da = exp(theta[9]);
-
-    stheta->p0 = theta[10];
-
-    stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
-
-    stheta->early = ACCUMULATOR_LOGNORM;
-    stheta->stop = ACCUMULATOR_LOGNORM;
-    stheta->anti = ACCUMULATOR_LOGNORM;
-
-    stheta->inhibition_race = nlognorm_gslint;
-
-    return 0;
-}
-
-int
-reparametrize_dora_invgamma(const double *theta, DORA_PARAMETERS *stheta)
+reparametrize_seria_invgamma(const double *theta, SERIA_PARAMETERS *stheta)
 {
     
     stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]) + 2;
@@ -366,7 +161,7 @@ reparametrize_dora_invgamma(const double *theta, DORA_PARAMETERS *stheta)
 }
 
 int
-reparametrize_dora_wald(const double *theta, DORA_PARAMETERS *stheta)
+reparametrize_seria_wald(const double *theta, SERIA_PARAMETERS *stheta)
 {
     double mu, sigma2;
     
@@ -412,7 +207,7 @@ reparametrize_dora_wald(const double *theta, DORA_PARAMETERS *stheta)
 }
 
 int
-reparametrize_dora_mixedgamma(const double *theta, DORA_PARAMETERS *stheta)
+reparametrize_seria_mixedgamma(const double *theta, SERIA_PARAMETERS *stheta)
 {
 
     stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]);
@@ -445,7 +240,7 @@ reparametrize_dora_mixedgamma(const double *theta, DORA_PARAMETERS *stheta)
 }
 
 int
-reparametrize_dora_gamma(const double *theta, DORA_PARAMETERS *stheta)
+reparametrize_seria_gamma(const double *theta, SERIA_PARAMETERS *stheta)
 {
     
     stheta->kp = transform_log_mv_to_invgamma_k(theta[0], theta[1]);
@@ -478,7 +273,7 @@ reparametrize_dora_gamma(const double *theta, DORA_PARAMETERS *stheta)
 }
 
 int
-reparametrize_dora_later(const double *theta, DORA_PARAMETERS *stheta)
+reparametrize_seria_later(const double *theta, SERIA_PARAMETERS *stheta)
 {
     
     stheta->kp = theta[0];
@@ -511,7 +306,7 @@ reparametrize_dora_later(const double *theta, DORA_PARAMETERS *stheta)
 }
 
 int
-reparametrize_dora_lognorm(const double *theta, DORA_PARAMETERS *stheta)
+reparametrize_seria_lognorm(const double *theta, SERIA_PARAMETERS *stheta)
 {
     
     stheta->tp = log(exp(theta[1] - 2 * theta[0]) + 1);

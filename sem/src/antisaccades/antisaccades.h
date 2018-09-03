@@ -42,8 +42,7 @@
 #define INTSTEP 80
 
 #define DIM_PROSA_THETA 9 
-#define DIM_SERI_THETA 11
-#define DIM_DORA_THETA 11
+#define DIM_SERIA_THETA 11
 
 #define MAX_INTEGRATION_SIZE 81
 
@@ -56,8 +55,8 @@
 #define LN_P_OUTLIER_ANTI -4.6051701859880909
 #define LN_P_OUTLIER_PRO -0.010050335853501451
 
-#define LN_P_DORA_EARLY_PRO -0.0010005003335835344
-#define LN_P_DORA_EARLY_ANTI -6.9077552789821368
+#define LN_P_SERIA_EARLY_PRO -0.0010005003335835344
+#define LN_P_SERIA_EARLY_ANTI -6.9077552789821368
 
 //#define LN_P_LATE_OUTLIER -7.6009024595420822
 //#define LN_P_LATE_NOT_OUTLIER -0.0005001250
@@ -148,35 +147,7 @@ typedef struct
 
 } PROSA_PARAMETERS;
 
-typedef struct
-{
-    double t0;
-    double p0;
-
-    double kp;
-    double tp;
-    double ka;
-    double ta;
-    double ks;
-    double ts;
-    
-    double pp;
-    double ap; 
-    
-    double da;
-
-    double cumint; // Current value of the cumulative integral.
-
-    ACCUMULATOR early;
-    ACCUMULATOR stop;
-    ACCUMULATOR anti;
-
-    NESTED_INTEGRAL inhibition_race; 
-
-} SERI_PARAMETERS;
-
-
-// Double race model
+// SERIA model 
 typedef struct
 {
     double t0;
@@ -201,23 +172,19 @@ typedef struct
 
     NESTED_INTEGRAL inhibition_race; 
 
-} DORA_PARAMETERS;
+} SERIA_PARAMETERS;
 
 // Likelihood typedef functions
 
 typedef double (*PROSA_LLH)(double t, int a, const PROSA_PARAMETERS params); 
 
-typedef double (*SERI_LLH)(double t, int a, const SERI_PARAMETERS params); 
-
-typedef double (*DORA_LLH)(double t, int a, const DORA_PARAMETERS params); 
+typedef double (*SERIA_LLH)(double t, int a, const SERIA_PARAMETERS params); 
 
 // Reparametrization of a function
 
 typedef int (*FILL_PARAMETERS_PROSA)(const double *theta, PROSA_PARAMETERS 
         *parameters);
-typedef int (*FILL_PARAMETERS_SERI)(const double *theta, SERI_PARAMETERS 
-        *parameters);
-typedef int (*FILL_PARAMETERS_DORA)(const double *theta, DORA_PARAMETERS 
+typedef int (*FILL_PARAMETERS_SERIA)(const double *theta, SERIA_PARAMETERS 
         *parameters);
 
 
@@ -232,17 +199,10 @@ typedef struct
 
 typedef struct
 {
-    FILL_PARAMETERS_SERI fill_parameters;
-    SERI_LLH llh;
+    FILL_PARAMETERS_SERIA fill_parameters;
+    SERIA_LLH llh;
     int dim_theta;
-} SERI_MODEL;
-
-typedef struct
-{
-    FILL_PARAMETERS_DORA fill_parameters;
-    DORA_LLH llh;
-    int dim_theta;
-} DORA_MODEL;
+} SERIA_MODEL;
 
 // Other numerical
 
@@ -253,21 +213,14 @@ lcosh(double x);
 // Populate parameters
 int
 populate_parameters_prosa(const double *theta, PROSA_PARAMETERS *stheta);
-// Populate the DORA parametes using teh array theta, where theta is required
+// Populate the SERIA parametes using teh array theta, where theta is required
 // to have 11 parameters 
 // theta        -- Array of parameters
 // stheta       -- Structure to be populated
 
 int
-populate_parameters_seri(const double *theta, SERI_PARAMETERS *stheta);
-// Populate the SERI parametes using teh array theta, where theta is required
-// to have 11 parameters 
-// theta        -- Array of parameters
-// stheta       -- Structure to be populated
-
-int
-populate_parameters_dora(const double *theta, DORA_PARAMETERS *stheta);
-// Populate the DORA parametes using teh array theta, where theta is required
+populate_parameters_seria(const double *theta, SERIA_PARAMETERS *stheta);
+// Populate the SERIA parametes using teh array theta, where theta is required
 // to have 11 parameters 
 // theta        -- Array of parameters
 // stheta       -- Structure to be populated
@@ -279,16 +232,12 @@ populate_parameters_dora(const double *theta, DORA_PARAMETERS *stheta);
 double
 prosa_llh_abstract(double t, int a, PROSA_PARAMETERS params);
 
-// Seri model
-double
-seri_llh_abstract(double t, int a, SERI_PARAMETERS params);
-
 // Dora model
 double
-dora_llh_abstract(double t, int a, DORA_PARAMETERS params);
+seria_llh_abstract(double t, int a, SERIA_PARAMETERS params);
 
 double
-dora_early_llh_abstract(double t, int a, DORA_PARAMETERS params);
+seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params);
 
 // Models
 
@@ -300,9 +249,6 @@ dora_early_llh_abstract(double t, int a, DORA_PARAMETERS params);
 
 
 int
-prosa_model_trial_by_trial(ANTIS_INPUT svals, PROSA_MODEL model, double *llh);
-
-int
 prosa_model_n_states_optimized(ANTIS_INPUT svals, PROSA_MODEL model,
        double *llh);
 
@@ -311,23 +257,10 @@ prosa_model_n_states(ANTIS_INPUT svals, PROSA_MODEL model,
        double *llh);
 
 int
-prosa_model_trial_by_trial(ANTIS_INPUT svals, PROSA_MODEL model, double *llh);
+seria_model_n_states(ANTIS_INPUT svals, SERIA_MODEL model, double *llh);
 
 int
-dora_model_n_states(ANTIS_INPUT svals, DORA_MODEL model, double *llh);
-
-int
-dora_model_n_states_optimized(ANTIS_INPUT svals, DORA_MODEL model, 
-        double *llh);
-
-int
-seri_model_trial_by_trial(ANTIS_INPUT svals, SERI_MODEL model, double *llh);
-
-int
-seri_model_n_states(ANTIS_INPUT svals, SERI_MODEL model, double *llh);
-
-int
-seri_model_n_states_optimized(ANTIS_INPUT svals, SERI_MODEL model, 
+seria_model_n_states_optimized(ANTIS_INPUT svals, SERIA_MODEL model, 
         double *llh);
 
 // Numericals
@@ -644,42 +577,22 @@ double nwald_gslint(double t0, double x, double mu1, double mu2, double sig1,
 // Reparametrize
 
 int
-reparametrize_seri_gamma(const double *theta, SERI_PARAMETERS *stheta);
+reparametrize_seria_gamma(const double *theta, SERIA_PARAMETERS *stheta);
 
 int
-reparametrize_seri_invgamma(const double *theta, SERI_PARAMETERS *stheta);
+reparametrize_seria_invgamma(const double *theta, SERIA_PARAMETERS *stheta);
 
 int
-reparametrize_seri_wald(const double *theta, SERI_PARAMETERS *stheta);
+reparametrize_seria_wald(const double *theta, SERIA_PARAMETERS *stheta);
 
 int
-reparametrize_seri_mixedgamma(const double *theta, SERI_PARAMETERS *stheta);
+reparametrize_seria_mixedgamma(const double *theta, SERIA_PARAMETERS *stheta);
 
 int
-reparametrize_seri_lognorm(const double *theta, SERI_PARAMETERS *stheta);
+reparametrize_seria_lognorm(const double *theta, SERIA_PARAMETERS *stheta);
 
 int
-reparametrize_seri_later(const double *theta, SERI_PARAMETERS *stheta);
-
-//
-
-int
-reparametrize_dora_gamma(const double *theta, DORA_PARAMETERS *stheta);
-
-int
-reparametrize_dora_invgamma(const double *theta, DORA_PARAMETERS *stheta);
-
-int
-reparametrize_dora_wald(const double *theta, DORA_PARAMETERS *stheta);
-
-int
-reparametrize_dora_mixedgamma(const double *theta, DORA_PARAMETERS *stheta);
-
-int
-reparametrize_dora_lognorm(const double *theta, DORA_PARAMETERS *stheta);
-
-int
-reparametrize_dora_later(const double *theta, DORA_PARAMETERS *stheta);
+reparametrize_seria_later(const double *theta, SERIA_PARAMETERS *stheta);
 
 //
 

@@ -4,7 +4,7 @@
 #include "antisaccades.h"
 
 double
-dora_llh_abstract(double t, int a, DORA_PARAMETERS params)
+seria_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 {
 
     double t0 = params.t0;
@@ -47,7 +47,7 @@ dora_llh_abstract(double t, int a, DORA_PARAMETERS params)
     fllh = params.early.lpdf(t, kp, tp);
     fllh += params.stop.lsf(t, ks, ts);
     
-    fllh += (a == PROSACCADE ? LN_P_DORA_EARLY_PRO : LN_P_DORA_EARLY_ANTI);
+    fllh += (a == PROSACCADE ? LN_P_SERIA_EARLY_PRO : LN_P_SERIA_EARLY_ANTI);
 
     if ( t > da )
     {
@@ -92,7 +92,7 @@ dora_llh_abstract(double t, int a, DORA_PARAMETERS params)
 
 /* Probability of an early prosaccade. */
 double
-dora_early_llh_abstract(double t, int a, DORA_PARAMETERS params)
+seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 {
 
     double t0 = params.t0;
@@ -133,7 +133,7 @@ dora_early_llh_abstract(double t, int a, DORA_PARAMETERS params)
 
     // There is a fixed value for antisaccades
     if ( a == ANTISACCADE )
-        return LN_P_DORA_EARLY_ANTI;
+        return LN_P_SERIA_EARLY_ANTI;
 
     // The log probability of an early response is 1.0
     if ( t < da )
