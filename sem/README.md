@@ -178,7 +178,7 @@ above. An example can be found in
 `tapas/sem/examples/tapas_sem_flat_example_estimate.m`. Below we have
 commented an abbreviated form of the code.
 
-~~~~
+```matlab
 % This function loads the data and prepares it in the necessary format.
 % The data contains two conditions (pro- and antisaccade trials)
 [data] = prepare_data();
@@ -223,7 +223,7 @@ posterior = tapas_sem_flat_estimate(data, ptheta, htheta, pars);
 toc
 
 display(posterior)
-~~~~ 
+``` 
 
 The variable `ptheta` represent the parameters of the model. It is a 
 structure with several fields explain in the table below.
