@@ -1,19 +1,19 @@
 function [posterior] = tapas_sem_hier_prepare_posterior(data, model, ...
     inference, states)
-%% 
+%%
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2016
 %
 
-T = states{end}.graph{1}.T;
+T = model.graph{1}.htheta.T;
 
 posterior = struct('data', data, 'model', model, 'inference', inference, ...
     'samples_theta', [], 'fe', [], 'llh', []);
 
 np = numel(states);
 
-theta = cell(np, 1); 
+theta = cell(np, 1);
 for i = 1:np
     theta{i} = states{i}.graph{2}(:, end);
 end

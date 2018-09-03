@@ -1,4 +1,4 @@
-function [ps, fe] = tapas_sem_estimate(y, u, ptheta, htheta, pars)
+function [ps, fe] = tapas_sem_flat_estimate(data, ptheta, htheta, pars)
 %% Estimates the posterior probability of the parameters using MCMC combined
 % with path sampling.
 %
@@ -59,6 +59,15 @@ else
     rng('shuffle');
 end
 
+if ~isfield(pars, 'T')
+    pars.T = linspace(0.1, 1.0, 16).^5;
+end
+
+if size(pars.T, 1) > 1
+    error('tapas:sem:flat_estimate:input', ...
+        'Temperature should be an 1xN matrix');
+end
+
 T = pars.T;
 nburnin = pars.nburnin;
 niter = pars.niter;
@@ -71,12 +80,12 @@ sample_priors = ptheta.sample_priors;
 nt = numel(T);
 
 % Prepare ptheta
-[y, u] = init_data(y, u);
+[data] = init_data(data);
 htheta = init_htheta(ptheta, htheta);
 ptheta = init_ptheta(ptheta, htheta);
-otheta = init_theta(y, u, T, ptheta);
+otheta = init_theta(data, T, ptheta);
 
-ollh = llh(y, u, otheta, ptheta);
+ollh = llh(data, otheta);
 olpp = lpp(otheta, ptheta);
 
 ollh = sum(ollh, 1);
@@ -114,7 +123,7 @@ for i = 1 : nburnin + niter
     end
     ntheta = propose_sample(otheta, ptheta, htheta, ok);
     %ntheta = tapas_sem_seri_gibbs_eta(y, u, ntheta, ptheta, T);
-    nllh = llh(y, u, ntheta, ptheta);
+    nllh = llh(data, ntheta);
 
     nllh = sum(nllh, 1);
     nlpp = sum(lpp(ntheta, ptheta), 1);
@@ -171,7 +180,7 @@ end
 
 % Expected posterior of theta
 
-ptrans = ptheta.ptrans; % Transformation function of the parameters
+ptrans = @(x) x; % For a future release. 
 ps.pE = mean(ptrans(ps_theta), 2);
 ps.pP = mean(ptrans(pp_theta), 2);
 
@@ -189,16 +198,18 @@ end
 ps.F = fe;
 % Log likelihood of posterior
 % Initial values
-ps.y = y;
-ps.u = u;
+ps.data = data;
 ps.ptheta = ptheta;
 ps.htheta = htheta;
 ps.pars = pars;
 
 end
 
-function [y, u] = init_data(y, u);
+function [data] = init_data(data)
 % Sort the data
+
+y = data.y;
+u = data.u;
 
 [~, indexes] = sort(y.t);
 
@@ -208,6 +219,8 @@ y.i = y.i(indexes);
 
 u.tt = u.tt(indexes);
 u.b = u.b(indexes);
+
+data = struct('y', y, 'u', u);
 
 end
 
@@ -237,7 +250,7 @@ nk = struct('S', nk, 's', s, 'k', tk);
 
 end
 
-function [ntheta] = init_theta(y, u, T, ptheta)
+function [ntheta] = init_theta(data, T, ptheta)
 %% Initial values of theta with the prior expected value
 %
 % Input 
@@ -270,7 +283,7 @@ for i = 1:500
         end
         ntheta{j} = sample_priors(ptheta);
     end
-    nllh = llh(y, u, ntheta, ptheta);
+    nllh = llh(data, ntheta);
 
     nllh = sum(nllh, 1);
     nlpp = sum(lpp(ntheta, ptheta), 1);
