@@ -1,4 +1,4 @@
-function [ptheta] = tapas_sem_seri_gamma_ptheta()
+function [ptheta] = tapas_sem_prosa_ptheta()
 %% Returns the standard priors of the model.
 %
 % Input 
@@ -16,24 +16,20 @@ function [ptheta] = tapas_sem_seri_gamma_ptheta()
 % copyright (C) 2015
 %
 
-dim_theta = tapas_sem_seri_ndims();
-
-ptheta = tapas_sem_seri_gaussian_priors();
+DIM_THETA = tapas_sem_prosa_ndims();
+[ptheta] = tapas_sem_prosa_gaussian_priors();
 
 % Projection matrix
-ptheta.jm = eye(dim_theta);
+ptheta.jm = eye(DIM_THETA);
 
 % Likelihood function and priors
 
-ptheta.name = 'seri_gamma';
-ptheta.llh = @tapas_sem_seri_no_transform_llh;
-ptheta.lpp = @tapas_sem_seri_lpp;
-ptheta.ptrans = @tapas_sem_seri_gamma_ptrans; 
-ptheta.method = @c_seri_two_states_gamma_no_transform;
+ptheta.name = 'prosa';
+ptheta.llh = [];
+ptheta.lpp = @tapas_sem_prosa_lpp;
 ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
-ptheta.ndims = dim_theta;
+ptheta.ndims = tapas_sem_prosa_ndims();
 ptheta.npars = 2; % It has two sets of parameters.
 
 end
-
