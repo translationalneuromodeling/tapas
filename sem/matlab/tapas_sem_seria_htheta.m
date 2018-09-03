@@ -1,4 +1,4 @@
-function [htheta] = tapas_sem_dora_htheta()
+function [htheta] = tapas_sem_seria_htheta()
 %% Returns the standard hyperpriors. 
 %
 % Input 

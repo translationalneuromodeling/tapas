@@ -1,4 +1,4 @@
-function [ptheta] = tapas_sem_dora_invgamma_ptheta()
+function [ptheta] = tapas_sem_seria_ptheta()
 %% Returns the standard priors of the model.
 %
 % Input 
@@ -16,20 +16,18 @@ function [ptheta] = tapas_sem_dora_invgamma_ptheta()
 % copyright (C) 2015
 %
 
-dim_theta = tapas_sem_dora_ndims();
+dim_theta = tapas_sem_seria_ndims();
 
-[ptheta] = tapas_sem_dora_gaussian_priors();
+[ptheta] = tapas_sem_seria_gaussian_priors();
 
 % Projection matrix
 ptheta.jm = eye(dim_theta);
 
 % Likelihood function and priors
 
-ptheta.name = 'dora_wald';
-ptheta.llh = @tapas_sem_seri_no_transform_llh;
+ptheta.name = 'seria';
+ptheta.llh = [] 
 ptheta.lpp = @tapas_sem_prosa_lpp;
-ptheta.ptrans = []; 
-ptheta.method = @c_dora_two_states_wald_no_transform;
 ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
 ptheta.ndims = dim_theta;

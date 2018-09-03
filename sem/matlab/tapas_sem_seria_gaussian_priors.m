@@ -1,4 +1,4 @@
-function [ptheta] = tapas_sem_dora_gaussian_priors()
+function [ptheta] = tapas_sem_seria_gaussian_priors()
 %% Generates standard priors for a gaussian distribution.
 %
 %   Input
