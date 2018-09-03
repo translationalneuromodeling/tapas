@@ -11,7 +11,6 @@ Graphical tools
 '''
 
 
-from pdb import set_trace as _
 import numpy as np
 from scipy.integrate import cumtrapz
 from scipy import stats
@@ -60,7 +59,7 @@ class SummaryStats(containers.AlgebraicObject):
         return None
 
 
-class SummaryDora(SummaryStats):
+class SummarySeria(SummaryStats):
     ''' Creates the summary of  the dora model. '''
 
     # Fields are early unit, late unit, stop unit, late prosaccade,
@@ -80,26 +79,26 @@ class SummaryDora(SummaryStats):
 
     def __init__(self, *args, **kargs):
 
-        super(SummaryDora, self).__init__(*args, **kargs)
+        super(SummarySeria, self).__init__(*args, **kargs)
 
         return None
 
 
-class SummaryDoraInvgamma(SummaryDora):
+class SummarySeriaInvgamma(SummaryDora):
 
     def __int__(self, *args, **kargs):
 
-        super(SummaryDoraInvgamma, self).__init__(*args, **kargs)
+        super(SummarySeriaInvgamma, self).__init__(*args, **kargs)
 
         return
 
 
-class SummaryDoraMixedgamma(SummaryDora):
+class SummarySeriaMixedgamma(SummaryDora):
     """Summary of the DORA model using the mixed gamma combination."""
 
     def __int__(self, *args, **kargs):
 
-        super(SummaryDoraMixedgamma, self).__init__(*args, **kargs)
+        super(SummarySeriaMixedgamma, self).__init__(*args, **kargs)
 
         return
 
@@ -165,12 +164,12 @@ class SummaryDoraMixedgamma(SummaryDora):
         return results
 
 
-class SummaryDoraLognorm(SummaryDora):
+class SummarySeriaLognorm(SummaryDora):
     """Summary of the DORA model using the mixed gamma combination."""
 
     def __int__(self, *args, **kargs):
 
-        super(SummaryDoraLognorm, self).__init__(*args, **kargs)
+        super(SummarySeriaLognorm, self).__init__(*args, **kargs)
 
         return
 
@@ -214,40 +213,6 @@ class SummaryDoraLognorm(SummaryDora):
         pr = stats.lognorm.pdf(time, stheta.kp, scale=stheta.tp) * \
              stats.lognorm.sf(time, stheta.ks, scale=stheta.ts)
         results['nst'] = np.trapz(pr, time)
-
-        return results
-
-
-class SummarySeri(SummaryStats):
-    ''' Creates the summary of  the dora model. '''
-
-    fields = ['p', 'a', 's', 'ap']
-
-    def __init__(self, *args, **kargs):
-
-        super(SummarySeri, self).__init__(*args, **kargs)
-
-        return None
-
-
-class SummarySeriInvgamma(SummarySeri):
-
-    def __int__(self, *args, **kargs):
-
-        super(SummarySeriInvgamma, self).__init__(*args, **kargs)
-
-        return
-
-    def summary_statistics(self, stheta):
-
-        results = {}
-
-        results['p'] = stheta.tp / (stheta.kp - 1) + stheta.t0
-        results['a'] = stheta.ta / (stheta.ka - 1) + stheta.t0 + \
-            stheta.da
-        results['s'] = stheta.ts / (stheta.ks - 1) + stheta.t0
-
-        results['ap'] = stheta.ap
 
         return results
 

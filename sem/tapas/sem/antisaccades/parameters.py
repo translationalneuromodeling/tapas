@@ -11,223 +11,140 @@ Contains functions related to the parameters.
 '''
 
 
-from pdb import set_trace as _
-import numpy as np
-
 import containers
 import reparametrize as reparam
-import likelihoods 
+import likelihoods
+
 
 class Parameters(containers.AlgebraicObject):
     ''' Abstract class. '''
     pass
 
+
 class ParametersProsa(Parameters):
-    '''Parameters of the dora model. '''
+    '''Parameters of the seria model. '''
 
     fields = ['kp', 'tp', 'ka', 'ta', 'ks', 'ts', 't0', 'da', 'p0']
 
     pass
 
-class ParametersDora(Parameters):
-    '''Parameters of the dora model. '''
 
-    fields = ['kp', 'tp', 'ka', 'ta', 'ks', 'ts', 'kl', 'tl', 't0', 
-        'da', 'p0']
+class ParametersSeria(Parameters):
+    '''Parameters of the seria model. '''
 
-    pass
-
-class ParametersSeri(Parameters):
-    '''Parameters of the dora model. '''
-
-    fields = ['kp', 'tp', 'ka', 'ta', 'ks', 'ts', 'pp', 'ap', 't0', 
-        'da', 'p0']
+    fields = [
+            'kp', 'tp', 'ka', 'ta', 'ks', 'ts', 'kl', 'tl', 't0',
+            'da', 'p0']
 
     pass
 
-class ParametersSeriGamma(ParametersSeri):
+
+class ParametersSeriaGamma(ParametersDora):
 
     @staticmethod
     def reparametrize(samples):
 
-        return reparam.reparametrize_seri_gamma(samples)
+        return reparam.reparametrize_seria_gamma(samples)
 
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.seri_n_states_gamma(t, a, tt, theta)
-
-class ParametersSeriInvgamma(ParametersSeri):
-
-    @staticmethod
-    def reparametrize(samples):
-
-        return reparam.reparametrize_seri_invgamma(samples)
-
-    @staticmethod
-    def lpdf(t, a, tt, theta):
-
-        return likelihoods.seri_n_states_invgamma(t, a, tt, theta)
-
-    
-class ParametersSeriMixedgamma(ParametersSeri):
-
-    @staticmethod
-    def reparametrize(samples):
-
-        return reparam.reparametrize_seri_mixedgamma(samples)
-
-    @staticmethod
-    def lpdf(t, a, tt, theta):
-
-        return likelihoods.seri_n_states_mixedgamma(t, a, tt, theta)
-
-class ParametersSeriLognorm(ParametersSeri):
-
-    @staticmethod
-    def reparametrize(samples):
-
-        return reparam.reparametrize_seri_lognorm(samples)
-
-    @staticmethod
-    def lpdf(t, a, tt, theta):
-
-        return likelihoods.seri_n_states_lognorm(t, a, tt, theta)
-
-    
-
-class ParametersSeriLater(ParametersSeri):
-
-    @staticmethod
-    def reparametrize(samples):
-
-        return reparam.reparametrize_seri_later(samples)
-
-    @staticmethod
-    def lpdf(t, a, tt, theta):
-
-        return likelihoods.seri_n_states_later(t, a, tt, theta)
-
-    
-
-class ParametersSeriWald(ParametersSeri):
-
-    @staticmethod
-    def reparametrize(samples):
-
-        return reparam.reparametrize_seri_wald(samples)
-
-    @staticmethod
-    def lpdf(t, a, tt, theta):
-
-        return likelihoods.seri_n_states_wald(t, a, tt, theta)
-
-    
-
-class ParametersDoraGamma(ParametersDora):
-
-    @staticmethod
-    def reparametrize(samples):
-
-        return reparam.reparametrize_dora_gamma(samples)
-
-    @staticmethod
-    def lpdf(t, a, tt, theta):
-
-        return likelihoods.dora_n_states_gamma(t, a, tt, theta)
+        return likelihoods.seria_n_states_gamma(t, a, tt, theta)
 
     @staticmethod
     def ler(t, a, tt, theta):
 
-        return likelihoods.dora_early_llh_n_states_gamma(t, a, tt, theta)
+        return likelihoods.seria_early_llh_n_states_gamma(t, a, tt, theta)
 
-class ParametersDoraInvgamma(ParametersDora):
+
+class ParametersSeriaInvgamma(ParametersDora):
 
     @staticmethod
     def reparametrize(samples):
 
-        return reparam.reparametrize_dora_invgamma(samples)
+        return reparam.reparametrize_seria_invgamma(samples)
 
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.dora_n_states_invgamma(t, a, tt, theta)
+        return likelihoods.seria_n_states_invgamma(t, a, tt, theta)
 
     @staticmethod
     def ler(t, a, tt, theta):
 
-        return likelihoods.dora_early_llh_n_states_invgamma(t, a, tt, theta)
-   
+        return likelihoods.seria_early_llh_n_states_invgamma(t, a, tt, theta)
 
-class ParametersDoraMixedgamma(ParametersDora):
+
+class ParametersSeriaMixedgamma(ParametersDora):
 
     @staticmethod
     def reparametrize(samples):
 
-        return reparam.reparametrize_dora_mixedgamma(samples)
+        return reparam.reparametrize_seria_mixedgamma(samples)
 
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.dora_n_states_mixedgamma(t, a, tt, theta)
+        return likelihoods.seria_n_states_mixedgamma(t, a, tt, theta)
 
     @staticmethod
     def ler(t, a, tt, theta):
 
-        return likelihoods.dora_early_llh_n_states_mixedgamma(t, a, tt, theta) 
+        return likelihoods.seria_early_llh_n_states_mixedgamma(t, a, tt, theta)
 
-class ParametersDoraLognorm(ParametersDora):
-
-    @staticmethod
-    def reparametrize(samples):
-   
-        return reparam.reparametrize_dora_lognorm(samples)
-
-    @staticmethod
-    def lpdf(t, a, tt, theta):
-
-        return likelihoods.dora_n_states_lognorm(t, a, tt, theta)
-
-    @staticmethod
-    def ler(t, aa, tt, theta):
-
-        return likelihoods.dora_early_llh_n_states_lognorm(t, a, tt, theta) 
- 
-
-class ParametersDoraLater(ParametersDora):
+class ParametersSeriaLognorm(ParametersDora):
 
     @staticmethod
     def reparametrize(samples):
 
-        return reparam.reparametrize_dora_later(samples)
+        return reparam.reparametrize_seria_lognorm(samples)
 
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.dora_n_states_later(t, a, tt, theta)
+        return likelihoods.seria_n_states_lognorm(t, a, tt, theta)
 
     @staticmethod
     def ler(t, aa, tt, theta):
 
-        return likelihoods.dora_early_llh_n_states_later(t, a, tt, theta) 
-   
+        return likelihoods.seria_early_llh_n_states_lognorm(t, aa, tt, theta)
 
-class ParametersDoraWald(ParametersDora):
+
+class ParametersSeriaLater(ParametersDora):
 
     @staticmethod
     def reparametrize(samples):
 
-        return reparam.reparametrize_dora_wald(samples)
+        return reparam.reparametrize_seria_later(samples)
 
     @staticmethod
     def lpdf(t, a, tt, theta):
 
-        return likelihoods.dora_n_states_wald(t, a, tt, theta)
+        return likelihoods.seria_n_states_later(t, a, tt, theta)
 
     @staticmethod
     def ler(t, aa, tt, theta):
 
-        return likelihoods.dora_early_llh_n_states_wald(t, a, tt, theta) 
+        return likelihoods.seria_early_llh_n_states_later(t, aa, tt, theta)
+
+
+class ParametersSeriaWald(ParametersDora):
+
+    @staticmethod
+    def reparametrize(samples):
+
+        return reparam.reparametrize_seria_wald(samples)
+
+    @staticmethod
+    def lpdf(t, a, tt, theta):
+
+        return likelihoods.seria_n_states_wald(t, a, tt, theta)
+
+    @staticmethod
+    def ler(t, aa, tt, theta):
+
+        return likelihoods.seria_early_llh_n_states_wald(t, aa, tt, theta)
+
 
 class ParametersProsaGamma(ParametersProsa):
 
@@ -241,7 +158,6 @@ class ParametersProsaGamma(ParametersProsa):
 
         return likelihoods.prosa_n_states_gamma(t, a, tt, theta)
 
-    
 
 class ParametersProsaInvgamma(ParametersProsa):
 
@@ -255,7 +171,6 @@ class ParametersProsaInvgamma(ParametersProsa):
 
         return likelihoods.prosa_n_states_invgamma(t, a, tt, theta)
 
-    
 
 class ParametersProsaMixedgamma(ParametersProsa):
 
@@ -269,7 +184,6 @@ class ParametersProsaMixedgamma(ParametersProsa):
 
         return likelihoods.prosa_n_states_mixedgamma(t, a, tt, theta)
 
-    
 
 class ParametersProsaLognorm(ParametersProsa):
 
@@ -283,7 +197,6 @@ class ParametersProsaLognorm(ParametersProsa):
 
         return likelihoods.prosa_n_states_lognorm(t, a, tt, theta)
 
-    
 
 class ParametersProsaLater(ParametersProsa):
 
@@ -297,7 +210,6 @@ class ParametersProsaLater(ParametersProsa):
 
         return likelihoods.prosa_n_states_later(t, a, tt, theta)
 
-    
 
 class ParametersProsaWald(ParametersProsa):
 
@@ -311,6 +223,6 @@ class ParametersProsaWald(ParametersProsa):
 
         return likelihoods.prosa_n_states_wald(t, a, tt, theta)
 
-if __name__ == '__main__':
-    pass    
 
+if __name__ == '__main__':
+    pass

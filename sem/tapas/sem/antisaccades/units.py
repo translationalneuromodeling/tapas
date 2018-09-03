@@ -25,70 +25,27 @@ class Units(containers.TimeSeries):
     pass
 
 
-class UnitsSeri(Units):
-
-    fields = ['p', 'a', 's', 'l']
-
-    def __init__(self, time=None, samples=None):
-
-        if samples is None:
-            super(UnitsSeri, self).__init__()
-        else:
-            results = self.llh(time, samples)
-            super(UnitsSeri, self).__init__(results)
-
-        return None
-
-
-class UnitsSeriInvgamma(UnitsSeri):
-
-    def __init__(self, *args, **kargs):
-
-        super(UnitsSeriInvgamma, self).__init__(*args, **kargs)
-
-        return None
-
-    def llh(self, time, stheta):
-
-        results = {}
-        results['time'] = time
-
-        results['p'] = stats.invgamma.logpdf(
-            time, stheta.kp, scale=stheta.tp, loc=stheta.t0)
-
-        results['a'] = np.log(stheta.ap) + stats.invgamma.logpdf(
-            time, stheta.ka, scale=stheta.ta, loc=stheta.t0 + stheta.da)
-
-        results['s'] = stats.invgamma.logpdf(
-            time, stheta.ks, scale=stheta.ts, loc=stheta.t0)
-
-        results['l'] = np.log(1 - stheta.ap) + results['a'] - \
-            np.log(stheta.ap)
-
-        return results
-
-
-class UnitsDora(containers.TimeSeries):
+class UnitsSeria(containers.TimeSeries):
 
     fields = ['e', 'a', 'i', 'p', 'ns']
 
     def __init__(self, time=None, samples=None):
 
         if samples is None:
-            super(UnitsDora, self).__init__()
+            super(UnitsSeria, self).__init__()
         else:
             results = self.llh(time, samples)
-            super(UnitsDora, self).__init__(results)
+            super(UnitsSeria, self).__init__(results)
 
         return
 
 
-class UnitsDoraMixedgamma(UnitsDora):
-    ''' Dora untis with mixed gamma. '''
+class UnitsSeriaMixedgamma(UnitsDora):
+    ''' Seria untis with mixed gamma. '''
 
     def __init__(self, time, samples):
-        '''Dora untis with mixedgamma. '''
-        super(UnitsDoraMixedgamma, self).__init__(time, samples)
+        '''Seria untis with mixedgamma. '''
+        super(UnitsSeriaMixedgamma, self).__init__(time, samples)
 
         return None
 
@@ -125,12 +82,12 @@ class UnitsDoraMixedgamma(UnitsDora):
         return results
 
 
-class UnitsDoraInvgamma(UnitsDora):
-    ''' Dora units with invgamma. '''
+class UnitsSeriaInvgamma(UnitsDora):
+    ''' Seria units with invgamma. '''
 
     def __init__(self, time, samples):
 
-        super(UnitsDoraInvgamma, self).__init__(time, samples)
+        super(UnitsSeriaInvgamma, self).__init__(time, samples)
 
         return None
 
@@ -187,12 +144,12 @@ class UnitsDoraInvgamma(UnitsDora):
         return results
 
 
-class UnitsDoraLognorm(UnitsDora):
-    ''' Dora units with invgamma. '''
+class UnitsSeriaLognorm(UnitsDora):
+    ''' Seria units with invgamma. '''
 
     def __init__(self, time, samples):
 
-        super(UnitsDoraInvgamma, self).__init__(time, samples)
+        super(UnitsSeriaInvgamma, self).__init__(time, samples)
 
         return None
 
