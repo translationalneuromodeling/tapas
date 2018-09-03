@@ -25,6 +25,7 @@ TAPAS toolbox
 - Dropped 4 digits versioning for 3.
 - The version of tapas is now read from misc/log\_tapas.txt. It is the first
     line of this file.
+- New version of the HGF toolbox (5.2.0). Detail in tapas/HGF/README.md.
 
 ### Removed
 - Deleted the gpo folder.
