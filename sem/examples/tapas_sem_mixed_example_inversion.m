@@ -1,4 +1,4 @@
-function tapas_sem_multiv_example_inversion(model, param, fp)
+function tapas_sem_mixed_example_inversion(model, param, fp)
 %% Test 
 %
 % fp -- Pointer to a file for the test output, defaults to 1
@@ -53,9 +53,6 @@ case 'seria'
     ptheta.jm = [...
         eye(19)
         zeros(3, 8) eye(3) zeros(3, 8)];
-
-    ptheta.x = ones(4, 1);
-
 case 'prosa'
     ptheta = tapas_sem_prosa_ptheta(); % Choose at convinience.
     switch param
@@ -76,11 +73,10 @@ case 'prosa'
     ptheta.jm = [...
         eye(15)
         zeros(3, 6) eye(3) zeros(3, 6)];
-
-    ptheta.x = ones(4, 1);
-
 end
 
+ptheta.x = eye(4);
+ptheta.mixed = ones(4, 1);
 pars = struct();
 
 pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
@@ -93,7 +89,7 @@ pars.verbose = 1;
 display(ptheta);
 inference = struct();
 tic
-tapas_sem_multiv_estimate(data, ptheta, inference, pars);
+tapas_sem_mixed_estimate(data, ptheta, inference, pars);
 toc
 
 
