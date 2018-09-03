@@ -1,4 +1,4 @@
-function tapas_hgf_binary_mab_plotTraj(r)
+function tapas_hgf_ar1_binary_mab_plotTraj(r)
 % Plots the estimated or generated trajectories for the binary HGF perceptual model for multi-armed
 % bandit situations.
 %
@@ -35,11 +35,7 @@ b = r.c_prc.n_bandits;
 n = size(r.u,1);
 
 % Time axis
-if size(r.u,2) > 1
-    t = r.u(:,end)';
-else
-    t = ones(1,n);
-end
+t = ones(1,n);
 
 ts = cumsum(t);
 ts = [0, ts];
@@ -124,7 +120,7 @@ if (ploty == true) && ~isempty(find(strcmp(fieldnames(r),'y'))) && ~isempty(r.y)
         plot(find(y==j), 1.08*ones([1 length(find(y==j))]), '.', 'Color', colors(j,:)); % responses
     end
     title(['Response y, input u (black dots), learning rate (fine black line), and posterior expectation of reward s(\mu_2) ', ...
-           '(colour coded) for \rho=', num2str(r.p_prc.rho(2:end)), ', \kappa=', ...
+           '(colour coded) for \phi=', num2str(r.p_prc.phi(2:end)), ', m=', num2str(r.p_prc.m(2:end)), ', \kappa=', ...
            num2str(r.p_prc.ka(2:end)), ', \omega=', num2str(r.p_prc.om(2:end))], ...
       'FontWeight', 'bold');
     ylabel('y, u, s(\mu_2)');
