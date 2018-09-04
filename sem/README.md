@@ -46,7 +46,7 @@ similarly so for prosaccades.
 This idea is represented in the figure above, where the four units and their
 interactions are presented.
 
-![SERIA](https://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=10.1371/journal.pcbi.1005692.g002)
+<img src="https://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=10.1371/journal.pcbi.1005692.g002" width="200"/>
 
 In addition to the units, we assume that there is an overall delay or 
 non-decision time that affects all the units. Saccades with a lower latency
