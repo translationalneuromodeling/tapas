@@ -1,52 +1,81 @@
 # README
 
 aponteeduardo@gmail.com
-copyright (C) 2015-2017
+copyright (C) 2015-2018
 
 # The SERIA model
 
 ## Quick start
 
 The [SERIA model](http://www.biorxiv.org/content/early/2017/06/08/109090)
-is a formal statistical model of the probability of a 
-pro- or antisaccade and its reaction time. The SEM toolbox includes an 
-inference method based on the Metropolis-Hasting algorithm implemented in
-MATLAB.
+is a formal statistical model of the probability of 
+pro- and antisaccades and the corresponding reaction time (RT). The SEM 
+toolbox includes an inference method based on the
+[Metropolis-Hastings algorithm](https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm)
+implemented in MATLAB.
 
 After installation (see below), you can run an example using
 
 ```matlab
 tapas_init();
-tapas_sem_flat_example_invesion();
+tapas_sem_flat_example_inversion();
 ```
 
-This will load data and estimate parameters. The data consists
-of a list of trials with trial type (pro or antisaccade), the
-action performed (pro or antisaccade) and the reaction time. 
+This will load example data and estimate parameters from it. The data consists
+of a list of trials with trial type (pro- or antisaccade), the
+action performed (pro- or antisaccade) and the RT. 
 
-You can use the file `sem/examples/tapas_sem_example_inversion.m`
+You can use the file `sem/examples/tapas_sem_flat_example_inversion.m`
 as a template to run your analysis.
 
 ## The model
+SERIA models the race between 4 accumulators or units, under the assumption
+that
+the order and threshold hit time of the units determine the action (pro-
+or antisaccade) and corresponding RT on a trial. The first, early unit
+represents fast, reflexive prosaccades. These are triggered at time
+*t* if the early unit hits threshold at time *t* and all the other units hit 
+threshold at a later point. Early prosaccades can be stopped by the second
+inhibitory unit, if the latter hits threshold before the early unit. In
+this case, the two late units (that represent voluntary, late prosaccades and
+antisaccades) can generate reactions depending on their hit time. In
+particular, if the antisaccade unit hits threshold at time *t* before the
+late prosaccade unit, an antisaccade at time *t* is generated, and
+similarly so for prosaccades.
+
+This idea is represented in the figure above, where the four units and their
+interactions are presented.
+
+![SERIA](https://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=10.1371/journal.pcbi.1005692.g002)
+
+In addition to the units, we assume that there is an overall delay or 
+non-decision time that affects all the units. Saccades with a lower latency
+are still possible but are counted as early outliers, whose probability is
+also modeled. Finally the late units have also a second delay relative to
+the early and inhibitiory unit. 
+
+A more detail explanation can be found in [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005692).
 
 ## Parametric distributions
-Different parametric distributions can be used to model the hit time of
-the units. We recommend the inverse Gamma distribution, or a combination of 
-the Gamma and inverse Gamma functions.
+When fitting empirical data, different parametric distributions can be used 
+to fit the hit time of each of the unis. The parametric distributions used
+in SERIA have two parameters, which can in most situations can be recasted in
+terms of their mean and variance. 
 
 Below is a table with all the available options, including the name,
 the distribution of the early and late units, and the name of the
 function that implements each of the models (i.e., the likelihood 
-function).
+function). We recommend the inverse Gamma distribution,
+or a combination of the Gamma and inverse Gamma functions.
 
 | Name | Early \& inhibitory unit | Late units | Likelihood function |
 |:-----:|:-----:|:-----:|:-----:|
-| Gamma | Gamma | Gamma | c_seria_multi_gamma |
-| Inv. Gamma | Inv. Gamma | Inv. Gamma | c_seria_multi_invgamma |
-| Mixed Gamma | Inv. Gamma | Gamma | c_seria_multi_mixedgamma |
-| Log. Normal | Log. Normal | Log. Normal | c_seria_multi_lognorm |
-| Wald | Wald | Wald | c_seria_multi_wald |
-| Later | Later | Later | c_seria_multi_later |
+| Gamma | Gamma | Gamma | `c_seria_multi_gamma` |
+| Inv. Gamma | Inv. Gamma | Inv. Gamma | `c_seria_multi_invgamma` |
+| Mixed Gamma | Inv. Gamma | Gamma | `c_seria_multi_mixedgamma` |
+| Log. Normal | Log. Normal | Log. Normal | `c_seria_multi_lognorm` |
+| Wald | Wald | Wald | `c_seria_multi_wald` |
+| Later | Later | Later | `c_seria_multi_later` |
 
 The [Wald distribution](https://en.wikipedia.org/wiki/Inverse_Gaussian_distribution)
 is the hit time distribution of a drift-diffusion process with a single
@@ -299,6 +328,8 @@ inference = struct();
 tic
 posterior = tapas_sem_hier_estimate(data, ptheta, inference, pars);
 toc
+
+display(posterior);
 ```
 The example data is a structure array of dimension 4x1.
 
