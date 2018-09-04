@@ -15,10 +15,10 @@ MATLAB.
 
 After installation (see below), you can run an example using
 
-~~~~
+```matlab
 tapas_init();
 tapas_sem_flat_example_invesion();
-~~~~
+```
 
 This will load data and estimate parameters. The data consists
 of a list of trials with trial type (pro or antisaccade), the
@@ -132,7 +132,7 @@ are shared across two conditions (for example, across pro and antisaccade
 trials). This is implemented by enforcing that in the product of a vector *v* 
 of dimensionality 11x2-3 with matrix *J*, the entries 9 to eleven are 
 equal to the entries 20 to 22. For example:
-~~~~
+```matlab
 K>>J = [eye(19);
     zeros(3, 8) eye(3) zeros(3, 8)];
 K>>v = [1:19]';
@@ -146,8 +146,8 @@ ans =
   Columns 13 through 22
 
     13    14    15    16    17    18    19     9    10    11
+```
 
-~~~~
 Note that the number of condition encoded in `u.tt` should be the same
 as the number of conditions *M*.
 
@@ -226,10 +226,10 @@ display(posterior)
 ``` 
 
 The variable `ptheta` represent the parameters of the model. It is a 
-structure with several fields explain in the table below.
+structure with several fields explained in the table below.
 
 | Field | Example value | Explanation |
-|:-----:|:-------------:|:-----------:|
+|:-----:|:-------------:|-------------|
 |mu|[11x1 double]| Prior mean of the parameters. |
 |pm|[11x1 double]| Prior precision (inverse variance) of the parameters |
 |p0|[11x1 double]| Expansion point (initilisation) of the algorithm |
@@ -245,7 +245,53 @@ function of the parameters.|
 the parameters  |
 |ndims|11| Number of parameters (11 for SERIA, 9 for PROSA) |
 
+The results from the model are
+| Field | Example value | Explanation |
+|:-----:|:-------------:|-------------|
+|pE|[22x1 double]| Expected value of the parameters |
+|pP|[22x1 double]| Variance of the parameters |
+|map|[22x1 double]| Maximum a posterior from the samples|
+|ps_theta|[]| Not used|
+|F|-799.6920| Log model evidence estimate|
+|data|[1x1 struct]| Data input|
+|ptheta|[1x1 struct]| Input parameters (see above)|
+|htheta|[1x1 struct]| Input parameters (see above)|
+|pars|[1x1 struct]| Input parameters (see above)|
+
 ### Hierarchical inference (tapas_sem_hier_estimate)
+SEM provides the option to use a hierarchical model to pool information 
+from several subjects. This method treats the mean of the parameters across
+subjects as a latent variable. Thus, it provides a form of regularization
+than better represents the population.
+
+#### Example
+
+```matlab
+[data] = prepare_data();
+
+ptheta = tapas_sem_seria_ptheta(); 
+ptheta.llh = @c_seria_multi_invgamma;
+ptheta.jm = [...
+    eye(19)
+    zeros(3, 8) eye(3) zeros(3, 8)];
+
+pars = struct();
+
+pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
+pars.nburnin = 4000;
+pars.niter = 4000;
+pars.ndiag = 1000;
+pars.mc3it = 16;
+pars.verbose = 1;
+
+display(ptheta);
+inference = struct();
+tic
+tapas_sem_hier_estimate(data, ptheta, inference, pars);
+toc
+
+```
+
 
 ### Parametric hierarchical inference (tapas_sem_multiv_estimate)
 
