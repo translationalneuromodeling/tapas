@@ -7,7 +7,7 @@ function tapas_sem_hier_example_inversion(model, param, fp)
 % copyright (C) 2015
 %
 
-n = 0,
+n = 0;
 
 n = n + 1;
 if nargin < n
@@ -26,7 +26,6 @@ end
 
 fname = mfilename();
 fname = regexprep(fname, 'test_', '');
-
 
 fprintf(fp, '================\n Test %s\n================\n', fname);
 
@@ -80,17 +79,19 @@ end
 pars = struct();
 
 pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
-pars.nburnin = 4000;
-pars.niter = 4000;
-pars.ndiag = 1000;
+pars.nburnin = 1000;
+pars.niter = 1000;
+pars.ndiag = 500;
 pars.mc3it = 16;
 pars.verbose = 1;
 
 display(ptheta);
 inference = struct();
 tic
-tapas_sem_hier_estimate(data, ptheta, inference, pars);
+posterior = tapas_sem_hier_estimate(data, ptheta, inference, pars);
 toc
+
+display(posterior);
 
 end
 

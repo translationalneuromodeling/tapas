@@ -93,10 +93,10 @@ pars.verbose = 1;
 display(ptheta);
 inference = struct();
 tic
-tapas_sem_multiv_estimate(data, ptheta, inference, pars);
+posterior = tapas_sem_multiv_estimate(data, ptheta, inference, pars);
 toc
 
-
+display(posterior)
 end
 
 function [data] = prepare_data()

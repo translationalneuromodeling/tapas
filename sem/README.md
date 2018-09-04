@@ -264,7 +264,12 @@ from several subjects. This method treats the mean of the parameters across
 subjects as a latent variable. Thus, it provides a form of regularization
 than better represents the population.
 
+Data from different subjects should be entered as different columns of
+the `data` structure array.
+
 #### Example
+This example is adapted from the file 
+`tapas/sem/examples/tapas_seria_hier_example_inversion.m`
 
 ```matlab
 [data] = prepare_data();
@@ -277,6 +282,8 @@ ptheta.jm = [...
 
 pars = struct();
 
+% The temperature array used for multichain should have be NxM where
+% N is the number of subjects and M the number of chains. 
 pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
 pars.nburnin = 4000;
 pars.niter = 4000;
@@ -287,35 +294,188 @@ pars.verbose = 1;
 display(ptheta);
 inference = struct();
 tic
-tapas_sem_hier_estimate(data, ptheta, inference, pars);
+posterior = tapas_sem_hier_estimate(data, ptheta, inference, pars);
 toc
+```
+The example data is a structure array of dimension 4x1.
+
+```matlab
+K>> display(data)
+
+data =
+
+  4x1 struct array with fields:
+
+    y
+    u
 
 ```
 
+The examples results are
+| Field | Example value | Explanation |
+|:-----:|:-------------:|-------------|
+|data|[4x1 struct]|Input data|
+|model|[1x1 struct]|Input model|
+|inference|[1x1 struct]|Input inference|
+|samples_theta|{4000x1 cell}|Samples of the parameters of the model.|
+|fe|-770.9473| log model evidence|
+|llh|{2x1 cell}| samples of the log likelihood|
+|T|[4x8 double]| Temperature array used|
 
 ### Parametric hierarchical inference (tapas_sem_multiv_estimate)
+While the previous method provides an option to pool information across
+different subjects, it does not provide a method to model how experimental
+manipulations could affect the behavior of different subjects. This can be
+done through a linear model that parametrically defines the prior 
+distribution of each subject.
+
+Developing the example above, we can assume that subjects 1 and 2 received
+treatment A, and subjects 3 and 4 received treatment B. This design can be
+entered using 'effects' coding, such that
+
+```matlab
+X =
+
+     1     1
+     1     1
+     1    -1
+     1    -1
+```
+Note that the first column of `X` represents the population mean, or 
+intercept, and the second column represent the contrast of treatment A and B.
+
+#### Example
+This example is adapted from 
+`tapas/sem/examples/tapas_sem_multiv_example_estimate.m` and is almost
+identical to the example above.
+
+```matlab
+[data] = prepare_data();
+
+ptheta = tapas_sem_seria_ptheta(); 
+
+ptheta.jm = [...
+    eye(19)
+    zeros(3, 8) eye(3) zeros(3, 8)];
+
+% In addition to the constraint matrix, the design matrix is entered as
+% a field of the model especified in ptheta
+ptheta.x = [1 1; 1 1; 1 -1; 1 -1];
+
+pars = struct();
+pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
+pars.nburnin = 4000;
+pars.niter = 4000;
+pars.ndiag = 1000;
+pars.mc3it = 16;
+pars.verbose = 1;
+
+display(ptheta);
+inference = struct();
+tic
+posterior = tapas_sem_multiv_estimate(data, ptheta, inference, pars);
+toc
+
+display(posterior);
+
+```
+
+The results of `tapas_sem_multiv_estimate` are identical to the results
+of `tapas_sem_hier_estimate`.
 
 ### Parametric mixed effect inference (tapas_sem_mixed_estimate)
+A final generalization is the extension of the parametric model above to a 
+mixed effect model. Mixed effect models contain some coefficients
+whose prior mean is model as a latent variable. The implementation here aim to
+group of observations, that, for example, come from the same subject or
+group of subjects.
+
+In a typical application, a group of subjects underwent several measurements
+of a number of conditions. For example, assume that 3 subjects underwent 4
+measurements. All subjects underwent condition A (measurement 1 and 2) and
+B (measurement 3 and 4). An option to account for the fact that 
+several observations originate from the same subject (without entering them as
+different
+conditions in the variable `u.tt`), is to use a regressor for each of the
+subjects.
+
+```matlab
+X =
+
+     1     1     0     0
+     1     1     0     0
+    -1     1     0     0
+    -1     1     0     0
+     1     0     1     0
+     1     0     1     0
+    -1     0     1     0
+    -1     0     1     0
+     1     0     0     1
+     1     0     0     1
+    -1     0     0     1
+    -1     0     0     1
+```
+The first column models conditions A and B. Columns 2 and 4 model a regressor
+for each subjects. Note that no population mean (or overall intercept) is 
+modeled. This corresponds to the mean of the subject specific intercept.
+To do this, we group regressors 2 to 4 in the variable `ptheta.mixed`
+```matlab
+ptheta.mixed = [0 1 1 1];
+```
+This groups regressors and implicitly generate a mean value.
+
+#### Example
+This example is adapted from 
+`tapas/sem/examples/tapas_sem_mixed_example_estimate.m` and is almost
+identical to the example above. Using the same as in the example above
+we use a single regressor for each subject in the line `ptheta.x = eye(4)`,
+and group the four regressors with `ptheta.mixed = [1 1 1 1];`.
+
+```matlab
+[data] = prepare_data();
+
+ptheta = tapas_sem_seria_ptheta(); 
+ptheta.llh = @c_seria_multi_invgamma;
+
+ptheta.jm = [...
+    eye(19)
+    zeros(3, 8) eye(3) zeros(3, 8)];
+
+ptheta.x = eye(4);
+ptheta.mixed = [1 1 1 1];
+pars = struct();
+
+pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
+pars.nburnin = 4000;
+pars.niter = 4000;
+pars.ndiag = 1000;
+pars.mc3it = 16;
+pars.verbose = 1;
+
+display(ptheta);
+inference = struct();
+tic
+posterior = tapas_sem_mixed_estimate(data, ptheta, inference, pars);
+toc
+
+display(posterior);
+
+```
+The results are identical to the model below.
 
 # Installation
+SEM contains matlab, python, and c code. The c code uses efficient 
+numerical techniques to accelerate the inversion of the model. It requires
+the installation of the numerical library
+[gsl](https://www.gnu.org/software/gsl/) in the version 1.16 or above.
 
-## As a python package
-
-This toolbox can be installed as python package. Although no inference
-algorithm is currently implemented, it can be potentially used in combination
-with packages implementing maximum likelihood estimators or the 
-Metropolis-Hasting algorithm. After installation it can be imported as
-~~~~
-from tapas.sem.antisaccades import likelihoods as seria
-~~~~
-This contains all the models described in the original
-[SERIA paper](https://doi.org/10.1371/journal.pcbi.1005692).
-
-# Installation
+The main part of the package is implemented in matlab. We have tested the
+compilation in different flavors of ubutu, centOS and MacOS using 
+autotools (see below).
 
 ## Supported platforms
 
-Mac OSX and linux are supported. We have tested in a variaty of setups
+Mac OSX and linux are supported. We have tested in a variety of setups
 and it has worked so far. If you have any issue please contact us.
 
 We do not support Windows but most likely it can be installed as a python 
@@ -351,7 +511,7 @@ alias.
 ### Linux
 To install the package it should be enough to go to
 ~~~~
-tapas/sem/src/
+cd tapas/sem/src/
 ~~~~
 and type
 ~~~~
@@ -370,7 +530,7 @@ autoreconf -ifv
 ~~~~
 Then try again
 ~~~~
-configure && make
+./configure && make
 ~~~~
 
 ### Mac
@@ -385,7 +545,7 @@ Often after installation, the compiler fails to find gsl's headeers.
 ~~~~
 export C_INCLUDE_PATH="$C_INCLUDE_PATH:/opt/local/include"
 export CFLAGS="-I:/opt/local/include $CFLAGS"
-configure && make
+./configure && make
 ~~~~
 
 #### Has config found gls's libraries? 
@@ -399,10 +559,21 @@ configure && make
 If not, find the path of matlab and type
 ~~~~
 export PATH=$PATH:your-matlab-path
-configure && make
+./configure && make
 ~~~~
+## As a python package
 
-## Python Package
+This toolbox can be installed as python package. Although no inference
+algorithm is currently implemented, it can be potentially used in combination
+with packages implementing maximum likelihood estimators or the 
+Metropolis-Hasting algorithm. After installation it can be imported as
+~~~~
+from tapas.sem.antisaccades import likelihoods as seria
+~~~~
+This contains all the models described in the original
+[SERIA paper](https://doi.org/10.1371/journal.pcbi.1005692).
+
+### Installation
 
 This toolbox can be install as an usual python package using
 ~~~~

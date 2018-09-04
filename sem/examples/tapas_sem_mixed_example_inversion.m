@@ -76,7 +76,7 @@ case 'prosa'
 end
 
 ptheta.x = eye(4);
-ptheta.mixed = ones(4, 1);
+ptheta.mixed = ones(4, 1)';
 pars = struct();
 
 pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
@@ -89,9 +89,10 @@ pars.verbose = 1;
 display(ptheta);
 inference = struct();
 tic
-tapas_sem_mixed_estimate(data, ptheta, inference, pars);
+posterior = tapas_sem_mixed_estimate(data, ptheta, inference, pars);
 toc
 
+display(posterior);
 
 end
 
