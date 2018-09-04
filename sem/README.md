@@ -8,10 +8,10 @@
     * [Data coding](#data-coding)
     * [Constraints](#constraints)
     * [Model fitting](#model-fitting)
-        + [Single subject](#flat)
-        + [Hierarchical](#hier)
-        + [Parametric hierarchical](#multiv)
-        + [Mixed effects](#mixed)        
+        + [Single subject](#single-subject-inference)
+        + [Hierarchical](#hierarchical-inference)
+        + [Parametric hierarchical](#parametrical-hierarchical-inference)
+        + [Mixed effects](#parametric-mixed-effects)        
 - [Installation](#installation)
     * [Matlab](#inst-matlab)
     * [Python](#inst-python)
@@ -214,7 +214,7 @@ There are currently four methods to fit models:
 
 Below this methods are explain in some detail.
 
-### Single subject inference (tapas_sem_flat_estimate) [flat]
+### Single subject inference 
 In the most simple case, the data from a subject is fitted using a standard
 prior. Several conditions can be coded in `data.u.tt` and constraints 
 across conditions can be implemented using a projection matrix as explained
@@ -300,7 +300,7 @@ The results from the model are
 |htheta|[1x1 struct]| Input parameters (see above)|
 |pars|[1x1 struct]| Input parameters (see above)|
 
-### Hierarchical inference (tapas_sem_hier_estimate) {#hier}
+### Hierarchical inference 
 SEM provides the option to use a hierarchical model to pool information 
 from several subjects. This method treats the mean of the parameters across
 subjects as a latent variable. Thus, it provides a form of regularization
@@ -367,7 +367,7 @@ The examples results are
 |llh|{2x1 cell}| samples of the log likelihood|
 |T|[4x8 double]| Temperature array used|
 
-### Parametric hierarchical inference (tapas_sem_multiv_estimate) {#multiv}
+### Parametric hierarchical inference
 While the previous method provides an option to pool information across
 different subjects, it does not provide a method to model how experimental
 manipulations could affect the behavior of different subjects. This can be
@@ -428,7 +428,7 @@ display(posterior);
 The results of `tapas_sem_multiv_estimate` are identical to the results
 of `tapas_sem_hier_estimate`.
 
-### Parametric mixed effect inference (tapas_sem_mixed_estimate) {#mixed}
+### Parametric mixed effects 
 A final generalization is the extension of the parametric model above to a 
 mixed effect model. Mixed effect models contain some coefficients
 whose prior mean is model as a latent variable. The implementation here aim to
