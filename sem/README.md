@@ -1,4 +1,4 @@
-- [The SERIA model](#the-seria-model)
+- [The SERIA model][]
     * [Quick start](#quick-start)
     * [The model](#the-model)
     * [Parametric distributions](#param-dists)
@@ -15,7 +15,7 @@
     * [Matlab](#inst-matlab)
     * [Python](#inst-python)
 
-# The SERIA model {#the-seria-model}
+# The SERIA model
 
 ## Quick start {#quick-start}
 
