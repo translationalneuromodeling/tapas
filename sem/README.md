@@ -134,6 +134,7 @@ are shared across two conditions (for example, across pro and antisaccade
 trials). This is implemented by enforcing that in the product of a vector *v* 
 of dimensionality 11x2-3 with matrix *J*, the entries 9 to eleven are 
 equal to the entries 20 to 22. For example:
+
 ```matlab
 K>>J = [eye(19);
     zeros(3, 8) eye(3) zeros(3, 8)];
