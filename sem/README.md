@@ -31,8 +31,9 @@ as a template to run your analysis.
 
 ## Parametric distributions
 Different parametric distributions can be used to model the hit time of
-the units. We recommend to model the hit times with the inverse Gamma
-distribution, or a combination of the Gamma and inverse Gamma functions.
+the units. We recommend the inverse Gamma distribution, or a combination of 
+the Gamma and inverse Gamma functions.
+
 Below is a table with all the available options, including the name,
 the distribution of the early and late units, and the name of the
 function that implements each of the models (i.e., the likelihood 
@@ -48,12 +49,13 @@ function).
 | Later | Later | Later | c_seria_multi_later |
 
 The [Wald distribution](https://en.wikipedia.org/wiki/Inverse_Gaussian_distribution)
-is the hit time distribution of a Drift-diffusion process with a single
-boundary. The Later model is the distribution of the random variable \(1/X\),
+is the hit time distribution of a drift-diffusion process with a single
+boundary. The [Later model](https://doi.org/10.1016/j.neubiorev.2016.02.018) 
+is the distribution of the random variable \(1/X\),
 where \(X\) is truncated normal distributed such that \(X>0\).
 
 ## Parameters coding
-The parameters of SERIA are organized as 11x1 vector. The table below
+The parameters of SERIA are organized as a 11x1 vector. The table below
 explains the meaning of each parameter.
 
 |\# | Meaning |
@@ -75,7 +77,7 @@ appropriate transformations are implemented internally depending on the
 parametric distribution used for the hit time of the units.
 
 ### A note on the PROSA model
-In the PROSA model, the assumption that late prosaccades can be generated
+In the PROSA model, the assumption that prosaccades can be generated
 by a late unit is dropped. Instead, all prosaccades are early saccades.
 Because the PROSA model lacks late prosaccades, it has 2 parameters less
 than the SERIA model (parameters 7 and 8). The same set of parametric 
@@ -84,47 +86,47 @@ to the table
 
 | Name | Early \& inhibitory unit | Late units | Likelihood function |
 |:-----:|:-----:|:-----:|:-----:|
-| Gamma | Gamma | Gamma | c_prosa_multi_gamma |
-| Inv. Gamma | Inv. Gamma | Inv. Gamma | c_prosa_multi_invgamma |
-| Mixed Gamma | Inv. Gamma | Gamma | c_prosa_multi_mixedgamma |
-| Log. Normal | Log. Normal | Log. Normal | c_prosa_multi_lognorm |
-| Wald | Wald | Wald | c_prosa_multi_wald |
-| Later | Later | Later | c_prosa_multi_later |
+| Gamma | Gamma | Gamma | `c_prosa_multi_gamma` |
+| Inv. Gamma | Inv. Gamma | `Inv. Gamma | c_prosa_multi_invgamma` |
+| Mixed Gamma | Inv. Gamma | Gamma | `c_prosa_multi_mixedgamma` |
+| Log. Normal | Log. Normal | Log. Normal | `c_prosa_multi_lognorm` |
+| Wald | Wald | Wald | `c_prosa_multi_wald` |
+| Later | Later | Later | `c_prosa_multi_later` |
 
 
 ## Data coding
 The data entered to the model is encoded as a structure with the fields
-`y` and `u`. This is an structure array, in which the number of rows 
-corresponds to the number of subjects.
+`y` and `u`, in which the number of rows corresponds to the number of 
+subjects.
  
 The field `y` represents the responses of a subjects in terms of RT (in 
 tenths of a second) and the corresponding action. The contents of each
-field is represented by a vector of Nx1 trials.
+field are represented by a vector of Nx1 trials.
 
-| Fields `y` | Meaning | Data |
+| Fields of `y` | Meaning | Data |
 |:----------:|:-------:|:----:|
-| `t`        | Reaction time | Seconds x 1/10 |
+| `t`        | Reaction time | Tenths of second |
 | `a`        | Action        | Pro=0, Anti=1 |
 
 The field `u` represents experimental conditions and it has a single 
 subfield `tt`, which is a vector of Nx1 trials. `u.tt` codes the condition
-of the corresponding trial. Conditions should be coded by 
+of the corresponding trial. Conditions should be coded
 by integers starting from 0. 
 
-| Fields *u* | Meaning | Data |
+| Fields `u` | Meaning | Data |
 |:----------:|:-------:|:----:|
-|*tt*       | Trial type <br> (condition) | Integer from 0 to M |
+|`tt`       | Trial type <br> (condition) | Integer from 0 to M |
 
 For example, if in an experiment pro- and antisaccade trials are mixed in
 a single block, it is possible to code these two types of trials as 0 and 1.
-Note that the consequences of coding two types of trials as two conditions
-is that a different set of parameters will be initialized for each condition.
+A complete set of parameters (11x1 vector) is initialized for each condition.
 
 ## Constraints
 It is possible to enforce constraints on the parameters of a model
-across conditions of a single subject using a projection matrix. 
-This matrix *J* should have *M* times 11 rows and *K* columns, 
-where *M* is the number of condition and *K* is the number of free parameters.
+across conditions of a single subject using a *projection matrix*. 
+This matrix, *J*, should have *M* times 11 rows and *K* columns, 
+where *M* is the number of conditions and *K* is the number of free 
+parameters.
 
 As an example, imagine that we want to enforce that the no decision time, 
 the probability of an early outlier and the delay of the late units
