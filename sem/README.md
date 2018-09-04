@@ -1,4 +1,4 @@
-- [The SERIA model][]
+- [The SERIA model](#the-seria-model)
     * [Quick start](#quick-start)
     * [The model](#the-model)
     * [Parametric distributions](#param-dists)
