@@ -1,11 +1,23 @@
-# README
+- [The SERIA model](#the-seria-model)
+    * [Quick start](#quick-start)
+    * [The model](#the-model)
+    * [Parametric distributions](#param-dists)
+    * [Parameter coding](#param-encoding)
+    * [The PROSA model](#prosa-model)
+    * [Data coding](#data-encoding)
+    * [Constraints](#constraints)
+    * [Model fitting](#model-fitting)
+        + [Single subject](#flat)
+        + [Hierarchical](#hier)
+        + [Parametric hierarchical](#multiv)
+        + [Mixed effects](#mixed)        
+- [Installation](#installation)
+    * [Matlab](#inst-matlab)
+    * [Python](#inst-python)
 
-aponteeduardo@gmail.com
-copyright (C) 2015-2018
+# The SERIA model {#the-seria-model}
 
-# The SERIA model
-
-## Quick start
+## Quick start {#quick-start}
 
 The [SERIA model](http://www.biorxiv.org/content/early/2017/06/08/109090)
 is a formal statistical model of the probability of 
@@ -28,7 +40,9 @@ action performed (pro- or antisaccade) and the RT.
 You can use the file `sem/examples/tapas_sem_flat_example_inversion.m`
 as a template to run your analysis.
 
-## The model
+## The model {#the-model}
+<img src="https://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=10.1371/journal.pcbi.1005692.g002" width="400" align="right"/>
+
 SERIA models the race between 4 accumulators or units, under the assumption
 that
 the order and threshold hit time of the units determine the action (pro-
@@ -43,10 +57,8 @@ particular, if the antisaccade unit hits threshold at time *t* before the
 late prosaccade unit, an antisaccade at time *t* is generated, and
 similarly so for prosaccades.
 
-This idea is represented in the figure above, where the four units and their
-interactions are presented.
-
-<img src="https://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=10.1371/journal.pcbi.1005692.g002" width="400" align="right"/>
+This idea is represented in the figure on the right, where the four units and
+their interactions are presented.
 
 In addition to the units, we assume that there is an overall delay or 
 non-decision time that affects all the units. Saccades with a lower latency
@@ -54,9 +66,9 @@ are still possible but are counted as early outliers, whose probability is
 also modeled. Finally the late units have also a second delay relative to
 the early and inhibitiory unit. 
 
-A more detail explanation can be found in [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005692).
+A more detailed explanation can be found in [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005692).
 
-## Parametric distributions
+## Parametric distributions {#param-dists}
 When fitting empirical data, different parametric distributions can be used 
 to fit the hit time of each of the unis. The parametric distributions used
 in SERIA have two parameters, which can in most situations can be recasted in
@@ -83,7 +95,7 @@ boundary. The [Later model](https://doi.org/10.1016/j.neubiorev.2016.02.018)
 is the distribution of the random variable \(1/X\),
 where \(X\) is truncated normal distributed such that \(X>0\).
 
-## Parameters coding
+## Parameter coding {#param-encoding}
 The parameters of SERIA are organized as a 11x1 vector. The table below
 explains the meaning of each parameter.
 
@@ -105,7 +117,7 @@ All the parameters are in a scale from \(-\infty\) to \(\infty\). The
 appropriate transformations are implemented internally depending on the
 parametric distribution used for the hit time of the units.
 
-### A note on the PROSA model
+### A note on the PROSA model {#prosa-model}
 In the PROSA model, the assumption that prosaccades can be generated
 by a late unit is dropped. Instead, all prosaccades are early saccades.
 Because the PROSA model lacks late prosaccades, it has 2 parameters less
@@ -116,14 +128,13 @@ to the table
 | Name | Early \& inhibitory unit | Late units | Likelihood function |
 |:-----:|:-----:|:-----:|:-----:|
 | Gamma | Gamma | Gamma | `c_prosa_multi_gamma` |
-| Inv. Gamma | Inv. Gamma | `Inv. Gamma | c_prosa_multi_invgamma` |
+| Inv. Gamma | Inv. Gamma | Inv. Gamma | `c_prosa_multi_invgamma` |
 | Mixed Gamma | Inv. Gamma | Gamma | `c_prosa_multi_mixedgamma` |
 | Log. Normal | Log. Normal | Log. Normal | `c_prosa_multi_lognorm` |
 | Wald | Wald | Wald | `c_prosa_multi_wald` |
 | Later | Later | Later | `c_prosa_multi_later` |
 
-
-## Data coding
+## Data coding {#data-encoding}
 The data entered to the model is encoded as a structure with the fields
 `y` and `u`, in which the number of rows corresponds to the number of 
 subjects.
@@ -150,7 +161,7 @@ For example, if in an experiment pro- and antisaccade trials are mixed in
 a single block, it is possible to code these two types of trials as 0 and 1.
 A complete set of parameters (11x1 vector) is initialized for each condition.
 
-## Constraints
+## Constraints {#constraints}
 It is possible to enforce constraints on the parameters of a model
 across conditions of a single subject using a *projection matrix*. 
 This matrix, *J*, should have *M* times 11 rows and *K* columns, 
@@ -183,7 +194,7 @@ ans =
 Note that the number of condition encoded in `u.tt` should be the same
 as the number of conditions *M*.
 
-## Model fitting / inference
+## Model fitting / inference {#model-fitting}
 The toolbox includes a variety of methods to fit models to experimental
 data based on the Metropolis-Hastings algorithm. This is a generic method
 to sample from a target distribution (usually the distribution of the 
@@ -202,7 +213,7 @@ There are currently four methods to fit models:
 
 Below this methods are explain in some detail.
 
-### Single subject inference (tapas_sem_flat_estimate)
+### Single subject inference (tapas_sem_flat_estimate) {#flat}
 In the most simple case, the data from a subject is fitted using a standard
 prior. Several conditions can be coded in `data.u.tt` and constraints 
 across conditions can be implemented using a projection matrix as explained
@@ -288,7 +299,7 @@ The results from the model are
 |htheta|[1x1 struct]| Input parameters (see above)|
 |pars|[1x1 struct]| Input parameters (see above)|
 
-### Hierarchical inference (tapas_sem_hier_estimate)
+### Hierarchical inference (tapas_sem_hier_estimate) {#hier}
 SEM provides the option to use a hierarchical model to pool information 
 from several subjects. This method treats the mean of the parameters across
 subjects as a latent variable. Thus, it provides a form of regularization
@@ -355,7 +366,7 @@ The examples results are
 |llh|{2x1 cell}| samples of the log likelihood|
 |T|[4x8 double]| Temperature array used|
 
-### Parametric hierarchical inference (tapas_sem_multiv_estimate)
+### Parametric hierarchical inference (tapas_sem_multiv_estimate) {#multiv}
 While the previous method provides an option to pool information across
 different subjects, it does not provide a method to model how experimental
 manipulations could affect the behavior of different subjects. This can be
@@ -416,7 +427,7 @@ display(posterior);
 The results of `tapas_sem_multiv_estimate` are identical to the results
 of `tapas_sem_hier_estimate`.
 
-### Parametric mixed effect inference (tapas_sem_mixed_estimate)
+### Parametric mixed effect inference (tapas_sem_mixed_estimate) {#mixed}
 A final generalization is the extension of the parametric model above to a 
 mixed effect model. Mixed effect models contain some coefficients
 whose prior mean is model as a latent variable. The implementation here aim to
@@ -496,7 +507,7 @@ display(posterior);
 ```
 The results are identical to the model below.
 
-# Installation
+# Installation {#installation}
 SEM contains matlab, python, and c code. The c code uses efficient 
 numerical techniques to accelerate the inversion of the model. It requires
 the installation of the numerical library
@@ -532,7 +543,7 @@ Or alternatively using mac ports.
 sudo port install gsl
 ~~~~
 
-## Matlab package
+## Matlab package {#inst-matlab}
 
 You will need a running matlab 
 installation. In particular, the command line command  `matlab` should be able
@@ -594,7 +605,8 @@ If not, find the path of matlab and type
 export PATH=$PATH:your-matlab-path
 ./configure && make
 ~~~~
-## As a python package
+
+## Python package {#inst-python}
 
 This toolbox can be installed as python package. Although no inference
 algorithm is currently implemented, it can be potentially used in combination
@@ -620,3 +632,7 @@ Requirements can be installed using
 ~~~~
 pip install -r requirements.txt
 ~~~~
+
+aponteeduardo@gmail.com
+copyright (C) 2015-2018
+
