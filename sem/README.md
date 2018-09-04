@@ -269,15 +269,13 @@ structure with several fields explained in the table below.
 |jm|[22x19 double]| Constraint matrix. |
 |name|'seria'| Name of the model |
 |llh|@c_seria_multi_mixedgamma| Likelihood function |
-|lpp|@tapas_sem_prosa_lpp| Prior distribution. Shared between the PROSA and 
-SERIA models |
-|prepare|@tapas_sem_prepare_gaussian_ptheta| Initilisation
-function of the parameters.|
-|sample_priors|@tapas_sem_sample_gaussian_uniform_priors| Methods to sample
-the parameters  |
+|lpp|@tapas_sem_prosa_lpp| Prior distribution. Shared between the PROSA and SERIA models |
+|prepare|@tapas_sem_prepare_gaussian_ptheta| Initilisation function of the parameters.|
+|sample_priors|@tapas_sem_sample_gaussian_uniform_priors| Methods to sample the parameters  |
 |ndims|11| Number of parameters (11 for SERIA, 9 for PROSA) |
 
 The results from the model are
+
 | Field | Example value | Explanation |
 |:-----:|:-------------:|-------------|
 |pE|[22x1 double]| Expected value of the parameters |
@@ -346,6 +344,7 @@ data =
 ```
 
 The examples results are
+
 | Field | Example value | Explanation |
 |:-----:|:-------------:|-------------|
 |data|[4x1 struct]|Input data|
