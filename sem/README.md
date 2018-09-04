@@ -13,8 +13,8 @@
         + [Parametric hierarchical](#parametrical-hierarchical-inference)
         + [Mixed effects](#parametric-mixed-effects)        
 - [Installation](#installation)
-    * [Matlab](#inst-matlab)
-    * [Python](#inst-python)
+    * [Matlab](#matlab-package)
+    * [Python](#python-package)
 
 # The SERIA model
 
@@ -27,32 +27,33 @@ toolbox includes an inference method based on the
 [Metropolis-Hastings algorithm](https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm)
 implemented in MATLAB.
 
-After installation (see below), you can run an example using
+After installation (see below), from the matlab console, you can run an 
+example using:
 
 ```matlab
 tapas_init();
 tapas_sem_flat_example_inversion();
 ```
 
-This will load example data and estimate parameters from it. The data consists
-of a list of trials with trial type (pro- or antisaccade), the
+This will load example data and estimate parameters from it. The data 
+consists of a list of trials with trial type (pro- or antisaccade), the
 action performed (pro- or antisaccade) and the RT. 
 
-You can use the file `sem/examples/tapas_sem_flat_example_inversion.m`
-as a template to run your analysis.
+The file `tapas/sem/examples/tapas_sem_flat_example_inversion.m`
+can be used as a template for other analysis.
 
 ## The model
 <img src="https://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=10.1371/journal.pcbi.1005692.g002" width="400" align="right"/>
 
-SERIA models the race between 4 accumulators or units, under the assumption
+SERIA models the race between 4 accumulators or units under the assumption
 that
 the order and threshold hit time of the units determine the action (pro-
-or antisaccade) and corresponding RT on a trial. The first, early unit
+or antisaccade) and corresponding RT on a trial. The first (early) unit
 represents fast, reflexive prosaccades. These are triggered at time
 *t* if the early unit hits threshold at time *t* and all the other units hit 
 threshold at a later point. Early prosaccades can be stopped by the second
 inhibitory unit, if the latter hits threshold before the early unit. In
-this case, the two late units (that represent voluntary, late prosaccades and
+this case, the two late units (that represent voluntary, late pro- and
 antisaccades) can generate reactions depending on their hit time. In
 particular, if the antisaccade unit hits threshold at time *t* before the
 late prosaccade unit, an antisaccade at time *t* is generated, and
@@ -63,9 +64,9 @@ their interactions are presented.
 
 In addition to the units, we assume that there is an overall delay or 
 non-decision time that affects all the units. Saccades with a lower latency
-are still possible but are counted as early outliers, whose probability is
-also modeled. Finally the late units have also a second delay relative to
-the early and inhibitiory unit. 
+are still possible but are treated as outliers, whose probability is
+also modeled. Finally, the late units have also a second delay relative to
+the early and inhibitory units.
 
 A more detailed explanation can be found in [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005692).
 
@@ -104,10 +105,10 @@ explains the meaning of each parameter.
 |:----:|-------|
 |1 | log mean hit time early unit|
 |2 | log variance hit time early unit|
-|3 | log mean hit time inhibitory unit|
-|4 | log variance hit time inhibitory unit|
-|5 | log mean hit time anti. unit|
-|6 | log variance hit time anti. unit|
+|3 | log mean hit time anti. unit|
+|4 | log variance hit time anti. unit|
+|5 | log mean hit time inhib. unit|
+|6 | log variance hit time inhib. unit|
 |7 | log mean hit time late pro. unit|
 |8 | log variance hit time late pro. unit|
 |9 | log no decision time|
@@ -124,7 +125,7 @@ by a late unit is dropped. Instead, all prosaccades are early saccades.
 Because the PROSA model lacks late prosaccades, it has 2 parameters less
 than the SERIA model (parameters 7 and 8). The same set of parametric 
 distributions are implemented for the SERIA and PROSA models according
-to the table
+to the table below.
 
 | Name | Early \& inhibitory unit | Late units | Likelihood function |
 |:-----:|:-----:|:-----:|:-----:|
@@ -142,11 +143,11 @@ subjects.
  
 The field `y` represents the responses of a subjects in terms of RT (in 
 tenths of a second) and the corresponding action. The contents of each
-field are represented by a vector of Nx1 trials.
+field are represented by vectors of Nx1 trials.
 
 | Fields of `y` | Meaning | Data |
 |:----------:|:-------:|:----:|
-| `t`        | Reaction time | Tenths of second |
+| `t`        | Reaction time | Tenths of a second |
 | `a`        | Action        | Pro=0, Anti=1 |
 
 The field `u` represents experimental conditions and it has a single 
@@ -169,12 +170,14 @@ This matrix, *J*, should have *M* times 11 rows and *K* columns,
 where *M* is the number of conditions and *K* is the number of free 
 parameters.
 
-As an example, imagine that we want to enforce that the no decision time, 
-the probability of an early outlier and the delay of the late units
-are shared across two conditions (for example, across pro and antisaccade 
-trials). This is implemented by enforcing that in the product of a vector *v* 
-of dimensionality 11x2-3 with matrix *J*, the entries 9 to eleven are 
-equal to the entries 20 to 22. For example:
+For example, we want to enforce that the *no decision time*, 
+*the probability of an early outlier* and *the delay of the late unit*
+are shared across two conditions. This parameters are the 9th to 11th entries
+on the parameter vector. Different conditions are concatenate to each other
+along the second dimensions. Hence, we need a matrix that enforces that
+the entries 9 to 11 are equal to the entries 20 to 22. Note that this implies
+that the model has effectively 19, and not 22 parameters. This can be 
+accomplished as shown below.
 
 ```matlab
 K>>J = [eye(19);
@@ -191,9 +194,10 @@ ans =
 
     13    14    15    16    17    18    19     9    10    11
 ```
-
-Note that the number of condition encoded in `u.tt` should be the same
-as the number of conditions *M*.
+The last 3 entries are equal to the 9th to 11th entries, as desired. This 
+provides a powerful method to code constraints in the parameter space.
+Note that the number of conditions encoded in `u.tt` should be the same
+as the number of conditions \(M\).
 
 ## Model fitting 
 The toolbox includes a variety of methods to fit models to experimental
@@ -212,16 +216,26 @@ There are currently four methods to fit models:
 |Multiv.  | Hierarchical    | Uses a linear model to construct a parametric prior from the population. | `tapas_sem_multiv_estimate.m` |
 |Mixed    | Hierarchical     | Uses a mixed effect model to construct a parametric prior from the population. | `tapas_sem_mixed_estimate.m` |
 
-Below this methods are explain in some detail.
+This methods are explain in some detail below.
 
 ### Single subject inference 
+<img src="misc/flat_model.png" width="250" align="right"/>
+
 In the most simple case, the data from a subject is fitted using a standard
 prior. Several conditions can be coded in `data.u.tt` and constraints 
 across conditions can be implemented using a projection matrix as explained
-above. An example can be found in 
+above.
+
+On the left the graphical model or Bayesian network that represents the 
+model is displayed. The response \(y\) are fitted using parameters theta, whose
+prior is encoded by \(\mu_0\). Note that \(u\) encodes the subject specific 
+conditions.
+
+An example can be found in 
 `tapas/sem/examples/tapas_sem_flat_example_estimate.m`. Below we have
 commented an abbreviated form of the code.
 
+#### Example
 ```matlab
 % This function loads the data and prepares it in the necessary format.
 % The data contains two conditions (pro- and antisaccade trials)
@@ -301,10 +315,18 @@ The results from the model are
 |pars|[1x1 struct]| Input parameters (see above)|
 
 ### Hierarchical inference 
+<img src="misc/hier_model.png" width="300" align="right"/>
+
 SEM provides the option to use a hierarchical model to pool information 
 from several subjects. This method treats the mean of the parameters across
 subjects as a latent variable. Thus, it provides a form of regularization
 than better represents the population.
+
+The graphical representation of this model is display on the right. Note 
+that now data for i=1,...,N subjects is simultaneously fitted. The population
+mean is represented by the latent variable mu which is inferred from the 
+parameters theta_i. In addition, the variance of the population sigma**2 is 
+simultaneoulsy estimated.
 
 Data from different subjects should be entered as different columns of
 the `data` structure array.
@@ -368,11 +390,17 @@ The examples results are
 |T|[4x8 double]| Temperature array used|
 
 ### Parametric hierarchical inference
+<img src="misc/multiv_model.png" width="300" align="right"/>
+
 While the previous method provides an option to pool information across
 different subjects, it does not provide a method to model how experimental
 manipulations could affect the behavior of different subjects. This can be
 done through a linear model that parametrically defines the prior 
 distribution of each subject.
+
+The graphical model on the right extends the previous model by allowing a
+parametric empirical prior for each subject, based on the independent 
+variables x_i. 
 
 Developing the example above, we can assume that subjects 1 and 2 received
 treatment A, and subjects 3 and 4 received treatment B. This design can be
@@ -425,24 +453,31 @@ display(posterior);
 
 ```
 
-The results of `tapas_sem_multiv_estimate` are identical to the results
-of `tapas_sem_hier_estimate`.
+`tapas_sem_multiv_estimate` returns a similar structure as 
+`tapas_sem_hier_estimate`.
 
 ### Parametric mixed effects 
-A final generalization is the extension of the parametric model above to a 
-mixed effect model. Mixed effect models contain some coefficients
-whose prior mean is model as a latent variable. The implementation here aim to
-group of observations, that, for example, come from the same subject or
-group of subjects.
+<img src="misc/mixed_model.png" width="300" align="right"/>
 
-In a typical application, a group of subjects underwent several measurements
-of a number of conditions. For example, assume that 3 subjects underwent 4
+A final generalization is the extension of the parametric model above to a 
+mixed effects model. This type of models contains some coefficients
+whose prior mean is modeled as a latent variable. The implementation here
+aims to group observations, that, for example, come from the same subject.
+
+On the right, the graphical representation of the mixed effects model is 
+displayed. Note that the main difference to the model above is that a subset
+of parameters, denoted as BR have a latent prior B0,F.
+
+As an example application, assume that a group of subjects underwent several
+measurements of two conditions. For example, assume that 3 subjects underwent 4
 measurements. All subjects underwent condition A (measurement 1 and 2) and
 B (measurement 3 and 4). An option to account for the fact that 
 several observations originate from the same subject (without entering them as
 different
-conditions in the variable `u.tt`), is to use a regressor for each of the
-subjects.
+conditions in the variable `u.tt`), is to enter a subject specific regressor 
+that codes the subject specific intercept. In the example below, these 
+regressors are specified in the columns 2 to 4. The first column models 
+conditions A and B.
 
 ```matlab
 X =
@@ -460,20 +495,24 @@ X =
     -1     0     0     1
     -1     0     0     1
 ```
-The first column models conditions A and B. Columns 2 and 4 model a regressor
-for each subjects. Note that no population mean (or overall intercept) is 
+ Note that no population mean (or overall intercept) is 
 modeled. This corresponds to the mean of the subject specific intercept.
 To do this, we group regressors 2 to 4 in the variable `ptheta.mixed`
 ```matlab
 ptheta.mixed = [0 1 1 1];
 ```
-This groups regressors and implicitly generate a mean value.
+This groups regressors and generates the random effect population mean B0,R.
+
+The rationale to model the population mean of the subject specific mean is to 
+account for the population mean, while allowing for subject specific 
+variations centered around it.
 
 #### Example
 This example is adapted from 
 `tapas/sem/examples/tapas_sem_mixed_example_estimate.m` and is almost
-identical to the example above. Using the same as in the example above
-we use a single regressor for each subject in the line `ptheta.x = eye(4)`,
+identical to the example above. In the example data, there are 4 observations
+from 4 subjects. We use a single regressor for each subject in the line 
+`ptheta.x = eye(4)`,
 and group the four regressors with `ptheta.mixed = [1 1 1 1];`.
 
 ```matlab
@@ -506,9 +545,9 @@ toc
 display(posterior);
 
 ```
-The results are identical to the model below.
+The structure return has the same fields as 'tapas_sem_hier_estimate'.
 
-# Installation {#installation}
+# Installation
 SEM contains matlab, python, and c code. The c code uses efficient 
 numerical techniques to accelerate the inversion of the model. It requires
 the installation of the numerical library
@@ -544,7 +583,7 @@ Or alternatively using mac ports.
 sudo port install gsl
 ~~~~
 
-## Matlab package {#inst-matlab}
+## Matlab package
 
 You will need a running matlab 
 installation. In particular, the command line command  `matlab` should be able
@@ -607,7 +646,7 @@ export PATH=$PATH:your-matlab-path
 ./configure && make
 ~~~~
 
-## Python package {#inst-python}
+## Python package 
 
 This toolbox can be installed as python package. Although no inference
 algorithm is currently implemented, it can be potentially used in combination
@@ -619,7 +658,7 @@ from tapas.sem.antisaccades import likelihoods as seria
 This contains all the models described in the original
 [SERIA paper](https://doi.org/10.1371/journal.pcbi.1005692).
 
-### Installation
+### Python installation
 
 This toolbox can be install as an usual python package using
 ~~~~
