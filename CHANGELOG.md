@@ -26,6 +26,7 @@ TAPAS toolbox
 - The version of tapas is now read from misc/log\_tapas.txt. It is the first
     line of this file.
 - New version of the HGF toolbox (5.2.0). Detail in tapas/HGF/README.md.
+- New version of the PhysIO toolbox (R2018.1). Details in tapas/PhysIO/CHANGELOG.md.
 
 ### Removed
 - Deleted the gpo folder.
