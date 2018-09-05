@@ -4,10 +4,15 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-PhysIO_Toolbox_R2018.1
+PhysIO_Toolbox_R2018.1.1
 
 September 05, 2018
 
+Bugfix Release Notes (R2018.1.1)
+-------------------------------
+
+### Changed
+- documentation.{html,pdf} export nicer with different FAQ numbering
 
 Major Release Notes (R2018.1)
 -----------------------------
