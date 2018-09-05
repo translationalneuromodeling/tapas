@@ -64,9 +64,13 @@ else
     logfile = log_files.respiration;
 end
 
-y = tapas_physio_read_physlogfiles_philips_matrix(logfile);
-
-acq_codes   = y(:,10);
+if hasCardiac || hasResp
+    y = tapas_physio_read_physlogfiles_philips_matrix(logfile);
+    acq_codes   = y(:,10);
+else
+    y = [];
+    acq_codes = [];
+end
 
 Nsamples    = size(y,1);
 
