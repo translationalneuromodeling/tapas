@@ -23,9 +23,9 @@
 The [SERIA model](http://www.biorxiv.org/content/early/2017/06/08/109090)
 is a formal statistical model of the probability of 
 pro- and antisaccades and the corresponding reaction time (RT). The SEM 
-toolbox includes an inference method based on the
-[Metropolis-Hastings algorithm](https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm)
-implemented in MATLAB.
+toolbox includes several methods for fitting SERIA based on the
+[Metropolis-Hastings algorithm](https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm).
+This methods are all implemented in MATLAB.
 
 After installation (see below), from the matlab console, you can run an 
 example using:
@@ -37,7 +37,7 @@ tapas_sem_flat_example_inversion();
 
 This will load example data and estimate parameters from it. The data 
 consists of a list of trials with trial type (pro- or antisaccade), the
-action performed (pro- or antisaccade) and the RT. 
+action performed (pro- or antisaccade) and RT. 
 
 The file `tapas/sem/examples/tapas_sem_flat_example_inversion.m`
 can be used as a template for other analysis.
@@ -45,44 +45,54 @@ can be used as a template for other analysis.
 ## The model
 <img src="https://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=10.1371/journal.pcbi.1005692.g002" width="400" align="right"/>
 
-SERIA models the race between 4 accumulators or units under the assumption
-that
-the order and threshold hit time of the units determine the action (pro-
-or antisaccade) and corresponding RT on a trial. The first (early) unit
-represents fast, reflexive prosaccades. These are triggered at time
-*t* if the early unit hits threshold at time *t* and all the other units hit 
-threshold at a later point. Early prosaccades can be stopped by the second
+The SERIA model relies on the race-to-threshold framework to define the 
+probability of an action (pro- or antisaccade) and its RT. The main
+assumption of SERIA is that actions and RT are determined by
+4 accumulators or units with stochastic hit time. The units are
+* the early prosaccade unit,
+* the inhibitory unit (that can stop early prosaccades),
+* the antisaccade unit,
+* and the late prosaccade unit.
+
+The first unit represents fast, reflexive prosaccades. This type of
+saccades are triggered at time
+\(t\) if the early unit hits threshold at time \(t\) and all the other 
+units hit threshold at a later point. Early prosaccades can be stopped by
+the second
 inhibitory unit, if the latter hits threshold before the early unit. In
 this case, the two late units (that represent voluntary, late pro- and
 antisaccades) can generate reactions depending on their hit time. In
-particular, if the antisaccade unit hits threshold at time *t* before the
-late prosaccade unit, an antisaccade at time *t* is generated, and
+particular, if the antisaccade unit hits threshold at time \(t\) before the
+late prosaccade unit, an antisaccade at time \(t\) is generated, and
 similarly so for prosaccades.
 
 This idea is represented in the figure on the right, where the four units and
 their interactions are presented.
 
 In addition to the units, we assume that there is an overall delay or 
-non-decision time that affects all the units. Saccades with a lower latency
-are still possible but are treated as outliers, whose probability is
-also modeled. Finally, the late units have also a second delay relative to
-the early and inhibitory units.
+non-decision time that affects all the units. Saccades with a latency below
+the no decision time are still possible but are considered outliers. 
+Finally, the late units 
+are assumed to be delayed with respect to the early and inhibitory units.
+This delay can be understood as the cost of voluntary saccades.
 
 A more detailed explanation can be found in [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005692).
 
 ## Parametric distributions 
-When fitting empirical data, different parametric distributions can be used 
-to fit the hit time of each of the unis. The parametric distributions used
-in SERIA have two parameters, which can in most situations can be recasted in
-terms of their mean and variance. 
+Different parametric distributions can be used to model 
+the hit time of the SERIA units. The distributions used
+here are defined by two parameters, which correspond (roughly)
+to the mean hit time of the units and their variance. 
 
-Below is a table with all the available options, including the name,
-the distribution of the early and late units, and the name of the
+Below is the table of all the options implemented in the toolbox, 
+including the name, the distribution of the early and late units, 
+and the name of the
 function that implements each of the models (i.e., the likelihood 
 function). We recommend the inverse Gamma distribution,
-or a combination of the Gamma and inverse Gamma functions.
+or a combination of the Gamma and inverse Gamma functions (mixed 
+Gamma model).
 
-| Name | Early \& inhibitory unit | Late units | Likelihood function |
+| Name | Early & inhibitory unit | Late units | Likelihood function |
 |:-----:|:-----:|:-----:|:-----:|
 | Gamma | Gamma | Gamma | `c_seria_multi_gamma` |
 | Inv. Gamma | Inv. Gamma | Inv. Gamma | `c_seria_multi_invgamma` |
@@ -93,9 +103,9 @@ or a combination of the Gamma and inverse Gamma functions.
 
 The [Wald distribution](https://en.wikipedia.org/wiki/Inverse_Gaussian_distribution)
 is the hit time distribution of a drift-diffusion process with a single
-boundary. The [Later model](https://doi.org/10.1016/j.neubiorev.2016.02.018) 
-is the distribution of the random variable \(1/X\),
-where \(X\) is truncated normal distributed such that \(X>0\).
+boundary. The [Later distribution](https://doi.org/10.1016/j.neubiorev.2016.02.018) 
+models the random variable \(1/X\),
+where \(X\) is truncated normal distributed and \(X>0\).
 
 ## Parameter coding
 The parameters of SERIA are organized as a 11x1 vector. The table below
@@ -112,8 +122,8 @@ explains the meaning of each parameter.
 |7 | log mean hit time late pro. unit|
 |8 | log variance hit time late pro. unit|
 |9 | log no decision time|
-|10 | logit of the probability of an early outlier|
-|11 | log late units delay |
+|10 | log late units delay |
+|11 | logit of the probability of an early outlier|
 
 All the parameters are in a scale from \(-\infty\) to \(\infty\). The
 appropriate transformations are implemented internally depending on the
@@ -127,7 +137,7 @@ than the SERIA model (parameters 7 and 8). The same set of parametric
 distributions are implemented for the SERIA and PROSA models according
 to the table below.
 
-| Name | Early \& inhibitory unit | Late units | Likelihood function |
+| Name | Early & inhibitory unit | Late units | Likelihood function |
 |:-----:|:-----:|:-----:|:-----:|
 | Gamma | Gamma | Gamma | `c_prosa_multi_gamma` |
 | Inv. Gamma | Inv. Gamma | Inv. Gamma | `c_prosa_multi_invgamma` |
@@ -137,7 +147,7 @@ to the table below.
 | Later | Later | Later | `c_prosa_multi_later` |
 
 ## Data coding
-The data entered to the model is encoded as a structure with the fields
+The data entered into the model is encoded as a structure with fields
 `y` and `u`, in which the number of rows corresponds to the number of 
 subjects.
  
@@ -153,7 +163,7 @@ field are represented by vectors of Nx1 trials.
 The field `u` represents experimental conditions and it has a single 
 subfield `tt`, which is a vector of Nx1 trials. `u.tt` codes the condition
 of the corresponding trial. Conditions should be coded
-by integers starting from 0. 
+by integers starting at 0. 
 
 | Fields `u` | Meaning | Data |
 |:----------:|:-------:|:----:|
@@ -162,6 +172,26 @@ by integers starting from 0.
 For example, if in an experiment pro- and antisaccade trials are mixed in
 a single block, it is possible to code these two types of trials as 0 and 1.
 A complete set of parameters (11x1 vector) is initialized for each condition.
+The two set of parameters are then stacked in a single vector of dimensionality
+22x1. 
+
+In the example below, there are 4 trials (two pro., two anti.), from two
+different conditions.
+```matlab
+
+y = struct('t', [], 'a', []);
+% Four trials with latencies 200ms, 400ms, 500ms, 300ms
+y.t = [0.2, 0.4, 0.5, 0.3]';
+% The first two trials are prosaccades, the last two are antisaccades
+y.a = [0, 0, 1, 1]';
+
+u = struct('tt', []);
+% First two trials are from condition 0 and two last from condition 1.
+u.tt = [0 0 1 1]';
+
+% The input data is composed of fields y and u
+data = stuct('y', [], 'u')
+```
 
 ## Constraints
 It is possible to enforce constraints on the parameters of a model
@@ -172,16 +202,16 @@ parameters.
 
 For example, we want to enforce that the *no decision time*, 
 *the probability of an early outlier* and *the delay of the late unit*
-are shared across two conditions. This parameters are the 9th to 11th entries
-on the parameter vector. Different conditions are concatenate to each other
-along the second dimensions. Hence, we need a matrix that enforces that
+are shared across two conditions. These parameters are the 9th to 11th entries
+on the parameter vector. Because different conditions are stacked into
+a single vector, we need a matrix that enforces that
 the entries 9 to 11 are equal to the entries 20 to 22. Note that this implies
 that the model has effectively 19, and not 22 parameters. This can be 
 accomplished as shown below.
 
 ```matlab
 K>>J = [eye(19);
-    zeros(3, 8) eye(3) zeros(3, 8)];
+    zeros(3, 8) eye(3) zeros(3, 8)]; 
 K>>v = [1:19]';
 K>>display((J * v)');
 ans =
@@ -194,27 +224,28 @@ ans =
 
     13    14    15    16    17    18    19     9    10    11
 ```
-The last 3 entries are equal to the 9th to 11th entries, as desired. This 
+When multiplying the vector *v* and matrix *J*, we force enforce that the
+last 3 entries are equal to the 9th to 11th entries, as desired. This 
 provides a powerful method to code constraints in the parameter space.
 Note that the number of conditions encoded in `u.tt` should be the same
-as the number of conditions \(M\).
+as the number of conditions \(M\). 
 
 ## Model fitting 
 The toolbox includes a variety of methods to fit models to experimental
 data based on the Metropolis-Hastings algorithm. This is a generic method
 to sample from a target distribution (usually the distribution of the 
-model parameters conditioned on experimental data). The results are therefore
+model parameters conditioned on experimental data). The results are
 an array of samples from the target distribution, which can be used to 
 compute summary statistics (mean, variance) of parameters estimates.
 
 There are currently four methods to fit models:
 
-| Name | Hier./single subject | Description | Function |
+| Name | Multiple/single subject | Description | Function |
 |:----:|:-------------------:|-------------|----------|
 |Flat  | Single subject     | Fits a single subject at a time. | `tapas_sem_flat_estimate.m` |
-|Hier.    | Hierarchical     | Uses the population mean as prior of the parameters. | `tapas_sem_hier_estimate.m` |
-|Multiv.  | Hierarchical    | Uses a linear model to construct a parametric prior from the population. | `tapas_sem_multiv_estimate.m` |
-|Mixed    | Hierarchical     | Uses a mixed effect model to construct a parametric prior from the population. | `tapas_sem_mixed_estimate.m` |
+|Hier.    | Multi. subject    | Uses the population mean as prior of the parameters. | `tapas_sem_hier_estimate.m` |
+|Multiv.  | Multi. subject  | Uses a linear model to construct a parametric prior from the population. | `tapas_sem_multiv_estimate.m` |
+|Mixed    | Multi. subject  | Uses a mixed effect model to construct a parametric prior from the population. | `tapas_sem_mixed_estimate.m` |
 
 This methods are explain in some detail below.
 
@@ -227,17 +258,17 @@ across conditions can be implemented using a projection matrix as explained
 above.
 
 On the left the graphical model or Bayesian network that represents the 
-model is displayed. The response \(y\) are fitted using parameters theta, whose
+model is displayed. The response \(y\) are fitted using parameters \(\theta\), whose
 prior is encoded by \(\mu_0\). Note that \(u\) encodes the subject specific 
 conditions.
 
 An example can be found in 
 `tapas/sem/examples/tapas_sem_flat_example_estimate.m`. Below we have
-commented an abbreviated form of the code.
+commented an abbreviated form of the example.
 
 #### Example
 ```matlab
-% This function loads the data and prepares it in the necessary format.
+% This function loads the data and prepares it in the right format.
 % The data contains two conditions (pro- and antisaccade trials)
 [data] = prepare_data();
 
@@ -295,7 +326,7 @@ structure with several fields explained in the table below.
 |jm|[22x19 double]| Constraint matrix. |
 |name|'seria'| Name of the model |
 |llh|@c_seria_multi_mixedgamma| Likelihood function |
-|lpp|@tapas_sem_prosa_lpp| Prior distribution. Shared between the PROSA and SERIA models |
+|lpp|@tapas_sem_prosa_lpp| Prior density function. Shared between the PROSA and SERIA models |
 |prepare|@tapas_sem_prepare_gaussian_ptheta| Initilisation function of the parameters.|
 |sample_priors|@tapas_sem_sample_gaussian_uniform_priors| Methods to sample the parameters  |
 |ndims|11| Number of parameters (11 for SERIA, 9 for PROSA) |
@@ -307,7 +338,7 @@ The results from the model are
 |pE|[22x1 double]| Expected value of the parameters |
 |pP|[22x1 double]| Variance of the parameters |
 |map|[22x1 double]| Maximum a posterior from the samples|
-|ps_theta|[]| Not used|
+|ps_theta|[22x4000| Samples from the posterior distribution|
 |F|-799.6920| Log model evidence estimate|
 |data|[1x1 struct]| Data input|
 |ptheta|[1x1 struct]| Input parameters (see above)|
@@ -317,16 +348,16 @@ The results from the model are
 ### Hierarchical inference 
 <img src="misc/hier_model.png" width="300" align="right"/>
 
-SEM provides the option to use a hierarchical model to pool information 
+SEM offers the option to use a hierarchical model to pool information 
 from several subjects. This method treats the mean of the parameters across
-subjects as a latent variable. Thus, it provides a form of regularization
-than better represents the population.
+subjects as a latent variable and thereby it offers a form of regularization
+based on observations from the population. 
 
-The graphical representation of this model is display on the right. Note 
-that now data for i=1,...,N subjects is simultaneously fitted. The population
-mean is represented by the latent variable mu which is inferred from the 
-parameters theta_i. In addition, the variance of the population sigma**2 is 
-simultaneoulsy estimated.
+The graphical representation of this model is displayed on the right. Note 
+that now data from \(i=1,...,N\) subjects is fitted simultaneously. 
+The population mean is represented by the latent variable \(\mu\) which is 
+inferred from the parameters \(\theta_i\). In addition, the variance of the
+population \(\sigma^2\) is also estimated.
 
 Data from different subjects should be entered as different columns of
 the `data` structure array.
@@ -377,14 +408,14 @@ data =
 
 ```
 
-The examples results are
+The output of `tapas_sem_hier_estimate` has the following fields:
 
 | Field | Example value | Explanation |
 |:-----:|:-------------:|-------------|
 |data|[4x1 struct]|Input data|
 |model|[1x1 struct]|Input model|
 |inference|[1x1 struct]|Input inference|
-|samples_theta|{4000x1 cell}|Samples of the parameters of the model.|
+|samples_theta|{4000x1 cell}|Samples of the parameters.|
 |fe|-770.9473| log model evidence|
 |llh|{2x1 cell}| samples of the log likelihood|
 |T|[4x8 double]| Temperature array used|
@@ -393,18 +424,18 @@ The examples results are
 <img src="misc/multiv_model.png" width="300" align="right"/>
 
 While the previous method provides an option to pool information across
-different subjects, it does not provide a method to model how experimental
-manipulations could affect the behavior of different subjects. This can be
+subjects, it does not provide a method to model the impact of any experimental
+manipulation. This can be
 done through a linear model that parametrically defines the prior 
 distribution of each subject.
 
 The graphical model on the right extends the previous model by allowing a
 parametric empirical prior for each subject, based on the independent 
-variables x_i. 
+variables \(x_i\). 
 
 Developing the example above, we can assume that subjects 1 and 2 received
 treatment A, and subjects 3 and 4 received treatment B. This design can be
-entered using 'effects' coding, such that
+entered using 'effects' coding:
 
 ```matlab
 X =
@@ -419,8 +450,7 @@ intercept, and the second column represent the contrast of treatment A and B.
 
 #### Example
 This example is adapted from 
-`tapas/sem/examples/tapas_sem_multiv_example_estimate.m` and is almost
-identical to the example above.
+`tapas/sem/examples/tapas_sem_multiv_example_estimate.m`.
 
 ```matlab
 [data] = prepare_data();
@@ -461,12 +491,10 @@ display(posterior);
 
 A final generalization is the extension of the parametric model above to a 
 mixed effects model. This type of models contains some coefficients
-whose prior mean is modeled as a latent variable. The implementation here
-aims to group observations, that, for example, come from the same subject.
-
+\(B_R\) whose prior mean \(B_{0,R}\) is modeled as a latent variable. 
+The implementation here aims to group some observations \(y_i\).
 On the right, the graphical representation of the mixed effects model is 
-displayed. Note that the main difference to the model above is that a subset
-of parameters, denoted as BR have a latent prior B0,F.
+displayed. 
 
 As an example application, assume that a group of subjects underwent several
 measurements of two conditions. For example, assume that 3 subjects underwent 4
@@ -501,18 +529,15 @@ To do this, we group regressors 2 to 4 in the variable `ptheta.mixed`
 ```matlab
 ptheta.mixed = [0 1 1 1];
 ```
-This groups regressors and generates the random effect population mean B0,R.
-
-The rationale to model the population mean of the subject specific mean is to 
-account for the population mean, while allowing for subject specific 
-variations centered around it.
+This groups regressors and generates the random effect population mean
+\(B0,R\). Currently, it is only possible to use one random effect.
 
 #### Example
 This example is adapted from 
 `tapas/sem/examples/tapas_sem_mixed_example_estimate.m` and is almost
-identical to the example above. In the example data, there are 4 observations
-from 4 subjects. We use a single regressor for each subject in the line 
-`ptheta.x = eye(4)`,
+identical to the examples from the sections above. In the example data, 
+there are 4 observations from 4 subjects. We use a single regressor for
+each subject in the line `ptheta.x = eye(4)`,
 and group the four regressors with `ptheta.mixed = [1 1 1 1];`.
 
 ```matlab

@@ -188,7 +188,7 @@ ps.pP = mean(ptrans(pp_theta), 2);
 [~, i] = max(elps(1, :));
 ps.map = ptrans(ps_theta(:, i));
 % Posteriors of theta
-ps.ps_theta = [];
+ps.ps_theta = ps_theta;
 pa.llh = [];
 if pars.samples
     ps.ps_theta = ps_theta;
@@ -447,5 +447,3 @@ for i = 1:nt
 end
  
 end
-
-
