@@ -2,12 +2,13 @@
 /* copyright (C) 2018 */
 
 #include "mexutils.h"
+#include <stdio.h>
 
 void
 verify_input_theta_array(mxArray *theta, int dims_theta)
 {
     int i;
-    int na;
+    int na = 1;
 
     if ( !mxIsCell(theta) )
     {
@@ -33,12 +34,6 @@ verify_input_theta_array(mxArray *theta, int dims_theta)
     {
 
         mxArray *i_params = mxGetCell(theta, i);
-
-        if ( mxGetClassID(i_params) == mxDOUBLE_CLASS )
-        {
-             mexErrMsgIdAndTxt("tapas:sem:input",
-                "Cells should be of double type");
-        }
 
         mwSize stheta = mxGetNumberOfDimensions(i_params);
         mwSize *dtheta = mxGetDimensions(i_params);
@@ -78,7 +73,7 @@ reparametrize_prosa(
 {
 
     int i;
-    int na;
+    int na = 1;
 
     if ( nrhs != 1 )
     {
@@ -122,9 +117,9 @@ reparametrize_prosa(
 
         for (j = 0; j < dtheta[0]; j += DIM_PROSA_THETA)
         {
-            PROSA_PARAMETERS *sparams;
-            reparametrize(d_i_params + j, sparams);
-            linearize_prosa(sparams, d_o_params + j);
+            PROSA_PARAMETERS sparams;
+            reparametrize(d_i_params + j, &sparams);
+            linearize_prosa(&sparams, d_o_params + j);
         }
 
         // Set the parameters
@@ -146,7 +141,7 @@ reparametrize_seria(
 {
 
     int i;
-    int na;
+    int na = 1;
 
     if ( nrhs != 1 )
     {
@@ -182,19 +177,19 @@ reparametrize_seria(
         mxArray *i_params = mxGetCell(prhs[0], i);
         double *d_i_params = mxGetPr(i_params);
         
-        mwSize stheta = mxGetNumberOfDimensions(i_params);
         mwSize *dtheta = mxGetDimensions(i_params);
 
         mxArray *o_params = mxCreateDoubleMatrix(dtheta[0], 1, mxREAL); 
+        
         double *d_o_params = mxGetPr(o_params);
 
         for (j = 0; j < dtheta[0]; j += DIM_SERIA_THETA)
         {
-            SERIA_PARAMETERS *sparams;
-            reparametrize(d_i_params + j, sparams);
-            linearize_seria(sparams, d_o_params + j);
+            SERIA_PARAMETERS sparams;
+            reparametrize(d_i_params + j, &sparams);
+            linearize_seria(&sparams, d_o_params + j);
         }
-
+       
         // Set the parameters
         mxSetCell(plhs[0], i, o_params);
     

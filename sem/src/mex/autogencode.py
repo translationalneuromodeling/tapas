@@ -227,7 +227,7 @@ def gen_reparametrize():
         for p in parametric:
             fname, code = gen_code_reparametrize(f, p)
             with open(fname, 'w') as fp:
-                #fp.write(code)
+                fp.write(code)
                 pass
             print fname
             print code
