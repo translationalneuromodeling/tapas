@@ -75,7 +75,7 @@ transform_mv_to_gamma_t(double mu, double sigma2)
 }
 
 double
-transform_log_mv_to_gamma_t(double mu, double sigma2)                                                                                                         
+transform_log_mv_to_gamma_t(double mu, double sigma2)
 {
     // Transform mean and variance to parameter k
     return exp(mu - sigma2);
@@ -114,15 +114,15 @@ double
 transform_inv_to_wald_l(double mu, double sigma2)
 {
     // From the mean and variance of the reciprocal to the lambda parameter
-    
+
     return 1.0/(sqrt(0.25 * mu * mu + sigma2) - 0.5 * mu);
 }
 
-double 
+double
 transform_inv_to_wald_mu(double mu, double sigma2)
 {
     // From the mean and variance of the reciprocal to the mu parameter
-    
+
    return 1.0/(1.5 * mu - sqrt(0.25 * mu * mu + sigma2));
 }
 
@@ -130,7 +130,7 @@ transform_inv_to_wald_mu(double mu, double sigma2)
 int
 reparametrize_seria_invgamma(const double *theta, SERIA_PARAMETERS *stheta)
 {
-    
+
     stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]) + 2;
     stheta->tp = transform_log_mv_to_gamma_t(theta[0], theta[1]);
 
@@ -164,7 +164,7 @@ int
 reparametrize_seria_wald(const double *theta, SERIA_PARAMETERS *stheta)
 {
     double mu, sigma2;
-    
+
     mu = exp(theta[0]);
     sigma2 = exp(theta[1]);
 
@@ -173,19 +173,19 @@ reparametrize_seria_wald(const double *theta, SERIA_PARAMETERS *stheta)
 
     mu = exp(theta[2]);
     sigma2 = exp(theta[3]);
-    
+
     stheta->ka = transform_inv_to_wald_mu(mu, sigma2);
     stheta->ta = transform_inv_to_wald_l(mu, sigma2);
 
     mu = exp(theta[4]);
     sigma2 = exp(theta[5]);
-    
+
     stheta->ks = transform_inv_to_wald_mu(mu, sigma2);
     stheta->ts = transform_inv_to_wald_l(mu, sigma2);
 
     mu = exp(theta[6]);
     sigma2 = exp(theta[7]);
-    
+
     stheta->kl = transform_inv_to_wald_mu(mu, sigma2);
     stheta->tl = transform_inv_to_wald_l(mu, sigma2);
 
@@ -242,7 +242,7 @@ reparametrize_seria_mixedgamma(const double *theta, SERIA_PARAMETERS *stheta)
 int
 reparametrize_seria_gamma(const double *theta, SERIA_PARAMETERS *stheta)
 {
-    
+
     stheta->kp = transform_log_mv_to_invgamma_k(theta[0], theta[1]);
     stheta->tp = transform_log_mv_to_invgamma_t(theta[0], theta[1]);
 
@@ -275,17 +275,17 @@ reparametrize_seria_gamma(const double *theta, SERIA_PARAMETERS *stheta)
 int
 reparametrize_seria_later(const double *theta, SERIA_PARAMETERS *stheta)
 {
-    
+
     stheta->kp = theta[0];
     stheta->tp = exp(0.5 * theta[1]);
 
-    stheta->ka = theta[2]; 
-    stheta->ta = exp(0.5 * theta[3]); 
+    stheta->ka = theta[2];
+    stheta->ta = exp(0.5 * theta[3]);
 
-    stheta->ks = theta[4]; 
+    stheta->ks = theta[4];
     stheta->ts = exp(0.5 * theta[5]);
 
-    stheta->kl = theta[6]; 
+    stheta->kl = theta[6];
     stheta->tl = exp(0.5 * theta[7]);
 
     stheta->t0 = exp(theta[8]);
@@ -308,11 +308,11 @@ reparametrize_seria_later(const double *theta, SERIA_PARAMETERS *stheta)
 int
 reparametrize_seria_lognorm(const double *theta, SERIA_PARAMETERS *stheta)
 {
-    
+
     stheta->tp = log(exp(theta[1] - 2 * theta[0]) + 1);
     stheta->kp = -(theta[0] - 0.5 * stheta->tp);
     stheta->tp = sqrt(stheta->tp);
-    
+
     stheta->ta = log(exp(theta[3] - 2 * theta[2]) +  1);
     stheta->ka = -(theta[2] - 0.5 * stheta->ta);
     stheta->ta = sqrt(stheta->ta);
@@ -346,7 +346,7 @@ int
 reparametrize_prosa_invgamma(const double *theta, PROSA_PARAMETERS *stheta)
 {
     double mu, sigma2;
-    
+
     mu = exp(theta[0]);
     sigma2 = exp(theta[1]);
 
@@ -355,20 +355,20 @@ reparametrize_prosa_invgamma(const double *theta, PROSA_PARAMETERS *stheta)
 
     mu = exp(theta[2]);
     sigma2 = exp(theta[3]);
-    
+
     stheta->ka = transform_mv_to_gamma_k(mu, sigma2) + 2;
     stheta->ta = transform_mv_to_gamma_t(mu, sigma2);
 
     mu = exp(theta[4]);
     sigma2 = exp(theta[5]);
-    
+
     stheta->ks = transform_mv_to_gamma_k(mu, sigma2) + 2;
-    stheta->ts = transform_mv_to_gamma_t(mu, sigma2); 
+    stheta->ts = transform_mv_to_gamma_t(mu, sigma2);
 
     stheta->t0 = exp(theta[6]);
     stheta->da = exp(theta[7]);
 
-    stheta->p0 = theta[8]; 
+    stheta->p0 = theta[8];
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
@@ -385,7 +385,7 @@ int
 reparametrize_prosa_wald(const double *theta, PROSA_PARAMETERS *stheta)
 {
     double mu, sigma2;
-    
+
     mu = exp(theta[0]);
     sigma2 = exp(theta[1]);
 
@@ -394,19 +394,19 @@ reparametrize_prosa_wald(const double *theta, PROSA_PARAMETERS *stheta)
 
     mu = exp(theta[2]);
     sigma2 = exp(theta[3]);
-    
+
     stheta->ka = transform_inv_to_wald_mu(mu, sigma2);
     stheta->ta = transform_inv_to_wald_l(mu, sigma2);
 
     mu = exp(theta[4]);
     sigma2 = exp(theta[5]);
-    
+
     stheta->ks = transform_inv_to_wald_mu(mu, sigma2);
     stheta->ts = transform_inv_to_wald_l(mu, sigma2);
 
     stheta->t0 = exp(theta[6]);
     stheta->da = exp(theta[7]);
-    stheta->p0 = theta[8]; 
+    stheta->p0 = theta[8];
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
@@ -423,7 +423,7 @@ int
 reparametrize_prosa_mixedgamma(const double *theta, PROSA_PARAMETERS *stheta)
 {
     double mu, sigma2;
-    
+
     mu = exp(theta[0]);
     sigma2 = exp(theta[1]);
 
@@ -435,13 +435,13 @@ reparametrize_prosa_mixedgamma(const double *theta, PROSA_PARAMETERS *stheta)
 
     mu = exp(theta[4]);
     sigma2 = exp(theta[5]);
-    
+
     stheta->ks = transform_mv_to_gamma_k(mu, sigma2) + 2;
-    stheta->ts = transform_mv_to_gamma_t(mu, sigma2); 
+    stheta->ts = transform_mv_to_gamma_t(mu, sigma2);
 
     stheta->t0 = exp(theta[6]);
     stheta->da = exp(theta[7]);
-    stheta->p0 = theta[8]; 
+    stheta->p0 = theta[8];
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
@@ -457,19 +457,19 @@ reparametrize_prosa_mixedgamma(const double *theta, PROSA_PARAMETERS *stheta)
 int
 reparametrize_prosa_gamma(const double *theta, PROSA_PARAMETERS *stheta)
 {
-    
+
     stheta->kp = transform_log_mv_to_invgamma_k(theta[0], theta[1]);
     stheta->tp = transform_log_mv_to_invgamma_t(theta[0], theta[1]);
-    
+
     stheta->ka = transform_log_mv_to_invgamma_k(theta[2], theta[3]);
     stheta->ta = transform_log_mv_to_invgamma_t(theta[2], theta[3]);
-    
+
     stheta->ks = transform_log_mv_to_invgamma_k(theta[4], theta[5]);
     stheta->ts = transform_log_mv_to_invgamma_t(theta[4], theta[5]);
 
     stheta->t0 = exp(theta[6]);
     stheta->da = exp(theta[7]);
-    stheta->p0 = theta[8]; 
+    stheta->p0 = theta[8];
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
@@ -485,14 +485,14 @@ reparametrize_prosa_gamma(const double *theta, PROSA_PARAMETERS *stheta)
 int
 reparametrize_prosa_later(const double *theta, PROSA_PARAMETERS *stheta)
 {
-    
+
     stheta->kp = theta[0];
     stheta->tp = exp(0.5 * theta[1]);
 
-    stheta->ka = theta[2]; 
-    stheta->ta = exp(0.5 * theta[3]); 
+    stheta->ka = theta[2];
+    stheta->ta = exp(0.5 * theta[3]);
 
-    stheta->ks = theta[4]; 
+    stheta->ks = theta[4];
     stheta->ts = exp(0.5 * theta[5]);
 
     stheta->t0 = exp(theta[6]);
@@ -517,7 +517,7 @@ reparametrize_prosa_lognorm(const double *theta, PROSA_PARAMETERS *stheta)
     stheta->tp = log(exp(theta[1] - 2 * theta[0]) + 1);
     stheta->kp = -(theta[0] - 0.5 * stheta->tp);
     stheta->tp = sqrt(stheta->tp);
-    
+
     stheta->ta = log(exp(theta[3] - 2 * theta[2]) +  1);
     stheta->ka = -(theta[2] - 0.5 * stheta->ta);
     stheta->ta = sqrt(stheta->ta);
@@ -529,7 +529,7 @@ reparametrize_prosa_lognorm(const double *theta, PROSA_PARAMETERS *stheta)
     stheta->t0 = exp(theta[6]);
     stheta->da = exp(theta[7]);
 
-    stheta->p0 = theta[8]; 
+    stheta->p0 = theta[8];
 
     stheta->cumint = CUMINT_NO_INIT; // Initilize value to empty
 
@@ -542,4 +542,49 @@ reparametrize_prosa_lognorm(const double *theta, PROSA_PARAMETERS *stheta)
     return 0;
 }
 
+int
+linearize_prosa(const PROSA_PARAMETERS *stheta, double *theta)
+{
+    double p0 = stheta->p0;
+
+    theta[0] = stheta->kp;
+    theta[1] = stheta->tp;
+
+    theta[2] = stheta->ka;
+    theta[3] = stheta->ta;
+
+    theta[4] = stheta->ks;
+    theta[5] = stheta->ts;
+
+    theta[6] = stheta->t0;
+    theta[7] = stheta->da;
+    theta[8] = exp(-0.5 * p0 - M_LN2 - lcosh(0.5 * p0));
+
+   return 0;
+}
+
+int
+linearize_seria(const SERIA_PARAMETERS *stheta, double *theta)
+{
+    
+    double p0 = stheta->p0;
+    
+    theta[0] = stheta->kp;
+    theta[1] = stheta->tp;
+
+    theta[2] = stheta->ka;
+    theta[3] = stheta->ta;
+
+    theta[4] = stheta->ks;
+    theta[5] = stheta->ts;
+
+    theta[6] = stheta->kl;
+    theta[7] = stheta->tl;
+
+    theta[8] = stheta->t0;
+    theta[9] = stheta->da;
+    theta[10] = exp(-0.5 * p0 - M_LN2 - lcosh(0.5 * p0));
+
+    return 0;
+}
 

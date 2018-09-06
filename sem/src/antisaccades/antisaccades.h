@@ -614,5 +614,11 @@ reparametrize_prosa_lognorm(const double *theta, PROSA_PARAMETERS *stheta);
 int
 reparametrize_prosa_later(const double *theta, PROSA_PARAMETERS *stheta);
 
+// Linearize turns parameter structures to doubles
+int
+linearize_seria(const SERIA_PARAMETERS *stheta, double *theta);
+
+int
+linearize_prosa(const PROSA_PARAMETERS *stheta, double *theta);
 
 #endif

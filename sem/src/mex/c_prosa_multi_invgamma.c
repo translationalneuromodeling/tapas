@@ -1,9 +1,9 @@
-
-
 /* aponteeduardo@gmail.com */
 /* copyright (C) 2017 */
 
 #include "antisaccades.h"
+#include "mexutils.h"
+
 #ifdef HAVE_OMP_H
 #include <omp.h>
 #endif
