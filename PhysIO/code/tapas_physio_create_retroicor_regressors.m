@@ -76,7 +76,6 @@ if ~hasPhaseData
     % compute differently, i.e. separate regressors for multiple slice
     % generation
     nSampleSlices = numel(sqpar.onset_slice);
-    hasMultipleSlices = nSampleSlices>1;
     
     %parameters for resampling
     rsampint    = t(2)-t(1);

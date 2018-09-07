@@ -14,10 +14,10 @@ TAPAS toolbox
 - Now there is log file that list the versions of tapas, the download link
     and the hash of the file that is downloaded.
 - Use the an external file to do the md5 check sum. See external javamd5.
-- HUGE toolbox: hierarchical unsupervised generative embedding
-    doi:10.1016/j.neuroimage.2018.06.073
-- rDCM toolbox: Regression dynamic causal modeling 
-    https://doi.org/10.1016/j.neuroimage.2017.02.090
+- HUGE toolbox: hierarchical unsupervised generative embedding  
+    https://doi.org/10.1016/j.neuroimage.2018.06.073
+- rDCM toolbox: Regression dynamic causal modeling   
+    https://doi.org/10.1016/j.neuroimage.2017.02.090  
     https://doi.org/10.1016/j.neuroimage.2018.05.058
 
 ### Changed
@@ -25,7 +25,10 @@ TAPAS toolbox
 - Dropped 4 digits versioning for 3.
 - The version of tapas is now read from misc/log\_tapas.txt. It is the first
     line of this file.
-- New version of the HGF toolbox (5.2.0). Detail in tapas/HGF/README.md.
+- New version of the HGF toolbox (5.2.0). Details in tapas/HGF/README.md.
+- New version of the PhysIO toolbox (R2018.1). Details in tapas/PhysIO/CHANGELOG.md.
+- tapas_init.m displays a message to download the data in case the examples
+    directory is not present.
 
 ### Removed
 - Deleted the gpo folder.

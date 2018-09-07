@@ -131,8 +131,22 @@ if model.retroicor.include
         hasRespData);
 end
 
+
+if model.movement.include
+    censoring = model.movement.censoring;
+    quality_measures = model.movement.quality_measures;
+    switch lower(model.movement.censoring_method)
+        case 'fd'
+            verbose.fig_handles(end+1) = tapas_physio_plot_movement_outliers_fd(rp, ...
+                quality_measures, censoring, movement.censoring_threshold);
+        case 'maxval'
+            verbose.fig_handles(end+1) = tapas_physio_plot_movement_outliers_maxval(rp, ...
+                quality_measures, censoring, movement.censoring_threshold);
+    end
+end
+
 %% tapas_physio_create_hrv_regressors, tapas_physio_create_rvt_regressors
-% tapas_physio_create_noise_rois_regressors, tapas_physio_create_movement_regressors
+% tapas_physio_create_noise_rois_regressors
 % => create functions out of inline-plotting
 
 %% TODO: replace this call by just using the plot-subpart of the
