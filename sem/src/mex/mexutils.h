@@ -8,6 +8,26 @@
 #include <mex.h>
 #include "antisaccades.h"
 
+#ifdef HAVE_OMP_H
+#include <omp.h>
+#endif
+
+void
+wrapper_seria_multi(
+        int nlhs,
+        mxArray *plhs[],
+        int nrhs,
+        const mxArray *prhs[],
+        FILL_PARAMETERS_SERIA reparametrize);
+
+void
+wrapper_prosa_multi(
+        int nlhs, 
+        mxArray *plhs[], 
+        int nrhs, 
+        const mxArray *prhs[],
+        FILL_PARAMETERS_PROSA reparametrize);
+
 void
 reparametrize_prosa(
         int nlhs,
