@@ -13,6 +13,22 @@
 #endif
 
 void
+wrapper_seria_n_states(
+        int nlhs,
+        mxArray *plhs[],
+        int nrhs,
+        const mxArray *prhs[],
+        FILL_PARAMETERS_SERIA reparametrize);
+
+void
+wrapper_prosa_n_states(
+        int nlhs, 
+        mxArray *plhs[], 
+        int nrhs, 
+        const mxArray *prhs[],
+        FILL_PARAMETERS_PROSA reparametrize);
+
+void
 wrapper_seria_multi(
         int nlhs,
         mxArray *plhs[],

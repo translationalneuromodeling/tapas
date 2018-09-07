@@ -11,8 +11,8 @@ verify_input_theta_array(mxArray *theta, int dims_theta)
 
     if ( !mxIsCell(theta) )
     {
-          mexErrMsgIdAndTxt("tapas:sem:input", 
-                  "Input parameters should be a cell array");   
+          mexErrMsgIdAndTxt("tapas:sem:input",
+                  "Input parameters should be a cell array");
     }
 
     mwSize nd = mxGetNumberOfDimensions(theta);
@@ -26,7 +26,7 @@ verify_input_theta_array(mxArray *theta, int dims_theta)
 
     if ( nd == 0 )
     {
-         mexErrMsgIdAndTxt("tapas:sem:input", "Empty input."); 
+         mexErrMsgIdAndTxt("tapas:sem:input", "Empty input.");
     }
 
     for (i = 0; i < na; i++)
@@ -40,7 +40,7 @@ verify_input_theta_array(mxArray *theta, int dims_theta)
         if ( stheta == 0 || stheta > 2)
         {
             mexErrMsgIdAndTxt("tapas:sem:input",
-                    "Dimensions of the parameters is not adequate."); 
+                    "Dimensions of the parameters is not adequate.");
         }
 
         if ( stheta == 2 )
@@ -48,18 +48,126 @@ verify_input_theta_array(mxArray *theta, int dims_theta)
             if ( dtheta[1] > 1 )
             {
                 mexErrMsgIdAndTxt("tapas:sem:input",
-                    "Dimensions of the parameters is not adequate.");       
+                    "Dimensions of the parameters is not adequate.");
             }
         }
 
         if ( dims_theta * (dtheta[0] / dims_theta) != dtheta[0] )
         {
             mexErrMsgIdAndTxt("tapas:sem:input",
-                "Dimensions of the parameters is not adequate.");       
+                "Dimensions of the parameters is not adequate.");
         }
-    
-    }  
-    
+
+    }
+
+}
+
+void
+wrapper_prosa_n_states(
+        int nlhs,
+        mxArray *plhs[],
+        int nrhs,
+        const mxArray *prhs[],
+        FILL_PARAMETERS_PROSA reparametrize)
+{
+    ANTIS_INPUT svals;
+    double *llh;
+    PROSA_MODEL model;
+    int i;
+    int nd = 0;
+    int *np;
+    int na = 1;
+
+    svals.t = mxGetPr(prhs[0]);
+    svals.a = mxGetPr(prhs[1]);
+    svals.u = mxGetPr(prhs[2]);
+    svals.theta = mxGetPr(prhs[3]);
+
+    svals.nt = *mxGetDimensions(prhs[0]);
+
+    nd = mxGetNumberOfDimensions(prhs[3]);
+    np = mxGetDimensions(prhs[3]);
+
+    for (i = 0; i < nd; i++)
+    {
+        // For a weird reason empty dimensions are set to zero.
+        na *= (np[i] == 0)? 1: np[i];
+    }
+
+    if (nd == 0 )
+    {
+         mexErrMsgIdAndTxt("tapas:sem:input", "Empty input.");
+    }
+
+    if ( na % DIM_PROSA_THETA != 0)
+    {
+        mexErrMsgIdAndTxt("tapas:sem:input", "Dimensions are not correct");
+    }
+
+    svals.np = na / DIM_PROSA_THETA;
+
+    plhs[0] = mxCreateDoubleMatrix(svals.nt, 1, mxREAL);
+    llh = mxGetPr(plhs[0]);
+
+    model.llh = prosa_llh_abstract;
+    model.fill_parameters = reparametrize;
+    gsl_set_error_handler_off();
+    prosa_model_n_states(svals, model, llh);
+    gsl_set_error_handler(NULL);
+}
+
+void
+wrapper_seria_n_states(
+        int nlhs,
+        mxArray *plhs[],
+        int nrhs,
+        const mxArray *prhs[],
+        FILL_PARAMETERS_SERIA reparametrize)
+{
+    ANTIS_INPUT svals;
+    double *llh;
+    SERIA_MODEL model;
+    int i;
+    int nd = 0;
+    int *np;
+    int na = 1;
+
+    svals.t = mxGetPr(prhs[0]);
+    svals.a = mxGetPr(prhs[1]);
+    svals.u = mxGetPr(prhs[2]);
+    svals.theta = mxGetPr(prhs[3]);
+
+    svals.nt = *mxGetDimensions(prhs[0]);
+
+    nd = mxGetNumberOfDimensions(prhs[3]);
+    np = mxGetDimensions(prhs[3]);
+
+    for (i = 0; i < nd; i++)
+    {
+        // For a weird reason empty dimensions are set to zero.
+        na *= (np[i] == 0)? 1: np[i];
+    }
+
+    if (nd == 0 )
+    {
+         mexErrMsgIdAndTxt("tapas:sem:input", "Empty input."); 
+    }
+
+    if ( na % DIM_SERIA_THETA != 0)
+    {
+        mexErrMsgIdAndTxt("tapas:sem:input", "Dimensions are not correct"); 
+    }
+
+    svals.np = na / DIM_SERIA_THETA;
+
+    plhs[0] = mxCreateDoubleMatrix(svals.nt, 1, mxREAL);
+    llh = mxGetPr(plhs[0]);
+   
+    model.llh = seria_llh_abstract;
+    model.fill_parameters = reparametrize; 
+    gsl_set_error_handler_off();
+    seria_model_n_states(svals, model, llh);
+    gsl_set_error_handler(NULL);
 }
 
 void
@@ -89,12 +197,12 @@ wrapper_seria_multi(
     model.fill_parameters = reparametrize;
     gsl_set_error_handler_off();
 
-    #pragma omp parallel for private(i) private(j) collapse(2) schedule(dynamic) 
-    for (j = 0; j < nc; j++) 
+    #pragma omp parallel for private(i) private(j) collapse(2) schedule(dynamic)
+    for (j = 0; j < nc; j++)
     {
         for (i = 0; i < ns; i++)
         {
-            
+
             ANTIS_INPUT svals;
             mxArray *y = mxGetField(prhs[0], i, "y");
             mxArray *u = mxGetField(prhs[0], i, "u");
@@ -102,19 +210,19 @@ wrapper_seria_multi(
             double *tllh;
             int k;
 
-            
+
             svals.t = mxGetPr(mxGetField(y, 0, "t"));
             svals.a = mxGetPr(mxGetField(y, 0, "a"));
             svals.u = mxGetPr(mxGetField(u, 0, "tt"));
-            
+
             svals.theta = mxGetPr(theta);
-            
-            svals.nt = *mxGetDimensions(mxGetField(y, 0, "t")); 
+
+            svals.nt = *mxGetDimensions(mxGetField(y, 0, "t"));
             svals.np = (mxGetDimensions(theta)[0]
                 * mxGetDimensions(theta)[1])/DIM_SERIA_THETA;
-            
+
             tllh = (double *) malloc(svals.nt * sizeof(double));
-            
+
             seria_model_n_states_optimized(svals, model, tllh);
 
             llh[i + ns * j] = 0;
@@ -125,17 +233,17 @@ wrapper_seria_multi(
             if ( abs(llh[i + ns * j]) == INFINITY || isnan(llh[i + ns * j]))
                 llh[i + ns * j] = -INFINITY;
             free(tllh);
-            
+
         }
     }
-   gsl_set_error_handler(NULL); 
+   gsl_set_error_handler(NULL);
 }
 
 void
 wrapper_prosa_multi(
-        int nlhs, 
-        mxArray *plhs[], 
-        int nrhs, 
+        int nlhs,
+        mxArray *plhs[],
+        int nrhs,
         const mxArray *prhs[],
         FILL_PARAMETERS_PROSA reparametrize)
 {
@@ -155,34 +263,34 @@ wrapper_prosa_multi(
     llh = mxGetPr(plhs[0]);
 
     model.llh = prosa_llh_abstract;
-    model.fill_parameters = reparametrize; 
+    model.fill_parameters = reparametrize;
     gsl_set_error_handler_off();
 
-    #pragma omp parallel for private(i) private(j) collapse(2) schedule(static) 
-    for (j = 0; j < nc; j++) 
+    #pragma omp parallel for private(i) private(j) collapse(2) schedule(static)
+    for (j = 0; j < nc; j++)
     {
         for (i = 0; i < ns; i++)
         {
-            
+
             ANTIS_INPUT svals;
             mxArray *y = mxGetField(prhs[0], i, "y");
             mxArray *u = mxGetField(prhs[0], i, "u");
             mxArray *theta = mxGetCell(prhs[1], i + ns * j);
             double *tllh;
             int k;
- 
+
             svals.t = mxGetPr(mxGetField(y, 0, "t"));
             svals.a = mxGetPr(mxGetField(y, 0, "a"));
             svals.u = mxGetPr(mxGetField(u, 0, "tt"));
-            
+
             svals.theta = mxGetPr(theta);
-            
-            svals.nt = *mxGetDimensions(mxGetField(y, 0, "t")); 
+
+            svals.nt = *mxGetDimensions(mxGetField(y, 0, "t"));
             svals.np = (mxGetDimensions(theta)[0]
                 * mxGetDimensions(theta)[1])/DIM_PROSA_THETA;
-   
+
             tllh = (double *) malloc(svals.nt * sizeof(double));
-            
+
             prosa_model_n_states_optimized(svals, model, tllh);
 
             llh[i + ns * j] = 0;
@@ -193,17 +301,17 @@ wrapper_prosa_multi(
             if ( abs(llh[i + ns * j]) == INFINITY || isnan(llh[i + ns * j]))
                 llh[i + ns * j] = -INFINITY;
             free(tllh);
-            
+
         }
     }
-   gsl_set_error_handler(NULL); 
+   gsl_set_error_handler(NULL);
 }
 
 
 void
 reparametrize_prosa(
         int nlhs,
-        mxArray *plhs[], 
+        mxArray *plhs[],
         int nrhs,
         const mxArray *prhs[],
         FILL_PARAMETERS_PROSA reparametrize)
@@ -214,16 +322,16 @@ reparametrize_prosa(
 
     if ( nrhs != 1 )
     {
-         mexErrMsgIdAndTxt("tapas:sem:input", "Invalid number of inputs."); 
+         mexErrMsgIdAndTxt("tapas:sem:input", "Invalid number of inputs.");
     }
 
     if ( nlhs != 1 )
     {
-         mexErrMsgIdAndTxt("tapas:sem:output", "Invalid output."); 
+         mexErrMsgIdAndTxt("tapas:sem:output", "Invalid output.");
     }
 
     // Verify input
-    
+
     verify_input_theta_array(prhs[0], DIM_PROSA_THETA);
 
     mwSize nd = mxGetNumberOfDimensions(prhs[0]);
@@ -237,7 +345,7 @@ reparametrize_prosa(
 
     // Output will have the same structure
     plhs[0] = mxCreateCellArray(nd, np);
-   
+
     gsl_set_error_handler_off();
     for (i = 0; i < na; i++)
     {
@@ -245,11 +353,11 @@ reparametrize_prosa(
 
         mxArray *i_params = mxGetCell(prhs[0], i);
         double *d_i_params = mxGetPr(i_params);
-        
+
         mwSize stheta = mxGetNumberOfDimensions(i_params);
         mwSize *dtheta = mxGetDimensions(i_params);
 
-        mxArray *o_params = mxCreateDoubleMatrix(dtheta[0], 1, mxREAL); 
+        mxArray *o_params = mxCreateDoubleMatrix(dtheta[0], 1, mxREAL);
         double *d_o_params = mxGetPr(o_params);
 
         for (j = 0; j < dtheta[0]; j += DIM_PROSA_THETA)
@@ -261,9 +369,9 @@ reparametrize_prosa(
 
         // Set the parameters
         mxSetCell(plhs[0], i, o_params);
-    
-    }  
-    
+
+    }
+
     gsl_set_error_handler(NULL);
 
 }
@@ -271,7 +379,7 @@ reparametrize_prosa(
 void
 reparametrize_seria(
         int nlhs,
-        mxArray *plhs[], 
+        mxArray *plhs[],
         int nrhs,
         const mxArray *prhs[],
         FILL_PARAMETERS_SERIA reparametrize)
@@ -282,16 +390,16 @@ reparametrize_seria(
 
     if ( nrhs != 1 )
     {
-         mexErrMsgIdAndTxt("tapas:sem:input", "Invalid number of inputs."); 
+         mexErrMsgIdAndTxt("tapas:sem:input", "Invalid number of inputs.");
     }
 
     if ( nlhs != 1 )
     {
-         mexErrMsgIdAndTxt("tapas:sem:output", "Invalid output."); 
+         mexErrMsgIdAndTxt("tapas:sem:output", "Invalid output.");
     }
 
     // Verify input
-    
+
     verify_input_theta_array(prhs[0], DIM_SERIA_THETA);
 
     mwSize nd = mxGetNumberOfDimensions(prhs[0]);
@@ -305,7 +413,7 @@ reparametrize_seria(
 
     // Output will have the same structure
     plhs[0] = mxCreateCellArray(nd, np);
-   
+
     gsl_set_error_handler_off();
     for (i = 0; i < na; i++)
     {
@@ -313,11 +421,11 @@ reparametrize_seria(
 
         mxArray *i_params = mxGetCell(prhs[0], i);
         double *d_i_params = mxGetPr(i_params);
-        
+
         mwSize *dtheta = mxGetDimensions(i_params);
 
-        mxArray *o_params = mxCreateDoubleMatrix(dtheta[0], 1, mxREAL); 
-        
+        mxArray *o_params = mxCreateDoubleMatrix(dtheta[0], 1, mxREAL);
+
         double *d_o_params = mxGetPr(o_params);
 
         for (j = 0; j < dtheta[0]; j += DIM_SERIA_THETA)
@@ -326,12 +434,12 @@ reparametrize_seria(
             reparametrize(d_i_params + j, &sparams);
             linearize_seria(&sparams, d_o_params + j);
         }
-       
+
         // Set the parameters
         mxSetCell(plhs[0], i, o_params);
-    
-    }  
-    
+
+    }
+
     gsl_set_error_handler(NULL);
 
 }
