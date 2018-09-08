@@ -72,7 +72,7 @@ end
 
 pars = struct();
 
-pars.T = ones(4, 1) * linspace(0.1, 1, 1).^5;
+pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
 pars.nburnin = 4000;
 pars.niter = 4000;
 pars.ndiag = 500;
