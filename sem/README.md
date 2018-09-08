@@ -43,7 +43,7 @@ The file `tapas/sem/examples/tapas_sem_flat_example_inversion.m`
 can be used as a template for other analysis.
 
 ## The model
-<img src="https://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=10.1371/journal.pcbi.1005692.g002" width="400" align="right"/>
+<img src="misc/seria.png" width="400" align="right"/>
 
 The SERIA model relies on the race-to-threshold framework to define the 
 probability of an action (pro- or antisaccade) and its RT. The main
