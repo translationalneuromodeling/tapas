@@ -42,7 +42,7 @@ requirement is the installation of MATLAB (produced by The MathWorks, Inc.
 Natick, MA, USA. http://www.mathworks.com/).
 
 Please download TAPAS from our 
-[Github Release Page](github.com/translationalneuromodeling/tapas/releases).
+[Github Release Page](https://github.com/translationalneuromodeling/tapas/releases).
 
 To add the TAPAS directory to the MATLAB path, run the script `tapas_init.m` in 
 the directory where tapas is installed/extracted. 
@@ -94,7 +94,7 @@ Information about changes in the current release can be found in the [CHANGELOG.
 file.
 
 All recent stables releases can be downloaded from our
-[TAPAS Github Release Page](github.com/translationalneuromodeling/tapas/releases).
+[TAPAS Github Release Page](https://github.com/translationalneuromodeling/tapas/releases).
 
 
 -------
