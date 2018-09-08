@@ -1,0 +1,111 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2015 */
+
+# ifndef FMRI_KERNELS_H
+# define FMRI_KERNELS_H
+
+#include "mpdcm.hcu"
+
+template <class T_theta, class T_ptheta, class T_model>
+__device__
+int kernel_launcher(DataArray x, DataArray y, DataArray u, T_theta theta, 
+    T_ptheta ptheta, T_model model);
+
+template <class T_theta, class T_ptheta, class T_model>
+__device__
+int
+kernel_launcher(DataArray x, DataArray y, DataArray u, T_theta theta, 
+    T_ptheta ptheta, T_model model)
+{
+    int i;
+    int nx = y.nir;
+    dbuff bx, by, bu;
+
+    // Start the index
+    i = threadIdx.x/nx + (blockDim.x / nx) * blockIdx.x;
+
+    while ( i < theta.nc * theta.nr )
+    {
+        __syncthreads();
+        memset(x.data_device, 0, model.preloc_size * NUM_THREADS * 
+            DIM_FMRI_X * sizeof(MPFLOAT));
+        __syncthreads();
+        model.set_x(i, &x, &bx);
+        model.set_y(i, &y, &by);
+        model.set_u(i/theta.nr, &u, &bu);
+        
+        model.set_theta(i, &theta);
+        model.set_ptheta(i, &ptheta);
+        
+        model.integrate(&bx, &by, &bu);
+        
+        // Advance index
+        i += gridDim.x * (blockDim.x / nx );
+    }
+
+    return 0;
+} 
+
+
+template<class T_Integrator>
+__global__
+void
+kernel_template_euler(DataArray y, DataArray u, ThetaFmriArray theta,
+    PThetaFmri ptheta);
+
+template<class T_Integrator>
+__global__
+void
+kernel_template_euler(DataArray y, DataArray u, ThetaFmriArray theta,
+    PThetaFmri ptheta)
+{
+
+    __shared__ MPFLOAT sx[
+        PRELOC_SIZE_FMRI_EULER_X * NUM_THREADS * DIM_FMRI_X];
+
+    T_Integrator fmri;
+
+    DataArray x;
+
+    x.data_device = sx;
+    x.nc = y.nc;
+    x.nr = y.nr;
+
+    x.nir = y.nir;
+    x.nic = fmri.preloc_size; // So what the fuck is this?
+
+    kernel_launcher(x, y, u, theta, ptheta, fmri);
+
+}
+
+template<class T_Integrator, int T_preloc>
+__global__
+void
+kernel_global(DataArray y, DataArray u, ThetaFmriArray theta,
+    PThetaFmri ptheta);
+
+template<class T_Integrator, int T_preloc>
+__global__
+void
+kernel_global(DataArray y, DataArray u, ThetaFmriArray theta,
+    PThetaFmri ptheta)
+{
+
+    __shared__ MPFLOAT sx[T_preloc * NUM_THREADS * DIM_FMRI_X];
+
+    T_Integrator fmri;
+
+    DataArray x;
+
+    x.data_device = sx;
+    x.nc = y.nc;
+    x.nr = y.nr;
+
+    x.nir = y.nir;
+    x.nic = fmri.preloc_size; 
+
+    kernel_launcher(x, y, u, theta, ptheta, fmri);
+
+}
+
+# endif

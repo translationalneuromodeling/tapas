@@ -15,7 +15,8 @@
 #
 # Locations of these are included in 
 #   CUDA_CFLAGS and 
-#   CUDA_LDFLAGS.
+#   CUDA_LDFLAGS
+#   CUDA_LIBS.
 # Path to nvcc is included as
 #   NVCC_PATH
 # in config.h
@@ -57,6 +58,7 @@ fi
 # Saving the current flags
 ax_save_CFLAGS="${CFLAGS}"
 ax_save_LDFLAGS="${LDFLAGS}"
+ax_save_LIBS="${LIBS}"
 
 CUDA_CFLAGS="-I$cuda_prefix/include"
 CFLAGS="$CUDA_CFLAGS $CFLAGS"
@@ -76,14 +78,17 @@ AC_CHECK_LIB([cuda], [cuInit], [], AC_MSG_FAILURE([Couldn't find libcuda]))
 AC_CHECK_HEADER([cuda_runtime_api.h], [], AC_MSG_FAILURE([Couldn't find cuda_runtime_api.h]), [#include <cuda_runtime_api.h>])
 AC_CHECK_LIB([cudart], [cudaDeviceSynchronize], [], AC_MSG_FAILURE([Couldn't find libcudart]))
 
+CUDA_LIBS="${LIBS}"
+
 # Announcing the new variables
 AC_SUBST([CUDA_CFLAGS])
 AC_SUBST([CUDA_LDFLAGS])
+AC_SUBST([CUDA_LIBS])
 AC_SUBST([NVCC])
 
 
 # Returning to the original flags
 CFLAGS=${ax_save_CFLAGS}
 LDFLAGS=${ax_save_LDFLAGS}
-
+LIBS=${ax_save_LIBS}
 ])

@@ -1,0 +1,13 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2016 */
+
+#ifndef FMRI_H
+#define FMRI_H
+
+#define FMRI_EULER_PRELOC_X 2
+#define FMRI_RK4_PRELOC_X 3
+#define FMRI_STD_RK4_PRELOC_X 4
+
+
+#endif // FMRI_H
+

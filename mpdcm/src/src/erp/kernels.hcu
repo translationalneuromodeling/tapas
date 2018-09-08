@@ -1,0 +1,46 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2015 */
+
+# ifndef KERNELS_H
+# define KERNELS_H
+
+#include "mpdcm.hcu"
+
+template <class T_theta, class T_ptheta, class T_model>
+__device__
+int kernel_launcher(DataArray x, DataArray y, DataArray u, T_theta theta, 
+    T_ptheta ptheta, T_model model);
+
+template <class T_theta, class T_ptheta, class T_model>
+__device__
+int
+kernel_launcher(DataArray x, DataArray y, DataArray u, T_theta theta, 
+    T_ptheta ptheta, T_model model)
+{
+    int i;
+    int nx = y.nic;
+    dbuff bx, by, bu;
+
+    // Start the index
+    i = threadIdx.x/nx + (blockDim.x / nx) * blockIdx.x;
+
+    while ( i < theta.nc * theta.nr )
+    {
+        
+        model.set_x(i, &x, &bx);
+        model.set_y(i, &y, &by);
+        model.set_u(i/theta.nr, &u, &bu);
+        
+        model.set_theta(i, &theta);
+        model.set_ptheta(i, &ptheta);
+        
+        model.integrate(&bx, &by, &bu);
+        
+        // Advance index
+        i += gridDim.x * (blockDim.x / nx );
+    }
+
+    return 0;
+} 
+
+# endif

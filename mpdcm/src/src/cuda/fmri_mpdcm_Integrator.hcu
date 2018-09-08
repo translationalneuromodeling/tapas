@@ -1,0 +1,37 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2015 */
+
+# ifndef MPDCM_INTEGRATOR_H
+# define MPDCM_INTEGRATOR_H
+
+#include "mpdcm.hcu"
+
+struct Integrator
+{
+    int preloc_size;
+    int num_eqs;
+
+    __device__
+    Integrator(int, int);    
+ 
+    __device__
+    virtual int update_x(dbuff *ox, dbuff *y, dbuff *u, dbuff *nx) = 0;
+
+    __device__
+    int update_y(dbuff *x, dbuff *y, dbuff *u, dbuff *ny);
+    // Update the buffer with y
+
+    __device__
+    int set_x(int i, DataArray *x, dbuff *bx);
+
+    __device__
+    int set_y(int i, DataArray *y, dbuff *by);
+
+    __device__
+    int set_u(int i, DataArray *u, dbuff *bu);
+
+    __device__
+    int integrate(dbuff *x, dbuff *y, dbuff *u);
+};
+
+# endif
