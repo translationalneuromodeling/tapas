@@ -1,0 +1,169 @@
+//
+// Author: Eduardo Aponte
+// Copyright 2015 by Eduardo Aponte <aponteeduardo@gmail.com>
+//
+// Licensed under GNU General Public License 3.0 or later.
+// Some rights reserved. See COPYING, AUTHORS.
+//
+// Revision log:
+//
+
+# ifndef FMRI_CUDA_H
+# define FMRI_CUDA_H
+
+# include "mpdcm.h"
+
+# ifdef __CUDACC__
+
+# include "math.h"
+# include "curand_kernel.h"
+# include "curand.h"
+# include <stdio.h>
+
+# endif
+
+// Determines whether compile double or single precision
+
+# ifdef MPDOUBLEFLAG
+# define MPFLOAT double 
+# else
+# define MPFLOAT float
+# endif
+
+
+# define HANDLE_CERROR( err ) {if (err != cudaSuccess ) { \
+    printf( "%s in %s at line %d\n", cudaGetErrorString( err ), \
+        __FILE__, __LINE__ ); \
+    mexErrMsgIdAndTxt("tapas:mpdcm:fmri:cuda:memory", \
+        "cuda error encounter"); \
+    }}
+
+struct DataArray {
+    int nc;
+    int nr;
+    int nic;
+    int nir;
+    MPFLOAT *data_device;
+    MPFLOAT *data_host;
+};
+
+
+typedef enum { MF_TRUE, MF_FALSE } MatFlag;
+
+typedef struct
+{
+    int nc;
+    int nr;
+    //short int dim;
+    MPFLOAT *arr;
+} dbuff;
+
+// Data structure for a set of concatenated sparse square matrices.
+
+typedef struct
+{
+    int dim_x;  // Dimension of the matrices
+    int n;     // Total number of matrices.
+
+    unsigned long int *i;
+    unsigned long int *j;
+
+    MPFLOAT *v;
+
+    unsigned long int *i_device;
+    unsigned long int *j_device;
+
+    MPFLOAT *v_device;
+} sqsparse; 
+
+//  Parameters
+typedef struct
+{
+    int dim_x;
+    int dim_u;
+
+    // This flag indicates whether the matrix should be used or not. 
+
+    MatFlag fA;
+    MatFlag fB;
+    MatFlag fC;
+    MatFlag fD;
+
+    MPFLOAT *A;
+    MPFLOAT *B;
+    MPFLOAT *C;
+    MPFLOAT *D;
+
+    sqsparse sB[1];
+    sqsparse sD[1];
+
+    MPFLOAT *K; // Kappa 
+    MPFLOAT *tau;
+
+    MPFLOAT V0;
+    MPFLOAT E0;
+    MPFLOAT ln1_E0; // For optimization. 
+    MPFLOAT lnE0; // For optimization.
+    MPFLOAT k1;
+    MPFLOAT k2;
+    MPFLOAT k3;
+
+    MPFLOAT alpha;
+    MPFLOAT gamma;
+
+} ThetaFmri;
+
+typedef struct {
+    int nc;
+    int nr;
+
+    ThetaFmri *data_host;
+    ThetaFmri *data_device;
+
+    // Linearized data of theta.
+    DataArray linear;
+
+    sqsparse sB;
+    sqsparse sD;
+
+} ThetaFmriArray;
+
+// Fixed values 
+typedef struct
+{
+    MPFLOAT dt; // Step size in the integration
+    MPFLOAT dyu; // Ratio of the sampling rate of y and u.
+    MPFLOAT de; // Precomputed h 
+    char mode; // Either 'f' or 'c'. It's the type of array of the theta, i.e.
+        //fortran or c.
+} PThetaFmri;
+
+// Priors for all
+
+typedef struct
+{
+    MPFLOAT dt; // Step size in the integration
+    MPFLOAT dyu; // Ratio of the sampling rate of y and u.
+    MPFLOAT de; // Precomputed h 
+    char mode; // Either 'f' or 'c'. It's the type of array of the theta, i.e.
+        //fortran or c.
+} PTheta;
+
+// ==========================  Functions  ============================
+
+
+
+#define PRELOC_SIZE_FMRI_RK4_X 3
+#define PRELOC_SIZE_FMRI_STD_RK4_X 4
+#define PRELOC_SIZE_FMRI_EULER_X 2
+
+
+#define NUM_BLOCKS 12
+#define NUM_THREADS 32
+
+#define DIM_FMRI_X 5
+
+
+# endif // FMRI_CUDA_H
+
+

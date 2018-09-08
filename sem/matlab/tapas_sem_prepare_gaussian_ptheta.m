@@ -1,4 +1,4 @@
-function [ptheta] = tapas_sem_prepare_gaussian_ptheta(ptheta);
+function [ptheta] = tapas_sem_prepare_gaussian_ptheta(ptheta)
 %% Precomputes things that might be needed afterwards.
 %
 % Input
@@ -11,7 +11,7 @@ function [ptheta] = tapas_sem_prepare_gaussian_ptheta(ptheta);
 %
 
 np = ptheta.ndims;
-dtheta = ptheta.npars; % Number of parameter sets.
+dtheta = size(ptheta.jm, 1)/np;
 
 LN2PI = log(2 * pi);
 

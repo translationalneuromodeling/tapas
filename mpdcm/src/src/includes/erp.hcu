@@ -1,0 +1,63 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2016 */
+
+#ifndef ERP_CUDA_H
+#define ERP_CUDA_H
+
+#include "mpdcm.hcu"
+
+#define ERP_DIM_BLOCKS_Y 3
+#define ERP_DIM_BLOCKS_X 32
+
+#define ERP_DIM_X 9
+#define ERP_EULER_PRELOC_SIZE_X 2
+
+#define INDEX_S0 0
+#define INDEX_S1 1
+#define INDEX_S7 2
+#define INDEX_X14 0
+#define INDEX_X52 1
+#define INDEX_X78 2
+
+typedef struct {
+    int dim_x;
+    int dim_u;
+    MPFLOAT Au;
+    MPFLOAT gamma1;
+    MPFLOAT gamma2;
+    MPFLOAT gamma3;
+    MPFLOAT gamma4;
+    MPFLOAT r1;
+    MPFLOAT r2;
+    MPFLOAT er1r2;
+    MPFLOAT tau_e2;
+    MPFLOAT tau_es2;
+    MPFLOAT tau_i2;
+    MPFLOAT tau_is2;
+    MPFLOAT *A23;
+    MPFLOAT *A13;
+} ErpColumn;
+
+typedef struct {
+    int nc;
+    int nr;
+
+    int dim_x;
+    int dim_u;
+    
+    ErpColumn *data_host;
+    ErpColumn *data_device;
+    
+    DataArray linear_A13;
+    DataArray linear_A23;
+} ErpColumnArray;
+
+typedef struct {
+    MPFLOAT dt;
+    MPFLOAT dyu;
+    MPFLOAT udt;
+    MPFLOAT de;
+} ErpPTheta;
+
+
+#endif

@@ -78,10 +78,10 @@ function [gradf, err] = tapas_riddersgradient(f, x, varargin)
     for i = 1:n
         
         % Construct filehandle to be passed to riddersdiff
-        fxi = @(xi) fxi(f,x,i,xi);
+        fxih = @(xi) fxi(f,x,i,xi);
         
         % Calculate derivative
-        [gradf(i), err(i)] = tapas_riddersdiff(fxi,x(i),options);
+        [gradf(i), err(i)] = tapas_riddersdiff(fxih,x(i),options);
     end
 end
 

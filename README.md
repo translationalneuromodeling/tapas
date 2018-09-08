@@ -1,6 +1,6 @@
 ![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
 
-*Version 2.7.4.1*
+*Version 3.0.0*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================
@@ -50,6 +50,8 @@ the directory where tapas is installed/extracted.
 For the individual toolboxes included in TAPAS, please refer to their 
 documentation (s.b.) for specific installation instructions.
 
+To download the example data please use `tapas_download_example_data()` from
+the matlab console.
 
 -------------
 DOCUMENTATION
@@ -82,12 +84,7 @@ Cite Me
 -------
 
 Information about citations and current version can be printed from matlab with
-the command: 
-
-~~~
-tapas_version(1);
-~~~
-
+the command: `tapas_version(1);`
 
 ---------------
 Current release

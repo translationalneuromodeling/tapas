@@ -14,7 +14,8 @@ function [version, hash] = tapas_version(verbose)
 % copyright (C) 2017
 %
 
-version = {2, 7, 4, 1};
+version = tapas_get_current_version();
+version = strsplit(version, '.');
 hash = ''; % In a future implementation
 
 if nargin < 1
@@ -23,7 +24,7 @@ end
 
 if verbose
     tapas_print_logo();
-    fprintf(1, '\n\nVersion %d.%d.%d.%d\n', version{:});
+    fprintf(1, '\n\nVersion %s.%s.%s\n', version{:});
     fprintf(1, 'In your citation please include the current version.\n');
     fprintf(1, 'Please cite the corresponding publications according to the toolboxes used:\n')
     fprintf(1, 'PhysIO: https://www.ncbi.nlm.nih.gov/pubmed/27832957\n')

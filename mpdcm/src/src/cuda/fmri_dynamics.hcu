@@ -1,0 +1,121 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2015 */
+
+
+#ifndef FMRI_DYNAMICS_H
+#define FMRI_DYNAMICS_H
+
+#include "mpdcm.hcu"
+
+#define INDEX_V0 0
+#define INDEX_E0 1
+#define INDEX_K1 2
+#define INDEX_K2 3
+#define INDEX_K3 4
+#define INDEX_ALPHA 5
+#define INDEX_GAMMA 6
+
+#define INDEX_LK1 0 
+#define INDEX_LK2 1 
+#define INDEX_LK3 2 
+
+#define INDEX_X 0
+#define INDEX_F 1
+#define INDEX_S 2
+#define INDEX_V 3
+#define INDEX_Q 4
+
+__device__
+MPFLOAT
+fmri_dx(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+    int i);
+
+__device__
+MPFLOAT
+fmri_A(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+    int i);
+
+__device__
+MPFLOAT
+fmri_B(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+    int i);
+
+// Particions the computation of the bilinear element
+__device__
+MPFLOAT
+fmri_fB(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+    int i, int us, int ue);
+
+__device__
+MPFLOAT
+fmri_C(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+    int i);
+
+__device__
+MPFLOAT
+fmri_D(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+    int i);
+
+__device__
+int
+fmri_dL(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+    int i, MPFLOAT *dx);
+
+__device__
+int
+fmri_dNonlinear(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, 
+    PThetaFmri *ptheta, int i, MPFLOAT *dx);
+
+// Particions the computation of the nonlinear element
+__device__
+MPFLOAT
+fmri_fD(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+    int i, int us, int ue);
+
+
+__device__
+MPFLOAT
+fmri_ds(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+        int i);
+
+__device__
+MPFLOAT
+fmri_df(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+        int i);
+
+__device__
+MPFLOAT
+fmri_dv(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta,
+        int i);
+
+__device__
+MPFLOAT
+fmri_dq(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+        int i);
+
+__device__
+MPFLOAT
+fmri_lk1(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+        int i);
+
+__device__
+MPFLOAT
+fmri_lk2(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+        int i);
+
+__device__
+MPFLOAT
+fmri_lk3(dbuff *x, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+        int i);
+
+__device__
+void
+fmri_upy(dbuff *ox, dbuff *y, dbuff *u, ThetaFmri *theta, PThetaFmri *ptheta, 
+    dbuff *nx);
+
+__device__
+int
+fmri_store_y(dbuff *ny, dbuff *y, dbuff *u, ThetaFmri *theta, 
+    PThetaFmri *ptheta);
+
+#endif

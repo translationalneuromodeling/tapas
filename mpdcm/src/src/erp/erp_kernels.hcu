@@ -1,0 +1,17 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2016 */
+
+# ifndef ERP_KERNELS_H
+# define ERP_KERNELS_H
+
+#include "mpdcm.hcu"
+#include "erp.hcu"
+#include "kernels.hcu"
+
+__global__
+void
+kernel_erp_euler(DataArray y, DataArray u, ErpColumnArray theta,
+        ErpPTheta ptheta);
+
+# endif 
+

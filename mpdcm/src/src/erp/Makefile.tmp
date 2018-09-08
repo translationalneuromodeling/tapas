@@ -1,0 +1,17 @@
+
+
+NVCC = nvcc
+SOURCES = $(wildcard *.cu)
+NVCCFLAGS = -arch=sm_20 -Xcompiler -fPIC -rdc=true 
+OBJS = $(SOURCES:%.cu=%.o)
+
+all : liberp.a
+
+$(OBJS) : %.o : %.cu
+	$(NVCC) -c $(NVCCFLAGS) -I../includes/ $^ -o $@
+
+clean:
+	rm *.o
+
+liberp.a : $(OBJS)
+	$(NVCC) $(NVCCFLAGS) -lib -dlink $^ -o $@

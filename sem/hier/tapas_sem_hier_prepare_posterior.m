@@ -1,19 +1,19 @@
 function [posterior] = tapas_sem_hier_prepare_posterior(data, model, ...
     inference, states)
-%% 
+%%
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2016
 %
 
-T = states{end}.graph{1}.T;
+T = model.graph{1}.htheta.T;
 
 posterior = struct('data', data, 'model', model, 'inference', inference, ...
     'samples_theta', [], 'fe', [], 'llh', []);
 
 np = numel(states);
 
-theta = cell(np, 1); 
+theta = cell(np, 1);
 for i = 1:np
     theta{i} = states{i}.graph{2}(:, end);
 end
@@ -31,13 +31,6 @@ end
 
 cllh{1} = llh;
 
-%llh = zeros(ns, nc, np);
-%for i = 1:np
-%    llh(:, :, i) = states{i}.llh{2};
-%end
-%
-%cllh{2} = llh;
-
 posterior.llh = cllh;
 if size(T, 2) > 1
     fe = trapz(T(1, :), mean(squeeze(sum(cllh{1}, 1)), 2));
@@ -47,7 +40,14 @@ end
 posterior.fe = fe;
 
 posterior.T = T;
-posterior.samples_theta = theta;
+theta = horzcat(theta{:});
+jm = model.graph{1}.htheta.model.jm;
+p0 = model.graph{1}.htheta.model.p0;
 
+for i = 1:numel(theta)
+    theta{i} = p0 + jm * theta{i};
 end
 
+posterior.ps_theta = theta;
+
+end

@@ -32,7 +32,8 @@ else
 end
 %k = blkdiag(k, k);
 k = njm' * k * njm;
-k = chol(k);
+max_eigs = eigs(k, 1);
+k = sparse(chol(k));
 
 if isscalar(inference.k)
     no_update = logical(inference.k) * ones(1, ni);
@@ -40,11 +41,10 @@ else
     no_update = inference.k;
 end
 
-sk = inference.kernel_scale;
+sk = inference.kernel_scale/max_eigs;
 
 no_update = diag(no_update);
-%no_update = blkdiag(no_update, no_update);
-no_update = njm' * no_update * njm;
+no_update = sparse(njm' * no_update * njm);
 
 % Create a kernel for each subject and each chain.
 % k is the covariance

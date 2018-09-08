@@ -1,0 +1,21 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2015 */
+
+#ifndef FMRI_FMRISTDRK4_BILINEAR_H
+#define FMRI_FMRISTDRK4_BILINEAR_H
+
+#include "mpdcm.hcu"
+#include "fmri_FmriCuda.hcu"
+
+struct FmriStandardRK4Bilinear : FmriCuda
+{
+    __device__
+    FmriStandardRK4Bilinear();
+    
+    __device__
+    virtual
+    int update_x(dbuff *ox, dbuff *y, dbuff *u, dbuff *nx);
+
+};
+
+#endif

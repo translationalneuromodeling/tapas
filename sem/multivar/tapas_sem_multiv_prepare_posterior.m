@@ -1,12 +1,12 @@
 function [posterior] = tapas_sem_multiv_prepare_posterior(data, model, ...
     inference, states)
-%% 
+%%
 %
 % aponteeduardo@gmail.com
 % copyright (C) 2016
 %
 
-T = states{end}.graph{1}.T;
+T = model.graph{1}.htheta.T;
 
 posterior = struct('data', data, 'model', model, 'inference', inference, ...
     'samples_theta', [], 'fe', [], 'llh', []);
@@ -44,7 +44,16 @@ end
 posterior.fe = fe;
 
 posterior.T = T;
-posterior.samples_theta = theta;
+
+theta = horzcat(theta{:});
+jm = model.graph{1}.htheta.model.jm;
+p0 = model.graph{1}.htheta.model.p0;
+
+for i = 1:numel(theta)
+    theta{i} = p0 + jm * theta{i};
+end
+
+posterior.ps_theta = theta;
 
 end
 
