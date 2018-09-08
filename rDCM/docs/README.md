@@ -1,12 +1,11 @@
 Regression dynamic causal modeling (rDCM)
-====================
+=========================================
+
+
+> Authors: Stefan Frässle (<stefanf@biomed.ee.ethz.ch>), Ekaterina I. Lomakina
 
 
 > Copyright (C) 2016-2018 
-
-> Stefan Frässle <stefanf@biomed.ee.ethz.ch>, Ekaterina I. Lomakina
-
-
 
 > Translational Neuromodeling Unit (TNU)
 
@@ -20,7 +19,6 @@ Download
 
 - Please download the latest stable versions of the rDCM Toolbox on GitHub as part of the 
   [TAPAS software releases of the TNU](https://github.com/translationalneuromodeling/tapas/releases).
-- Older versions of TAPAS are available on the [TNU website](http://www.translationalneuromodeling.org/tapas).
 - The latest bugfixes can be found in the [GitHub Issue Forum](https://github.com/translationalneuromodeling/tapas/issues) or by request to the authors. 
 - Changes between all versions will be documented in the 
   [CHANGELOG](https://tnurepository.ethz.ch/sfraessle/rDCM/blob/master/CHANGELOG.md).
@@ -33,11 +31,12 @@ Purpose
 
 The regression dynamic causal modeling (rDCM) toobox implements a novel variant 
 of DCM for fMRI that enables extremely efficient inference on effective (i.e.,
-directed) connectivity among brain regions (Frässle et al., 2017, 2018). Due to its
+directed) connectivity among brain regions. Due to its
 computational efficiency, inversion of large network models becomes feasible.
 
-The accompanying technical paper about the toolbox concept and methodology 
-can be found [here](http://dx.doi.org/10.1016/j.neuroimage.2017.02.090).
+The accompanying technical papers about the toolbox concept and methodology 
+can be found in [Frässle et al., 2017](https://www.sciencedirect.com/science/article/pii/S105381191730201X?via%3Dihub) 
+and [Frässle et al., 2018](https://www.sciencedirect.com/science/article/pii/S1053811918304762?via%3Dihub).
 
 
 
@@ -48,17 +47,20 @@ Installation
 1. Unzip the TAPAS archive in your folder of choice
 2. Open Matlab
 3. Add the rDCM Toolbox to your Matlab path
+4. Use the [Manual](docs/Manual.pdf) and the tutorial script `tapas_rdcm_tutorial()` as starting points
 
 
 
-Important Note
-----------
+Important Notes
+---------------
 
 Please note that rDCM is a method that is still in it's infancy and thus subject to 
 various limiations. Due to these limitations, requirements of rDCM in terms of 
-fMRI data quality (i.e., fast TR, high SNR) are relatively high. For data that does not
-meet these conditions, the method might not give reliable results. Please refer to the 
-main toolbox references for a more detailed picture.
+fMRI data quality (i.e., fast TR, high SNR) are high. For data that does not
+meet these conditions, the method might not give reliable results. It remains the 
+responsibility of each user to ensure that his/her dataset fulfills these 
+requirements. Please refer to the main toolbox references (see below) for more 
+detailed explanations.
 
 
 
@@ -101,3 +103,13 @@ General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program (see the file [LICENSE](LICENSE)).  If not, see
 <http://www.gnu.org/licenses/>.
+
+
+
+Acknowledgment
+---------------
+
+We would like to highlight and acknowledge that the rDCM toolbox uses some 
+functions that were publised as part of the Statistical Parameteric Mapping 
+([SPM](https://www.fil.ion.ucl.ac.uk/spm/software/)) toolbox. The respective 
+functions are marked with the prefix `tapas_rdcm_spm_`.
