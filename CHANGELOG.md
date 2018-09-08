@@ -20,6 +20,7 @@ TAPAS toolbox
 - Dropped 4 digits versioning for 3.
 - The version of tapas is now read from misc/log\_tapas.txt. It is the first
     line of this file.
+- Updated the documentation of SEM.
 - Updated SEM to include hierarchical models for inference.
 
 ### Removed
