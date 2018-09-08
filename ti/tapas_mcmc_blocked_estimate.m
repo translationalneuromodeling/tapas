@@ -19,7 +19,7 @@ if si > 0
     states{si} = sstate;
 end
 
-for i = 1:inference.niter + inference.nburnin
+for i = 2:inference.niter + inference.nburnin
     for j = 1:nfuncs
          method = inference.sampling_methods{j};
          state = method(data, model, inference, state);         

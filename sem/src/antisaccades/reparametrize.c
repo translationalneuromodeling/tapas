@@ -558,7 +558,7 @@ linearize_prosa(const PROSA_PARAMETERS *stheta, double *theta)
 
     theta[6] = stheta->t0;
     theta[7] = stheta->da;
-    theta[8] = exp(-0.5 * p0 - M_LN2 - lcosh(0.5 * p0));
+    theta[8] = 1.0 - exp(-0.5 * p0 - M_LN2 - lcosh(0.5 * p0));
 
    return 0;
 }
@@ -583,7 +583,8 @@ linearize_seria(const SERIA_PARAMETERS *stheta, double *theta)
 
     theta[8] = stheta->t0;
     theta[9] = stheta->da;
-    theta[10] = exp(-0.5 * p0 - M_LN2 - lcosh(0.5 * p0));
+    //atan(theta[10])/M_PI + 0.5;
+    theta[10] = 1.0 - exp(-0.5 * p0 - M_LN2 - lcosh(0.5 * p0));
 
     return 0;
 }

@@ -37,6 +37,24 @@ verify_input_theta_array(mxArray *theta, int dims_theta)
         mwSize stheta = mxGetNumberOfDimensions(i_params);
         mwSize *dtheta = mxGetDimensions(i_params);
 
+        if ( !mxIsNumeric(i_params) )
+        {
+             mexErrMsgIdAndTxt("tapas:sem:input",
+                    "Not all parameters are numeric.");
+        }
+
+        if ( !( mxGetClassID(i_params) == mxDOUBLE_CLASS )  )
+        {
+              mexErrMsgIdAndTxt("tapas:sem:input",
+                    "Not all parameters are double.");          
+        }
+
+        if ( !mxIsNumeric(i_params) )
+        {
+             mexErrMsgIdAndTxt("tapas:sem:input",
+                    "Not all parameters are numeric.");
+        }
+
         if ( stheta == 0 || stheta > 2)
         {
             mexErrMsgIdAndTxt("tapas:sem:input",

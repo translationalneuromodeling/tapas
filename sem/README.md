@@ -123,7 +123,7 @@ explains the meaning of each parameter.
 |8 | log variance hit time late pro. unit|
 |9 | log no decision time|
 |10 | log late units delay |
-|11 | logit of the probability of an early outlier|
+|11 | logit of 1 minus the probability of an early outlier|
 
 All the parameters are in a scale from \(-\infty\) to \(\infty\). The
 appropriate transformations are implemented internally depending on the
@@ -339,7 +339,7 @@ The results from the model are
 |pP|[22x1 double]| Variance of the parameters |
 |map|[22x1 double]| Maximum a posterior from the samples|
 |ps_theta|[22x4000| Samples from the posterior distribution|
-|F|-799.6920| Log model evidence estimate|
+|fe|-799.6920| Log model evidence estimate|
 |data|[1x1 struct]| Data input|
 |ptheta|[1x1 struct]| Input parameters (see above)|
 |htheta|[1x1 struct]| Input parameters (see above)|
@@ -523,7 +523,7 @@ X =
     -1     0     0     1
     -1     0     0     1
 ```
- Note that no population mean (or overall intercept) is 
+Note that no population mean (or overall intercept) is 
 modeled. This corresponds to the mean of the subject specific intercept.
 To do this, we group regressors 2 to 4 in the variable `ptheta.mixed`
 ```matlab
@@ -571,6 +571,53 @@ display(posterior);
 
 ```
 The structure return has the same fields as 'tapas_sem_hier_estimate'.
+
+## Parameter interpretation
+The parameters returned by the model are mostly in log scale and represent
+the mean and variance of the hit time of the units. However, several points
+are noteworthy.
+
+The hit time of the early and inhibitory unit is shifted by the overall 
+delay of all units (parameter 9). The hit time of the late units
+is shifted by the overall delay and the delay of the late units (parameter 9
+and 10).
+
+It is possible to transform the unit parameters
+to more standard parametrizations. For example, the
+[Gamma distribution](https://en.wikipedia.org/wiki/Gamma_distribution)
+is usually represented by a shape and a scale parameter. To transform
+posterior samples to these parametrizations use the functions in the table 
+below. Note that
+the input should be a cell array of vectors of 11xM rows and 1 column
+(SERIA), or 9xM rows and 1 column (PROSA).
+
+|Parametric  | SERIA  | PROSA  |
+|------------|----------------|----------------|
+|Gamma       |`c_seria_reparametrize_gamma`|`c_prosa_reparametrize_gamma`|
+|Inv. Gamma  |`c_seria_reparametrize_invgamma`|`c_prosa_reparametrize_invgamma`|
+|Mixed Gamma |`c_seria_reparametrize_mixedgamma`|`c_prosa_reparametrize_mixedgamma`|
+|Log Norm.   |`c_seria_reparametrize_lognorm`|`c_prosa_reparametrize_lognorm`|
+|Later       |`c_seria_reparametrize_later`|`c_prosa_reparametrize_later`|
+|Wald        |`c_seria_reparametrize_wald`|`c_prosa_reparametrize_wald`|
+
+The parametrizations of the distributions are given in the following equations
+### Gamma distribution
+Shape-scale parametrization:
+\(p(t|a, b) = \frac{1}{\Gamma(a) b^a} t^{a-1} \exp (-t/b). \)
+### Inverse Gamma
+Shape-scale parametrization:
+\(p(t| a, b) = \frac{b^a}{\Gamma(a) t^{-a - 1}} \exp \left( -\frac{b}{t}\right). \)
+### Lognormal
+The parametrization is the \(\mu,\sigma^2\):
+\(p(t|\mu,\sigma^2) = \frac{1}{t\sigma \sqrt{2\pi}} \exp \left(- (\ln t - \mu)^2 / 2\sigma^2 \right). \)
+### Later
+In the later model, the representation used by SERIA is not the mean
+and variance, but the \(\mu\) and \(\sigma^2\) parameterization:
+\(p(t| \mu, \sigma^2) = \frac{1}{\phi(t/\sigma)} \exp \left(- \frac{(x-\mu)^2}{2 \sigma^2} \right), \)
+\( \phi(x) = \int_0^x \exp(- \tau^2/2 ) d\tau. \)
+### Wald
+The parametrization is the \(\lambda,\mu\) representation:
+\(p(t|\mu,\lambda) = \sqrt{\frac{\lambda}{2\pi t^3}} \exp \left( \lambda (t - \mu)^3/(2t\mu^2) \right). \)
 
 # Installation
 SEM contains matlab, python, and c code. The c code uses efficient 

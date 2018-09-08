@@ -94,4 +94,9 @@ if ~isfield(inference, 'ndiag')
     end
 end 
 
+% Scale of the kernel 
+if ~isfield(inference, 'kernel_scale')
+    inference.kernel_scale = 0.1 * 0.1;
+end
+
 end

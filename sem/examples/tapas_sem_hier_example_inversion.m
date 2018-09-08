@@ -1,4 +1,4 @@
-function tapas_sem_hier_example_inversion(model, param, fp)
+function [posterior] = tapas_sem_hier_example_inversion(model, param)
 %% Test 
 %
 % fp -- Pointer to a file for the test output, defaults to 1
@@ -19,17 +19,7 @@ if nargin < n
     param = 'mixedgamma';
 end
 
-n = n + 1;
-if nargin < n
-    fp = 1;
-end
-
-fname = mfilename();
-fname = regexprep(fname, 'test_', '');
-
-fprintf(fp, '================\n Test %s\n================\n', fname);
-
-[data] = prepare_data();
+[data] = load_data();
 
 switch model
 case 'seria'
@@ -52,7 +42,7 @@ case 'seria'
     ptheta.jm = [...
         eye(19)
         zeros(3, 8) eye(3) zeros(3, 8)];
-
+   ptheta.p0(11) = tapas_logit([0.005], 1);
 case 'prosa'
     ptheta = tapas_sem_prosa_ptheta(); % Choose at convinience.
     switch param
@@ -78,15 +68,16 @@ end
 
 pars = struct();
 
-pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
-pars.nburnin = 1000;
-pars.niter = 1000;
+pars.T = ones(4, 1) * linspace(0.1, 1, 1).^5;
+pars.nburnin = 5000;
+pars.niter = 5000;
 pars.ndiag = 500;
-pars.mc3it = 16;
+pars.mc3it = 4;
 pars.verbose = 1;
 
 display(ptheta);
 inference = struct();
+inference.kernel_scale = 0.1 * 0.1;
 tic
 posterior = tapas_sem_hier_estimate(data, ptheta, inference, pars);
 toc
@@ -95,76 +86,13 @@ display(posterior);
 
 end
 
-function [data] = prepare_data()
-%% Prepares the test data
-
-NDTIME = 100;
+function [data] = load_data()
 
 f = mfilename('fullpath');
 [tdir, ~, ~] = fileparts(f);
 
-% Files are delimited with a tab and skip the header
-d = dlmread(fullfile(tdir, 'data', 'sbj02.csv'), '\t', 1, 0);
+data = load(fullfile(tdir, 'data', 'example_data.mat'));
 
-%Filter out unreasonably short reactions
-
-nt = size(d, 1);
-
-y = struct('t', [], 'a', [], 'b', []);
-
-% Subject and block
-u.s = d(:, 1);
-u.b = d(:, 2);
-
-% Invalid trials are shorter than 100 ms
-y.i = d(:, 7) < NDTIME;
-% Shift and rescale the data
-y.t = d(:, 7)/100;
-
-% Is it a prosaccade or an antisaccade
-lr = zeros(nt, 1);
-% Saccade to the left
-lr(d(:, 6) < 640) = 1;
-% Up to hear prosaccades are 1 and antisaccades are 0
-y.a = lr == d(:, 5);
-y.a = double(y.a);
-
-u.tt = d(:, 4);
-
-t0 = y.a == 0;
-t1 = y.a == 1;
-
-y.a(t0) = 1;
-y.a(t1) = 0;
-
-t0 = u.tt == 0;
-t1 = u.tt == 1;
-
-y.a = y.a(~y.i);
-y.t = y.t(~y.i);
-
-u.s = u.s(~y.i);
-u.b = u.b(~y.i);
-u.tt = u.tt(~y.i);
-
-y.i = y.i(~y.i);
-
-data = struct('y', cell(3, 1), 'u', []);
-j = 1;
-for i = unique(u.b)'
-    data(j).y = struct();
-    data(j).u = struct();
-
-    data(j).y.a = y.a(u.b == i);
-    data(j).y.t = y.t(u.b == i);
-    data(j).y.i = y.i(u.b == i);
-
-    data(j).u.s = u.s(u.b == i);
-    data(j).u.b = u.b(u.b == i);
-    data(j).u.tt = u.tt(u.b == i);
-
-
-    j = j + 1;
-end
+data = data.data;
 
 end

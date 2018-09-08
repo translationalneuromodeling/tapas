@@ -50,7 +50,7 @@ if ~isfield(pars, 'seed')
 end
 
 if ~isfield(pars, 'samples')
-    pars.samples = 0;
+    pars.samples = 1;
 end
 
 if pars.seed > 0
@@ -188,14 +188,16 @@ ps.pP = mean(ptrans(pp_theta), 2);
 [~, i] = max(elps(1, :));
 ps.map = ptrans(ps_theta(:, i));
 % Posteriors of theta
-ps.ps_theta = ps_theta;
-pa.llh = [];
+ps_theta = mat2cell(ps_theta, size(ps_theta, 1), ...
+    ones(1, size(ps_theta, 2)));
+ps.llh = [];
+ps.ps_theta = [];
 if pars.samples
     ps.ps_theta = ps_theta;
     ps.llh = ellh;
 end
 % Free energy
-ps.F = fe;
+ps.fe = fe;
 % Log likelihood of posterior
 % Initial values
 ps.data = data;

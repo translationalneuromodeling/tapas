@@ -44,7 +44,16 @@ end
 posterior.fe = fe;
 
 posterior.T = T;
-posterior.samples_theta = theta;
+
+theta = horzcat(theta{:});
+jm = model.graph{1}.htheta.model.jm;
+p0 = model.graph{1}.htheta.model.p0;
+
+for i = 1:numel(theta)
+    theta{i} = p0 + jm * theta{i};
+end
+
+posterior.ps_theta = theta;
 
 end
 

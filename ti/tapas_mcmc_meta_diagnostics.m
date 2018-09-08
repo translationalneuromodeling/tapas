@@ -21,8 +21,7 @@ if ~mod(si, inference.ndiag)
     for i = 1:inference.ndiag
         v = v + states{tsi + i}.v;
     end
-    
-    fprintf(1, 'Sample: %d\n', state.nsample);
+    fprintf(1, 'Sample: %d\n', state.nsample + 1);
     fprintf(1, 'Accept rate: ');
     fprintf(1, '%0.2f, ', mean(v, 1)/inference.ndiag);
     fprintf(1, '\n');

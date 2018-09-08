@@ -108,7 +108,7 @@ end
 
 % Scale of the kernel 
 if ~isfield(inference, 'kernel_scale')
-    inference.kernel_scale = 0.1;
+    inference.kernel_scale = 0.1 * 0.1;
 end
 
 
