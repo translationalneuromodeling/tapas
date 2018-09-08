@@ -102,6 +102,7 @@ wrapper_prosa_n_states(
     svals.theta = mxGetPr(prhs[3]);
 
     svals.nt = *mxGetDimensions(prhs[0]);
+    verify_input_theta_array(prhs[3], DIM_PROSA_THETA);
 
     nd = mxGetNumberOfDimensions(prhs[3]);
     np = mxGetDimensions(prhs[3]);
@@ -110,11 +111,6 @@ wrapper_prosa_n_states(
     {
         // For a weird reason empty dimensions are set to zero.
         na *= (np[i] == 0)? 1: np[i];
-    }
-
-    if (nd == 0 )
-    {
-         mexErrMsgIdAndTxt("tapas:sem:input", "Empty input.");
     }
 
     if ( na % DIM_PROSA_THETA != 0)
@@ -155,25 +151,17 @@ wrapper_seria_n_states(
     svals.u = mxGetPr(prhs[2]);
     svals.theta = mxGetPr(prhs[3]);
 
+    verify_input_theta_array(prhs[3], DIM_SERIA_THETA);
     svals.nt = *mxGetDimensions(prhs[0]);
 
     nd = mxGetNumberOfDimensions(prhs[3]);
     np = mxGetDimensions(prhs[3]);
 
+
     for (i = 0; i < nd; i++)
     {
         // For a weird reason empty dimensions are set to zero.
         na *= (np[i] == 0)? 1: np[i];
-    }
-
-    if (nd == 0 )
-    {
-         mexErrMsgIdAndTxt("tapas:sem:input", "Empty input."); 
-    }
-
-    if ( na % DIM_SERIA_THETA != 0)
-    {
-        mexErrMsgIdAndTxt("tapas:sem:input", "Dimensions are not correct"); 
     }
 
     svals.np = na / DIM_SERIA_THETA;
@@ -207,6 +195,8 @@ wrapper_seria_multi(
 
     if ( nrhs != 2 )
         HANDLE_CERROR_MSG( 1 , "Wrong right size assignments." );
+
+    verify_input_theta_array(prhs[1], DIM_SERIA_THETA);
 
     plhs[0] = mxCreateDoubleMatrix(ns, nc, mxREAL);
     llh = mxGetPr(plhs[0]);
@@ -276,6 +266,8 @@ wrapper_prosa_multi(
 
     if ( nrhs != 2 )
         HANDLE_CERROR_MSG( 1 , "Wrong right size assignments." );
+
+    verify_input_theta_array(prhs[1], DIM_PROSA_THETA);
 
     plhs[0] = mxCreateDoubleMatrix(ns, nc, mxREAL);
     llh = mxGetPr(plhs[0]);
