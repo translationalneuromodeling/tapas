@@ -2,7 +2,8 @@ Hierarchical Unsupervised Generative Embedding Toolbox (HUGE)
 =============================================================
 
 This toolbox implements variational Bayesian inversion for hierarchical 
-unsupervised generative embedding (HUGE). To get started, read the tutorial
+unsupervised generative embedding (HUGE). To get started, read the 
+[tutorial](huge_tutorial.html), which you can also open in Matlab:
 ```
     open huge_tutorial.html
 ```
