@@ -101,11 +101,11 @@ function r = tapas_simModel(inputs, prc_model, prc_pvec, varargin)
 %     structure returned by tapas_simModel(...) as its only argument.
 %
 % EXAMPLE:
-%     sim = tapas_simModel(inputs, 'tapas_hgf_binary', [0, 1, 0, 1, 1 -2.3, 0.001], 'tapas_unitsq_sgm', 2);
+%     sim = tapas_simModel(inputs, 'tapas_hgf_binary', [NaN 0 1 NaN 1 1 NaN 0 0 1 1 NaN -2.5 -6], 'tapas_unitsq_sgm', 2);
 %     tapas_hgf_binary_plotTraj(sim)
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2012-2018 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL

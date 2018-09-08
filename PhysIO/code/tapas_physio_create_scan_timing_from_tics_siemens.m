@@ -38,20 +38,40 @@ function [VOLLOCS, LOCS, verbose] = ...
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
-%
-% $Id$
+
 DEBUG = verbose.level >=3;
+iSelectedEcho = 1; % extract data from first echo only
 
+%% Extract relevant columns slices/volumes/tic timing/echoes
 
-C = tapas_physio_read_files_siemens_tics(log_files.scan_timing, 'INFO');
+[C, columnNames] = tapas_physio_read_files_siemens_tics(log_files.scan_timing, 'INFO');
 
 dtTicSeconds = 2.5e-3;
 
 idVolumes       = C{1};
 idSlices        = C{2};
+ticsAcq         = double(C{3}); % for later computations in seconds, make double
+
+%% check for multiple echoes and only extract time stamp for first one for now
+iColumnEcho = tapas_physio_find_string(columnNames, 'ECHO');
+
+% get echo labels or create all-zero, if non-existing
+if isempty(iColumnEcho)
+    idEchoes = zeros(size(idVolumes));
+else
+    idEchoes = C{iColumnEcho};
+end
+
+idVolumes   = idVolumes(idEchoes == (iSelectedEcho-1)); % echoes count from 0
+idSlices    = idSlices(idEchoes == (iSelectedEcho-1));
+ticsAcq     = ticsAcq(idEchoes == (iSelectedEcho-1));
+
+
+%% Convert times into seconds and search next neighbour for closest 
+% slice/vol time stamp match to time vector
 
 % HACK: take care of interleaved acquisition; multiband?
-ticsAcq         = sort(double(C{3}));
+ticsAcq         = sort(ticsAcq);
 tAcqSeconds     = ticsAcq*dtTicSeconds - t_start; % relative timing to start of phys logfile
 
 % find time in physiological log time closest to time stamp of acquisition

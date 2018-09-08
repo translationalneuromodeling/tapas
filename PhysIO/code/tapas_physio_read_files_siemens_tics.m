@@ -1,4 +1,4 @@
-function C = tapas_physio_read_files_siemens_tics(fileName, fileType)
+function [C, columnNames] = tapas_physio_read_files_siemens_tics(fileName, fileType)
 % Reads _PULS, _RESP, _ECG, _Info-files from Siemens tics format with
 % multiple numbers of columns and different column headers
 %
@@ -12,6 +12,7 @@ function C = tapas_physio_read_files_siemens_tics(fileName, fileType)
 %               Physio_*_ECG.log -> log
 % OUT
 %   C           cell(1, nColumns) of cells(nRows,1) of values
+%   columnNames cell(1, nColumns) of column names
 %
 % EXAMPLE
 %   tapas_physio_read_files_siemens_tics('Physio_RESP.log', 'RESP')
@@ -97,6 +98,9 @@ while ~haveFoundColumnHeader
     strLine = fgets(fid);
     haveFoundColumnHeader = any(regexp(upper(strLine), strColumnHeader));
 end
+
+columnNames = regexp(strLine, '([\w]*)', 'tokens'); 
+columnNames = [columnNames{:}]; % cell of cell into cell of strings
 fclose(fid);
 
 nColumns = numel(regexp(strLine, ' *')) + 1; % columns are separated by arbitrary number of spaces

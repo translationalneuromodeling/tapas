@@ -79,10 +79,10 @@ function [hessf, err] = tapas_riddershessian(f, x, varargin)
     for i = 1:n
         
         % Construct filehandle to be passed to riddersdiff2
-        fxi = @(xi) fxi(f,x,i,xi);
+        fxih = @(xi) fxi(f,x,i,xi);
         
         % Calculate derivative
-        [hessf(i,i), err(i,i)] = tapas_riddersdiff2(fxi,x(i),options);
+        [hessf(i,i), err(i,i)] = tapas_riddersdiff2(fxih,x(i),options);
     end
 
     % Second: off-diagonal elements
@@ -91,10 +91,10 @@ function [hessf, err] = tapas_riddershessian(f, x, varargin)
         for j = 1:i-1 % columns
         
             % Construct filehandle to be passed to riddersdiffcross
-            fxixj = @(xixj) fxixj(f,x,i,j,xixj);
+            fxixjh = @(xixj) fxixj(f,x,i,j,xixj);
         
             % Calculate cross-derivative
-            [hessf(i,j), err(i,j)] = tapas_riddersdiffcross(fxixj,[x(i),x(j)],options);
+            [hessf(i,j), err(i,j)] = tapas_riddersdiffcross(fxixjh,[x(i),x(j)],options);
             hessf(j,i) = hessf(i,j);
             err(j,i)   = err(i,j);
         end

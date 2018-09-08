@@ -1,6 +1,6 @@
 ![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
 
-*Version 2.7.4.1*
+*Version 3.0.0*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================

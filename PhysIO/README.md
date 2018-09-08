@@ -1,7 +1,7 @@
 TAPAS PhysIO Toolbox 
 ====================
 
-*Current version: 2017.3*
+*Current version: 2018.1*
 
 > Copyright (C) 2012-2018 Lars Kasper <kasper@biomed.ee.ethz.ch>
 
@@ -54,21 +54,34 @@ can be found at: https://doi.org/10.1016/j.jneumeth.2016.10.019
 Installation
 ------------
 
-### Matlab ###
-- Unzip the TAPAS archive
-- Add tapas/physio/code to your matlab path
+### Matlab
+1. Unzip the TAPAS archive in your folder of choice
+2. Open Matlab
+3. Go to `/your/path/to/tapas/physio/code`
+4. Run `tapas_physio_init()` in Matlab
 
-### SPM ###
-- Certain functionality (Batch Editor GUI, pipeline dependencies, model assessment via F-contrasts) require the installation of SPM
-- Afterwards, the PhysIO Toolbox has to be registered as an SPM toolbox by copying the `physio/code` folder to `spm/toolbox/physio`
+
+*Note*: Step (4) executes the following steps, which you could do manually as well.
+- Adds the `physio/code/` folder to your Matlab path
+- Adds SPM to your Matlab path (you can enter it manually, if not found)
+- Links the folder (Linux/Max) or copies the folder (Windows) `physio/code/` to `/your/path/to/SPM/toolbox/PhysIO`, if the PhysIO code is not already found there  
+
+Only the first point is necessary for using PhysIO standalone with Matlab.
+The other two points enable PhysIO's SPM integration, i.e., certain functionality 
+(Batch Editor GUI, pipeline dependencies, model assessment via F-contrasts).
 
 
 Getting Started
 ---------------
 
-1. Download the toolbox example repository `physio-examples` from our [website](https://www.tnu.ethz.ch/en/software/tapas/data.html)
-2. Run `example_main_ECG3T.m` in subdirectory `Philips/ECG3T`
+...following the installation, you can try out an example:
+
+1. Download the TAPAS examples via running `tapas_download_example_data()` (found in `misc`-subfolder of TAPAS)
+    - The PhysIO Example files will be downloaded to `tapas/examples/<tapas-version>/PhysIO`
+2. Run `philips_ecg3t_matlab_script.m` in subdirectory `Philips/ECG3T`
 3. See subdirectory `physio/docs` and the next two section of this document for help.
+
+You may try any of the examples in the other vendor folders as well.
 
 
 Contact/Support
@@ -81,11 +94,11 @@ pointers and templates. Before you contact us, please try the following:
 
 1. A first look at the [FAQ](https://gitlab.ethz.ch/physio/physio-doc/wikis/FAQ) 
    (which is frequently extended) might already answer your questions.
-2. A lot of questions have also been discussed on our mailinglist 
+2. A lot of questions (before 2018) have also been discussed on our mailinglist 
    [tapas@sympa.ethz.ch](https://sympa.ethz.ch/sympa/info/tapas), 
    which has a searchable [archive](https://sympa.ethz.ch/sympa/arc/tapas).
 3. For new requests, we would like to ask you to submit them as 
-   [issues](https://github.com/translationalneuromodeling/tapas/issues) on our github release page for TAPAS.
+   [issues](https://github.com/translationalneuromodeling/tapas/issues) on our github release page for TAPAS, which is also an up-to-date resource to user-driven questions (since 2018).
 
 
 Documentation
@@ -150,7 +163,7 @@ Model-based correction of physiological noise:
 Features of this Toolbox
 ------------------------
 
-### Physiological Noise Modeling ###
+### Physiological Noise Modeling
 
 - Modeling physiological noise regressors from peripheral data 
   (breathing belt, ECG, pulse oximeter) 
@@ -163,13 +176,14 @@ Features of this Toolbox
 - Data-driven noise regressors
     - PCA extraction from nuisance ROIs (CSF, white matter), similar to aCompCor (Behzadi2007)
 
-### Automatization and Performance Assessment ###
+### Automatization and Performance Assessment
+
 - Automatic creation of nuisance regressors, full integration into standard 
   GLMs, tested for SPM8/12 ("multiple_regressors.mat")
 - Integration in SPM Batch Editor: GUI for parameter input, dependencies to integrate physiological noise correction in preprocessing pipeline
 - Performance Assessment: Automatic F-contrast and tSNR Map creation and display for groups of physiological noise regressors, using SPM GLM tools
 
-### Flexible Read-in ###
+### Flexible Read-in
 
 The toolbox is dedicated to seamless integration into a clinical research s
 etting and therefore offers correction methods to recover physiological 
@@ -226,10 +240,13 @@ Contributors
 References
 ----------
 
-### Main Toolbox Reference ###
+### Main Toolbox Reference
+
 1. Kasper, L., Bollmann, S., Diaconescu, A.O., Hutton, C., Heinzle, J., Iglesias, S., Hauser, T.U., Sebold, M., Manjaly, Z.-M., Pruessmann, K.P., Stephan, K.E., 2017. The PhysIO Toolbox for Modeling Physiological Noise in fMRI Data. Journal of Neuroscience Methods 276, 56–72. doi:10.1016/j.jneumeth.2016.10.019
 
-### Related Papers (Implemented noise correction algorithms) ###
+### Related Papers (Implemented noise correction algorithms)
+
+#### RETROICOR 
 2. Glover, G.H., Li, T.Q. & Ress, D. Image‐based method for retrospective correction
 of PhysIOlogical motion effects in fMRI: RETROICOR. Magn Reson Med 44, 162-7 (2000).
 
@@ -240,22 +257,28 @@ NeuroImage 57, 101‐112 (2011).
 Disentangling signal from PhysIOlogical noise. Journal of Magnetic Resonance
 Imaging 28, 1337‐1344 (2008).
 
+#### aCompCor / Noise ROIs 
 5. Behzadi, Y., Restom, K., Liau, J., Liu, T.T., 2007. A component based noise
 correction method (CompCor) for BOLD and perfusion based fMRI. NeuroImage 37,
 90–101. doi:10.1016/j.neuroimage.2007.04.042
     
+#### RVT
 6. Birn, R.M., Smith, M.A., Jones, T.B., Bandettini, P.A., 2008. The respiration response
 function: The temporal dynamics of fMRI s ignal fluctuations related to changes in
 respiration. NeuroImage 40, 644–654. doi:10.1016/j.neuroimage.2007.11.059
     
+#### HRV
 7. Chang, C., Cunningham, J.P., Glover, G.H., 2009. Influence of heart rate on the
 BOLD signal: The cardiac response function. NeuroImage 44, 857–869.
 doi:10.1016/j.neuroimage.2008.09.029
     
+#### Motion (Censoring, Framewise Displacement)
 8. Siegel, J.S., Power, J.D., Dubis, J.W., Vogel, A.C., Church, J.A., Schlaggar, B.L.,
 Petersen, S.E., 2014. Statistical improvements in functional magnetic resonance
 imaging analyses produced by censoring high-motion data points. Hum. Brain Mapp.
 35, 1981–1996. doi:10.1002/hbm.22307
+
+9. Power, J.D., Barnes, K.A., Snyder, A.Z., Schlaggar, B.L., Petersen, S.E., 2012. Spurious but systematic correlations in functional connectivity MRI networks arise from subject motion. NeuroImage 59, 2142–2154. https://doi.org/10.1016/j.neuroimage.2011.10.018
 
 
 Copying/License

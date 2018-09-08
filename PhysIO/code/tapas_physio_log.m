@@ -44,7 +44,12 @@ if verbose.level >=0 || warningLevel == 2
         case 2
             filenameProcessLog = sprintf('tapas_physio_error_process_log_%s.mat', ...
                 datestr(now, 'yyyy-mm-dd_HHMMSS'));
-            save(filenameProcessLog, 'verbose');
+            try
+                save(filenameProcessLog, 'verbose');
+            catch
+                warning(['Could not save verbose info in %s, ' ...
+                    'throwing original error now:'], filenameProcessLog);
+            end
             error(msg);
         case 1
             warning(msg);

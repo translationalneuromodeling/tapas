@@ -44,7 +44,7 @@ v(1,:) = v_0;
 
 % Pass through value update loop
 for k = 2:1:n
-    if not(ismember(k, r.ign))
+    if not(ismember(k-1, r.ign))
         
         %%%%%%%%%%%%%%%%%%%%%%
         % Effect of input u(k)
