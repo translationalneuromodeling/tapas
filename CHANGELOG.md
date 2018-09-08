@@ -1,7 +1,7 @@
 # Changelog
 TAPAS toolbox 
 
-## Unreleased
+## [3.0.0] 2018-08-10
 
 ### Added
 - tapas\_get\_tapas\_revision.m outputs the branch and hash of the repository.
@@ -31,6 +31,7 @@ TAPAS toolbox
 - New version of the PhysIO toolbox (R2018.1). Details in tapas/PhysIO/CHANGELOG.md.
 - tapas_init.m displays a message to download the data in case the examples
     directory is not present.
+- Update MPDCM for supporting up to cuda 9.0 and openmp.
 
 ### Removed
 - Deleted the gpo folder.
