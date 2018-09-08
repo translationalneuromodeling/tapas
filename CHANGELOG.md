@@ -1,7 +1,7 @@
 # Changelog
 TAPAS toolbox 
 
-## Unreleased
+## [3.0.0] 2018-08-10
 
 ### Added
 - tapas\_get\_tapas\_revision.m outputs the branch and hash of the repository.
