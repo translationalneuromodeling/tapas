@@ -19,9 +19,10 @@ end
 
 if ~isfield(inference, 'sampling_methods')
     inference.sampling_methods = {
-        @(d, m, i, s) tapas_mh_mc3_adaptive_ti_sample_node(d, m, i, s, 2), ... 
+        @(d, m, i, s) tapas_mh_mc3_tempering_sample_node(d, m, i, s, 2), ... 
         @(d, m, i, s) tapas_sampler_mdlinear_gibbs_node(d, m, i, s, 3), ...
-        @tapas_sampler_mc3g ...  Use population mcmc step with generalized
+        @tapas_sampler_mc3_tempering
+        ...  Use population mcmc step with generalized
         % Temperature for possibly Bayesian predictive distribution.
         };
 end
@@ -107,7 +108,7 @@ end
 
 % Scale of the kernel 
 if ~isfield(inference, 'kernel_scale')
-    inference.kernel_scale = 0.1;
+    inference.kernel_scale = 0.1 * 0.1;
 end
 
 

@@ -23,7 +23,8 @@ state.kernel = cell(4, 1);
 state.T = cell(4, 1);
 
 state.graph{1} = data;
-state.graph{2} = struct('y', [], 'u', []);
+state.graph{2} = struct('y', [], ...
+    'u', struct('temperature_ordering', uint16(1:nc)));
 
 state.graph{2}.y = cell(ns, nc);
 state.graph{2}.y(:) = {mu};

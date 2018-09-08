@@ -18,13 +18,11 @@ from scipy.integrate import cumtrapz
 from scipy import stats
 
 import containers
-import reparametrize as reparam
-import likelihoods 
-       
+
 class Fits(containers.TimeSeries):
     ''' An object containing the fits. '''
 
-    fields = ['pp', 'pa', 'ap', 'aa']
+    fields = ('pp', 'pa', 'ap', 'aa')
 
     def __init__(self, *args, **kargs):
 
@@ -45,12 +43,39 @@ class Fits(containers.TimeSeries):
 
         return nobj
 
+def generalize_fits_factory(trials):
+
+    class GeneralizedFits(containers.TimeSeries):
+
+        fields = trials
+
+        def __init__(self, *args, **kargs):
+
+            super(GeneralizedFits, self).__init__(*args, **kargs)
+
+            return
+
+        def scale(self, fields):
+
+            nobj = deepcopy(self)
+
+            for key in fields:
+                # Make sure that this key is acceptable
+                if not key in self.__class__.fields:
+                    raise(KeyError)
+
+                nobj.__dict__[key] = self.__dict__[key] * fields[key]
+
+            return nobj
+
+    return GeneralizedFits
+
 def generate_llh_no_outliers(theta, model, time, t0):
-    ''' Generate the likelihood of a model but zero everything below t0. 
-    
+    ''' Generate the likelihood of a model but zero everything below t0.
+
     theta       -- Array of double
     model       -- likelihood function
-    time        -- A vector of time points. 
+    time        -- A vector of time points.
 
     '''
 
@@ -65,13 +90,35 @@ def generate_llh_no_outliers(theta, model, time, t0):
 
     return Fits(results)
 
+def generalized_llh(theta, model, time, trials):
+
+    ns = len(time)
+
+    a = np.zeros((ns, 1))
+    tt = np.zeros((ns, 1))
+
+    results = {'time': time}
+    for trial in trials:
+        a[:] = trial[0]
+        tt[:] = trial[1]
+        results[trial] = model(time, a, tt, theta)
+
+    return results
+
+
+def generalized_fits(theta, model, time, trials):
+
+    llh = generalized_llh(theta, model, time, trials)
+    LocalFits = generalize_fits_factory(trials)
+
+    return LocalFits(llh)
 
 def generate_llh(theta, model, time):
-    ''' Generate the likelihood of a model. 
-    
+    ''' Generate the likelihood of a model.
+
     theta       -- Array of double
     model       -- likelihood function
-    time        -- A vector of time points. 
+    time        -- A vector of time points.
 
 
     '''
@@ -79,22 +126,22 @@ def generate_llh(theta, model, time):
     ns = len(time)
 
     a = np.zeros((ns, 1))
-    tt = np.zeros((ns, 1)) 
+    tt = np.zeros((ns, 1))
 
     results = {'time': time}
 
     # Prosaccades in prosaccade trial
     results['pp'] = model(time, a, tt, theta)
-        
+
     # Prosaccade in antisccade trial
     tt[:] = 1
     results['ap'] = model(time, a, tt, theta)
 
     # Antisaccade in prosaccade trial
-    
+
     a[:] = 1
     tt[:] = 0
-    
+
     results['pa'] = model(time, a, tt, theta)
 
     # Antisaccad in antisaccade trial
@@ -109,8 +156,8 @@ def generate_llh(theta, model, time):
 
 
 def gen_llh(theta, model, maxt=8.0, ns=100):
-    ''' Generate the likelihood of a model. 
-    
+    ''' Generate the likelihood of a model.
+
     theta       -- Array of double
     model       -- likelihood function
     maxt        -- Limit of integration
@@ -120,11 +167,11 @@ def gen_llh(theta, model, maxt=8.0, ns=100):
     '''
 
     # Time offset
-    
+
     t = np.linspace(0.0, maxt, ns)
- 
+
     return generate_llh(theta, model, t)
-    
+
 def generate_fits(theta, model, maxt=8.0, ns=100):
 
     results = gen_llh(theta, model, maxt, ns)
@@ -133,5 +180,5 @@ def generate_fits(theta, model, maxt=8.0, ns=100):
 
 
 if __name__ == '__main__':
-    pass    
+    pass
 

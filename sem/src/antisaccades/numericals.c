@@ -51,6 +51,13 @@ wald_cdf(double x, double mu, double lambda)
 }
 
 double
+wald_lcdf(double x, double mu, double lambda)
+{
+    return log(wald_cdf(x, mu, lambda));
+}
+
+
+double
 wald_sf(double x, double mu, double lambda)
 {
 
@@ -103,7 +110,6 @@ nwald_gslint(double t0, double x, double mu1, double mu2, double sig1,
     return v;
 }
 
-
 double
 invgamma_lpdf(double x, double k, double t)
 {
@@ -120,6 +126,13 @@ invgamma_lpdf(double x, double k, double t)
     SOONER_GSLERROR( gsl_sf_lngamma_e( k, &gr ) );
 
     return -gr.val - ((k + 1) * log(x)) - (t/x ) + (k * log(t));
+}
+
+double
+invgamma_pdf(double x, double k, double t)
+{
+
+    return exp(invgamma_lpdf(x, k, t));
 }
 
 double
@@ -241,6 +254,13 @@ gamma_lpdf(double x, double k, double t)
 }
 
 double
+gamma_pdf(double x, double k, double t)
+{
+
+    return gamma_lpdf(x, k, t);
+}
+
+double
 gamma_cdf(double x, double k, double t)
 {
     // Gamma log pdf
@@ -291,6 +311,14 @@ lognorm_lpdf(double x, double mu, double sigma)
 
     // Provide a bit of numerical stability to the data. 
     return  - log(x * sigma) - 0.5 * LOG2PI - 0.5 * tv * tv;
+}
+
+double
+lognorm_pdf(double x, double mu, double sigma)
+{
+    double prob = exp(lognorm_lpdf(x, mu, sigma));
+
+    return prob;
 }
 
 double
@@ -542,7 +570,13 @@ ngamma_gslint(double t0, double x, double a, double b, double c0, double c1)
 
     af.function = &dngamma;
     af.params = pars;
-    gsl_integration_qng(&af, t0, x, SEM_TOL, SEM_RTOL, &v, &aberr, &neval);
+    SOONER_GSLERROR(gsl_integration_qng(&af, t0, x, SEM_TOL, SEM_RTOL, &v,
+               &aberr, &neval));
+
+    if (aberr > 0.001)
+    {
+        return GSL_NEGINF;
+    }
 
     return v * gr.val * pow(c0, -a);
 }
@@ -556,12 +590,13 @@ dninvgamma(double x, void *vpars)
     double b = pars[1];
     double c0 = pars[2];
     double c1 = pars[3];
+    double c2 = pars[4];
     double r;
 
     gsl_sf_result gr;
 
     SOONER_GSLERROR( gsl_sf_gamma_inc_Q_e(b, c1 / x, &gr) );
-    r = exp(-c0 / x - (a + 1) * log(x) + log(gr.val));
+    r = exp(-c0 / x - (a + 1) * log(x) + c2) * gr.val;
 
     return r;
 }
@@ -579,20 +614,34 @@ ninvgamma_gslint(double xs, double xe, double a, double b, double c0,
     double pars[5];
     double v;
     double aberr;
-    size_t neval;
+    int neval; 
 
-    SOONER_GSLERROR( gsl_sf_gammainv_e(a, &gr) );
+    SOONER_GSLERROR( gsl_sf_lngamma_e(a, &gr) );
 
     pars[0] = a;
     pars[1] = b;
     pars[2] = c0;
     pars[3] = c1;
+    pars[4] = - gr.val + log(c0) * a;
 
     af.function = &dninvgamma;
     af.params = pars;
-    gsl_integration_qng(&af, xs, xe, SEM_TOL, SEM_RTOL, &v, &aberr, &neval);
 
-    return v * gr.val * pow(c0, a);
+    gsl_integration_workspace *ws = gsl_integration_workspace_alloc(3);
+    gsl_integration_qag(&af, xs, xe, SEM_TOL, SEM_RTOL, 3, GSL_INTEG_GAUSS15, 
+        ws, &v, &aberr);
+    gsl_integration_workspace_free(ws);
+    /*
+    SOONER_GSLERROR(gsl_integration_qng(&af, xs, xe, SEM_TOL, SEM_RTOL, &v,
+                &aberr, &neval));
+    */
+
+    if (aberr > 0.001)
+    {
+        return GSL_NEGINF;
+    }
+
+    return v;
 }
 
 
@@ -657,7 +706,14 @@ nlognorm_gslint(double t0, double x, double mu1, double mu2, double sig1,
 
     af.function = &dnlognorm;
     af.params = pars;
-    gsl_integration_qng(&af, t0, x, SEM_TOL, SEM_RTOL, &v, &aberr, &neval);
+    SOONER_GSLERROR(gsl_integration_qng(&af, t0, x, SEM_TOL, SEM_RTOL, 
+                &v, &aberr, &neval));
+
+    if (aberr > 0.001)
+    {
+        return GSL_NEGINF;
+    }
+
 
     return v;
 }
@@ -696,7 +752,13 @@ nlater_gslint(double t0, double x, double mu1, double mu2, double sig1,
     af.function = &dnlater;
     af.params = pars;
        
-    gsl_integration_qng(&af, t0, x, SEM_TOL, SEM_RTOL, &v, &aberr, &neval);
+    SOONER_GSLERROR(gsl_integration_qng(&af, t0, x, SEM_TOL, SEM_RTOL, &v,
+                &aberr, &neval));
+
+    if (aberr > 0.001)
+    {
+        return GSL_NEGINF;
+    }
 
     return v / ( gsl_cdf_gaussian_Q(-mu1, sig1) * sig1 * SQRT2PI * 
             gsl_cdf_gaussian_Q(-mu2, sig2));

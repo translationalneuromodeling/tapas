@@ -18,7 +18,7 @@ mu = model.graph{4}.htheta.y.mu;
 nb = numel(mu);
 np = size(ptheta.jm, 2);
 
-state = struct('graph', [], 'llh', [], 'kernel', [], 'T', []);
+state = struct('graph', [], 'llh', [], 'kernel', [], 'T', [], 'time', tic);
 
 state.graph = cell(5, 1);
 state.llh = cell(5, 1);
@@ -30,17 +30,16 @@ state.graph{1} = data;
 
 % Second node
 state.graph{2} = struct('y', [], 'u', []);
-state.graph{2}.y = cell(ns, nc);
-ty = ptheta.x * model.graph{4}.htheta.y.mu;
-ty = reshape(ty', numel(ty), 1);
-state.graph{2}.y = repmat(mat2cell(ty, np * ones(ns, 1), 1), 1, nc);
+state.graph{2}.y = tapas_sem_multiv_init_theta(data, model, inference); 
+
 % Regressors
 state.graph{2}.u = struct(...
     'x', ptheta.x, ...
     'omega', ptheta.omega, ... x'x + I
     'iomega', ptheta.iomega, ... inv(x'x + I)
     'comega', ptheta.comega, ...
-    'ciomega', ptheta.ciomega); % sqrt(omega)
+    'ciomega', ptheta.ciomega, ...
+    'temperature_ordering', uint16(1:nc)); % sqrt(omega)
 
 % Third node
 state.graph{3} = struct('y', [], 'u', []);
@@ -67,7 +66,9 @@ state.llh{3} = -inf * ones(1, nc);
 state.llh{4} = -inf * ones(1, nc);
 
 state.kernel{2} = cell(ns, nc);
-state.kernel{2}(:) = inference.kernel(2);
+
+kernel = rmfield(inference.kernel{2}, 'nuk');
+state.kernel{2}(:) = {kernel};
 
 state.T{1} = model.graph{1}.htheta.T;
 

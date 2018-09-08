@@ -1,0 +1,41 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2015 */
+
+
+#ifndef ERP_ERPCUDA_H
+#define ERP_ERPCUDA_H
+
+#include "erp.hcu"
+#include "mpdcm.hcu"
+#include "erp_Integrator.hcu"
+#include "erp_dynamics.hcu"
+
+struct ErpCuda  : Integrator
+{
+
+    __device__
+    ErpCuda();
+
+    __device__
+    int set_theta(int i, ErpColumnArray *atheta);
+
+    __device__
+    int set_theta_fields(int i, ErpColumnArray *atheta);
+
+    __device__
+    int set_theta_A(int i, ErpColumnArray *atheta);
+
+    __device__
+    virtual
+    int update_x(dbuff *ox, dbuff *y, dbuff *u, dbuff *nx) = 0;
+
+    __device__
+    virtual
+    int update_y(dbuff *x, dbuff *y, dbuff *u, dbuff *ny);
+
+    __device__
+    virtual
+    int store_y(dbuff *x, dbuff *y, dbuff *u, dbuff *ny);
+};
+
+#endif

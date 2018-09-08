@@ -25,6 +25,8 @@ TAPAS toolbox
 - Dropped 4 digits versioning for 3.
 - The version of tapas is now read from misc/log\_tapas.txt. It is the first
     line of this file.
+- Updated the documentation of SEM.
+- Updated SEM to include hierarchical models for inference.
 - New version of the HGF toolbox (5.2.0). Details in tapas/HGF/README.md.
 - New version of the PhysIO toolbox (R2018.1). Details in tapas/PhysIO/CHANGELOG.md.
 - tapas_init.m displays a message to download the data in case the examples

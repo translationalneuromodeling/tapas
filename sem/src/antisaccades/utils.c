@@ -22,28 +22,9 @@ populate_parameters_prosa(const double *theta, PROSA_PARAMETERS *stheta)
     return 0;
 }
 
-int
-populate_parameters_seri(const double *theta, SERI_PARAMETERS *stheta)
-{
-    stheta->kp = theta[0];
-    stheta->tp = theta[1];
-    stheta->ka = theta[2];
-    stheta->ta = theta[3];
-    stheta->ks = theta[4];
-    stheta->ts = theta[5];
-
-    stheta->pp = theta[6];
-    stheta->ap = theta[7];
-
-    stheta->t0 = theta[8];
-    stheta->da = theta[9];
-    stheta->p0 = theta[10];
-
-    return 0;
-}
 
 int
-populate_parameters_dora(const double *theta, DORA_PARAMETERS *stheta)
+populate_parameters_seria(const double *theta, SERIA_PARAMETERS *stheta)
 {
     stheta->kp = theta[0];
     stheta->tp = theta[1];
