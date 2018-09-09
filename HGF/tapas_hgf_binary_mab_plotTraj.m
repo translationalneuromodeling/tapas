@@ -118,13 +118,13 @@ if (ploty == true) && ~isempty(find(strcmp(fieldnames(r),'y'))) && ~isempty(r.y)
     y = r.y(:,1);
     if ~isempty(find(strcmp(fieldnames(r),'irr')))
         y(r.irr) = NaN; % weed out irregular responses
-        plot(ts(r.irr),  1.08.*ones([1 length(r.irr)]), 'x', 'Color', [1 0.7 0], 'Markersize', 11, 'LineWidth', 2); % irregular responses
+        plot(ts(r.irr)+1,  1.08.*ones([1 length(r.irr)]), 'x', 'Color', [1 0.7 0], 'Markersize', 11, 'LineWidth', 2); % irregular responses
     end
     for j=1:b
         plot(find(y==j), 1.08*ones([1 length(find(y==j))]), '.', 'Color', colors(j,:)); % responses
     end
     title(['Response y, input u (black dots), learning rate (fine black line), and posterior expectation of reward s(\mu_2) ', ...
-           '(red) for \rho=', num2str(r.p_prc.rho(2:end)), ', \kappa=', ...
+           '(colour coded) for \rho=', num2str(r.p_prc.rho(2:end)), ', \kappa=', ...
            num2str(r.p_prc.ka(2:end)), ', \omega=', num2str(r.p_prc.om(2:end))], ...
       'FontWeight', 'bold');
     ylabel('y, u, s(\mu_2)');

@@ -1,0 +1,21 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2015 */
+
+
+#ifndef FMRI_FMRI_EULER_BILINEAR_H
+#define FMRI_FMRI_EULER_BILINEAR_H
+
+#include "mpdcm.hcu"
+#include "fmri_FmriCuda.hcu"
+
+struct FmriEulerBilinear : FmriCuda
+{
+    __device__
+    FmriEulerBilinear();
+    
+    __device__
+    virtual int update_x(dbuff *ox, dbuff *y, dbuff *u, dbuff *nx);
+
+};
+
+#endif

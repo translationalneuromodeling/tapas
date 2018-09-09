@@ -4,9 +4,30 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-PhysIO_Toolbox_R2017.3
+PhysIO_Toolbox_R2018.1.1
 
-January 24, 2018
+September 05, 2018
+
+Bugfix Release Notes (R2018.1.1)
+-------------------------------
+
+### Changed
+- documentation.{html,pdf} export nicer with different FAQ numbering
+
+Major Release Notes (R2018.1)
+-----------------------------
+
+### Added
+- initialization function `tapas_physio_init()` to check Matlab paths, including SPM for batch processing
+- Extended motion diagnostics via Framewise displacement (Power et al., 2012)
+    - Outlier motion models generate 'spike' regressors from FD outliers (gitlab issue  #)
+- Censoring of intervals with bad physiological recordings in RETROICOR regressors (github issue #11, gitlab #36)
+- Added examples of Siemens VD (Tics Format, Prisma) and Human Connectome Project (HCP) format
+
+### Changed
+- Updated read-in examples of all vendors (Siemens, Philips, GE) to latest PhysIO Toolbox version.
+- Updated `README.md` to reflect changes to example download, new references
+- Extended Wiki documentation, in particular examples and read-in formats
 
 Minor Release Notes (R2017.3)
 -----------------------------

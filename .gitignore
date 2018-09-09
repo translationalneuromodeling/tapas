@@ -12,3 +12,6 @@ lib
 *.a
 *.pyc
 *.so
+*.mexw64
+*.asv
+examples/

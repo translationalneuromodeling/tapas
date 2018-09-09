@@ -27,17 +27,20 @@
 flags = [
 '-Wall',
 '-Werror',
-
+'-std=c11',
 # std is required
 # clang won't know which language to use compiling headers
 
 # '-x' and 'c++' also required
 # use 'c' for C projects
-'-x',
 'c',
-'-I'
-'./antisaccades',
-'-I/usr/local/MATLAB/R2014a/extern/include'
+'-I./',
+'-I./antisaccades',
+'-I/opt/local/include/',
+'-I/usr/local/MATLAB/R2017a/extern/include',
+'-I/Applications/MATLAB_R2017b.app/extern/include',
+'-imath',
+'-istdlib'
 # include third party libraries
 #'-isystem',
 #'/usr/include/python2.7',

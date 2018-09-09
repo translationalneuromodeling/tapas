@@ -37,6 +37,10 @@ function y = tapas_physio_read_physlogfiles_philips_matrix(fileNamePhyslog)
 % textscan; TODO: use fread and sscanf to make it even faster...
 
 %% check log file version by header line
+if ~exist(fileNamePhyslog, 'file')
+    error('Physlog file not found: %s', fileNamePhyslog);
+end
+
 fid  = fopen(fileNamePhyslog, 'r');
 stringFirstLine = fgetl(fid);
 fclose(fid);

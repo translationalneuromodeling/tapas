@@ -16,7 +16,7 @@ mu = model.graph{4}.htheta.y.mu;
 nb = numel(mu);
 np = size(model.graph{1}.htheta.model.jm, 2);
 
-state = struct('graph', [], 'llh', [], 'kernel', [], 'T', []);
+state = struct('graph', [], 'llh', [], 'kernel', [], 'T', [], 'time', tic);
 
 state.graph = cell(4, 1);
 state.llh = cell(4, 1);
@@ -36,7 +36,8 @@ state.graph{2}.u = struct(...
     'omega', model.graph{1}.htheta.model.omega, ... x'x + I
     'iomega', model.graph{1}.htheta.model.iomega, ... inv(x'x + I)
     'comega', model.graph{1}.htheta.model.comega, ...
-    'ciomega', model.graph{1}.htheta.model.ciomega); % sqrt(omega)
+    'ciomega', model.graph{1}.htheta.model.ciomega, ...
+    'temperature_ordering', uint16(1:nc));
 
 state.graph{3} = struct('y', [], 'u', []);
 state.graph{3}.y = cell(1, nc);

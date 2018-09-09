@@ -115,7 +115,9 @@ else
         subplot(3,1,1);
         plot(t, c, 'k'); title('Finding first peak of cycle, backwards')
     end
-    
+    verbose = tapas_physio_log(['No peaks found in raw cardiac time series. Check raw ' ...
+        'physiological recordings figure whether there is any non-constant' ...
+        'cardiac data'], verbose, 2); % error!
 end
 
 

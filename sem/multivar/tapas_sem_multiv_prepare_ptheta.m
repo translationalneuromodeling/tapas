@@ -6,7 +6,18 @@ function [ptheta] = tapas_sem_multiv_prepare_ptheta(ptheta, theta, pars)
 %
 
 % Number of parameter data sets.
-npars = ptheta.npars;
+nvals = size(ptheta.jm, 1);
+ndims = ptheta.ndims;
+
+npars = nvals / ndims;
+
+assert(floor(npars) == npars, ...
+    'tapas:sem:hier:ptheta', ...
+    ['Dimensions of the constraint matrix is %dx%d ' ...
+    'but parameters of model %s are %d'], ...
+    size(ptheta.jm, 1), size(ptheta.jm, 2), ptheta.name, ndims);
+
+ptheta.npars = npars;
 
 % Rename
 ptheta.name = sprintf('multiv_%s', ptheta.name);

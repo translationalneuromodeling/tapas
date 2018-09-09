@@ -7,25 +7,17 @@ function [sstate, si] = tapas_sem_multiv_get_stored_state(data, model, ...
 %
 
 sstate = struct('graph', {cell(4, 1)}, 'llh', {cell(4, 1)}, 'v', []);
+order = state.graph{2}.u.temperature_ordering;
+sstate.graph{2} = state.graph{2}.y(:, order);
 
-sstate.graph{2} = state.graph{2}.y;
-%sstate.graph{3} = state.graph{3}.y;
+sstate.llh{1} = state.llh{1}(:, order);
 
-sstate.llh{1} = state.llh{1};
-%sstate.llh{2} = state.llh{2};
-%sstate.llh{3} = state.llh{3};
-
-sstate.v = state.v;
+sstate.v = state.v(:, order);
 
 if state.nsample <= inference.nburnin;
     si = mod(state.nsample, inference.ndiag) + 1;
 else
-    si = (state.nsample - inference.nburnin);
-end
-
-if si == inference.niter
-    sstate.graph{1}.T = state.T{1};
+    si = (state.nsample - inference.nburnin) + 1;
 end
 
 end
-
