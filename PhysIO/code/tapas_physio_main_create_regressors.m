@@ -96,6 +96,7 @@ verbose     = physio.verbose;
 
 hasPhaseLogfile = strcmpi(log_files.vendor, 'CustomPhase');
 doesNeedPhyslogFiles = model.retroicor.include || model.rvt.include || model.hrv.include;
+hasPhyslogFiles = ~isempty(log_files.cardiac) || ~isempty(log_files.respiration);
 
 if ~hasPhaseLogfile
     
@@ -103,122 +104,130 @@ if ~hasPhaseLogfile
     if doesNeedPhyslogFiles
         
         
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %% 1. Read in vendor-specific physiological log-files
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        [ons_secs.c, ons_secs.r, ons_secs.t, ons_secs.cpulse, ons_secs.acq_codes, ...
-            verbose] = tapas_physio_read_physlogfiles(...
-            log_files, preproc.cardiac.modality, verbose);
-        
-        % also: normalize cardiac/respiratory data, if wanted
-        doNormalize = true;
-        
-        % Normalize and pad time series after read-In
-        ons_secs = tapas_physio_preprocess_phys_timeseries(ons_secs, ...
-            scan_timing.sqpar, doNormalize);
-        
-        
-        hasCardiacData = ~isempty(ons_secs.c);
-        hasRespData = ~isempty(ons_secs.r);
-        
-        
-        verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose);
-        
-        
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %% 2. Create scan timing nominally or from logfile
-        % nominal:  using entered sequence parameters (nSlices, nScans etc)
-        % Philips:  via gradient time-course or existing acq_codes in logfile
-        % GE:       nominal
-        % Siemens:  from tics (Release VD/E), from .resp/.ecg files (Release VB)
-        % Biopac:   using triggers from Digital input (mat file)
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        [ons_secs, VOLLOCS, LOCS, verbose] = tapas_physio_create_scan_timing(...
-            log_files, scan_timing, ons_secs, verbose);
-        minConstantIntervalAlertSamples = ceil(minConstantIntervalAlertSeconds/ons_secs.dt);
-        
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %% 3. Extract and preprocess physiological data, crop to scan aquisition
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        if hasCardiacData
-            % preproc.cardiac.modality = 'OXY'; % 'ECG' or 'OXY' (for pulse oximetry)
-            %% initial pulse select via load from logfile or autocorrelation with 1
-            %% cardiac pulse
-            switch preproc.cardiac.initial_cpulse_select.method
-                case {'load_from_logfile', ''}
-                    % do nothing
-                otherwise
-                    minCardiacCycleSamples = floor((1/(maxHeartRateBpm/60)/ons_secs.dt));
-                    
-                    % run one of the various cardiac pulse detection algorithms
-                    [ons_secs.cpulse, verbose] = ...
-                        tapas_physio_get_cardiac_pulses(ons_secs.t, ons_secs.c, ...
-                        preproc.cardiac.initial_cpulse_select, ...
-                        preproc.cardiac.modality, minCardiacCycleSamples, verbose);
-            end
+        if ~hasPhyslogFiles
+            verbose = tapas_physio_log(['No physlog files specified, but models relying on ' ...
+                'physiological recordings selected. I will skip those.'], ...
+                verbose, 1);
+            sqpar = scan_timing.sqpar;
+        else
             
             
-            %% post-hoc: hand pick additional cardiac pulses or load from previous
-            %% time
-            switch preproc.cardiac.posthoc_cpulse_select.method
-                case {'manual'}
-                    % additional manual fill-in of more missed pulses
-                    [ons_secs, outliersHigh, outliersLow, verbose] = ...
-                        tapas_physio_correct_cardiac_pulses_manually(ons_secs, ...
-                        preproc.cardiac.posthoc_cpulse_select, verbose);
-                case {'load'}
-                    hasPosthocLogFile = exist(preproc.cardiac.posthoc_cpulse_select.file, 'file') || ...
-                        exist([preproc.cardiac.posthoc_cpulse_select.file '.mat'], 'file');
-                    
-                    if hasPosthocLogFile % load or set selection to manual, if no file exists
-                        osload = load(preproc.cardiac.posthoc_cpulse_select.file, 'ons_secs');
-                        ons_secs = osload.ons_secs;
-                    else
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %% 1. Read in vendor-specific physiological log-files
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            [ons_secs.c, ons_secs.r, ons_secs.t, ons_secs.cpulse, ons_secs.acq_codes, ...
+                verbose] = tapas_physio_read_physlogfiles(...
+                log_files, preproc.cardiac.modality, verbose);
+            
+            % also: normalize cardiac/respiratory data, if wanted
+            doNormalize = true;
+            
+            % Normalize and pad time series after read-In
+            ons_secs = tapas_physio_preprocess_phys_timeseries(ons_secs, ...
+                scan_timing.sqpar, doNormalize);
+            
+            
+            hasCardiacData = ~isempty(ons_secs.c);
+            hasRespData = ~isempty(ons_secs.r);
+            
+            
+            verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose);
+            
+            
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %% 2. Create scan timing nominally or from logfile
+            % nominal:  using entered sequence parameters (nSlices, nScans etc)
+            % Philips:  via gradient time-course or existing acq_codes in logfile
+            % GE:       nominal
+            % Siemens:  from tics (Release VD/E), from .resp/.ecg files (Release VB)
+            % Biopac:   using triggers from Digital input (mat file)
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            [ons_secs, VOLLOCS, LOCS, verbose] = tapas_physio_create_scan_timing(...
+                log_files, scan_timing, ons_secs, verbose);
+            minConstantIntervalAlertSamples = ceil(minConstantIntervalAlertSeconds/ons_secs.dt);
+            
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %% 3. Extract and preprocess physiological data, crop to scan aquisition
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            
+            if hasCardiacData
+                % preproc.cardiac.modality = 'OXY'; % 'ECG' or 'OXY' (for pulse oximetry)
+                %% initial pulse select via load from logfile or autocorrelation with 1
+                %% cardiac pulse
+                switch preproc.cardiac.initial_cpulse_select.method
+                    case {'load_from_logfile', ''}
+                        % do nothing
+                    otherwise
+                        minCardiacCycleSamples = floor((1/(maxHeartRateBpm/60)/ons_secs.dt));
+                        
+                        % run one of the various cardiac pulse detection algorithms
+                        [ons_secs.cpulse, verbose] = ...
+                            tapas_physio_get_cardiac_pulses(ons_secs.t, ons_secs.c, ...
+                            preproc.cardiac.initial_cpulse_select, ...
+                            preproc.cardiac.modality, minCardiacCycleSamples, verbose);
+                end
+                
+                
+                %% post-hoc: hand pick additional cardiac pulses or load from previous
+                %% time
+                switch preproc.cardiac.posthoc_cpulse_select.method
+                    case {'manual'}
+                        % additional manual fill-in of more missed pulses
                         [ons_secs, outliersHigh, outliersLow, verbose] = ...
-                            tapas_physio_correct_cardiac_pulses_manually(ons_secs,...
+                            tapas_physio_correct_cardiac_pulses_manually(ons_secs, ...
                             preproc.cardiac.posthoc_cpulse_select, verbose);
-                    end
-                case {'off', ''}
+                    case {'load'}
+                        hasPosthocLogFile = exist(preproc.cardiac.posthoc_cpulse_select.file, 'file') || ...
+                            exist([preproc.cardiac.posthoc_cpulse_select.file '.mat'], 'file');
+                        
+                        if hasPosthocLogFile % load or set selection to manual, if no file exists
+                            osload = load(preproc.cardiac.posthoc_cpulse_select.file, 'ons_secs');
+                            ons_secs = osload.ons_secs;
+                        else
+                            [ons_secs, outliersHigh, outliersLow, verbose] = ...
+                                tapas_physio_correct_cardiac_pulses_manually(ons_secs,...
+                                preproc.cardiac.posthoc_cpulse_select, verbose);
+                        end
+                    case {'off', ''}
+                end
+                
+                % label constant samples as unreliable (clipping/detachment)
+                [ons_secs.c_is_reliable, ~, verbose] = tapas_physio_detect_constants(ons_secs.c, ...
+                    minConstantIntervalAlertSamples, [], verbose);
+                ons_secs.c_is_reliable = 1 - ons_secs.c_is_reliable;
             end
             
-            % label constant samples as unreliable (clipping/detachment)
-            [ons_secs.c_is_reliable, ~, verbose] = tapas_physio_detect_constants(ons_secs.c, ...
-                minConstantIntervalAlertSamples, [], verbose);
-            ons_secs.c_is_reliable = 1 - ons_secs.c_is_reliable;
-        end
-        
-        if hasRespData
-            % filter respiratory signal
-            ons_secs.fr = tapas_physio_filter_respiratory(ons_secs.r, ...
-                ons_secs.dt, doNormalize);
+            if hasRespData
+                % filter respiratory signal
+                ons_secs.fr = tapas_physio_filter_respiratory(ons_secs.r, ...
+                    ons_secs.dt, doNormalize);
+                
+                % label constant samples as unreliable (clipping/detachment)
+                [ons_secs.r_is_reliable, ~, verbose]  = tapas_physio_detect_constants(ons_secs.fr, ...
+                    minConstantIntervalAlertSamples, [], verbose);
+                ons_secs.r_is_reliable = 1 - ons_secs.r_is_reliable;
+            end
             
-            % label constant samples as unreliable (clipping/detachment)
-            [ons_secs.r_is_reliable, ~, verbose]  = tapas_physio_detect_constants(ons_secs.fr, ...
-                minConstantIntervalAlertSamples, [], verbose);
-            ons_secs.r_is_reliable = 1 - ons_secs.r_is_reliable;
+            [ons_secs, scan_timing.sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_window(...
+                ons_secs, scan_timing.sqpar, verbose);
+            sqpar = scan_timing.sqpar;
+            
+            
+            if verbose.level >= 2
+                verbose.fig_handles(end+1) = ...
+                    tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar);
+            end
+            
+            [verbose, ons_secs.c_outliers_low, ons_secs.c_outliers_high, ...
+                ons_secs.r_hist] = ...
+                tapas_physio_plot_raw_physdata_diagnostics(ons_secs.cpulse, ...
+                ons_secs.r, preproc.cardiac.posthoc_cpulse_select, verbose, ...
+                ons_secs.t, ons_secs.c);
         end
-        
-        [ons_secs, scan_timing.sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_window(...
-            ons_secs, scan_timing.sqpar, verbose);
-        sqpar = scan_timing.sqpar;
-        
-        
-        if verbose.level >= 2
-            verbose.fig_handles(end+1) = ...
-                tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar);
-        end
-        
-        [verbose, ons_secs.c_outliers_low, ons_secs.c_outliers_high, ...
-            ons_secs.r_hist] = ...
-            tapas_physio_plot_raw_physdata_diagnostics(ons_secs.cpulse, ...
-            ons_secs.r, preproc.cardiac.posthoc_cpulse_select, verbose, ...
-            ons_secs.t, ons_secs.c);
     else % does NOT NeedPhyslogFiles
         sqpar = scan_timing.sqpar;
     end % doesNeedPhyslogFiles
@@ -243,6 +252,9 @@ end
 onset_slices = reshape(sqpar.onset_slice, 1, []);
 nOnsetSlices = numel(onset_slices);
 
+if nOnsetSlices < 1
+    error('Please specify an onset slice.');
+end
 
 for onset_slice = onset_slices
     
@@ -265,43 +277,59 @@ for onset_slice = onset_slices
         ons_secs.r_sample_phase = [];
     end
     
-    
-    %% 4.2. Create RETROICOR regressors (Fourier expansion of cardiac/respiratory phase)
-    
-    if model.retroicor.include
-        [cardiac_sess, respire_sess, mult_sess, ons_secs, ...
-            model.retroicor.order, verbose] = ...
-            tapas_physio_create_retroicor_regressors(ons_secs, sqpar, ...
-            model.retroicor.order, verbose);
-    else
+    if hasPhyslogFiles
+        
+        %% 4.2. Create RETROICOR regressors (Fourier expansion of cardiac/respiratory phase)
+        
+        if model.retroicor.include
+            [cardiac_sess, respire_sess, mult_sess, ons_secs, ...
+                model.retroicor.order, verbose] = ...
+                tapas_physio_create_retroicor_regressors(ons_secs, sqpar, ...
+                model.retroicor.order, verbose);
+            
+            if model.censor_unreliable_recording_intervals
+                [ons_secs, cardiac_sess, respire_sess, mult_sess, verbose] = ...
+                    tapas_physio_censor_unreliable_regressor_parts_retroicor(...
+                    ons_secs, sqpar, cardiac_sess, respire_sess, mult_sess, verbose);
+            end
+            
+        else
+            cardiac_sess = [];
+            respire_sess = [];
+            mult_sess = [];
+        end
+        
+        
+        %% 4.3. Create a heart-rate variability regressor using the cardiac response
+        % function
+        
+        if model.hrv.include
+            [convHRV, ons_secs.hr, verbose] = tapas_physio_create_hrv_regressors(...
+                ons_secs, sqpar, model.hrv, verbose);
+        else
+            convHRV = [];
+        end
+        
+        
+        %% 4.4. Create a respiratory volume/time regressor using the respiratory response
+        % function
+        
+        if model.rvt.include
+            [convRVT, ons_secs.rvt, verbose] = tapas_physio_create_rvt_regressors(...
+                ons_secs, sqpar, model.rvt, verbose);
+        else
+            convRVT = [];
+        end
+        
+    else % no physlog files
         cardiac_sess = [];
         respire_sess = [];
-        mult_sess = [];
-    end
-    
-    
-    %% 4.3. Create a heart-rate variability regressor using the cardiac response
-    % function
-    
-    if model.hrv.include
-        [convHRV, ons_secs.hr, verbose] = tapas_physio_create_hrv_regressors(...
-            ons_secs, sqpar, model.hrv, verbose);
-    else
-        convHRV = [];
-    end
-    
-    
-    %% 4.4. Create a respiratory volume/time regressor using the respiratory response
-    % function
-    
-    if model.rvt.include
-        [convRVT, ons_secs.rvt, verbose] = tapas_physio_create_rvt_regressors(...
-            ons_secs, sqpar, model.rvt, verbose);
-    else
+        mult_sess = [];convHRV = [];
         convRVT = [];
-    end
+    end % hasPhyslogFiles
     
     %% 4.5. Extract anatomical defined (ROI) principal component regressors
+    
     
     if model.noise_rois.include
         [noise_rois_R, model.noise_rois, verbose] = tapas_physio_create_noise_rois_regressors(...
@@ -309,6 +337,8 @@ for onset_slice = onset_slices
     else
         noise_rois_R = [];
     end
+    
+    
     
     
     %% 4.6. Load other (physiological) confound regressors
@@ -324,22 +354,22 @@ for onset_slice = onset_slices
     %% 4.7. Load and manipulate movement parameters as confound regressors
     
     if model.movement.include && ~isempty(model.movement.file_realignment_parameters)
-        [movement_R, verbose] = tapas_physio_create_movement_regressors(...
-            model.movement, verbose);
+        [movement_R, model.movement, verbose] = ...
+            tapas_physio_create_movement_regressors(model.movement, verbose);
     else
         movement_R = [];
     end
     
     % Concatenate all regressors
-    R = [convHRV, convRVT, noise_rois_R, movement_R, other_R ];
+    R = [convHRV, convRVT, noise_rois_R, movement_R, other_R];
     
     
     %% 4.8. Orthogonalisation of regressors ensures numerical stability for
     % otherwise correlated cardiac regressors
     
     [R, verbose] = tapas_physio_orthogonalise_physiological_regressors(...
-        cardiac_sess, respire_sess, ...
-        mult_sess, R, model.orthogonalise, verbose);
+        cardiac_sess, respire_sess, mult_sess, R, model.orthogonalise, ...
+        verbose);
     
     
     %% 4.9   Save Multiple Regressors file for SPM

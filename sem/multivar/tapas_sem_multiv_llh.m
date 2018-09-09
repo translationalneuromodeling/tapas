@@ -29,7 +29,7 @@ for i = 1:ns
     end
 end
 
-llh = ptheta.model.llh(data, atheta);
+llh =  ptheta.model.llh(data, atheta);
 
 end
 

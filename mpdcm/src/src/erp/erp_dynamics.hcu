@@ -1,0 +1,34 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2015 */
+
+#ifndef ERP_DYNAMICS_H
+#define ERP_DYNAMICS_H
+
+#include "mpdcm.hcu"
+#include "erp.hcu"
+
+
+__device__
+MPFLOAT
+erp_saturation(MPFLOAT x, ErpColumn *theta);
+
+__device__
+MPFLOAT
+erp_dx8(dbuff *x, MPFLOAT *s1, MPFLOAT *s7, MPFLOAT *s9, dbuff *u, 
+    ErpColumn *theta, int i);
+
+__device__
+MPFLOAT
+erp_dx4(dbuff *x, MPFLOAT *s1, MPFLOAT *s7, MPFLOAT *s9, dbuff *u, 
+    ErpColumn *theta, int i);
+
+__device__
+MPFLOAT
+erp_dx5(dbuff *x, MPFLOAT *s1, MPFLOAT *s7, MPFLOAT *s9, dbuff *u, 
+    ErpColumn *theta, int i);
+__device__
+MPFLOAT
+erp_dx6(dbuff *x, MPFLOAT *s1, MPFLOAT *s7, MPFLOAT *s9, dbuff *u, 
+    ErpColumn *theta, int i);
+
+#endif // ERP_DYNAMICS_H

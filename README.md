@@ -1,6 +1,6 @@
 ![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
 
-*Version 2.7.4.1*
+*Version 3.0.0*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================
@@ -22,12 +22,15 @@ psychiatry, computational neurology, and computational psychosomatics.
 Currently, TAPAS includes the following packages:
 
 - [HGF](HGF/README.md): The Hierarchical Gaussian Filter; Bayesian inference 
-  on computational processes from observed behaviour
-- [MICP](MICP/Readme%20for%20MATLAB.pdf): Bayesian Mixed-effects Inference for Classification Studies
-- [MPDCM](mpdcm/README.md): Massively Parallel DCM; Efficient integration of DCMs using massive parallelization 
-- [PhysIO](PhysIO/README.md): Physiological Noise Correction for fMRI 
-- [SEM](sem/README.md): SERIA Model for Eye Movements (saccades and anti-saccades) and Reaction Times
-- [VBLM](VBLM/README.txt): Variational Bayesian Linear Regression
+  on computational processes from observed behaviour.
+- [HUGE](huge/README.md): Variational Bayesian inversion for hierarchical 
+unsupervised generative embedding (HUGE).
+- [MICP](MICP/Readme%20for%20MATLAB.pdf): Bayesian Mixed-effects Inference for Classification Studies.
+- [MPDCM](mpdcm/README.md): Massively Parallel DCM; Efficient integration of DCMs using massive parallelization.
+- [PhysIO](PhysIO/README.md): Physiological Noise Correction for fMRI.
+- [rDCM](rDCM/README.md): DCM based, efficient inference on effective brain connectivity for fMRI.
+- [SEM](sem/README.md): SERIA Model for Eye Movements (saccades and anti-saccades) and Reaction Times.
+- [VBLM](VBLM/README.txt): Variational Bayesian Linear Regression.
 
 TAPAS is written in MATLAB and distributed as open source code under 
 the GNU General Public License (GPL, Version 3).
@@ -42,7 +45,7 @@ requirement is the installation of MATLAB (produced by The MathWorks, Inc.
 Natick, MA, USA. http://www.mathworks.com/).
 
 Please download TAPAS from our 
-[Github Release Page](github.com/translationalneuromodeling/tapas/releases).
+[Github Release Page](https://github.com/translationalneuromodeling/tapas/releases).
 
 To add the TAPAS directory to the MATLAB path, run the script `tapas_init.m` in 
 the directory where tapas is installed/extracted. 
@@ -50,6 +53,8 @@ the directory where tapas is installed/extracted.
 For the individual toolboxes included in TAPAS, please refer to their 
 documentation (s.b.) for specific installation instructions.
 
+To download the example data please use `tapas_download_example_data()` from
+the matlab console.
 
 -------------
 DOCUMENTATION
@@ -82,12 +87,7 @@ Cite Me
 -------
 
 Information about citations and current version can be printed from matlab with
-the command: 
-
-~~~
-tapas_version(1);
-~~~
-
+the command: `tapas_version(1);`
 
 ---------------
 Current release
@@ -97,7 +97,7 @@ Information about changes in the current release can be found in the [CHANGELOG.
 file.
 
 All recent stables releases can be downloaded from our
-[TAPAS Github Release Page](github.com/translationalneuromodeling/tapas/releases).
+[TAPAS Github Release Page](https://github.com/translationalneuromodeling/tapas/releases).
 
 
 -------

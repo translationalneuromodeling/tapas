@@ -1,0 +1,21 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2015 */
+
+#ifndef FMRI_FMRISTDRK4_NONLINEAR_H
+#define FMRI_FMRISTDRK4_NONLINEAR_H
+
+#include "mpdcm.hcu"
+#include "fmri_FmriCuda.hcu"
+
+struct FmriStandardRK4Nonlinear : FmriCuda
+{
+    __device__
+    FmriStandardRK4Nonlinear();
+    
+    __device__
+    virtual
+    int update_x(dbuff *ox, dbuff *y, dbuff *u, dbuff *nx);
+
+};
+
+#endif

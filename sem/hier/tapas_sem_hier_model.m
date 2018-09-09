@@ -24,7 +24,7 @@ for i = 1:4
     model.graph{i} = struct('llh', [], 'htheta', []);
 end
 
-model.graph{1}.llh = @tapas_sem_hier_llh;
+model.graph{1}.llh = @tapas_sem_multiv_llh;
 model.graph{2}.llh = @tapas_dlinear_hier_llh;
 model.graph{3}.llh = @tapas_dlinear_llh;
 model.graph{4}.llh = [];

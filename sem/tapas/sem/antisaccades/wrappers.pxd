@@ -11,8 +11,24 @@ ctypedef np.float_t DTYPE_t
 cdef extern from "src/antisaccades/antisaccades.h":
 
     cdef int DIM_PROSA_THETA
-    cdef int DIM_DORA_THETA
-    cdef int DIM_SERI_THETA
+    cdef int DIM_SERIA_THETA
+
+    ctypedef double (*NESTED_INTEGRAL)(double x0, double x1, double a,
+        double b, double c0, double c1)
+
+    ctypedef double (*ACCUMULATOR_FUNCTION)(double time, double shape,
+        double scale)
+
+    ctypedef struct ACCUMULATOR:
+
+        ACCUMULATOR_FUNCTION pdf
+        ACCUMULATOR_FUNCTION lpdf
+
+        ACCUMULATOR_FUNCTION cdf
+        ACCUMULATOR_FUNCTION lcdf
+
+        ACCUMULATOR_FUNCTION sf
+        ACCUMULATOR_FUNCTION lsf 
 
     ctypedef struct ANTIS_INPUT:
         double *t
@@ -36,25 +52,14 @@ cdef extern from "src/antisaccades/antisaccades.h":
         double ts
 
         double da
+
+        ACCUMULATOR early
+        ACCUMULATOR stop
+        ACCUMULATOR anti
+
+        NESTED_INTEGRAL inhibition_race
         
-    ctypedef struct SERI_PARAMETERS:
-
-        double t0
-        double p0
-
-        double kp
-        double tp
-        double ka
-        double ta
-        double ks
-        double ts
-
-        double pp
-        double ap
-
-        double da
-
-    ctypedef struct DORA_PARAMETERS:
+    ctypedef struct SERIA_PARAMETERS:
 
         double t0
         double p0
@@ -71,123 +76,66 @@ cdef extern from "src/antisaccades/antisaccades.h":
 
         double da
 
+        ACCUMULATOR early
+        ACCUMULATOR stop
+        ACCUMULATOR anti
+        ACCUMULATOR late
+
+        NESTED_INTEGRAL inhibition_race
+
     ctypedef double ( *PROSA_LLH )(double t, int a, PROSA_PARAMETERS params)
-    ctypedef double ( *SERI_LLH )(double t, int a, SERI_PARAMETERS params)
-    ctypedef double ( *DORA_LLH )(double t, int a, DORA_PARAMETERS params)
+    ctypedef double ( *SERIA_LLH )(double t, int a, SERIA_PARAMETERS params)
 
     ctypedef int (*FILL_PARAMETERS_PROSA)(const double *theta, PROSA_PARAMETERS
         *parameters)
-    ctypedef int (*FILL_PARAMETERS_SERI)(const double *theta, SERI_PARAMETERS
+    ctypedef int (*FILL_PARAMETERS_SERIA)(const double *theta, SERIA_PARAMETERS
         *parameters)
-    ctypedef int (*FILL_PARAMETERS_DORA)(const double *theta, DORA_PARAMETERS
-        *parameters)
-    ctypedef double (*NESTED_INTEGRAL_SERI)(double x0, double x1, double a,
-        double b, double c0, double c1)
 
     ctypedef struct PROSA_MODEL:
         FILL_PARAMETERS_PROSA fill_parameters
         PROSA_LLH llh
 
-    ctypedef struct SERI_MODEL:
-        FILL_PARAMETERS_SERI fill_parameters
-        SERI_LLH llh
-        NESTED_INTEGRAL_SERI nested_integral
-
-    ctypedef struct DORA_MODEL:
-        FILL_PARAMETERS_DORA fill_parameters
-        DORA_LLH llh
-        NESTED_INTEGRAL_SERI nested_integral
+    ctypedef struct SERIA_MODEL:
+        FILL_PARAMETERS_SERIA fill_parameters
+        SERIA_LLH llh
 
     cdef:
-        double prosa_llh_gamma(double t, int a, PROSA_PARAMETERS params)
+        double prosa_llh_abstract(double t, int a, PROSA_PARAMETERS params)
 
-        double prosa_llh_invgamma(double t, int a, PROSA_PARAMETERS params)
+        double seria_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 
-        double prosa_llh_mixedgamma(double t, int a, PROSA_PARAMETERS params)
+        double seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 
-        double prosa_llh_lognorm(double t, int a, PROSA_PARAMETERS params)
+        int prosa_model_n_states_optimized(ANTIS_INPUT svals, 
+                PROSA_MODEL fllh, double *llh)
+        int prosa_model_n_states(ANTIS_INPUT svals, 
+                PROSA_MODEL fllh, double *llh)
 
-        double prosa_llh_later(double t, int a, PROSA_PARAMETERS params)
+        int seria_model_n_states_optimized(ANTIS_INPUT svals, 
+                SERIA_MODEL fllh, double *llh)
+        int seria_model_n_states(ANTIS_INPUT svals, 
+                SERIA_MODEL fllh, double *llh)
 
-        double prosa_llh_wald(double t, int a, PROSA_PARAMETERS params)
-
-        double seri_llh_gamma(double t, int a, SERI_PARAMETERS params)
-
-        double seri_llh_invgamma(double t, int a, SERI_PARAMETERS params)
-
-        double seri_llh_mixedgamma(double t, int a, SERI_PARAMETERS params)
-
-        double seri_llh_lognorm(double t, int a, SERI_PARAMETERS params)
-
-        double seri_llh_later(double t, int a, SERI_PARAMETERS params)
-
-        double seri_llh_wald(double t, int a, SERI_PARAMETERS params)
-
-        double dora_llh_gamma(double t, int a, DORA_PARAMETERS params)
-
-        double dora_llh_invgamma(double t, int a, DORA_PARAMETERS params)
-
-        double dora_llh_mixedgamma(double t, int a, DORA_PARAMETERS params)
-
-        double dora_llh_lognorm(double t, int a, DORA_PARAMETERS params)
-
-        double dora_llh_later(double t, int a, DORA_PARAMETERS params)
-
-        double dora_llh_wald(double t, int a, DORA_PARAMETERS params)
-
-        int prosa_model_trial_by_trial(ANTIS_INPUT svals, PROSA_MODEL fllh, 
-                double *llh)
-        
-        int prosa_model_two_states(ANTIS_INPUT svals, PROSA_MODEL fllh, 
-                double *llh)
-
-        int dora_model_trial_by_trial(ANTIS_INPUT svals, DORA_MODEL fllh, 
-            double *llh)
-
-        int dora_model_two_states(ANTIS_INPUT svals, DORA_MODEL fllh, 
-            double *llh)
-
-        int seri_model_trial_by_trial(ANTIS_INPUT svals, SERI_MODEL fllh, 
-                double *llh)
-
-        int seri_model_two_states(ANTIS_INPUT svals, SERI_MODEL fllh, 
-                double *llh)
 
         int populate_parameters_prosa(const double *theta, 
                 PROSA_PARAMETERS *stheta)
         
-        int populate_parameters_seri(const double *theta, 
-                SERI_PARAMETERS *stheta)
-
-        int populate_parameters_dora(const double *theta, 
-                DORA_PARAMETERS *stheta)
+        int populate_parameters_seria(const double *theta, 
+                SERIA_PARAMETERS *stheta)
 
         # Reparametrization
-        int reparametrize_seri_invgamma(const double *theta, 
-                SERI_PARAMETERS *stheta)
-        int reparametrize_seri_gamma(const double *theta, 
-                SERI_PARAMETERS *stheta)
-        int reparametrize_seri_mixedgamma(const double *theta, 
-                SERI_PARAMETERS *stheta)
-        int reparametrize_seri_lognorm(const double *theta, 
-                SERI_PARAMETERS *stheta)
-        int reparametrize_seri_later(const double *theta, 
-                SERI_PARAMETERS *stheta)
-        int reparametrize_seri_wald(const double *theta, 
-                SERI_PARAMETERS *stheta)
-
-        int reparametrize_dora_invgamma(const double *theta, 
-                DORA_PARAMETERS *stheta)
-        int reparametrize_dora_gamma(const double *theta, 
-                DORA_PARAMETERS *stheta)
-        int reparametrize_dora_mixedgamma(const double *theta, 
-                DORA_PARAMETERS *stheta)
-        int reparametrize_dora_lognorm(const double *theta, 
-                DORA_PARAMETERS *stheta)
-        int reparametrize_dora_later(const double *theta, 
-                DORA_PARAMETERS *stheta)
-        int reparametrize_dora_wald(const double *theta, 
-                DORA_PARAMETERS *stheta)
+        int reparametrize_seria_invgamma(const double *theta, 
+                SERIA_PARAMETERS *stheta)
+        int reparametrize_seria_gamma(const double *theta, 
+                SERIA_PARAMETERS *stheta)
+        int reparametrize_seria_mixedgamma(const double *theta, 
+                SERIA_PARAMETERS *stheta)
+        int reparametrize_seria_lognorm(const double *theta, 
+                SERIA_PARAMETERS *stheta)
+        int reparametrize_seria_later(const double *theta, 
+                SERIA_PARAMETERS *stheta)
+        int reparametrize_seria_wald(const double *theta, 
+                SERIA_PARAMETERS *stheta)
 
         int reparametrize_prosa_invgamma(const double *theta, 
                 PROSA_PARAMETERS *stheta)
@@ -202,4 +150,11 @@ cdef extern from "src/antisaccades/antisaccades.h":
         int reparametrize_prosa_wald(const double *theta, 
                 PROSA_PARAMETERS *stheta)
 
-
+        double ngamma_gslint(double t0, double x, double a, double b, 
+		double c0, double c1)
+        double ninvgamma_gslint(double x0, double x1, double a, double b, 
+                double c0, double c1)
+        double nlater_gslint(double t0, double x, double mu1, double mu2,
+		double sig1, double sig2)
+        double nwald_gslint(double t0, double x, double mu1, double mu2, 
+		double sig1, double sig2)

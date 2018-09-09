@@ -20,9 +20,6 @@ function [compflag] = tapas_mpdcm_compflag()
 %
 %
 
-
-
 compflag = c_mpdcm_compflag();
-
 
 end

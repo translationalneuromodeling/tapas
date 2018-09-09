@@ -31,7 +31,7 @@ end
 try
     l = r.c_prc.n_levels;
 catch
-    l = (length(p)+1)/5;
+    l = (length(p)+1)/6;
     
     if l ~= floor(l)
         error('tapas:hgf:UndetNumLevels', 'Cannot determine number of levels');

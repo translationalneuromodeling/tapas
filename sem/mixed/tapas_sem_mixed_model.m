@@ -34,6 +34,9 @@ model.graph{2}.llh_sn = @tapas_mdlinear_hier_llh_sn;
 [ns, nr] = size(ptheta.x);
 ng = size(ptheta.mixed, 2);
 
+% Create a zerod matrix
+ptheta.sm = tapas_zeromat(ptheta.jm);
+
 % No create the starting points
 model.graph{1}.htheta = struct('pe', 0.5, 'T', pars.T, 'model', ptheta);
 model.graph{2}.htheta = struct('T', ones(size(pars.T, 2)), 'y', []);

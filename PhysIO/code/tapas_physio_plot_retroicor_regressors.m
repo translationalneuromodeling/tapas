@@ -92,7 +92,7 @@ for s = 1:3
         plotY = [y + ...
             repmat(-1+2*ceil((1:size(y,2))/nPerOrder{s}),length(y),1)];
         
-        for iPerOrder = 1:nPerOrder{s};
+        for iPerOrder = 1:nPerOrder{s}
             plot(plotY(:,iPerOrder:nPerOrder{s}:end), ...
                 'LineStyle', lineStyles{iPerOrder}); hold on;
             xlabel('scan volumes');

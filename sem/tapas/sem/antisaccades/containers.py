@@ -15,6 +15,7 @@ from collections import Sequence
 from pdb import set_trace as _
 import numpy as np
 from copy import deepcopy
+from scipy.integrate import cumtrapz
 
 class AlgebraicObject(object):
     ''' A class for the units statistics. '''
@@ -207,6 +208,14 @@ class FitsContainer(Sequence):
 
         #return None
 
+    def __str__(self):
+
+        mystr = []
+        for i in self:
+            mystr += [i]
+
+        return mystr.__str__()
+
     def __add__(self, other):
         '''Addition of lists. '''
 
@@ -219,6 +228,18 @@ class FitsContainer(Sequence):
 
         self.data.append(val)
         return None
+
+    def sum(self):
+
+        if len(self) == 0:
+            raise(IndexError('Empty container'))
+
+        nobj = deepcopy(self[0])
+
+        for i in self[1:]:
+            nobj += i
+
+        return nobj
 
     def mean(self):
 

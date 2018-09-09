@@ -2,6 +2,19 @@
 /* copyright (C) 2015 */
 
 #include "antisaccades.h"
+#include <stdlib.h>
+#include <string.h>
+
+
+/* Compares between trials */
+int cmpfunc(const void *a, const void *b)
+{
+    // Get the values from the pointers
+    double *da = ((MODEL_INPUTS *) a)->t;
+    double *db = ((MODEL_INPUTS *) b)->t;
+    double diff = (*da) - (*db); 
+    return ( (diff > 0) - (diff < 0) );
+}
 
 int
 prosa_model_trial_by_trial(const ANTIS_INPUT svals, PROSA_MODEL model, 
@@ -32,35 +45,6 @@ prosa_model_trial_by_trial(const ANTIS_INPUT svals, PROSA_MODEL model,
 }
 
 int
-prosa_model_two_states(const ANTIS_INPUT svals, PROSA_MODEL model, 
-    double *llh)
-{
-    int i;
-    double *t = svals.t;
-    double *a = svals.a;
-    double *u = svals.u;
-    double *theta = svals.theta;
-
-    int nt = svals.nt;
-
-    gsl_set_error_handler_off();
-    
-    #pragma omp parallel for private(i)
-    for (i = 0; i < nt; i++)
-    {
-        PROSA_PARAMETERS ptheta;
-        model.fill_parameters(theta + ((int ) u[i]) * DIM_PROSA_THETA, 
-                &ptheta);
-        llh[i] = model.llh(t[i], a[i], ptheta);
-    }
-
-    gsl_set_error_handler(NULL);
-
-    return 0;
-}
-
-
-int
 prosa_auxiliary(double t, double a, PROSA_MODEL model, 
     PROSA_PARAMETERS *ptheta, double *ct)
 {
@@ -82,7 +66,7 @@ prosa_auxiliary(double t, double a, PROSA_MODEL model,
     {
         if ( t0 > *ct )
         {
-            ptheta->cumint += model.nested_integral(*ct, t0, ptheta->kp,
+            ptheta->cumint += ptheta->inhibition_race(*ct, t0, ptheta->kp,
                    ptheta->ks, ptheta->tp, ptheta->ts);
             *ct = t0;
         }   
@@ -92,48 +76,123 @@ prosa_auxiliary(double t, double a, PROSA_MODEL model,
 }
 
 int
-prosa_model_two_states_optimized(const ANTIS_INPUT svals, PROSA_MODEL model, 
+prosa_model_n_states_optimized(const ANTIS_INPUT svals, PROSA_MODEL model, 
         double *llh)
 {
-    int i;
+    int i, j;
     double *t = svals.t;
-    double ct = 0;
     double *a = svals.a;
     double *u = svals.u;
     double *theta = svals.theta;
 
-    double ot_pro = ZERO_DISTS;
-    double ot_anti = ZERO_DISTS;
-
     int nt = svals.nt;
+    int np = svals.np; /* Sets the number of parameters */
 
-    PROSA_PARAMETERS ptheta_pro;
-    PROSA_PARAMETERS ptheta_anti;
+    /* Enter arbitrary number of parameters */
+    double *old_times = (double *) malloc(np * sizeof( double ));
+    PROSA_PARAMETERS *ptheta = (PROSA_PARAMETERS *) 
+        malloc( np * sizeof(PROSA_PARAMETERS) );
 
-    model.fill_parameters(theta, &ptheta_pro);
-    model.fill_parameters(theta + DIM_PROSA_THETA, &ptheta_anti);
+    for (j = 0; j < np; j++)
+    {
+        model.fill_parameters(theta + j * DIM_PROSA_THETA, ptheta + j);
+        old_times[j] = ZERO_DISTS;
+    }
 
     for (i = 0; i < nt; i++)
     {
-        switch ( (int ) u[i] )
-        {
-            case ANTISACCADE:
-                // Update if necessary
-                prosa_auxiliary(t[i], a[i], model, &ptheta_anti, &ot_anti);
-                llh[i] = model.llh(t[i], a[i], ptheta_anti);
-                break;
-            case PROSACCADE:
-                prosa_auxiliary(t[i], a[i], model, &ptheta_pro, &ot_pro);
-                llh[i] = model.llh(t[i], a[i], ptheta_pro);
-                break;
-        }
+        // Update if necessary
+        int trial_type = u[i];
+        prosa_auxiliary(t[i], a[i], model, ptheta + trial_type, 
+                old_times + trial_type);
+        llh[i] = model.llh(t[i], a[i], ptheta[trial_type]);
     }
+    
+    /* Clean up memory */
+
+    free(ptheta);
+    free(old_times);
 
     return 0;
 }
 
 int
-seri_model_trial_by_trial(const ANTIS_INPUT svals, SERI_MODEL model, 
+prosa_model_n_states(const ANTIS_INPUT svals, PROSA_MODEL model, 
+        double *llh)
+{
+    int i, j, k;
+    int nt = svals.nt;
+    double buff;
+   
+    MODEL_INPUTS *inputs = 
+        (MODEL_INPUTS *) malloc(nt * sizeof(MODEL_INPUTS));
+   
+    double *sorted_t = (double *) malloc(nt * sizeof(double));
+    double *sorted_a = (double *) malloc(nt * sizeof(double));
+    double *sorted_u = (double *) malloc(nt * sizeof(double));
+
+    ANTIS_INPUT tvals;
+
+    tvals.theta = svals.theta;
+    tvals.nt = svals.nt;
+    tvals.np = svals.np;
+
+    for (i = 0; i < nt; i++)
+    {
+        inputs[i].a = svals.a + i;
+        inputs[i].u = svals.u + i;
+        inputs[i].t = svals.t + i;
+    }
+
+    /* Sort the times. */
+    qsort(inputs, nt, sizeof(MODEL_INPUTS), cmpfunc);
+
+    for (i = 0; i < nt; i++)
+    {
+        sorted_t[i] = *(inputs[i].t);
+        sorted_a[i] = *(inputs[i].a);
+        sorted_u[i] = *(inputs[i].u);
+    }
+
+    tvals.t = sorted_t;
+    tvals.a = sorted_a;
+    tvals.u = sorted_u;
+
+    prosa_model_n_states_optimized(tvals, model, llh);
+
+    k = 0;
+    while (k < nt)
+    {
+        if ( inputs[k].t - svals.t == k )
+        {
+            k++;
+            continue;
+        }
+
+        i = inputs[k].t - svals.t;
+        j = inputs[i].t - svals.t;
+
+        inputs[i].t = i + svals.t;
+        inputs[k].t = j + svals.t;
+
+        buff = llh[k];
+
+        llh[k] = llh[i];
+        llh[i] = buff;
+
+    }
+
+    free(sorted_t);
+    free(sorted_a);
+    free(sorted_u);
+    free(inputs);
+
+    return 0;
+}
+
+/* ---------------------------------------------------------------------*/
+int
+seria_model_trial_by_trial(const ANTIS_INPUT svals, SERIA_MODEL model, 
         double *llh)
 {
     int i;
@@ -141,7 +200,7 @@ seri_model_trial_by_trial(const ANTIS_INPUT svals, SERI_MODEL model,
     double *a = svals.a;
     //double *u = svals.u;
     double *theta = svals.theta;
-
+    
     int nt = svals.nt;
 
     gsl_set_error_handler_off();
@@ -149,8 +208,8 @@ seri_model_trial_by_trial(const ANTIS_INPUT svals, SERI_MODEL model,
     #pragma omp parallel for private(i)
     for (i = 0; i < nt; i++)
     {
-        SERI_PARAMETERS ptheta;
-        model.fill_parameters(theta + i * DIM_SERI_THETA, &ptheta);
+        SERIA_PARAMETERS ptheta;
+        model.fill_parameters(theta + i * DIM_SERIA_THETA, &ptheta);
         llh[i] = model.llh(t[i], a[i], ptheta);
     }
 
@@ -161,38 +220,8 @@ seri_model_trial_by_trial(const ANTIS_INPUT svals, SERI_MODEL model,
 }
 
 int
-seri_model_two_states(const ANTIS_INPUT svals, SERI_MODEL model, double *llh)
-{
-    int i;
-    double *t = svals.t;
-    double *a = svals.a;
-    double *u = svals.u;
-    double *theta = svals.theta;
-
-    int nt = svals.nt;
-
-    SERI_PARAMETERS ptheta_pro;
-    SERI_PARAMETERS ptheta_anti;
-
-    model.fill_parameters(theta, &ptheta_pro);
-    model.fill_parameters(theta + DIM_SERI_THETA, &ptheta_anti);
-
-    gsl_set_error_handler_off();
-    
-    #pragma omp parallel for private(i)
-    for (i = 0; i < nt; i++)
-    {
-        llh[i] = model.llh(t[i], a[i], u[i] ? ptheta_anti : ptheta_pro);
-    }
-
-    gsl_set_error_handler(NULL);
-
-    return 0;
-}
-
-int
-seri_auxiliary(double t, double a, SERI_MODEL model, SERI_PARAMETERS *ptheta,
-        double *ct)
+seria_auxiliary(double t, double a, NESTED_INTEGRAL inhibition_race, 
+        SERIA_PARAMETERS *ptheta, double *ct)
 {
 
     double t0 = t - ptheta->t0;
@@ -212,7 +241,7 @@ seri_auxiliary(double t, double a, SERI_MODEL model, SERI_PARAMETERS *ptheta,
     {
         if ( t0 > *ct )
         {
-            ptheta->cumint += model.nested_integral(*ct, t0, ptheta->kp,
+            ptheta->cumint += inhibition_race(*ct, t0, ptheta->kp,
                    ptheta->ks, ptheta->tp, ptheta->ts);
             *ct = t0;
         }   
@@ -221,176 +250,119 @@ seri_auxiliary(double t, double a, SERI_MODEL model, SERI_PARAMETERS *ptheta,
     return 0;
 }
 
+
 int
-seri_model_two_states_optimized(const ANTIS_INPUT svals, SERI_MODEL model, 
+seria_model_n_states(const ANTIS_INPUT svals, SERIA_MODEL model, 
         double *llh)
 {
-    int i;
-    double *t = svals.t;
-    double ct = 0;
-    double *a = svals.a;
-    double *u = svals.u;
-    double *theta = svals.theta;
-
-    double ot_pro = ZERO_DISTS;
-    double ot_anti = ZERO_DISTS;
-
+    int i, j, k;
     int nt = svals.nt;
+    double buff;
+   
+    MODEL_INPUTS *inputs = 
+        (MODEL_INPUTS *) malloc(nt * sizeof(MODEL_INPUTS));
+   
+    double *sorted_t = (double *) malloc(nt * sizeof(double));
+    double *sorted_a = (double *) malloc(nt * sizeof(double));
+    double *sorted_u = (double *) malloc(nt * sizeof(double));
 
-    SERI_PARAMETERS ptheta_pro;
-    SERI_PARAMETERS ptheta_anti;
+    ANTIS_INPUT tvals;
 
-    model.fill_parameters(theta, &ptheta_pro);
-    model.fill_parameters(theta + DIM_SERI_THETA, &ptheta_anti);
+    tvals.theta = svals.theta;
+    tvals.nt = svals.nt;
+    tvals.np = svals.np;
 
     for (i = 0; i < nt; i++)
     {
-        switch ( (int ) u[i] )
+        inputs[i].a = svals.a + i;
+        inputs[i].u = svals.u + i;
+        inputs[i].t = svals.t + i;
+    }
+
+    /* Sort the times. */
+    qsort(inputs, nt, sizeof(MODEL_INPUTS), cmpfunc);
+
+    for (i = 0; i < nt; i++)
+    {
+        sorted_t[i] = *(inputs[i].t);
+        sorted_a[i] = *(inputs[i].a);
+        sorted_u[i] = *(inputs[i].u);
+    }
+
+    tvals.t = sorted_t;
+    tvals.a = sorted_a;
+    tvals.u = sorted_u;
+
+    seria_model_n_states_optimized(tvals, model, llh);
+
+    k = 0;
+    while (k < nt)
+    {
+        if ( inputs[k].t - svals.t == k )
         {
-            case ANTISACCADE:
-                // Update if necessary
-                seri_auxiliary(t[i], a[i], model, &ptheta_anti, &ot_anti);
-                llh[i] = model.llh(t[i], a[i], ptheta_anti);
-                break;
-            case PROSACCADE:
-                seri_auxiliary(t[i], a[i], model, &ptheta_pro, &ot_pro);
-                llh[i] = model.llh(t[i], a[i], ptheta_pro);
-                break;
+            k++;
+            continue;
         }
+
+        i = inputs[k].t - svals.t;
+        j = inputs[i].t - svals.t;
+
+        inputs[i].t = i + svals.t;
+        inputs[k].t = j + svals.t;
+
+        buff = llh[k];
+
+        llh[k] = llh[i];
+        llh[i] = buff;
+
     }
+
+    free(sorted_t);
+    free(sorted_a);
+    free(sorted_u);
+    free(inputs);
 
     return 0;
 }
 
 
-
 int
-dora_model_trial_by_trial(const ANTIS_INPUT svals, DORA_MODEL model, 
+seria_model_n_states_optimized(const ANTIS_INPUT svals, SERIA_MODEL model, 
         double *llh)
 {
-    int i;
-    double *t = svals.t;
-    double *a = svals.a;
-    //double *u = svals.u;
-    double *theta = svals.theta;
-    
-    int nt = svals.nt;
-
-    gsl_set_error_handler_off();
-    
-    #pragma omp parallel for private(i)
-    for (i = 0; i < nt; i++)
-    {
-        DORA_PARAMETERS ptheta;
-        model.fill_parameters(theta + i * DIM_DORA_THETA, &ptheta);
-        llh[i] = model.llh(t[i], a[i], ptheta);
-    }
-
-    gsl_set_error_handler(NULL);
-
-
-    return 0;
-}
-
-int
-dora_model_two_states(const ANTIS_INPUT svals, DORA_MODEL model, double *llh)
-{
-    int i;
+    int i, j;
     double *t = svals.t;
     double *a = svals.a;
     double *u = svals.u;
     double *theta = svals.theta;
 
     int nt = svals.nt;
+    int np = svals.np; /* Sets the number of parameters */
 
-    gsl_set_error_handler_off();
+    /* Enter arbitrary number of parameters */
+    double *old_times = (double *) malloc(np * sizeof( double ));
+    SERIA_PARAMETERS *ptheta = (SERIA_PARAMETERS *) 
+        malloc( np * sizeof(SERIA_PARAMETERS) );
 
-    DORA_PARAMETERS ptheta_pro;
-    DORA_PARAMETERS ptheta_anti;
-
-    model.fill_parameters(theta, &ptheta_pro);
-    model.fill_parameters(theta + DIM_DORA_THETA, &ptheta_anti);
-
-    #pragma omp parallel for private(i)
-    for (i = 0; i < nt; i++)
+    for (j = 0; j < np; j++)
     {
-        DORA_PARAMETERS ptheta;
-        llh[i] = model.llh(t[i], a[i], u[i] ? ptheta_anti : ptheta_pro);
+        model.fill_parameters(theta + j * DIM_SERIA_THETA, ptheta + j);
+        old_times[j] = ZERO_DISTS;
     }
 
-    gsl_set_error_handler(NULL);
-
-    return 0;
-}
-
-int
-dora_auxiliary(double t, double a, DORA_MODEL model, DORA_PARAMETERS *ptheta,
-        double *ct)
-{
-
-    double t0 = t - ptheta->t0;
-
-    // In case that it has not been initilize, do it now
+    for (i = 0; i < nt; i++)
+    {
+        // Update if necessary
+        int trial_type = u[i];
+        seria_auxiliary(t[i], a[i], (ptheta + trial_type)->inhibition_race,
+                ptheta + trial_type, old_times + trial_type);
+        llh[i] = model.llh(t[i], a[i], ptheta[trial_type]);
+    }
     
-    if ( ptheta->cumint == CUMINT_NO_INIT )
-    {
-        ptheta->cumint = 0;
-    }
+    /* Clean up memory */
 
-    // For now do nothing
-    if ( t0 <= ZERO_DISTS )
-    {
-        ptheta->cumint = 0;
-    } else 
-    {
-        if ( t0 > *ct )
-        {
-            ptheta->cumint += model.nested_integral(*ct, t0, ptheta->kp,
-                   ptheta->ks, ptheta->tp, ptheta->ts);
-            *ct = t0;
-        }   
-    }
-
-    return 0;
-}
-
-int
-dora_model_two_states_optimized(const ANTIS_INPUT svals, DORA_MODEL model, 
-        double *llh)
-{
-    int i;
-    double *t = svals.t;
-    double ct = 0;
-    double *a = svals.a;
-    double *u = svals.u;
-    double *theta = svals.theta;
-
-    double ot_pro = ZERO_DISTS;
-    double ot_anti = ZERO_DISTS;
-
-    int nt = svals.nt;
-
-    DORA_PARAMETERS ptheta_pro;
-    DORA_PARAMETERS ptheta_anti;
-
-    model.fill_parameters(theta, &ptheta_pro);
-    model.fill_parameters(theta + DIM_DORA_THETA, &ptheta_anti);
-
-    for (i = 0; i < nt; i++)
-    {
-        switch ( (int ) u[i] )
-        {
-            case ANTISACCADE:
-                // Update if necessary
-                dora_auxiliary(t[i], a[i], model, &ptheta_anti, &ot_anti);
-                llh[i] = model.llh(t[i], a[i], ptheta_anti);
-                break;
-            case PROSACCADE:
-                dora_auxiliary(t[i], a[i], model, &ptheta_pro, &ot_pro);
-                llh[i] = model.llh(t[i], a[i], ptheta_pro);
-                break;
-        }
-    }
+    free(ptheta);
+    free(old_times);
 
     return 0;
 }

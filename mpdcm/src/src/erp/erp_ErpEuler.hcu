@@ -1,0 +1,22 @@
+/* aponteeduardo@gmail.com */
+/* copyright (C) 2015 */
+
+#ifndef ERP_EULER_H
+#define ERP_EULER_H
+
+#include "mpdcm.hcu"
+#include "erp.hcu"
+#include "erp_dynamics.hcu"
+#include "erp_ErpCuda.hcu"
+
+
+struct ErpEuler : ErpCuda
+{
+
+    __device__
+    int update_x(dbuff *ox, dbuff *y, dbuff *u, dbuff *nx);
+
+};
+
+
+#endif // ERP_EULER_H

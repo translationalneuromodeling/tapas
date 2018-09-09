@@ -20,7 +20,8 @@ k = eye(np);
 % Create a kernel for each subject and each chain.
 % k is the covariance
 % s is a scaling factor for the covariance
-inference.kernel{2} = struct('k', k, 's', 0.2);
+kernel_scale = inference.kernel_scale;
+inference.kernel{2} = struct('k', k, 's', kernel_scale);
 % No need for a kernel as it can be sampled using a gibbs step.
 
 end

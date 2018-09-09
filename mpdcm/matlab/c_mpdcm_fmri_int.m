@@ -61,7 +61,7 @@
 %
 % ptheta should be structure with parameters
 %
-% ptheta.dt -- Sumsampling precision. Should be double between 0 and 1. 
+% ptheta.dt -- Subsampling precision. Should be double between 0 and 1. 
 %       ceil(1/ptheta.dt) integration steps will be performed between data
 %       points. Input u are theated as boxcart functions accross integration
 %       steps.

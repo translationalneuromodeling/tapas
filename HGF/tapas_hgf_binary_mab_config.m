@@ -113,7 +113,7 @@ c.model = 'hgf_binary_mab';
 c.n_levels = 3;
 
 % Number of bandits
-c.n_bandits = 2;
+c.n_bandits = 3;
 
 % Coupling
 % This may only be set to true if c.n_bandits is set to 2 above. If

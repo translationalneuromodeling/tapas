@@ -79,9 +79,9 @@ function c = tapas_hgf_ar1_binary_config
 % first column of sa will be 0 always.
 %
 % Tips:
-% - When analyzing a new dataset, take your inputs u and use
+% - When analyzing a new dataset, take your inputs u and responses y and use
 %
-%   >> est = tapas_fitModel([], u, 'tapas_hgf_binary_config', 'tapas_bayes_optimal_binary_config');
+%   >> est = tapas_fitModel(y, u, 'tapas_hgf_binary_config', 'tapas_bayes_optimal_binary_config');
 %
 %   to determine the Bayes optimal perceptual parameters (given your current priors as defined in
 %   this file here, so choose them wide and loose to let the inputs influence the result). You can
