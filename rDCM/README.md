@@ -1,5 +1,5 @@
 Regression dynamic causal modeling (rDCM)
-====================
+=========================================
 
 
 > Authors: Stefan Frässle (<stefanf@biomed.ee.ethz.ch>), Ekaterina I. Lomakina
@@ -19,7 +19,6 @@ Download
 
 - Please download the latest stable versions of the rDCM Toolbox on GitHub as part of the 
   [TAPAS software releases of the TNU](https://github.com/translationalneuromodeling/tapas/releases).
-- Older versions of TAPAS are available on the [TNU website](http://www.translationalneuromodeling.org/tapas).
 - The latest bugfixes can be found in the [GitHub Issue Forum](https://github.com/translationalneuromodeling/tapas/issues) or by request to the authors. 
 - Changes between all versions will be documented in the 
   [CHANGELOG](https://tnurepository.ethz.ch/sfraessle/rDCM/blob/master/CHANGELOG.md).
@@ -48,12 +47,12 @@ Installation
 1. Unzip the TAPAS archive in your folder of choice
 2. Open Matlab
 3. Add the rDCM Toolbox to your Matlab path
-4. Use the Manual and the tutorial script `tapas_rdcm_tutorial()` as starting points
+4. Use the [Manual](docs/Manual.pdf) and the tutorial script `tapas_rdcm_tutorial()` as starting points
 
 
 
 Important Notes
-----------
+---------------
 
 Please note that rDCM is a method that is still in it's infancy and thus subject to 
 various limiations. Due to these limitations, requirements of rDCM in terms of 

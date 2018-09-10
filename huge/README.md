@@ -1,12 +1,20 @@
-﻿This toolbox implements variational Bayesian inversion for hierarchical 
-unsupervised generative embedding (HUGE). To get started, read the tutorial
-    open huge_tutorial.html
-or run the demo script:
-    open tapas_huge_demo.m
+Hierarchical Unsupervised Generative Embedding Toolbox (HUGE)
+=============================================================
 
+This toolbox implements variational Bayesian inversion for hierarchical 
+unsupervised generative embedding (HUGE). To get started, read the 
+[tutorial](huge_tutorial.html), which you can also open in Matlab:
+```
+    open huge_tutorial.html
+```
+or run the demo script:
+```
+    open tapas_huge_demo.m
+```
 
 The supported interface is:
 
+```
 [DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize, seed)
 INPUT:
   DCM       - cell array of DCM in SPM format
@@ -67,19 +75,24 @@ OUTPUT:
       meanNoisePrecision:  posterior mean of precision of observation
                            noise (lambda_n,r in Eq.(23) of REF [1])
       modifiedSumSqrErr:   b'_n,r in Eq.(22) of REF [1]
+```
 
 The toolbox requires compilation of mex files, which is done automatically.
 If you wish to compile manually, set the current directory of your Matlab 
 session to the folder containing the HUGE toolbox and use the following 
 command:
-mex tapas_huge_int_euler.c
+```
+    mex tapas_huge_int_euler.c
+```
 To choose a compiler, use the command:
-mex -setup
+```
+    mex -setup
+```
 
 For more information, read following the paper:
-Yao Y, Raman SS, Schiek M, Leff A, Fr�ssle S, Stephan KE (2018). Variational 
+Yao Y, Raman SS, Schiek M, Leff A, Frässle S, Stephan KE (2018). Variational 
 Bayesian Inversion for Hierarchical Unsupervised Generative Embedding (HUGE). 
-NeuroImage, 179: 604-619
+NeuroImage, 179: 604-619  
 https://doi.org/10.1016/j.neuroimage.2018.06.073
 
 The HUGE toolbox is part of TAPAS, which is released under the terms of the 
@@ -89,10 +102,13 @@ GNU General Public Licence (GPL), version 3. For further details, see
 This software is intended for research only. Do not use for clinical purpose. 
 Please note that the HUGE toolbox is in an early stage of development. 
 Considerable changes are planned for future releases. For support, please 
-refer to:
+refer to:  
 https://github.com/translationalneuromodeling/tapas/issues
 
-Author: Yu Yao (yao@biomed.ee.ethz.ch)
-Copyright (C) 2018 Translational Neuromodeling Unit
-                   Institute for Biomedical Engineering,
+Author
+------
+Yu Yao (yao@biomed.ee.ethz.ch)  
+
+Copyright (C) 2018 Translational Neuromodeling Unit  
+                   Institute for Biomedical Engineering,  
                    University of Zurich and ETH Zurich.
