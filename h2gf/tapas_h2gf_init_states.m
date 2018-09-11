@@ -15,4 +15,3 @@ function [states] = tapas_h2gf_init_states(data, model, inference)
 states = cell(inference.niter, 1);
 
 end
-

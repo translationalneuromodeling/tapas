@@ -17,10 +17,10 @@ sstate.llh{3} = state.llh{3};
 
 sstate.v = state.v;
 
-if state.nsample <= inference.nburnin;
+if state.nsample < inference.nburnin
     si = mod(state.nsample, inference.ndiag) + 1;
 else
-    si = state.nsample - inference.nburnin;
+    si = state.nsample - inference.nburnin + 1;
 end
 
 if si == inference.niter

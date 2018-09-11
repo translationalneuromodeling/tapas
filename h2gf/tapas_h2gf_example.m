@@ -77,21 +77,21 @@ inference = struct();
 pars = struct();
 
 % Number of samples stored 
-pars.niter = 1000;
+pars.niter = 200;
 % Number of samples in the burn-in phase
-pars.nburnin = 1000;
+pars.nburnin = 200;
 % Number of samples used for diagnostics. During the 
 % burn-in phase the parameters of the algorithm are 
 % adjusted to increase the efficiency. This happens after 
 % every diagnostic cycle.
-pars.ndiag = 200;
+pars.ndiag = 100;
 
 % Set up the so called temperature schedule. This is used to
 % compute the model evidence. It is a matrix of NxM, where N 
 % is the number of subjects and M is the number of chains used 
 % to compute the model evidence. The
 % temperature schedule is selected using a 5th order power rule. 
-pars.T = ones(num_subjects, 1) * linspace(0.01, 1, 16).^5;
+pars.T = ones(num_subjects, 1) * linspace(0.01, 1, 8).^5;
 
 % This controls how often a 'swap' step is perform. 
 pars.mc3it = 0;
@@ -101,5 +101,7 @@ pars.mc3it = 0;
 % behavior can be largely modified by changing the default 
 % settings.
 hgf_est = tapas_h2gf_estimate(data, hgf, inference, pars);
+
+display(hgf_est);
 
 end

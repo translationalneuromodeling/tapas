@@ -6,7 +6,7 @@ function [posterior] = tapas_h2gf_prepare_posterior(data, model, ...
 % copyright (C) 2016
 %
 
-T = states{end}.graph{1}.T;
+T = model.graph{1}.htheta.T;
 
 posterior = struct('data', data, 'model', model, 'inference', inference, ...
     'samples_theta', [], 'fe', [], 'llh', []);
@@ -31,26 +31,33 @@ end
 
 cllh{1} = llh;
 
-%llh = zeros(ns, nc, np);
-%for i = 1:np
-%    llh(:, :, i) = states{i}.llh{2};
-%end
-%
-%cllh{2} = llh;
-
 posterior.llh = cllh;
+ellh = mean(squeeze(sum(cllh{1}, 1)), 2);
 
-fe = trapz(T(1, :), mean(squeeze(sum(cllh{1}, 1)), 2));
-posterior.fe = fe;
-
-posterior.T = T;
-posterior.samples_theta = theta;
-
-% Try to stamp the version of the code
-
-[~, hash] = tapas_get_tapas_revision(0);
-posterior.tapas_revision = hash;
-
-
+if size(T, 2) > 1
+    fe = trapz(T(1, :), ellh);
+else
+    fe = nan;
 end
 
+posterior.fe = fe;
+posterior.accuracy = ellh(end);
+
+posterior.T = T;
+posterior.samples_theta = horzcat(theta{:});
+
+hgf = model.graph{1}.htheta.hgf;
+
+for i = 1:numel(posterior.samples_theta)
+    posterior.samples_theta{i} = tapas_h2gf_unwrapp_parameters(...
+        posterior.samples_theta{i}, hgf);
+end
+
+posterior.hgf = hgf;
+posterior.summary = tapas_h2gf_summary(posterior.samples_theta, hgf);
+
+% Try to stamp the version of the code
+% [~, hash] = tapas_get_tapas_revision(0);
+% posterior.tapas_revision = hash;
+
+end

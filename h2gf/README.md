@@ -1,11 +1,23 @@
 # H2GF: Hierarchical inference for the HGF
-The h2gf package is an extension of the HGF for hierarchical inference in
+# Contents
+
+- [Introduction](#introduction)
+- [Quick start](#quick-start)
+    * [An example script](#an-example-script)
+        + [Setting up the model](#model)
+        + [Settig up the data](#data)
+        + [Setting up the inference](#inference)
+        + [Output parameters](#output)
+- [The model](#the-model)
+
+# Introduction
+The **h2gf** package is an extension of the HGF for hierarchical inference in
 group studies. It provides a very simple method to pool information from 
 a sample population to estimate the prior mean over subjects using 
 hierarchical Bayes. In addition, it can be used to compute the model
 evidence using thermodynamic integration.
 
-## Quick start
+# Quick start
 From the matlab command line, write
 ```matlab
 % Initilize tapas
@@ -14,10 +26,13 @@ tapas_init();
 posterior = tapas_h2g_example();
 ```
 
-### The example script
+## An example script
 The h2gf package works out of the box with HGF models. The three main
 inputs of the model are subjects' data, an hgf structure defining the
-model, and a structure defining the parameters of the sampler.
+model, and a structure defining the parameters of the sampler. In this
+section we explain the sample script `tapas/h2gf/tapas_h2gf_example.m`.
+
+### Model
 
 The first part of this function sets up the model 
 ```matlab
@@ -56,6 +71,7 @@ hgf.empirical_priors = struct('eta', []);
 hgf.empirical_priors.eta = 1;
 ```
 
+### Data
 
 Following the definition of the model, we input the data input. It is
 entered as the `data` structure array
@@ -92,6 +108,8 @@ for i = 1:num_subjects
     data(i).u = u;
 end
 ```
+
+### Inference
 
 At this point we enter the parameters for the inference method. It is 
 a Markov Chain Monte Carlo Method that draws samples from the posterior.
@@ -135,39 +153,46 @@ The next line runs the algorithm using the input.
 % behavior can be largely modified by changing the default 
 % settings.
 hgf_est = tapas_h2gf_estimate(data, hgf, inference, pars);
+
+display(hgf_est)
 ```
+
+### Output
+The output of the algorithm is in `hgf_est`. This is a structure with the
+fields:
+
+| Field name | Example | Meaning |
+| ---------- | ------- | ------- |
+| data       | [10x1 struct] | Input data |
+| model      | [1x1 struct]  | Fully specified model. |
+| inference  | [1x1 struct]  | Inference parameters used. |
+| samples_theta | {10x200 cell} | NxM cell array with samples from the posterior, where N is the number of subjects and M is the number of samples. |
+| fe        | -1152.5 | Log model evidence |
+| llh       | {2x1 cell } | Samples of the log likelihood |
+| accuracy  | -1127.1     | Estimated accuracy (expected log likelihood). |
+| T         | [10x8 double] | Input temperature schedule. |
+| hgf       | [1x1 struct] | Input hgf model.  |
+| summary   | [10x1 struct] | Nx1 summary structure of the parameter estimates. |
+
+The field `hgf_est.summary` contains a summary of the posterior samples. It
+is a Nx1 struct array, where N is the number of subjects. The fields are:
+
+| Field name | Example | Meaning |
+| ---------- | ------- | ------- |
+| prc_mean  | [14x1 double] | Expected value of the perceptual parameters. |
+| obs_mean  | 0.83 | Expected value of the observation parameters. |
+| covariance | [15x15 double] | Covariance of all the parameters. Observation model parameters are stacked *below* the perceptual parameters. |
 
 
 ## The model
-The main model used here is a 'Gamma-Gaussian' prior over the parameters
-of the model. It assumes that the parameters of the model are Gaussian
-distributed around the population mean. The prior of the model parameters
-is effectively treated as a fixed number of observations.
+<img src="misc/hierarchical_model.png" width="400" align="right"/>
+The main model used here is a 'Gamma-Gaussian' prior over the HGF 
+parameters of each subject \(\theta_i\). It is assumed that the parameters
+are Gaussian distributed around the population mean \(\mu\). The prior of 
+the parameters \(\mu_0\) is effectively treated as a fixed number of 
+observations. The weight of the observations is defined by \(\eta\).
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Contact 
 aponteeduardo@gmail.com
+
 copyright (c) 2018
