@@ -64,19 +64,20 @@ hgf.c_obs.priorsas = 1;
 
 % Set the empirical prior
 % Eta weights the prior with respect to the observations. Because the prior
-% mean is treated as fixed obserations, eta is the number of observation
-% represented by the prior. If eta = 1, the prior is mean is treated as 
-% a single additional observation.
+% mean mu is treated as fixed obserations, eta is the number of observations
+% represented by mu. If eta = 1, mu is treated as a single additional observation.
 hgf.empirical_priors = struct('eta', []);
+% eta can be a scalar of a vector. If eta is a vector, it should have
+% the dimensionality of mu. 
 hgf.empirical_priors.eta = 1;
 ```
 
 ### Data
 
-Following the definition of the model, we input the data input. It is
-entered as the `data` structure array
+Following the definition of the model, we enter the 'experimental' data. It 
+is entered as the `data` structure array
 with fields `y`, `u`, `ign`, and `irr`. `y` corresponds to subjects 
-responses and `u` as experimental inputs. Each row in 'data' corresponds
+responses and `u` to experimental inputs. Each row in 'data' corresponds
 to a different subject.
 ```matlab
 %% Simulating data
@@ -98,10 +99,12 @@ data = struct('y', cell(num_subjects, 1), ...
 
 for i = 1:num_subjects
 	% Generate artifical data
-    %sim = tapas_simModel(u, 'tapas_hgf_binary', ...
+    % sim = tapas_simModel(u, 'tapas_hgf_binary', ...
 	%	pars, 'tapas_unitsq_sgm');
-    % Instead of simulating data we use the loaded data 10 time. It is also
-    % possible to generate data using the function above.
+
+    % Instead of simulating data we use the same data 10 times. It is also
+    % possible to generate data by uncommentic the lines above.
+
 	% Fill the responses
     data(i).y = y;
 	% and experimental manipulations
@@ -111,9 +114,10 @@ end
 
 ### Inference
 
-At this point we enter the parameters for the inference method. It is 
-a Markov Chain Monte Carlo Method that draws samples from the posterior.
-Default values are set in `tapas_h2gf_inference.m`
+At this point, we enter the parameters for the inference for the Markov 
+Chain Monte Carlo algorithm that draws samples from the posterior
+distribution of the model parameters. Default values are set in 
+`tapas_h2gf_inference.m`.
 
 ```matlab
 %% Parameters for inference
@@ -125,14 +129,14 @@ inference = struct();
 pars = struct();
 
 % Number of samples stored 
-pars.niter = 4000;
+pars.niter = 600;
 % Number of samples in the burn-in phase
-pars.nburnin = 4000;
+pars.nburnin = 600;
 % Number of samples used for diagnostics. During the 
 % burn-in phase the parameters of the algorithm are 
 % adjusted to increase the efficiency. This happens after 
 % every diagnostic cycle.
-pars.ndiag = 1000;
+pars.ndiag = 200;
 
 % Set up the so called temperature schedule. This is used to
 % compute the model evidence. It is a matrix of NxM, where N 
@@ -158,19 +162,19 @@ display(hgf_est)
 ```
 
 ### Output
-The output of the algorithm is in `hgf_est`. This is a structure with the
+The output of the algorithm is `hgf_est`. This is a structure array with the
 fields:
 
 | Field name | Example | Meaning |
 | ---------- | ------- | ------- |
 | data       | [10x1 struct] | Input data |
 | model      | [1x1 struct]  | Fully specified model. |
-| inference  | [1x1 struct]  | Inference parameters used. |
+| inference  | [1x1 struct]  | Inference parameters. |
 | samples_theta | {10x200 cell} | NxM cell array with samples from the posterior, where N is the number of subjects and M is the number of samples. |
 | fe        | -1152.5 | Log model evidence |
 | llh       | {2x1 cell } | Samples of the log likelihood |
 | accuracy  | -1127.1     | Estimated accuracy (expected log likelihood). |
-| T         | [10x8 double] | Input temperature schedule. |
+| T         | [10x8 double] | Temperature schedule. |
 | hgf       | [1x1 struct] | Input hgf model.  |
 | summary   | [10x1 struct] | Nx1 summary structure of the parameter estimates. |
 

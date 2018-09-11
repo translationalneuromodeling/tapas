@@ -35,10 +35,11 @@ hgf.c_obs.priorsas = 1;
 
 % Set the empirical prior
 % Eta weights the prior with respect to the observations. Because the prior
-% mean is treated as fixed obserations, eta is the number of observation
-% represented by the prior. If eta = 1, the prior is mean is treated as 
-% a single additional observation.
+% mean mu is treated as fixed obserations, eta is the number of observations
+% represented by mu. If eta = 1, mu is treated as a single additional observation.
 hgf.empirical_priors = struct('eta', []);
+% eta can be a scalar of a vector. If eta is a vector, it should have
+% the dimensionality of mu. 
 hgf.empirical_priors.eta = 1;
 
 %% Simulating data
