@@ -43,5 +43,6 @@ if ~isfield(model.graph{4}.htheta.y, 'beta')
     model.graph{4}.htheta.y.beta = beta;
 end
 
+model.graph{4}.htheta.y.eta = ones(size(mu_pe));
 
 end
