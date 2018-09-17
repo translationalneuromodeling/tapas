@@ -36,8 +36,8 @@ for i = 1:nsubjects
     subjects(i).prc_mean = prc;
     subjects(i).obs_mean = obs;
     subjects(i).covariance = cov(values');
-    % r_hat = psrf(values');
-    % subjects(i).r_hat = r_hat;
+    r_hat = psrf(values')';
+    subjects(i).r_hat = r_hat;
 end
 
 summary = subjects;

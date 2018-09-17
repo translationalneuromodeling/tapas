@@ -186,7 +186,7 @@ is a Nx1 struct array, where N is the number of subjects. The fields are:
 | prc_mean  | [14x1 double] | Expected value of the perceptual parameters. |
 | obs_mean  | 0.83 | Expected value of the observation parameters. |
 | covariance | [15x15 double] | Covariance of all the parameters. Observation model parameters are stacked *below* the perceptual parameters. |
-
+| r_hat     | [15x1 double] | R hat statistic or 'potential reduction factor' is a heuristic measure of MCMCM convergence. Values below 1.1 usually indicate convergence|
 
 ## The model
 <img src="misc/hierarchical_model.png" width="400" align="right"/>
