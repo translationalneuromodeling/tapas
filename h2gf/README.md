@@ -187,7 +187,8 @@ is a Nx1 struct array, where N is the number of subjects. The fields are:
 | obs_mean  | 0.83 | Expected value of the observation parameters. |
 | mean      | [14x1 double] | Expected value of all the parameters. |
 | sequence  | [1x1 struct]  | States of the model computed from the values in mean. This should be compatible with the respective plotting functions.|
-| covariance | [15x15 double] | Covariance of all the parameters. Observation model parameters are stacked *below* the perceptual parameters. |
+| covariance | [3x3 double] | Covariance of all estimated parameters. Observation model parameters are stacked *below* the perceptual parameters. |
+| pseudo_lm2 | [-114.43]    | Pseudo model evidence for each subject. |
 | r_hat     | [15x1 double] | R hat statistic or 'potential reduction factor' is a heuristic measure of MCMCM convergence. Values below 1.1 usually indicate convergence|
 
 ## The model
