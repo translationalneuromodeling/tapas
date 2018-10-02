@@ -34,12 +34,13 @@ for i = 1:nsubjects
     values = [samples{i, :}];    
     expected = mean(values, 2);
     [prc, obs] = tapas_hgf_get_theta(expected, hgf);
-
     subjects(i).prc_mean = prc;
     subjects(i).obs_mean = obs;
-    subjects(i).sequence = tapas_h2gf_gen_state(data(i), expected, ...
+    subjects(i).traj = tapas_h2gf_gen_state(data(i), expected, ...
         struct('hgf', hgf));
-    subjects(i).covariance = cov(values');
+    valid = logical(sum(hgf.jm, 2));
+    covariance = cov(values');
+    subjects(i).covariance = covariance(valid, valid);
     r_hat = psrf(values')';
     subjects(i).r_hat = r_hat;
 end
