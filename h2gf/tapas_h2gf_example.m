@@ -7,7 +7,7 @@ function [hgf_est] = tapas_h2gf_example()
 %
 
 %% Prepare the model
-% Initilize a structure to hold the hgf
+% Initialize a structure to hold the hgf
 hgf = struct('c_prc', [], 'c_obs', []);
 % Set up the number of levels
 hgf.c_prc.n_levels = 3; 
@@ -70,7 +70,7 @@ for i = 1:num_subjects
 end
 
 %% Parameters for inference.
-% Initilize the place holder for the parameters of the 
+% Initialize the place holder for the parameters of the 
 % inference. Missing parameters are filled by default
 % values. This is implemented in tapas_h2gf_inference.m
 

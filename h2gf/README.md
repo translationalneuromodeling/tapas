@@ -20,7 +20,7 @@ evidence using thermodynamic integration.
 # Quick start
 From the matlab command line, write
 ```matlab
-% Initilize tapas
+% Initialize tapas
 tapas_init(); 
 % Run an example script
 posterior = tapas_h2g_example();
@@ -36,7 +36,7 @@ section we explain the sample script `tapas/h2gf/tapas_h2gf_example.m`.
 
 The first part of this function sets up the model 
 ```matlab
-% Initilize a structure to hold the hgf
+% Initialize a structure to hold the hgf
 hgf = struct('c_prc', [], 'c_obs', []);
 % Set up the number of levels
 hgf.c_prc.n_levels = 3; 
@@ -121,7 +121,7 @@ distribution of the model parameters. Default values are set in
 
 ```matlab
 %% Parameters for inference
-% Initilize the place holder for the parameters of the 
+% Initialize the place holder for the parameters of the 
 % inference. Missing parameters are filled by default
 % values. This is implemented in tapas_h2gf_inference.m
 
