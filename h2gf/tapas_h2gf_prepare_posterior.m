@@ -54,7 +54,7 @@ for i = 1:numel(posterior.samples_theta)
 end
 
 posterior.hgf = hgf;
-posterior.summary = tapas_h2gf_summary(posterior.samples_theta, hgf);
+posterior.summary = tapas_h2gf_summary(data, posterior.samples_theta, hgf);
 
 % Try to stamp the version of the code
 % [~, hash] = tapas_get_tapas_revision(0);

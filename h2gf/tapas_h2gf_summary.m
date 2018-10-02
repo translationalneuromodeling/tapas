@@ -1,8 +1,10 @@
-function [summary] = tapas_h2gf_summary(samples, hgf)
+function [summary] = tapas_h2gf_summary(data, samples, hgf)
 %% Provides a summary of the results for the user.
 %
 % Input
-%   pt       -- A structure obtained from tapas_h2gf_estimate
+%   data       -- A structure with the data of each subject.
+%   samples     -- Posterior samples.
+%   hgf         -- HGF model.
 %
 % Output
 %   summary         -- A structure containing some relevant information for
@@ -35,6 +37,8 @@ for i = 1:nsubjects
 
     subjects(i).prc_mean = prc;
     subjects(i).obs_mean = obs;
+    subjects(i).sequence = tapas_h2gf_gen_state(data(i), expected, ...
+        struct('hgf', hgf));
     subjects(i).covariance = cov(values');
     r_hat = psrf(values')';
     subjects(i).r_hat = r_hat;

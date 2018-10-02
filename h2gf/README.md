@@ -23,7 +23,7 @@ From the matlab command line, write
 % Initialize tapas
 tapas_init(); 
 % Run an example script
-posterior = tapas_h2g_example();
+posterior = tapas_h2gf_example();
 ```
 
 ## An example script
@@ -64,7 +64,7 @@ hgf.c_obs.priorsas = 1;
 
 % Set the empirical prior
 % Eta weights the prior with respect to the observations. Because the prior
-% mean mu is treated as fixed obserations, eta is the number of observations
+% mean mu is treated as fixed observations, eta is the number of observations
 % represented by mu. If eta = 1, mu is treated as a single additional observation.
 hgf.empirical_priors = struct('eta', []);
 % eta can be a scalar of a vector. If eta is a vector, it should have
@@ -185,6 +185,8 @@ is a Nx1 struct array, where N is the number of subjects. The fields are:
 | ---------- | ------- | ------- |
 | prc_mean  | [14x1 double] | Expected value of the perceptual parameters. |
 | obs_mean  | 0.83 | Expected value of the observation parameters. |
+| mean      | [14x1 double] | Expected value of all the parameters. |
+| sequence  | [1x1 struct]  | States of the model computed from the values in mean. This should be compatible with the respective plotting functions.|
 | covariance | [15x15 double] | Covariance of all the parameters. Observation model parameters are stacked *below* the perceptual parameters. |
 | r_hat     | [15x1 double] | R hat statistic or 'potential reduction factor' is a heuristic measure of MCMCM convergence. Values below 1.1 usually indicate convergence|
 
