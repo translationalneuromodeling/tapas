@@ -103,14 +103,14 @@ inference = struct();
 pars = struct();
 
 % Number of samples stored 
-pars.niter = 300;
+pars.niter = 100;
 % Number of samples in the burn-in phase
-pars.nburnin = 300;
+pars.nburnin = 100;
 % Number of samples used for diagnostics. During the 
 % burn-in phase the parameters of the algorithm are 
 % adjusted to increase the efficiency. This happens after 
 % every diagnostic cycle.
-pars.ndiag = 100;
+pars.ndiag = 50;
 
 % Set up the so called temperature schedule. This is used to
 % compute the model evidence. It is a matrix of NxM, where N 

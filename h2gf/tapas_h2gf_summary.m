@@ -1,8 +1,10 @@
-function [summary] = tapas_h2gf_summary(samples, hgf)
+function [summary] = tapas_h2gf_summary(data, posterior, hgf)
 %% Provides a summary of the results for the user.
 %
 % Input
-%   pt       -- A structure obtained from tapas_h2gf_estimate
+%   data        -- A structure with the data of each subject.
+%   posterior   -- Posterior structure.
+%   hgf         -- HGF model.
 %
 % Output
 %   summary         -- A structure containing some relevant information for
@@ -22,6 +24,9 @@ function [summary] = tapas_h2gf_summary(samples, hgf)
 % copyright (C) 2018
 %
 
+samples = posterior.samples_theta;
+T = posterior.T;
+llh = posterior.llh{1};
 
 [nsubjects] = size(samples, 1);
 
@@ -32,12 +37,16 @@ for i = 1:nsubjects
     values = [samples{i, :}];    
     expected = mean(values, 2);
     [prc, obs] = tapas_hgf_get_theta(expected, hgf);
-
     subjects(i).prc_mean = prc;
     subjects(i).obs_mean = obs;
-    subjects(i).covariance = cov(values');
+    subjects(i).traj = tapas_h2gf_gen_state(data(i), expected, ...
+        struct('hgf', hgf));
+    valid = logical(sum(hgf.jm, 2));
+    covariance = cov(values');
+    subjects(i).covariance = covariance(valid, valid);
     r_hat = psrf(values')';
     subjects(i).r_hat = r_hat;
+    subjects(i).pseudo_lme = trapz(T(i, :), mean(llh(i, :, :), 3));
 end
 
 summary = subjects;
