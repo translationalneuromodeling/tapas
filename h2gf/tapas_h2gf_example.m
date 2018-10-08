@@ -1,4 +1,4 @@
-function [hgf_est] = tapas_h2gf_example()
+function [h2gf_est, h2gf_input, sim] = tapas_h2gf_example()
 % Runs an example of the h2gf using simulated data.
 %
 
@@ -9,9 +9,6 @@ function [hgf_est] = tapas_h2gf_example()
 %% Prepare the model
 % Initialize a structure to hold the hgf
 hgf = struct('c_prc', [], 'c_obs', []);
-% Set the number of levels
-hgf.c_prc.n_levels = 3; 
-
 % Set the perceptual model
 hgf.c_prc.prc_fun = @tapas_hgf_binary;
 % Set the corresponding reparameterization function
@@ -25,9 +22,11 @@ hgf.c_obs.transp_obs_fun = @tapas_unitsq_sgm_transp;
 % Run the config function of the perceptual model
 config = tapas_hgf_binary_config();
 
-% Copy the priors of the perceptual model into the hgf structure
+% Copy the priors and number of levels of the perceptual model into
+% the hgf structure
 hgf.c_prc.priormus = config.priormus;
 hgf.c_prc.priorsas = config.priorsas;
+hgf.c_prc.n_levels = config.n_levels;
 
 % Set the priors of the observational model
 hgf.c_obs.priormus = 0.5;
@@ -53,26 +52,37 @@ hgf.empirical_priors.eta = 1;
 % Number of subjects
 num_subjects = 10;
 
-% Values of kappa2 and zeta for each simulated subject
-ka2 = [0.5 1 1.5 1.7 2 2.2 2.4 2.6 3 3.5];
+% Values of omega2 and zeta for each simulated subject
+om2 = [-5 -4.5 -4 -3.6 -3.4 -3.2 -3.0 -2.8 -2.6 -2.4];
 ze = [0.5 1 1.3 1.4 1.5 1.7 1.8 1.9 2 2.5];
 % Randomly permute the elements of ze such that there is no
-% systematic association between high values of kappa2 and
+% systematic association between high values of omega2 and
 % high values of zeta
 ze = ze(randperm(length(ze))); 
 
-% Initialize a structure for the data
+% Initialize a structure array for the simulations
+sim = struct('u', [],...
+             'ign', [],...
+             'c_sim', [],...
+             'p_prc', [],...
+             'c_prc', [],...
+             'traj', [],...
+             'p_obs', [],...
+             'c_obs', [],...
+             'y', []);
+
+% Initialize a sctructure array for the 'data' argument of h2gf_estimate
 data = struct('y', cell(num_subjects, 1),...
-              'u', cell(num_subjects, 1),...
+              'u', [],...
               'ign', [],...
               'irr', []);
 
-% Load example inputs u (example responses y are not needed)
-[y, u] = tapas_h2gf_load_example_data();
+% Load example inputs u
+[~, u] = tapas_h2gf_load_example_data();
 
+% Generate simulated data with the chosen range of parameter settings
 for i = 1:num_subjects
-    % Generate data with the chosen range of parameter settings
-    sim = tapas_simModel(u,...
+    sim(i) = tapas_simModel(u,...
                          'tapas_hgf_binary', [NaN,...
                                               1,...
                                               1,...
@@ -83,23 +93,21 @@ for i = 1:num_subjects
                                               0,...
                                               0,...
                                               1,...
-                                              ka2(i),...
+                                              1,...
                                               NaN,...
-                                              -4,...
+                                              om2(i),...
                                               log(0.0025)],...
                          'tapas_unitsq_sgm', ze(i));
-    % Responses
-    data(i).y = sim.y;
+    % Simulated responses
+    data(i).y = sim(i).y;
     % Experimental inputs
-    data(i).u = sim.u;
+    data(i).u = sim(i).u;
 end
 
-%% Configuration for inference.
+%% Configure the sampler
 % Initialize the place holder for the parameters of the 
 % inference. Missing parameters are filled by default
 % values. This is implemented in tapas_h2gf_inference.m
-
-inference = struct();
 pars = struct();
 
 % Number of samples stored 
@@ -126,8 +134,14 @@ pars.mc3it = 0;
 % The function tapas_h2gf_estimate() is the entry point to the
 % estimation. Its behavior can be  modified by changing the default
 % settings.
-hgf_est = tapas_h2gf_estimate(data, hgf, inference, pars);
+inference = struct();
+h2gf_est = tapas_h2gf_estimate(data, hgf, inference, pars);
 
-display(hgf_est);
+% Gather the input in one struct
+h2gf_input = struct();
+h2gf_input.data = data;
+h2gf_input.hgf = hgf;
+h2gf_input.inference = inference;
+h2gf_input.pars = pars;
 
 end
