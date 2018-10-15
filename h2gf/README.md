@@ -28,13 +28,15 @@ posterior = tapas_h2gf_example();
 
 ## An example script
 The h2gf package works out of the box with HGF models. The three main
-inputs of the model are subjects' data, an hgf structure defining the
-model, and a structure defining the parameters of the sampler. In this
-section we explain the sample script `tapas/h2gf/tapas_h2gf_example.m`.
+inputs of the model are the data, an 'hgf' structure defining the
+model, and a structure defining the configuration of the sampler. In
+this section, we explain the sample script
+`tapas/h2gf/tapas_h2gf_example.m`, whose contents we will go through
+step by step.
 
 ### Model
 
-The first part of this function sets up the model 
+The first part of the script sets up the model.
 ```matlab
 % Initialize a structure to hold the hgf
 hgf = struct('c_prc', [], 'c_obs', []);
