@@ -78,9 +78,9 @@ inference = struct();
 pars = struct();
 
 % Number of samples stored 
-pars.niter = 100;
+pars.niter = 300;
 % Number of samples in the burn-in phase
-pars.nburnin = 100;
+pars.nburnin = 300;
 % Number of samples used for diagnostics. During the 
 % burn-in phase the parameters of the algorithm are 
 % adjusted to increase the efficiency. This happens after 
