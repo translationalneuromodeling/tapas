@@ -7,7 +7,9 @@
         + [Setting up the model](#model)
         + [Settig up the data](#data)
         + [Setting up the inference](#inference)
-        + [Output parameters](#output)
+- [Inputs and outputs](#inputs-and-outputs)
+    * [Input](#input)
+    * [Output](#output)
 - [The model](#the-model)
 
 # Introduction
@@ -163,7 +165,65 @@ hgf_est = tapas_h2gf_estimate(data, hgf, inference, pars);
 display(hgf_est)
 ```
 
-### Output
+# Inputs and outputs
+## Input
+
+The inputs to `tapas_h2gf_estimate` are: `data`, `hgf`, `inference`, 
+`parameters`. 
+
+### data
+`data` is a Nx1 structure array with the fields `y`, `u`, `ign`, `irr`. N is 
+the number of observations or subjects.
+
+| Field name | Type    | Meaning |
+|------------|---------|---------|
+| `y`          | Depends on the model. | Participants responses in N trials|
+| `u`          | Depends on the model. | Experimental manipulation in N trial |
+| `ign`        | Double array. | Ignored trials. |
+| `irr`        | Double array. | Irregular trials. |
+
+### hgf
+`hgf` is a structure that defines the hgf model used for inference.
+The fields are `c_prc` and `c_obs`.
+
+| Field name | Type    | Example | Meaning |
+|------------|---------|---------|---------|
+| `c_prc`      | Structure | [1x1 struct] | Perceptual model.|
+| `c_obs`      | Structure | [1x1 struct] | Observation model. | 
+
+### infererence
+`inference` is a structure containing the parameters of the inference
+method. It should *always* be passed as an argument. The fields
+not specified by the user are set in `tapas_h2gf_inference`. 
+
+| Field name | Type    | Default | Meaning |
+|------------|---------|---------|---------|
+| `estimate_method` |  Function handle | `@tapas_mcmc_blocked_estimate` | Main method used for inference. |
+| `initilize_state`  | Function handle | `@tapas_h2gf_init_state`  | Initializes the state of the sampler. |
+| `initilize_states` | Function handle | `@tapas_h2gf_init_states` | Initialize the structure that contains the states of the sampler that are stored. |
+| `sampling_methods` |  Cell array |  See `tapas_h2gf_inference` | An array of methods used to draw samples from the posterior distribution. Samples from each participants are drawn using Metropolis-Hastings with a Gaussian kernel as a proposal distribution and a Gibbs step is used for the second level parameters. |
+| `metasampling_methods` | Cell array | See `tapas_h2gf_inference` | An array of methods for diagnosis and adaptive MCMC. By default the kernel of the Metropolis-Hastings is updated every certain number of iterations. |
+| `get_stored_state` | Function Handle  |`@tapas_h2gf_get_stored_state` | Called to store (part) of the state of the sampler. |
+| `prepare_posterior` | Function handle | `@tapas_h2gf_prepare_posterior` | Function handle | Called at the end of the simulation. It takes an array of stored states from the samples contain and prepares a user friendly output. For example, it computes the model evidence, the MAPs, etc.. |
+| `mh_sampler` | Cell array | See `tapas_h2gf_inference` | Method used for the Metropolis-Step. |
+
+### parameters
+Structure with general parameters of the samplers. It can be an empty 
+structure that will be automatically filled by `tapas_h2gf_pars`.
+
+| Field name | Type    | Default | Meaning |
+|------------|---------|---------|---------|
+| `niter`      | Int scalar    | 4000    | Number of iterations of the model that are stored after burn-in. |
+| `nburnin`    | Int scalar    | 1000    | Number of burn-in samples (not stored). |
+| `seed`       | Int scalar    | 0       | Seed of the sampler. If 0, it use `rng('shuffle')` which uses the CPU clock to seed the RNG. Otherwise it uses `seed` as starting point RNG. |
+| `ndiag`      | Int scalar    | 400     | Frequency of diagnostics. During the burnin phase, every `ndiag` samples the kernel of the samplers is updated. |
+| `T`          | Double matrix |  | NxM Matrix with the temperature schedule, where N is the size of data, and M is the number of chains. The values should be between 0 and 1. |
+| `nchains`    | Int scalar | 8 | Number of chains used. If this argument is provided and `T` is not, it will construct a temperature schedule with `nchains`. If `parameters` has the `T` field, `nchains` will be ignored and a warning will be generated. The temperature schedule is constructed as `linspace(0.01, 1, nchains)`. |
+| `mc3it` | Int scalar | 0 | When using multi-chain this determines the frequency of 'swapping' proposal. This determines how many proposal are made per 'niter'. Note that this samples are not counted as part of the total number of samples. |
+| `thinning` | Int scalar | 1 | Thinning factor. Only every `thinning` samples are stored. Thus the total number of samples will be `floor(niter/thinning).`
+
+
+## Output
 The output of the algorithm is `hgf_est`. This is a structure array with the
 fields:
 
@@ -193,7 +253,7 @@ is a Nx1 struct array, where N is the number of subjects. The fields are:
 | pseudo_lm2 | [-114.43]    | Pseudo model evidence for each subject. |
 | r_hat     | [15x1 double] | R hat statistic or 'potential reduction factor' is a heuristic measure of MCMCM convergence. Values below 1.1 usually indicate convergence|
 
-## The model
+# The model
 <img src="misc/hierarchical_model.png" width="400" align="right"/>
 The main model used here is a 'Gamma-Gaussian' prior over the HGF 
 parameters of each subject \(\theta_i\). It is assumed that the parameters
