@@ -1,6 +1,14 @@
 # Changelog
 TAPAS toolbox 
 
+## [3.0.1] 2018-10-17
+
+### Changed
+- PhysIO R2018.1.2: fixed bug for 3D nifti array read-in in tapas_physio_create_noise_rois_regressors (github issue #24, gitlab #52)
+
+### Added
+- PhysIO R2018.1.2: BioPac txt-file reader (for single file, resp/cardiac/trigger data in different columns)
+
 ## [3.0.0] 2018-09-09
 
 ### Added
