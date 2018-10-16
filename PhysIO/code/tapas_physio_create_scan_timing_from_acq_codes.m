@@ -53,6 +53,10 @@ doCountFromStart = strcmpi(align_scan, 'first');
 LOCS = find(acq_codes == 1);
 VOLLOCS = find(acq_codes == 10);
 
+if isempty(VOLLOCS) % try Philips scan trigger onset code instead
+    VOLLOCS = find(acq_codes == 8);
+end
+
 isValidVOLLOCS = numel(VOLLOCS) >= nTotalVolumes;
 isValidLOCS = numel(LOCS) >= nTotalSlices;
 
@@ -69,7 +73,7 @@ if isValidVOLLOCS
     if doCountFromStart
         VOLLOCS = VOLLOCS(1:nTotalVolumes);
     else
-        VOLLOCS = VOLLOCS((end-(nTotalVolumes+1)):end);
+        VOLLOCS = VOLLOCS((end-nTotalVolumes+1):end);
     end
 end
 
