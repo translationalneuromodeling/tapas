@@ -51,45 +51,11 @@ if ~isfield(inference.mh_sampler{2}, 'propose_sample')
         @tapas_mh_mc3g_arc;
 end
 
-
-if ~isfield(inference, 'niter')
-    if isfield(pars, 'niter')
-        inference.niter = pars.niter;
-    else
-        inference.niter = 5000;
-    end
-end
-
-if ~isfield(inference, 'nburnin')
-    if isfield(pars, 'nburnin')
-        inference.nburnin = pars.nburnin;
-    else
-        inference.nburnin = 5000;
-    end
-end
-
-if ~isfield(inference, 'mc3it')
-    if isfield(pars, 'mc3it')
-        inference.mc3it = pars.mc3it;
-    else
-        inference.mc3it = 10;
-    end
-end
-
-if ~isfield(inference, 'thinning')
-    if isfield(pars, 'thinning')
-        inference.thinning = pars.thinning;
-    else
-        inference.thinning = 0;
-    end
-end
-
-if ~isfield(inference, 'ndiag')
-    if isfield(pars, 'ndiag')
-        inference.ndiag = pars.ndiag;
-    else
-        inference.ndiag = 200;
-    end
-end 
+% Take the parameters from pars, and overwrite what ever might be inference.
+inference.niter = pars.niter;
+inference.nburnin = pars.nburnin;
+inference.mc3it = pars.mc3it;
+inference.thinning = pars.thinning;
+inference.ndiag = pars.ndiag;
 
 end
