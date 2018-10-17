@@ -239,8 +239,8 @@ std_mu3_0 = std2(AllInv_SRL2_h2gf.mu3_0);
 plot([0 length(options.subjectIDs)+1],[mean_mu3_0 mean_mu3_0],'black');
 plot([0 length(options.subjectIDs)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
 title({['h2gf mu3 0']; ['(mean: ', num2str(mean_mu3_0),'; std: ', num2str(std_mu3_0),')']});
-saveas(gcf,['h2gf_mu3_0_',configtype,'_boxplot_eta',eta_label,'_', num2str(NrIter)],'fig');
-print(['h2gf_mu3_0_',configtype,'_boxplot_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
+saveas(gcf,['h2gf_mu3_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
+print(['h2gf_mu3_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
 
 
 %%sa2_0
@@ -268,8 +268,8 @@ plot([0 length(options.subjectIDs)+1],[mean_sa2_0 mean_sa2_0],'black');
 plot([0 length(options.subjectIDs)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
 axis([0 length(options.subjectIDs)+1 y1 y2])
 title({['h2gf sa2 0']; ['(mean: ', num2str(mean_sa2_0),'; std: ', num2str(std_sa2_0),')']});
-saveas(gcf,['h2gf_sa2_0_',configtype,'_boxplot_eta',eta_label,'_', num2str(NrIter)],'fig');
-print(['h2gf_sa2_0_',configtype,'_boxplot_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
+saveas(gcf,['h2gf_sa2_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
+print(['h2gf_sa2_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
 
 
 %%sa3_0
@@ -297,8 +297,8 @@ plot([0 length(options.subjectIDs)+1],[mean_sa3_0 mean_sa3_0],'black');
 plot([0 length(options.subjectIDs)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
 axis([0 length(options.subjectIDs)+1 y1 y2])
 title({['h2gf sa3 0']; ['(mean: ', num2str(mean_sa3_0),'; std: ', num2str(std_sa3_0),')']});
-saveas(gcf,['h2gf_sa3_0_',configtype,'_boxplot_eta',eta_label,'_', num2str(NrIter)],'fig');
-print(['h2gf_sa3_0_',configtype,'_boxplot_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
+saveas(gcf,['h2gf_sa3_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
+print(['h2gf_sa3_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
 
 
 % close all;

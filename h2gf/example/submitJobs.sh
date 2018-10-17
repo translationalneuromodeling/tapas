@@ -11,3 +11,5 @@ for k in {1..12}; do for j in {1..12};do bsub -W 3:55 -o o_srl1_boxplot_h2gf_100
 for k in {1..12}; do for j in {1..12};do bsub -W 3:55 -o o_srl1_boxplot_h2gf_3000_eta$k_config$j -e e_srl1_boxplot_h2gf_3000_eta$k_config$j matlab -singleCompThread -r "h2gf_demo_srl2_summary(3000,$k,$j)"; done; done;
 for k in {1..12}; do for j in {1..12};do bsub -W 3:55 -o o_srl1_boxplot_h2gf_4000_eta$k_config$j -e e_srl1_boxplot_h2gf_4000_eta$k_config$j matlab -singleCompThread -r "h2gf_demo_srl2_summary(4000,$k,$j)"; done; done;
 for k in {1..12}; do for j in {1..12};do bsub -W 3:55 -o o_srl1_boxplot_h2gf_5000_eta$k_config$j -e e_srl1_boxplot_h2gf_5000_eta$k_config$j matlab -singleCompThread -r "h2gf_demo_srl2_summary(5000,$k,$j)"; done; done;
+
+h2gf_demo_run_link_figures
