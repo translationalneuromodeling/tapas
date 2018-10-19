@@ -3,7 +3,7 @@ TAPAS toolbox
 
 ## [3.0.1] 2018-10-17
 
-### Changed
+### Fixed
 - PhysIO R2018.1.2: fixed bug for 3D nifti array read-in in tapas_physio_create_noise_rois_regressors (github issue #24, gitlab #52)
 
 ### Added
