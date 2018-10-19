@@ -1,15 +1,15 @@
 TAPAS PhysIO Toolbox 
 ====================
 
-*Current version: 2018.1*
+*Current version: 2018.1.2*
 
-> Copyright (C) 2012-2018 Lars Kasper <kasper@biomed.ee.ethz.ch>
-
-> Translational Neuromodeling Unit (TNU)
-
-> Institute for Biomedical Engineering
-
-> University of Zurich and ETH Zurich
+> Copyright (C) 2012-2018  
+> Lars Kasper  
+> <kasper@biomed.ee.ethz.ch>  
+>  
+> Translational Neuromodeling Unit (TNU)  
+> Institute for Biomedical Engineering  
+> University of Zurich and ETH Zurich  
 
 
 Download

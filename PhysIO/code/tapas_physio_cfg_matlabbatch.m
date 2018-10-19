@@ -48,6 +48,7 @@ vendor.help   = {' Vendor Name depending on your MR Scanner/Physiological record
     '                       ''Siemens_HCP'' - Human Connectome Project (HCP) Physiology Data' 
     '                           HCP-downloaded files of  name format  *_Physio_log.txt '
     '                           are already preprocessed into this simple 3-colum text format'
+    '                       ''Biopac_Txt'' - exported txt files from Biopac system (4 columns, [Resp PPU GSR Trigger]'
     '                       ''Biopac_Mat'' - exported mat files from Biopac system'
     '                       ''BrainProducts'' - .eeg files from BrainProducts EEG system'
     '                       ''Custom'''
@@ -69,9 +70,9 @@ vendor.help   = {' Vendor Name depending on your MR Scanner/Physiological record
 vendor.labels = {'Philips', 'GE', 'Siemens (VB, *.puls/*.ecg/*.resp)', ...
     'Siemens_Tics (VD: *_PULS.log/*_ECG1.log/*_RESP.log/*_AcquisitionInfo*.log)', ...
     'Siemens_HCP (Human Connectome Project, *Physio_log.txt, 3 column format', ...
-    'Biopac_Mat', 'BrainProducts', 'Custom'};
+    'Biopac_Txt', 'Biopac_Mat', 'BrainProducts', 'Custom'};
 vendor.values = {'Philips', 'GE', 'Siemens', 'Siemens_Tics', 'Siemens_HCP', ...
-    'Biopac_Mat', 'BrainProducts', 'Custom'};
+    'Biopac_Txt','Biopac_Mat', 'BrainProducts', 'Custom'};
 vendor.val    = {'Philips'};
 
 %--------------------------------------------------------------------------

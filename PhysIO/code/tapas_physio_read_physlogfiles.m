@@ -60,6 +60,9 @@ switch lower(log_files.vendor)
     case 'biopac_mat'
         [c, r, t, cpulse, acq_codes] = ...
             tapas_physio_read_physlogfiles_biopac_mat(log_files, cardiac_modality, verbose);
+    case 'biopac_txt'
+        [c, r, t, cpulse, acq_codes, verbose, gsr] = ...
+            tapas_physio_read_physlogfiles_biopac_txt(log_files, cardiac_modality, verbose);
     case 'custom'
         [c, r, t, cpulse] = ...
             tapas_physio_read_physlogfiles_custom(log_files, verbose);

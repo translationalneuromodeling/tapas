@@ -1,8 +1,10 @@
-function fh = tapas_physio_plot_raw_physdata_siemens_hcp(t, c, r, acq_codes)
+function fh = tapas_physio_plot_raw_physdata_siemens_hcp(t, c, r, acq_codes, ...
+    stringTitle)
 % plots cardiac data as extracted from Human Connectome Phys log file
 % (=preprocessed Siemens log file)
 %
-%   fh = tapas_physio_plot_raw_physdata_siemens_hcp(t, c, r, acq_codes)
+%   fh = tapas_physio_plot_raw_physdata_siemens_hcp(t, c, r, acq_codes, ...
+%           stringTitle)
 %
 % IN
 %
@@ -22,8 +24,10 @@ function fh = tapas_physio_plot_raw_physdata_siemens_hcp(t, c, r, acq_codes)
 % License (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
+if nargin < 5
+    stringTitle = 'Raw Human Connectome Project physlog data (preprocessed Siemens Data)';
+end
 
-stringTitle = 'Raw Human Connectome Project physlog data (preprocessed Siemens Data)';
 volpulse_on = find(acq_codes == 8);
 volpulse_off = find(acq_codes == 16);
 
