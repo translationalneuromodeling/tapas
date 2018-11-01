@@ -11,11 +11,11 @@ and
 each GitHub User listed in the following table:  
 
 Name                     | Company/Institution/Address | City      | Country | E-Mail/GitHub Username 
------------------------- | ----------------------------| --------- | ------- | ----------------------
+------------------------ | --------------------------- | --------- | ------- | ----------------------
 Lars Kasper              | TNU, University of Zurich   | Zurich    | CH      | mrikasper
 Eduardo Aponte           | TNU, University of Zurich   | Zurich    | CH      | tnutapas
-                         |                             |           |         |   
-**-> Add Entry here <-** |                             |           |         |
+**- Add Entry here -**   | **- Add Entry here -**      | **Add**   | **Add** | **Add**                    
+
 (hereinafter referred to as "Contributor")
 
 relating to the Contribution (as defined below) that Contributor makes to the following Project: 
