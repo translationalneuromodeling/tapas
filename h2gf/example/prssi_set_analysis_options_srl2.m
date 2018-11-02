@@ -7,8 +7,8 @@ function options = prssi_set_analysis_options_srl2
 %                       different steps of the analysis.
 
 %% code and task
-options.maincodedir = '/cluster/project/tnu/igsandra/HGF_sim/h2gf/code_srl_SSP';
-options.maindatadir = '/cluster/project/tnu/igsandra/PRSSISRLSHORTDATA/';
+options.maincodedir = 'C:\Users\Sandra Iglesias\Documents\Documents\code\GitTNU\tapas\h2gf\example';
+options.maindatadir = 'D:\PRSSI\EEG2\';
 options.workdir     = options.maincodedir;
 % options.workdir = fullfile(options.maincodedir, 'prj', 'code_srl_SSP');
 options.task = 'SRL'; %or SSL
