@@ -103,7 +103,7 @@ hgf.c_prc.priormus = config.priormus;
 hgf.c_prc.priorsas = config.priorsas;
 
 % Priors of the observational model
-hgf.c_obs.priormus = 0.5;
+hgf.c_obs.priormus = log(48);
 hgf.c_obs.priorsas = 1;
 
 % Set the empirical prior
