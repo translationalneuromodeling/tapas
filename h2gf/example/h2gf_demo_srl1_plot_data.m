@@ -1,11 +1,11 @@
-% h2gf demo using the data: PRSSI, EEG, short version of SRL (srl2)
+% h2gf demo using the data: PRSSI, EEG, long version of SRL (srl1)
 %
 % plot h2gf results
 % =========================================================================
-% h2gf_demo_srl2_plot_data(4000,1,1) 
+% h2gf_demo_srl1_plot_data(4000,1,1) 
 % =========================================================================
 
-function h2gf_demo_srl2_plot_data(NrIter,spec_eta,config_file,m)
+function h2gf_demo_srl1_plot_data(NrIter,spec_eta,config_file,m)
 
 addpath(genpath('/cluster/project/tnu/igsandra/tapas/'));
 
@@ -16,7 +16,7 @@ disp('**************************************');
 
 maskRep = ['/traj_',num2str(m)];
 
-disp(['This is SRL EEG study 2']);% Go through scans
+disp(['This is SRL EEG study 1']);% Go through scans
 
 %% specify eta:
 eta_label = num2str(spec_eta);
@@ -79,7 +79,7 @@ maskResFolder = ([tdir,'/results/',configtype,'/eta', eta_label,'/', num2str(NrI
 maskTrajFolder = fullfile([maskResFolder, maskRep]);
 mkdir(maskTrajFolder);
 
-h2gf_est = load([maskResFolder, '/h2gf_3l_est_srl2_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat']);
+h2gf_est = load([maskResFolder, '/h2gf_3l_est_srl1_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat']);
 
 subjindex = 0;
 for idCell = 1:length(h2gf_est.summary)
@@ -94,7 +94,7 @@ for idCell = 1:length(h2gf_est.summary)
         h2gf_est.data(subjindex).y, h2gf_est.data(subjindex).u, ...
         h2gf_est.summary(subjindex).prc_mean, h2gf_est.summary(subjindex).obs_mean)
 
-    print(['srl2_re_h2gf_3l_fixom_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_subjnr_',num2str(subjindex)],'-dtiff');
+    print(['srl1_re_h2gf_3l_fixom_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_subjnr_',num2str(subjindex)],'-dtiff');
 
     
 %     movefile (['srl_re_h2gf_3l_fixom_eta', eta_label,'_', num2str(NrIter),'.tif'], [maskResFolder, maskModel{1},'/srl_re_h2gf_3l_fixom_eta', eta_label,'_', num2str(NrIter), details.subjname,'.tif']);
