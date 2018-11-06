@@ -44,6 +44,8 @@ else
     rng('shuffle');
 end
 
+pars.rng_seed = rng();
+
 if ~isfield(pars, 'niter')
     pars.niter = 4000;
 end

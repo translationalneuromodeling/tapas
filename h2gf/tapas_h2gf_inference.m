@@ -57,5 +57,6 @@ inference.nburnin = pars.nburnin;
 inference.mc3it = pars.mc3it;
 inference.thinning = pars.thinning;
 inference.ndiag = pars.ndiag;
+inference.rng_seed = pars.rng_seed;
 
 end
