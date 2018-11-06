@@ -76,6 +76,7 @@ f = mfilename('fullpath');
 [tdir, ~, ~] = fileparts(f);
 
 maskResFolder = ([tdir,'/results/',configtype,'/eta', eta_label,'/', num2str(NrIter)]);
+% maskResFolder = (['D:\PRSSI\h2gf/results/',configtype,'/eta', eta_label,'/', num2str(NrIter)]);
 maskTrajFolder = fullfile([maskResFolder, maskRep]);
 mkdir(maskTrajFolder);
 

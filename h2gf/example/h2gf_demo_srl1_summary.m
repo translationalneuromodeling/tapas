@@ -9,8 +9,6 @@ function h2gf_demo_srl1_summary(NrIter,spec_eta,config_file)
 
 addpath(genpath('/cluster/project/tnu/igsandra/tapas/'));
 
-options = prssi_set_analysis_options_srl1;
-
 maskModel = {'HGF_1_fixom_v5_1'};
 %% specify eta_label
 eta_label = num2str(spec_eta);
@@ -51,7 +49,7 @@ f = mfilename('fullpath');
 [tdir, ~, ~] = fileparts(f);
 
 maskResFolder = ([tdir,'/results/',configtype,'/eta', eta_label,'/', num2str(NrIter)]);
-
+% maskResFolder = (['D:\PRSSI\h2gf\/results/',configtype,'/eta', eta_label,'/', num2str(NrIter)]);
 cd(maskResFolder);
 % listFiles=dir('*h2gf_3l_fixom_est_srl1*');
 
@@ -64,7 +62,7 @@ for m = 1:12 %length(listFiles)
 
     h2gf_inf = load([maskResFolder, '/h2gf_3l_est_srl1_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat']);
     
-    for s = 1:length(options.subjectIDs)
+    for s = 1:length(h2gf_inf.summary)
         
         %% estimated parameters
         srl1_estpar_h2gf.param.p_prc = h2gf_inf.summary(s).prc_mean;
@@ -113,7 +111,7 @@ boxplot(box_input,'colors',col_input, 'Plotstyle','compact'); hold on;
 [i,j]=(max(median(box_input(:,1:length(box_input(1,:))))));
 mean_LME= mean2(AllInv_srl1_h2gf.LME);
 std_LME = std2(AllInv_srl1_h2gf.LME);
-plot([0 length(options.subjectIDs)+1],[mean_LME mean_LME],'black');
+plot([0 length(h2gf_inf.summary)+1],[mean_LME mean_LME],'black');
 title({['h2gf LME']; ['(mean: ', num2str(mean_LME),'; std: ', num2str(std_LME),')']});
 saveas(gcf,['srl1_h2gf_LME_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
 print(['srl1_h2gf_LME_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
@@ -141,9 +139,9 @@ if h2gf_inf.hgf.c_prc.priormus(prior_index,1)<max(box_input(:))
 else
     y2 = h2gf_inf.hgf.c_prc.priormus(prior_index,1)+0.2;
 end
-plot([0 length(options.subjectIDs)+1],[mean_ka mean_ka],'black'); hold on;
-plot([0 length(options.subjectIDs)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
-axis([0 length(options.subjectIDs)+1 y1 y2])
+plot([0 length(h2gf_inf.summary)+1],[mean_ka mean_ka],'black'); hold on;
+plot([0 length(h2gf_inf.summary)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
+axis([0 length(h2gf_inf.summary)+1 y1 y2])
 title({['h2gf ka']; ['(mean: ', num2str(mean_ka),'; std: ', num2str(std_ka),')']});
 saveas(gcf,['srl1_h2gf_ka_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
 print(['srl1_h2gf_ka_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
@@ -161,8 +159,8 @@ boxplot(box_input,'colors',col_input, 'Plotstyle','compact'); hold on;
 mean_om2= mean2(AllInv_srl1_h2gf.om2);
 std_om2 = std2(AllInv_srl1_h2gf.om2);
 
-plot([0 length(options.subjectIDs)+1],[mean_om2 mean_om2],'black'); hold on;
-plot([0 length(options.subjectIDs)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
+plot([0 length(h2gf_inf.summary)+1],[mean_om2 mean_om2],'black'); hold on;
+plot([0 length(h2gf_inf.summary)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
 
 title({['h2gf om2']; ['(mean: ', num2str(mean_om2),'; std: ', num2str(std_om2),')']});
 saveas(gcf,['srl1_h2gf_om2_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
@@ -189,9 +187,9 @@ boxplot(box_input,'colors',col_input, 'Plotstyle','compact'); hold on;
 [i,j]=(max(median(box_input(:,1:length(box_input(1,:))))));
 mean_om3= mean2(AllInv_srl1_h2gf.om3);
 std_om3 = std2(AllInv_srl1_h2gf.om3);
-plot([0 length(options.subjectIDs)+1],[mean_om3 mean_om3],'black');hold on;
-plot([0 length(options.subjectIDs)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
-axis([0 length(options.subjectIDs)+1 y1 y2])
+plot([0 length(h2gf_inf.summary)+1],[mean_om3 mean_om3],'black');hold on;
+plot([0 length(h2gf_inf.summary)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
+axis([0 length(h2gf_inf.summary)+1 y1 y2])
 title({['h2gf om3']; ['(mean: ', num2str(mean_om3),'; std: ', num2str(std_om3),')']});
 saveas(gcf,['srl1_h2gf_om3_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
 print(['srl1_h2gf_om3_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
@@ -217,9 +215,9 @@ boxplot(box_input,'colors',col_input, 'Plotstyle','compact'); hold on;
 [i,j]=(max(median(box_input(:,1:length(box_input(1,:))))));
 mean_mu2_0= mean2(AllInv_srl1_h2gf.mu2_0);
 std_mu2_0 = std2(AllInv_srl1_h2gf.mu2_0);
-plot([0 length(options.subjectIDs)+1],[mean_mu2_0 mean_mu2_0],'black');hold on;
-plot([0 length(options.subjectIDs)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
-axis([0 length(options.subjectIDs)+1 y1 y2])
+plot([0 length(h2gf_inf.summary)+1],[mean_mu2_0 mean_mu2_0],'black');hold on;
+plot([0 length(h2gf_inf.summary)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
+axis([0 length(h2gf_inf.summary)+1 y1 y2])
 title({['h2gf mu2 0']; ['(mean: ', num2str(mean_mu2_0),'; std: ', num2str(std_mu2_0),')']});
 saveas(gcf,['srl1_h2gf_mu2_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
 print(['srl1_h2gf_mu2_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
@@ -236,8 +234,8 @@ boxplot(box_input,'colors',col_input, 'Plotstyle','compact'); hold on;
 [i,j]=(max(median(box_input(:,1:length(box_input(1,:))))));
 mean_mu3_0= mean2(AllInv_srl1_h2gf.mu3_0);
 std_mu3_0 = std2(AllInv_srl1_h2gf.mu3_0);
-plot([0 length(options.subjectIDs)+1],[mean_mu3_0 mean_mu3_0],'black');
-plot([0 length(options.subjectIDs)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
+plot([0 length(h2gf_inf.summary)+1],[mean_mu3_0 mean_mu3_0],'black');
+plot([0 length(h2gf_inf.summary)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
 title({['h2gf mu3 0']; ['(mean: ', num2str(mean_mu3_0),'; std: ', num2str(std_mu3_0),')']});
 saveas(gcf,['srl1_h2gf_mu3_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
 print(['srl1_h2gf_mu3_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
@@ -264,9 +262,9 @@ boxplot(box_input,'colors',col_input, 'Plotstyle','compact'); hold on;
 [i,j]=(max(median(box_input(:,1:length(box_input(1,:))))));
 mean_sa2_0= mean2(AllInv_srl1_h2gf.sa2_0);
 std_sa2_0 = std2(AllInv_srl1_h2gf.sa2_0);
-plot([0 length(options.subjectIDs)+1],[mean_sa2_0 mean_sa2_0],'black');
-plot([0 length(options.subjectIDs)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
-axis([0 length(options.subjectIDs)+1 y1 y2])
+plot([0 length(h2gf_inf.summary)+1],[mean_sa2_0 mean_sa2_0],'black');
+plot([0 length(h2gf_inf.summary)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
+axis([0 length(h2gf_inf.summary)+1 y1 y2])
 title({['h2gf sa2 0']; ['(mean: ', num2str(mean_sa2_0),'; std: ', num2str(std_sa2_0),')']});
 saveas(gcf,['srl1_h2gf_sa2_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
 print(['srl1_h2gf_sa2_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
@@ -293,9 +291,9 @@ boxplot(box_input,'colors',col_input, 'Plotstyle','compact'); hold on;
 [i,j]=(max(median(box_input(:,1:length(box_input(1,:))))));
 mean_sa3_0= mean2(AllInv_srl1_h2gf.sa3_0);
 std_sa3_0 = std2(AllInv_srl1_h2gf.sa3_0);
-plot([0 length(options.subjectIDs)+1],[mean_sa3_0 mean_sa3_0],'black');
-plot([0 length(options.subjectIDs)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
-axis([0 length(options.subjectIDs)+1 y1 y2])
+plot([0 length(h2gf_inf.summary)+1],[mean_sa3_0 mean_sa3_0],'black');
+plot([0 length(h2gf_inf.summary)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
+axis([0 length(h2gf_inf.summary)+1 y1 y2])
 title({['h2gf sa3 0']; ['(mean: ', num2str(mean_sa3_0),'; std: ', num2str(std_sa3_0),')']});
 saveas(gcf,['srl1_h2gf_sa3_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
 print(['srl1_h2gf_sa3_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');

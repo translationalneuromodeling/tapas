@@ -51,7 +51,7 @@ end
 %
 % [tdir, ~, ~] = fileparts(f);
 tdir = '/cluster/project/tnu/igsandra/tapas/h2gf/example/';
-
+% tdir = 'D:\PRSSI\h2gf\';
 for eta_label =1:6
     try
     if eta_label == 1
