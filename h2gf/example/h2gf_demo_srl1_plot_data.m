@@ -2,7 +2,7 @@
 %
 % plot h2gf results
 % =========================================================================
-% h2gf_demo_srl1_plot_data(4000,1,1) 
+% h2gf_demo_srl1_plot_data(4000,1,1)
 % =========================================================================
 
 function h2gf_demo_srl1_plot_data(NrIter,spec_eta,config_file,m)
@@ -65,6 +65,8 @@ elseif config_file == 11
     configtype = 'estom2sa2';
 elseif config_file == 12
     configtype = 'estom2sa3';
+elseif config_file == 13
+    configtype = 'estrw';
 end
 
 disp(['config file:', configtype]);
@@ -76,28 +78,31 @@ f = mfilename('fullpath');
 [tdir, ~, ~] = fileparts(f);
 
 maskResFolder = ([tdir,'/results/',configtype,'/eta', eta_label,'/', num2str(NrIter)]);
-% maskResFolder = (['D:\PRSSI\h2gf/results/',configtype,'/eta', eta_label,'/', num2str(NrIter)]);
 maskTrajFolder = fullfile([maskResFolder, maskRep]);
 mkdir(maskTrajFolder);
 
-h2gf_est = load([maskResFolder, '/h2gf_3l_est_srl1_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat']);
+if config_file == 13
+    h2gf_est = load([maskResFolder, '/h2gf_rw_est_srl1_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat']);
+else
+    h2gf_est = load([maskResFolder, '/h2gf_3l_est_srl1_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat']);
+end
 
 subjindex = 0;
 for idCell = 1:length(h2gf_est.summary)
     subjindex = subjindex+1;
     disp('_________________________________________')
-    id = char(idCell);
+    disp(['subject nr.: ',num2str(subjindex)]);
     disp('_________________________________________');
-
+    
     cd (maskTrajFolder);
+    if config_file == 13
+        tapas_rw_binary_plotTraj(h2gf_est.summary(subjindex))
+        print(['srl1_re_h2gf_rw_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_subjnr_',num2str(subjindex)],'-dtiff');
+    else
+        tapas_hgf_binary_plotTraj(h2gf_est.summary(subjindex))
+        print(['srl1_re_h2gf_3l_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_subjnr_',num2str(subjindex)],'-dtiff');
+    end
     
-    tapas_hgf_binary_plotTraj(h2gf_est.summary(subjindex))
-
-    print(['srl1_re_h2gf_3l_fixom_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_subjnr_',num2str(subjindex)],'-dtiff');
-
-    
-%     movefile (['srl_re_h2gf_3l_fixom_eta', eta_label,'_', num2str(NrIter),'.tif'], [maskResFolder, maskModel{1},'/srl_re_h2gf_3l_fixom_eta', eta_label,'_', num2str(NrIter), details.subjname,'.tif']);
-
     delete(findall(0,'Type','figure'));
 end
 end
