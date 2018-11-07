@@ -26,8 +26,8 @@ if ~isfield(pars, 'T')
     if isfield(pars, 'nchains')
         nchains = pars.nchains;
     end 
-    pars.T = ones(size(data, 1), 1) * ...
-        linspace(0.01, 1, nchains)' .^ power_rule;
+    pars.T = (ones(size(data, 1), 1) * ...
+        linspace(0.01, 1, nchains)) .^ power_rule;
 end
 
 if ~isfield(pars, 'ndiag')
@@ -43,6 +43,8 @@ if pars.seed > 0
 else
     rng('shuffle');
 end
+
+pars.rng_seed = rng();
 
 if ~isfield(pars, 'niter')
     pars.niter = 4000;

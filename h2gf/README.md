@@ -231,7 +231,7 @@ fields:
 | ---------- | ------- | ------- |
 | data       | [10x1 struct] | Input data |
 | model      | [1x1 struct]  | Fully specified model. |
-| inference  | [1x1 struct]  | Inference parameters. |
+| inference  | [1x1 struct]  | Inference parameters. The seed of the random number generator is stored as rng_seed.|
 | samples_theta | {10x200 cell} | NxM cell array with samples from the posterior, where N is the number of subjects and M is the number of samples. |
 | fe        | -1152.5 | Log model evidence |
 | llh       | {2x1 cell } | Samples of the log likelihood |

@@ -143,22 +143,9 @@ pars.niter = 100;
 
 pars.nburnin = 100;
 %% 
-% Number of samples used for diagnostics. During burn-in the parameters 
-% of the algorithm are adjusted to increase efficiency. This happens after every 
-% diagnostic cycle, whose length is defined here.
+% Number of chains.
 
-pars.ndiag = 50;
-%% 
-% Set up the so called temperature schedule. This is used to compute the 
-% model evidence. It is a matrix of dimension NxM, where N is the number of subjects 
-% and M is the number of chains used to compute the model evidence. The temperature 
-% schedule is selected using a 5th order power rule. 
-
-pars.T = ones(num_subjects, 1) * linspace(0.01, 1, 8).^5;
-%% 
-% How often a 'swap' step is performed.
-
-pars.mc3it = 0;
+pars.nchains = 8;
 %% 
 % Parameters not explicitly defined here take the default values set in 
 % tapas_h2gf_inference.m.
@@ -175,3 +162,15 @@ inference = struct();
 % Finally, we can run the estimation.
 
 h2gf_est = tapas_h2gf_estimate(data, hgf, inference, pars);
+%% 
+% We can now look at the belief trajectories of individual subjects. These 
+% are the trajectories implied by the median posterior parameter values.
+
+tapas_hgf_binary_plotTraj(h2gf_est.summary(1))
+%% 
+% All the plotting and diagnostic functions from the HGF Toolbox work with 
+% the 'summary' substructure of the h2gf output.
+
+tapas_fit_plotCorr(h2gf_est.summary(1))
+%%
+tapas_fit_plotResidualDiagnostics(h2gf_est.summary(1))
