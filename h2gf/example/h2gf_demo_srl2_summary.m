@@ -67,20 +67,20 @@ for m = 1:12 %length(listFiles)
     for s = 1:length(options.subjectIDs)
         
         %% estimated parameters
-        srl2_estpar_h2gf.param.p_prc = h2gf_inf.summary(s).prc_mean;
-        srl2_estpar_h2gf.param.p_obs = h2gf_inf.summary(s).obs_mean;
-        srl2_estpar_h2gf.param.LME = h2gf_inf.summary(s).pseudo_lme;
+        srl2_estpar_h2gf.param.p_prc = h2gf_inf.summary(s).p_prc;
+        srl2_estpar_h2gf.param.p_obs = h2gf_inf.summary(s).p_obs;
+        srl2_estpar_h2gf.param.LME = h2gf_inf.summary(s).optim.LME;
         
-        srl2_estpar_h2gf.param.mu2_0 = srl2_estpar_h2gf.param.p_prc(2,1);
-        srl2_estpar_h2gf.param.mu3_0 = srl2_estpar_h2gf.param.p_prc(3,1);
-        srl2_estpar_h2gf.param.sa2_0 = srl2_estpar_h2gf.param.p_prc(5,1);
-        srl2_estpar_h2gf.param.sa3_0 = srl2_estpar_h2gf.param.p_prc(6,1);
+        srl2_estpar_h2gf.param.mu2_0 = srl2_estpar_h2gf.param.p_prc.mu_0(1,2);
+        srl2_estpar_h2gf.param.mu3_0 = srl2_estpar_h2gf.param.p_prc.mu_0(1,3);
+        srl2_estpar_h2gf.param.sa2_0 = srl2_estpar_h2gf.param.p_prc.sa_0(1,2);
+        srl2_estpar_h2gf.param.sa3_0 = srl2_estpar_h2gf.param.p_prc.sa_0(1,3);
         
-        srl2_estpar_h2gf.param.ka = srl2_estpar_h2gf.param.p_prc(11,1);
-        srl2_estpar_h2gf.param.om2 = srl2_estpar_h2gf.param.p_prc(13,1);
-        srl2_estpar_h2gf.param.om3 = srl2_estpar_h2gf.param.p_prc(14,1);
+        srl2_estpar_h2gf.param.ka = srl2_estpar_h2gf.param.p_prc.ka(1,2);
+        srl2_estpar_h2gf.param.om2 = srl2_estpar_h2gf.param.p_prc.om(1,2);
+        srl2_estpar_h2gf.param.om3 = srl2_estpar_h2gf.param.p_prc.om(1,3);
         
-        srl2_estpar_h2gf.param.ze = srl2_estpar_h2gf.param.p_obs;
+        srl2_estpar_h2gf.param.ze = srl2_estpar_h2gf.param.p_obs.ze;
         
         % Structure stats for all        
         AllInv_SRL2_h2gf.LME(s,m)  = srl2_estpar_h2gf.param.LME;
