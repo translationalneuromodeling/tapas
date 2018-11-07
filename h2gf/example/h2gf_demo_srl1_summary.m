@@ -1,6 +1,6 @@
-% h2gf demo using the data: PRSSI, EEG, short version of SRL (srl1)
+% h2gf demo using the data: PRSSI, EEG, long version of SRL (srl1)
 %
-% missed trials are removed and therefore not part of the perceptual model
+% plot boxplots for all parameters and LME
 % =========================================================================
 % h2gf_demo_srl1_summary(4000,1,1)
 % =========================================================================
@@ -298,6 +298,33 @@ title({['h2gf sa3 0']; ['(mean: ', num2str(mean_sa3_0),'; std: ', num2str(std_sa
 saveas(gcf,['srl1_h2gf_sa3_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
 print(['srl1_h2gf_sa3_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
 
+%%ze
+figure('Color',[1 1 1]); hold on;
+box_input = AllInv_srl1_h2gf.ze';
+prior_index = 6;
+if h2gf_inf.hgf.c_prc.priormus(prior_index,1)>min(box_input(:))
+    y1 = min(box_input(:))-0.2;
+else
+    y1 = h2gf_inf.hgf.c_prc.priormus(prior_index,1)-0.2;
+end
+if h2gf_inf.hgf.c_prc.priormus(prior_index,1)<max(box_input(:))
+    y2 = max(box_input(:))+0.2;
+else
+    y2 = h2gf_inf.hgf.c_prc.priormus(prior_index,1)+0.2;
+end
+col_input = [0.4 0.0 0.6; 0.4 0.2 0.6; 0.4 0.4 0.6; 0.4 0.6 0.6; 0.4 0.8 0.6; 0.4 1.0 0.6; ...
+            1.0 1.0 0.6; 1.0 0.8 0.6; 1.0 0.6 0.6; 1.0 0.4 0.6; 1.0 0.2 0.6; 0.8 0.4 0.6; ...
+            0.8 0.0 0.6];
+boxplot(box_input,'colors',col_input, 'Plotstyle','compact'); hold on;
+[i,j]=(max(median(box_input(:,1:length(box_input(1,:))))));
+mean_ze= mean2(AllInv_srl1_h2gf.ze);
+std_ze = std2(AllInv_srl1_h2gf.ze);
+plot([0 length(h2gf_inf.summary)+1],[mean_ze mean_ze],'black');
+plot([0 length(h2gf_inf.summary)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
+axis([0 length(h2gf_inf.summary)+1 y1 y2])
+title({['h2gf ze']; ['(mean: ', num2str(mean_ze),'; std: ', num2str(std_ze),')']});
+saveas(gcf,['srl1_h2gf_ze_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
+print(['srl1_h2gf_ze_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'-dtiff');
 
 % close all;
 end
