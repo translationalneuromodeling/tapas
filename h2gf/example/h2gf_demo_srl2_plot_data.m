@@ -90,9 +90,7 @@ for idCell = 1:length(h2gf_est.summary)
 
     cd (maskTrajFolder);
     
-    tapas_h2gf_binary_plotTraj(h2gf_est.summary(subjindex).traj, ...
-        h2gf_est.data(subjindex).y, h2gf_est.data(subjindex).u, ...
-        h2gf_est.summary(subjindex).prc_mean, h2gf_est.summary(subjindex).obs_mean)
+    tapas_hgf_binary_plotTraj(h2gf_est.summary(subjindex))
 
     print(['srl2_re_h2gf_3l_fixom_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_subjnr_',num2str(subjindex)],'-dtiff');
 
