@@ -71,12 +71,12 @@ for id = 1:num_subjects
     hgf_est_srl1(id) = tapas_fitModel(data_srl1(id).y, data_srl1(id).u, config, 'tapas_unitsq_sgm_config', 'tapas_quasinewton_optim_config');
     
     % save data and plot trajectories:
-    if configtype == 13
-        save(['hgf_rw_est_srl1_',configtype,'.mat'],'-struct','hgf_est_srl1'); 
+    if config_file == 13
+        save(['hgf_rw_est_srl1_',configtype,'.mat'],'hgf_est_srl1'); 
         tapas_rw_binary_plotTraj(hgf_est_srl1(id));
         print(['srl1_re_hgf_rw_',configtype,'_subjnr_',num2str(id)],'-dtiff');   
     else
-        save(['hgf_3l_est_srl1_',configtype,'.mat'],'-struct','hgf_est_srl1');
+        save(['hgf_3l_est_srl1_',configtype,'.mat'],'hgf_est_srl1');
         tapas_hgf_binary_plotTraj(hgf_est_srl1(id));
         print(['srl1_re_hgf_3l_',configtype,'_subjnr_',num2str(id)],'-dtiff'); 
     end
