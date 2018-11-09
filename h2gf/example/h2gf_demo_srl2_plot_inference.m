@@ -1,10 +1,10 @@
-% h2gf demo using the data: PRSSI, EEG, long version of SRL (srl1)
+% h2gf demo using the data: PRSSI, EEG, short version of SRL (srl2)
 %
 % plot h2gf results
 % =========================================================================
-% h2gf_demo_srl1_plot_inference(1,3,1)
+% h2gf_demo_srl2_plot_inference(1,3,1)
 % =========================================================================
-function h2gf_demo_srl1_plot_inference(spec_eta,config_file,m)
+function h2gf_demo_srl2_plot_inference(spec_eta,config_file,m)
 
 addpath(genpath('/cluster/project/tnu/igsandra/tapas/'));
 
@@ -106,10 +106,10 @@ maskResFolder = (['D:\PRSSI\h2gf/results/',configtype,'/eta', eta_label,'/']);
 maskPlotFolder = fullfile([maskResFolder, maskRep]);
 mkdir(maskPlotFolder);
 
-h2gf_est1000 = load([maskResFolder, '1000/h2gf_3l_est_srl1_',configtype,'_eta',eta_label,'_1000_',num2str(m),'.mat']);
-h2gf_est3000 = load([maskResFolder, '3000/h2gf_3l_est_srl1_',configtype,'_eta',eta_label,'_3000_',num2str(m),'.mat']);
-h2gf_est4000 = load([maskResFolder, '4000/h2gf_3l_est_srl1_',configtype,'_eta',eta_label,'_4000_',num2str(m),'.mat']);
-h2gf_est5000 = load([maskResFolder, '5000/h2gf_3l_est_srl1_',configtype,'_eta',eta_label,'_5000_',num2str(m),'.mat']);
+h2gf_est1000 = load([maskResFolder, '1000/h2gf_3l_est_srl2_',configtype,'_eta',eta_label,'_1000_',num2str(m),'.mat']);
+h2gf_est3000 = load([maskResFolder, '3000/h2gf_3l_est_srl2_',configtype,'_eta',eta_label,'_3000_',num2str(m),'.mat']);
+h2gf_est4000 = load([maskResFolder, '4000/h2gf_3l_est_srl2_',configtype,'_eta',eta_label,'_4000_',num2str(m),'.mat']);
+h2gf_est5000 = load([maskResFolder, '5000/h2gf_3l_est_srl2_',configtype,'_eta',eta_label,'_5000_',num2str(m),'.mat']);
 
 subjindex = 0;
 for idCell = 1:length(h2gf_est1000.summary)
@@ -383,7 +383,7 @@ function plot_hist(subjindex, param, parameter_label, parameter_nr, config_file,
     configtype, h2gf_est1000, h2gf_est3000, h2gf_est4000, h2gf_est5000)
 
 for j = 1:length(fields(param.prc))
-    fig1=figure('rend','painters','pos',[10 10 1300 700],'Name',['Hist srl1; Parameter; ',parameter_label{j}, ' Config: ', configtype ],'NumberTitle','off');
+    fig1=figure('rend','painters','pos',[10 10 1300 700],'Name',['Hist srl2; Parameter; ',parameter_label{j}, ' Config: ', configtype ],'NumberTitle','off');
     fig1.Color = [1 1 1];
     
     subplot(2,2,1); fig1=histogram(param.prc.(parameter_label{j}).s1000, 'FaceColor', [0.4 0.5 0.6]);hold on;
@@ -412,10 +412,10 @@ for j = 1:length(fields(param.prc))
     
     linkaxes;
     suptitle(configtype);
-    print(['Hist_srl1_h2gf_',parameter_label{j},'_',configtype,'_eta',eta_label,'_subjnr_',num2str(subjindex)],'-dtiff');
+    print(['Hist_srl2_h2gf_',parameter_label{j},'_',configtype,'_eta',eta_label,'_subjnr_',num2str(subjindex)],'-dtiff');
 end
 
-fig1=figure('rend','painters','pos',[10 10 1300 700],'Name',['Hist srl1; Parameter; ze, Config: ', configtype ],'NumberTitle','off');
+fig1=figure('rend','painters','pos',[10 10 1300 700],'Name',['Hist srl2; Parameter; ze, Config: ', configtype ],'NumberTitle','off');
 fig1.Color = [1 1 1];
 subplot(2,2,1); fig1=histogram(param.obs.ze.s1000, 'FaceColor', [0.4 0.5 0.6]);hold on;
 line([h2gf_est1000.summary(subjindex).obs_mean, h2gf_est1000.summary(subjindex).obs_mean], ylim, 'LineWidth', 2, 'Color', 'black');
@@ -434,7 +434,7 @@ line([h2gf_est5000.summary(subjindex).obs_mean, h2gf_est5000.summary(subjindex).
 title(['nr. of samples: 5000; ze = ', num2str(h2gf_est5000.summary(subjindex).obs_mean)]); hold on;
 linkaxes;
 suptitle(configtype);
-print(['Hist_srl1_h2gf_ze_',configtype,'_eta',eta_label,'_subjnr_',num2str(subjindex)],'-dtiff');
+print(['Hist_srl2_h2gf_ze_',configtype,'_eta',eta_label,'_subjnr_',num2str(subjindex)],'-dtiff');
 
 end
 
@@ -442,7 +442,7 @@ function plot_inf(subjindex, param, parameter_label, parameter_nr, config_file, 
     h2gf_est1000, h2gf_est3000, h2gf_est4000, h2gf_est5000)
 
 for j = 1:length(fields(param.prc))
-    fig2=figure('rend','painters','pos',[10 10 1300 700],'Name',['Samples srl1; Parameter; ',parameter_label{j}, ' Config: ', configtype ],'NumberTitle','off');
+    fig2=figure('rend','painters','pos',[10 10 1300 700],'Name',['Samples srl2; Parameter; ',parameter_label{j}, ' Config: ', configtype ],'NumberTitle','off');
     fig2.Color = [1 1 1];
     subplot(2,2,1); fig2=plot(param.prc.(parameter_label{j}).s1000, 'Color', [0.4 0.5 0.6]); hold on;
     line(xlim, [h2gf_est1000.summary(subjindex).prc_mean(parameter_nr(j),1), h2gf_est1000.summary(subjindex).prc_mean(parameter_nr(j),1)], ...
@@ -469,10 +469,10 @@ for j = 1:length(fields(param.prc))
         parameter_label{j}, ' = ', num2str(h2gf_est5000.summary(subjindex).prc_mean(parameter_nr(j),1))]); hold on;
     linkaxes;
     suptitle(configtype);
-    print(['Line_srl1_h2gf_',parameter_label{j},'_',configtype,'_eta',eta_label,'_subjnr_',num2str(subjindex)],'-dtiff');
+    print(['Line_srl2_h2gf_',parameter_label{j},'_',configtype,'_eta',eta_label,'_subjnr_',num2str(subjindex)],'-dtiff');
     %     movefile (['srl_re_h2gf_3l_fixom_eta', eta_label,'_', num2str(NrIter),'.tif'], [maskResFolder, maskModel{1},'/srl_re_h2gf_3l_fixom_eta', eta_label,'_', num2str(NrIter), details.subjname,'.tif']);
 end
-fig2=figure('rend','painters','pos',[10 10 1300 700],'Name',['Samples srl1; Parameter; ze, Config: ', configtype ],'NumberTitle','off');
+fig2=figure('rend','painters','pos',[10 10 1300 700],'Name',['Samples srl2; Parameter; ze, Config: ', configtype ],'NumberTitle','off');
 fig2.Color = [1 1 1];
 subplot(2,2,1); fig2=plot(param.obs.ze.s1000, 'Color', [0.4 0.5 0.6]); hold on;
 line(xlim, [h2gf_est1000.summary(subjindex).obs_mean, h2gf_est1000.summary(subjindex).obs_mean], 'LineWidth', 2, 'Color', 'black');
@@ -491,7 +491,7 @@ line(xlim, [h2gf_est5000.summary(subjindex).obs_mean, h2gf_est5000.summary(subji
 title(['nr. of samples: 5000; ze = ', num2str(h2gf_est5000.summary(subjindex).obs_mean)]); hold on;
 linkaxes;
 suptitle(configtype);
-print(['Line_srl1_h2gf_ze_',configtype,'_eta',eta_label,'_subjnr_',num2str(subjindex)],'-dtiff');
+print(['Line_srl2_h2gf_ze_',configtype,'_eta',eta_label,'_subjnr_',num2str(subjindex)],'-dtiff');
 end
 
 
