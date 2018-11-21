@@ -30,20 +30,28 @@ end
 %% specify which h2gf parameter should be plotted
 if h2gf_parameter == 1
     parameter_label = 'LME';
+    parameter_title = 'LME';
 elseif h2gf_parameter == 2
     parameter_label = 'ka';
+    parameter_title = 'ka';
 elseif h2gf_parameter == 3
     parameter_label = 'om2';
+    parameter_title = 'om2';
 elseif h2gf_parameter == 4
     parameter_label = 'om3';
+    parameter_title = 'om3';
 elseif h2gf_parameter == 5
     parameter_label = 'mu2_0';
+    parameter_title = 'mu2 0';
 elseif h2gf_parameter == 6
     parameter_label = 'mu3_0';
+    parameter_title = 'mu3 0';
 elseif h2gf_parameter == 7
     parameter_label = 'sa2_0';
+    parameter_title = 'sa2 0';
 elseif h2gf_parameter == 8
     parameter_label = 'sa3_0';
+    parameter_title = 'sa3 0';
 end
 
 %% define where results have been stored:
@@ -116,11 +124,12 @@ h(1).XLim = [1,40];
 YLim1 = h(1).YLim;
 h(1).YLim = YLim1;
 
-suptitle([parameter_label, '; ',configtype]);
+suptitle([parameter_title, '; ',configtype, '; nr. samples: ',num2str(NrIter)]);
 fig7.Color = [1 1 1];
 
 cd([tdir,'/results'])
-saveas(fig7,['srl1_NrIter_',num2str(NrIter),'parameter',parameter_label, '_config_',configtype], 'fig');
-print(fig7,['srl1_NrIter_',num2str(NrIter),'parameter',parameter_label, '_config_',configtype,'.png'], '-dpng','-r300');
+saveas(fig7,[configtype,'_srl1_NrIter_',num2str(NrIter),'parameter',parameter_label, '_config',], 'fig');
+print(fig7,[configtype,'_srl1_NrIter_',num2str(NrIter),'parameter',parameter_label, '_config.png'], '-dpng','-r300');
+print(fig7,'-dpdf', [configtype,'_srl1_NrIter_',num2str(NrIter),'parameter',parameter_label, '_config.pdf']);
 end
 

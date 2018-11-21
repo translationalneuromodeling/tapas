@@ -77,7 +77,7 @@ print(['srl2_h2gf_LME_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)
 %%v_0
 figure('Color',[1 1 1]); hold on;
 box_input = AllInv_srl2_h2gf.v_0';
-prior_index = 11;
+prior_index = 1;
 figure('Color',[1 1 1]); hold on;
 col_input = [0.4 0.0 0.6; 0.4 0.2 0.6; 0.4 0.4 0.6; 0.4 0.6 0.6; 0.4 0.8 0.6; 0.4 1.0 0.6; ...
             1.0 1.0 0.6; 1.0 0.8 0.6; 1.0 0.6 0.6; 1.0 0.4 0.6; 1.0 0.2 0.6; 0.8 0.4 0.6; ...
@@ -86,18 +86,18 @@ boxplot(box_input,'colors',col_input, 'Plotstyle','compact'); hold on;
 [i,j]=(max(median(box_input(:,1:length(box_input(1,:))))));
 mean_v_0= mean2(AllInv_srl2_h2gf.v_0);
 std_v_0 = std2(AllInv_srl2_h2gf.v_0);
-if h2gf_inf.hgf.c_prc.priormus(prior_index,1)>min(box_input(:))
+if tapas_sgm(h2gf_inf.hgf.c_prc.priormus(prior_index,1),1)>min(box_input(:))
     y1 = min(box_input(:))-0.2;
 else
-    y1 = h2gf_inf.hgf.c_prc.priormus(prior_index,1)-0.2;
+    y1 = tapas_sgm(h2gf_inf.hgf.c_prc.priormus(prior_index,1),1)-0.2;
 end
-if h2gf_inf.hgf.c_prc.priormus(prior_index,1)<max(box_input(:))
+if tapas_sgm(h2gf_inf.hgf.c_prc.priormus(prior_index,1),1)<max(box_input(:))
     y2 = max(box_input(:))+0.2;
 else
-    y2 = h2gf_inf.hgf.c_prc.priormus(prior_index,1)+0.2;
+    y2 = tapas_sgm(h2gf_inf.hgf.c_prc.priormus(prior_index,1),1)+0.2;
 end
 plot([0 length(h2gf_inf.summary)+1],[mean_v_0 mean_v_0],'black'); hold on;
-plot([0 length(h2gf_inf.summary)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
+plot([0 length(h2gf_inf.summary)+1],[tapas_sgm(h2gf_inf.hgf.c_prc.priormus(prior_index,1),1) tapas_sgm(h2gf_inf.hgf.c_prc.priormus(prior_index,1),1)],'r');
 axis([0 length(h2gf_inf.summary)+1 y1 y2])
 title({['h2gf v 0']; ['(mean: ', num2str(mean_v_0),'; std: ', num2str(std_v_0),')']});
 saveas(gcf,['srl2_h2gf_v_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
@@ -107,7 +107,7 @@ print(['srl2_h2gf_v_0_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)
 %%al
 figure('Color',[1 1 1]); hold on;
 box_input = AllInv_srl2_h2gf.al';
-prior_index = 13;
+prior_index = 2;
 col_input = [0.4 0.0 0.6; 0.4 0.2 0.6; 0.4 0.4 0.6; 0.4 0.6 0.6; 0.4 0.8 0.6; 0.4 1.0 0.6; ...
             1.0 1.0 0.6; 1.0 0.8 0.6; 1.0 0.6 0.6; 1.0 0.4 0.6; 1.0 0.2 0.6; 0.8 0.4 0.6; ...
             0.8 0.0 0.6];
@@ -117,7 +117,7 @@ mean_al= mean2(AllInv_srl2_h2gf.al);
 std_al = std2(AllInv_srl2_h2gf.al);
 
 plot([0 length(h2gf_inf.summary)+1],[mean_al mean_al],'black'); hold on;
-plot([0 length(h2gf_inf.summary)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
+plot([0 length(h2gf_inf.summary)+1],[tapas_sgm(h2gf_inf.hgf.c_prc.priormus(prior_index,1),1) tapas_sgm(h2gf_inf.hgf.c_prc.priormus(prior_index,1),1)],'r');
 
 title({['h2gf alpha']; ['(mean: ', num2str(mean_al),'; std: ', num2str(std_al),')']});
 saveas(gcf,['srl2_h2gf_al_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');
@@ -126,16 +126,16 @@ print(['srl2_h2gf_al_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)]
 %%ze
 figure('Color',[1 1 1]); hold on;
 box_input = AllInv_srl2_h2gf.ze';
-prior_index = 6;
-if h2gf_inf.hgf.c_prc.priormus(prior_index,1)>min(box_input(:))
+prior_index = 1;
+if exp(h2gf_inf.hgf.c_obs.priormus(prior_index,1))>min(box_input(:))
     y1 = min(box_input(:))-0.2;
 else
-    y1 = h2gf_inf.hgf.c_prc.priormus(prior_index,1)-0.2;
+    y1 = exp(h2gf_inf.hgf.c_obs.priormus(prior_index,1))-0.2;
 end
-if h2gf_inf.hgf.c_prc.priormus(prior_index,1)<max(box_input(:))
+if exp(h2gf_inf.hgf.c_obs.priormus(prior_index,1))<max(box_input(:))
     y2 = max(box_input(:))+0.2;
 else
-    y2 = h2gf_inf.hgf.c_prc.priormus(prior_index,1)+0.2;
+    y2 = exp(h2gf_inf.hgf.c_obs.priormus(prior_index,1))+0.2;
 end
 col_input = [0.4 0.0 0.6; 0.4 0.2 0.6; 0.4 0.4 0.6; 0.4 0.6 0.6; 0.4 0.8 0.6; 0.4 1.0 0.6; ...
             1.0 1.0 0.6; 1.0 0.8 0.6; 1.0 0.6 0.6; 1.0 0.4 0.6; 1.0 0.2 0.6; 0.8 0.4 0.6; ...
@@ -145,7 +145,7 @@ boxplot(box_input,'colors',col_input, 'Plotstyle','compact'); hold on;
 mean_ze= mean2(AllInv_srl2_h2gf.ze);
 std_ze = std2(AllInv_srl2_h2gf.ze);
 plot([0 length(h2gf_inf.summary)+1],[mean_ze mean_ze],'black');
-plot([0 length(h2gf_inf.summary)+1],[h2gf_inf.hgf.c_prc.priormus(prior_index,1) h2gf_inf.hgf.c_prc.priormus(prior_index,1)],'r');
+plot([0 length(h2gf_inf.summary)+1],[exp(h2gf_inf.hgf.c_obs.priormus(prior_index,1)) exp(h2gf_inf.hgf.c_obs.priormus(prior_index,1))],'r');
 axis([0 length(h2gf_inf.summary)+1 y1 y2])
 title({['h2gf ze']; ['(mean: ', num2str(mean_ze),'; std: ', num2str(std_ze),')']});
 saveas(gcf,['srl2_h2gf_ze_boxplot_',configtype,'_eta',eta_label,'_', num2str(NrIter)],'fig');

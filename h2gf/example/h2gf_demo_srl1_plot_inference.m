@@ -101,8 +101,8 @@ f = mfilename('fullpath');
 
 [tdir, ~, ~] = fileparts(f);
 
-% maskResFolder = ([tdir,'/results/',configtype,'/eta', eta_label,'/']);
-maskResFolder = (['D:\PRSSI\h2gf/results/',configtype,'/eta', eta_label,'/']);
+maskResFolder = ([tdir,'/results/',configtype,'/eta', eta_label,'/']);
+% maskResFolder = (['D:\PRSSI\h2gf/results/',configtype,'/eta', eta_label,'/']);
 maskPlotFolder = fullfile([maskResFolder, maskRep]);
 mkdir(maskPlotFolder);
 

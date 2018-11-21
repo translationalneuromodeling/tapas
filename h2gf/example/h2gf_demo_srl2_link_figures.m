@@ -30,20 +30,28 @@ end
 %% specify which h2gf parameter should be plotted
 if h2gf_parameter == 1
     parameter_label = 'LME';
+    parameter_title = 'LME';
 elseif h2gf_parameter == 2
     parameter_label = 'ka';
+    parameter_title = 'ka';
 elseif h2gf_parameter == 3
     parameter_label = 'om2';
+    parameter_title = 'om2';
 elseif h2gf_parameter == 4
     parameter_label = 'om3';
+    parameter_title = 'om3';
 elseif h2gf_parameter == 5
     parameter_label = 'mu2_0';
+    parameter_title = 'mu2 0';
 elseif h2gf_parameter == 6
     parameter_label = 'mu3_0';
+    parameter_title = 'mu3 0';
 elseif h2gf_parameter == 7
     parameter_label = 'sa2_0';
+    parameter_title = 'sa2 0';
 elseif h2gf_parameter == 8
     parameter_label = 'sa3_0';
+    parameter_title = 'sa3 0';
 end
 
 %% define where results have been stored:
@@ -56,27 +64,27 @@ for eta_label =1:6
     try
     if eta_label == 1
         maskResFolder = ([tdir,'/results/',configtype,'/eta', num2str(eta_label),'/', num2str(NrIter)]);
-        fig1=hgload([maskResFolder,['/h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
+        fig1=hgload([maskResFolder,['/srl2_h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
         fig1.CurrentAxes.XTickLabel=[1:5:41];
     elseif eta_label == 2
         maskResFolder = ([tdir,'/results/',configtype,'/eta', num2str(eta_label),'/', num2str(NrIter)]);   
-        fig2=hgload([maskResFolder,['/h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
+        fig2=hgload([maskResFolder,['/srl2_h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
         fig2.CurrentAxes.XTickLabel=[1:5:41];
     elseif eta_label == 3
         maskResFolder = ([tdir,'/results/',configtype,'/eta', num2str(eta_label),'/', num2str(NrIter)]);  
-        fig3=hgload([maskResFolder,['/h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
+        fig3=hgload([maskResFolder,['/srl2_h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
         fig3.CurrentAxes.XTickLabel=[1:5:41];
     elseif eta_label == 4
         maskResFolder = ([tdir,'/results/',configtype,'/eta', num2str(eta_label),'/', num2str(NrIter)]);  
-        fig4=hgload([maskResFolder,['/h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
+        fig4=hgload([maskResFolder,['/srl2_h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
         fig4.CurrentAxes.XTickLabel=[1:5:41];
     elseif eta_label == 5
         maskResFolder = ([tdir,'/results/',configtype,'/eta', num2str(eta_label),'/', num2str(NrIter)]); 
-        fig5=hgload([maskResFolder,['/h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
+        fig5=hgload([maskResFolder,['/srl2_h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
         fig5.CurrentAxes.XTickLabel=[1:5:41];
     elseif eta_label == 6
         maskResFolder = ([tdir,'/results/',configtype,'/eta', num2str(eta_label),'/', num2str(NrIter)]);
-        fig6=hgload([maskResFolder,['/h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
+        fig6=hgload([maskResFolder,['/srl2_h2gf_',parameter_label,'_boxplot_',configtype,'_eta',num2str(eta_label),'_', num2str(NrIter),'.fig']]);
         fig6.CurrentAxes.XTickLabel=[1:5:41];
     end
     catch e
@@ -115,11 +123,12 @@ h(1).XLim = [1,40];
 YLim1 = h(1).YLim;
 h(1).YLim = YLim1;
 
-suptitle([parameter_label, '; ',configtype]);
+suptitle([parameter_title, '; ',configtype, '; nr. samples: ',num2str(NrIter)]);
 fig7.Color = [1 1 1];
 
 cd([tdir,'/results'])
-saveas(fig7,['srl2_NrIter_',num2str(NrIter),'parameter',parameter_label, '_config_',configtype], 'fig');
-print(fig7,['srl2_NrIter_',num2str(NrIter),'parameter',parameter_label, '_config_',configtype,'.png'], '-dpng','-r300');
+saveas(fig7,[configtype,'_srl2_NrIter_',num2str(NrIter),'parameter',parameter_label, '_config',], 'fig');
+print(fig7,[configtype,'_srl2_NrIter_',num2str(NrIter),'parameter',parameter_label, '_config.png'], '-dpng','-r300');
+print(fig7, '-dpdf',[configtype,'_srl1_NrIter_',num2str(NrIter),'parameter',parameter_label, '_config.pdf']);
 end
 
