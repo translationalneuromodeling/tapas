@@ -1191,6 +1191,7 @@ noise_rois_yes.val  = {fmri_files, roi_files, roi_thresholds, n_voxel_crop, ...
 noise_rois_yes.help = {
     'Include Noise ROIs model'
     '(Principal components of anatomical regions), similar to aCompCor, Behzadi et al. 2007'
+    'Noise ROIs will be shown in SPM ''Graphics'' window'
     };
 
 

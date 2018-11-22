@@ -38,6 +38,8 @@ function [R_noise_rois, noise_rois, verbose] = tapas_physio_create_noise_rois_re
 
 % TODO: visualization of Rois, components/mean and spatial loads in ROIs
 
+global st % to overlay the final ROIs, using spm_orthviews
+
 tapas_physio_strip_fields(noise_rois);
 
 if isempty(fmri_files) || isempty(roi_files)
@@ -67,6 +69,9 @@ if numel(n_components) == 1
     n_components = repmat(n_components, 1, nRois);
 end
 
+% Show the noise ROIs before threshold and erosion
+spm_check_registration( roi_files{:} )
+
 % TODO: what if different geometry of mask and fmri data?
 %       or several fmri files given?
 Vimg = spm_vol(fmri_files{1});
@@ -82,7 +87,7 @@ for r = 1:nRois
     
     hasRoiDifferentGeometry = any(any(abs(Vroi.mat - Vimg(1).mat) > 1e-5)) | ...
         any(Vroi.dim-Vimg(1).dim(1:3));
-    hasRoiDifferentGeometry = true;
+    % hasRoiDifferentGeometry = true;
     
     if hasRoiDifferentGeometry
         
@@ -100,20 +105,34 @@ for r = 1:nRois
         Vroi = spm_vol(spm_file(roi_files{r}, 'prefix', 'r'));
     end
         
-        
-    roi = spm_read_vols(Vroi);
-    roi(roi < thresholds(r)) = 0;
+    roi = spm_read_vols(Vroi); % 3D matrix of the ROI
+    roi(roi <  thresholds(r)) = 0;
     roi(roi >= thresholds(r)) = 1;
     
     % crop pixel, if desired
-    if n_voxel_crop(r)
-        nSlices = size(roi,3);
-        for s = 1:nSlices
-            roi(:,:,s) = imerode(roi(:,:,s), strel('disk', n_voxel_crop(r)));
-        end
+    for iter = 1 : n_voxel_crop(r)
+        roi = spm_erode(roi);                    % using spm_erode, a compiled mex file
+        % roi= imerode(roi, strel('sphere', 1)); % using imerode (+ strel) from Image Processing Toolbox
+        % NB : the result exactly the same with spm_erode or imerode
     end
-       
-    Yroi = Yimg(roi(:)==1, :);
+    
+    % Write in a volume noise ROIs, after threshold and erosiob
+    [fpRoi,fnRoi] = fileparts(Vroi.fname);
+    Vroi.fname = fullfile(fpRoi, sprintf('noiseROI_%s.nii', fnRoi));
+    spm_write_vol(Vroi,roi);
+    
+    % Overlay the final noise ROI
+    spm_orthviews('addcolouredimage',r,Vroi.fname ,[1 0 0])
+    hlabel = sprintf('%s (%s)',Vroi.fname ,'Red');
+    
+    c_handle    = findobj(findobj(st.vols{r}.ax{1}.cm,'label','Overlay'),'Label','Remove coloured blobs');
+    ch_c_handle = get(c_handle,'Children');
+    set(c_handle,'Visible','on');
+    uimenu(ch_c_handle(2),'Label',hlabel,'ForegroundColor',[1 0 0],...
+        'Callback','c = get(gcbo,''UserData'');spm_orthviews(''context_menu'',''remove_c_blobs'',2,c);');
+    spm_orthviews('redraw')
+    
+    Yroi = Yimg(roi(:)==1, :); % Time series of the fMRI volume in the noise ROIs
     
     %% mean and linear trend removal according to CompCor pub
     % design matrix
@@ -198,7 +217,7 @@ for r = 1:nRois
     end
     
     % write away extracted PC-loads & roi of extraction
-    [tmp,fnRoi] = fileparts(Vroi(1).fname);
+    [fpRoi,fnRoi] = fileparts(Vroi(1).fname);
     fpFmri = fileparts(Vimg(1).fname);
     for c = 1:nComponents
         Vpc = Vroi;
