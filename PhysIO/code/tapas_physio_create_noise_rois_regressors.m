@@ -36,7 +36,7 @@ function [R_noise_rois, noise_rois, verbose] = tapas_physio_create_noise_rois_re
 %
 % $Id$
 
-% TODO: visualization of Rois, components/mean and spatial loads in ROIs
+% TODO: components/mean and spatial loads in ROIs
 
 global st % to overlay the final ROIs, using spm_orthviews
 
@@ -69,7 +69,7 @@ if numel(n_components) == 1
     n_components = repmat(n_components, 1, nRois);
 end
 
-% Show the noise ROIs before threshold and erosion
+% Show the noise ROIs before reslice, threshold and erosion
 spm_check_registration( roi_files{:} )
 
 % TODO: what if different geometry of mask and fmri data?
@@ -113,18 +113,17 @@ for r = 1:nRois
     for iter = 1 : n_voxel_crop(r)
         roi = spm_erode(roi);                    % using spm_erode, a compiled mex file
         % roi= imerode(roi, strel('sphere', 1)); % using imerode (+ strel) from Image Processing Toolbox
-        % NB : the result exactly the same with spm_erode or imerode
+        % NB : the result is exactly the same with spm_erode or imerode
     end
     
-    % Write in a volume noise ROIs, after threshold and erosiob
+    % Write the final noise ROIs in a volume, after relice, threshold and erosion
     [fpRoi,fnRoi] = fileparts(Vroi.fname);
     Vroi.fname = fullfile(fpRoi, sprintf('noiseROI_%s.nii', fnRoi));
     spm_write_vol(Vroi,roi);
     
-    % Overlay the final noise ROI
+    % Overlay the final noise ROI (code from spm_orthviews:add_c_image)
     spm_orthviews('addcolouredimage',r,Vroi.fname ,[1 0 0])
     hlabel = sprintf('%s (%s)',Vroi.fname ,'Red');
-    
     c_handle    = findobj(findobj(st.vols{r}.ax{1}.cm,'label','Overlay'),'Label','Remove coloured blobs');
     ch_c_handle = get(c_handle,'Children');
     set(c_handle,'Visible','on');
