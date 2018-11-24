@@ -13,7 +13,7 @@ TAPAS toolbox
 
 ### Added
 - tapas\_get\_tapas\_revision.m outputs the branch and hash of the repository.
-- Revision is printed when initiliazing tapas.
+- Revision is printed when initializing tapas.
 - Contributor License Agreement (CLA) file
 - CONTRIBUTING.md explaining coding and style guidelines, signing procedure for CLA file
 - Include the function tapas\_get\_current\_version.m.
