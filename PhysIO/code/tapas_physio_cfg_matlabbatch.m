@@ -1089,6 +1089,30 @@ hrv.help = {
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
+% force_coregister
+%--------------------------------------------------------------------------
+
+force_coregister        = cfg_menu;
+force_coregister.tag    = 'force_coregister';
+force_coregister.name   = 'Force Coregister : Estimate & Reslice of the noise ROIs';
+force_coregister.labels = {'Yes', 'No'};
+force_coregister.values = {'Yes', 'No'};
+force_coregister.val    = {'Yes'}; % default value, discussion in https://github.com/translationalneuromodeling/tapas/pull/34
+force_coregister.help   = {
+    'Noise ROIs volumes must have the same geometry as the functional time series.'
+    'It means same affine transformation(space) and same matrix(voxel size)'
+    ''
+    'Yes - Coregister : Estimate & Reslice will be performed on the noise NOIs,'
+    'so their geometry (space + voxel size) will match the fMRI volume.'
+    ''
+    'No - Geometry will be tested :'
+    '1) If they match, continue'
+    '2) If they don''t match, perform a Coregister : Estimate & Reslice as fallback'
+    ''
+    };
+
+
+%--------------------------------------------------------------------------
 % fmri_files
 %--------------------------------------------------------------------------
 
@@ -1190,8 +1214,8 @@ noise_rois_no.help = {'Noise ROIs not used'};
 noise_rois_yes      = cfg_branch;
 noise_rois_yes.tag  = 'yes';
 noise_rois_yes.name = 'Yes';
-noise_rois_yes.val  = {fmri_files, roi_files, roi_thresholds, n_voxel_crop, ...
-    n_components};
+noise_rois_yes.val  = {fmri_files, roi_files, force_coregister, roi_thresholds,...
+    n_voxel_crop, n_components};
 noise_rois_yes.help = {
     'Include Noise ROIs model'
     '(Principal components of anatomical regions), similar to aCompCor, Behzadi et al. 2007'

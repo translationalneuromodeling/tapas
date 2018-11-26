@@ -91,15 +91,32 @@ for r = 1:nRois
         any(Vroi.dim-Vimg(1).dim(1:3));
     % hasRoiDifferentGeometry = true;
     
-    if hasRoiDifferentGeometry
+    % Force coregistration ?
+    if strcmp(force_coregister,'Yes')
+        perform_coreg = true;
+    elseif strcmp(force_coregister,'No')
+        if hasRoiDifferentGeometry % still check the geometry !! very important !!
+            perform_coreg = true;
+            warning(sprintf('fMRI volume and noise ROI have different orientation : \n %s \n %s \n', Vimg(1).fname, Vroi.fname)); %#ok<SPWRN>
+        else
+            perform_coreg = false;
+        end
+    end
+    
+    if perform_coreg
         
-        % reslice to same geometry
-        matlabbatch{1}.spm.spatial.coreg.write.ref = fmri_files(1);
-        matlabbatch{1}.spm.spatial.coreg.write.source = roi_files(r);
-        matlabbatch{1}.spm.spatial.coreg.write.roptions.interp = 4;
-        matlabbatch{1}.spm.spatial.coreg.write.roptions.wrap = [0 0 0];
-        matlabbatch{1}.spm.spatial.coreg.write.roptions.mask = 0;
-        matlabbatch{1}.spm.spatial.coreg.write.roptions.prefix = 'r';
+        % estimate & reslice to same geometry
+        matlabbatch{1}.spm.spatial.coreg.estwrite.ref = { sprintf('%s,1',fmri_files{1}) }; % select the first volume
+        matlabbatch{1}.spm.spatial.coreg.estwrite.source = roi_files(r);
+        matlabbatch{1}.spm.spatial.coreg.estwrite.other = {''};
+        matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.cost_fun = 'nmi';
+        matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.sep = [4 2];
+        matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
+        matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.fwhm = [7 7];
+        matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.interp = 4;
+        matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.wrap = [0 0 0];
+        matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.mask = 0;
+        matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.prefix = 'r';
         
         spm_jobman('run', matlabbatch);
         
