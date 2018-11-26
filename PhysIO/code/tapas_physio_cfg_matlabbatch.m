@@ -1111,7 +1111,11 @@ roi_files         = cfg_files;
 roi_files.tag     = 'roi_files';
 roi_files.name    = 'Noise ROI Image File(s)';
 roi_files.val     = {{''}};
-roi_files.help    = {'Masks/tissue probability maps characterizing where noise resides'};
+roi_files.help    = {
+    'Masks/tissue probability maps characterizing where noise resides'
+    'Theses volumes must be in the same space as the functional volume,'
+    'where the time series will be extracted.'
+    };
 roi_files.filter  = '.*';
 roi_files.ufilter = '.nii$|.img$';
 roi_files.num     = [0 Inf];
