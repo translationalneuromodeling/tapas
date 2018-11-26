@@ -1470,6 +1470,8 @@ verbose.help   = {
     '                            Fig 5: time course of all sampled RETROICOR'
     '                                   regressors'
     '                            Fig 6: final multiple_regressors matrix'
+    '                            SPM Graphics : noise ROI before VS after'
+    '                                   (reslice) + threshold + erosion'
     ''
     ' 3 = all plots'
     '                            Fig 1: raw phys logfile data'
@@ -1485,6 +1487,8 @@ verbose.help   = {
     '                            Fig 8: time course of all sampled RETROICOR'
     '                                   regressors'
     '                            Fig 9: final multiple_regressors matrix'
+    '                            SPM Graphics : noise ROI before VS after'
+    '                                   (reslice) + threshold + erosion'
     
     };
 verbose.val    = {level fig_output_file use_tabs};

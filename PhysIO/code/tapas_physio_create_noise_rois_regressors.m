@@ -70,7 +70,9 @@ if numel(n_components) == 1
 end
 
 % Show the noise ROIs before reslice, threshold and erosion
-spm_check_registration( roi_files{:} )
+if verbose.level >= 2
+    spm_check_registration( roi_files{:} )
+end
 
 % TODO: what if different geometry of mask and fmri data?
 %       or several fmri files given?
@@ -122,14 +124,16 @@ for r = 1:nRois
     spm_write_vol(Vroi,roi);
     
     % Overlay the final noise ROI (code from spm_orthviews:add_c_image)
-    spm_orthviews('addcolouredimage',r,Vroi.fname ,[1 0 0])
-    hlabel = sprintf('%s (%s)',Vroi.fname ,'Red');
-    c_handle    = findobj(findobj(st.vols{r}.ax{1}.cm,'label','Overlay'),'Label','Remove coloured blobs');
-    ch_c_handle = get(c_handle,'Children');
-    set(c_handle,'Visible','on');
-    uimenu(ch_c_handle(2),'Label',hlabel,'ForegroundColor',[1 0 0],...
-        'Callback','c = get(gcbo,''UserData'');spm_orthviews(''context_menu'',''remove_c_blobs'',2,c);');
-    spm_orthviews('redraw')
+    if verbose.level >= 2
+        spm_orthviews('addcolouredimage',r,Vroi.fname ,[1 0 0])
+        hlabel = sprintf('%s (%s)',Vroi.fname ,'Red');
+        c_handle    = findobj(findobj(st.vols{r}.ax{1}.cm,'label','Overlay'),'Label','Remove coloured blobs');
+        ch_c_handle = get(c_handle,'Children');
+        set(c_handle,'Visible','on');
+        uimenu(ch_c_handle(2),'Label',hlabel,'ForegroundColor',[1 0 0],...
+            'Callback','c = get(gcbo,''UserData'');spm_orthviews(''context_menu'',''remove_c_blobs'',2,c);');
+        spm_orthviews('redraw')
+    end
     
     Yroi = Yimg(roi(:)==1, :); % Time series of the fMRI volume in the noise ROIs
     
