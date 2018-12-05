@@ -137,11 +137,11 @@ pars = struct();
 % 
 % Number of samples stored.
 
-pars.niter = 100;
+pars.niter = 500;
 %% 
 % Number of samples in the burn-in phase.
 
-pars.nburnin = 100;
+pars.nburnin = 500;
 %% 
 % Number of chains.
 
@@ -174,3 +174,5 @@ tapas_hgf_binary_plotTraj(h2gf_est.summary(1))
 tapas_fit_plotCorr(h2gf_est.summary(1))
 %%
 tapas_fit_plotResidualDiagnostics(h2gf_est.summary(1))
+%%
+h2gf_est.
