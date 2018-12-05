@@ -1,11 +1,11 @@
-% h2gf demo using the data: PRSSI, EEG, short version of SRL (srl2)
+% h2gf demo using the data: PRSSI, EEG, long version of SRL (srl1)
 %
 % plot h2gf results
 % =========================================================================
-% h2gf_demo_srl2_plot_data(4000,1,1) 
+% h2gf_demo_srl1_plot_data(4000,1,1)
 % =========================================================================
 
-function h2gf_demo_srl2_plot_data(NrIter,spec_eta,config_file,m)
+function h2gf_demo_srl1_plot_data(NrIter,spec_eta,config_file,m)
 
 addpath(genpath('/cluster/project/tnu/igsandra/tapas/'));
 
@@ -16,7 +16,7 @@ disp('**************************************');
 
 maskRep = ['/traj_',num2str(m)];
 
-disp(['This is SRL EEG study 2']);% Go through scans
+disp(['This is SRL EEG study 1']);% Go through scans
 
 %% specify eta:
 eta_label = num2str(spec_eta);
@@ -82,9 +82,9 @@ maskTrajFolder = fullfile([maskResFolder, maskRep]);
 mkdir(maskTrajFolder);
 
 if config_file == 13
-    h2gf_est = load([maskResFolder, '/h2gf_rw_est_srl2_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat']);
+    h2gf_est = load([maskResFolder, '/h2gf_rw_est_srl1_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat']);
 else
-    h2gf_est = load([maskResFolder, '/h2gf_3l_est_srl2_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat']);
+    h2gf_est = load([maskResFolder, '/h2gf_3l_est_srl1_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat']);
 end
 
 subjindex = 0;
@@ -93,14 +93,14 @@ for idCell = 1:length(h2gf_est.summary)
     disp('_________________________________________')
     disp(['subject nr.: ',num2str(subjindex)]);
     disp('_________________________________________');
-
+    
     cd (maskTrajFolder);
     if config_file == 13
         tapas_rw_binary_plotTraj(h2gf_est.summary(subjindex))
-        print(['srl2_re_h2gf_rw_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_subjnr_',num2str(subjindex)],'-dtiff');   
+        print(['srl1_re_h2gf_rw_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_subjnr_',num2str(subjindex)],'-dtiff');
     else
         tapas_hgf_binary_plotTraj(h2gf_est.summary(subjindex))
-        print(['srl2_re_h2gf_3l_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_subjnr_',num2str(subjindex)],'-dtiff');
+        print(['srl1_re_h2gf_3l_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_subjnr_',num2str(subjindex)],'-dtiff');
     end
     
     delete(findall(0,'Type','figure'));

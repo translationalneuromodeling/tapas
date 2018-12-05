@@ -2,10 +2,10 @@
 %
 % missed trials are removed and therefore not part of the perceptual model
 % =========================================================================
-% h2gf_demo_srl1(1,4000,1,1)
+% h2gf_demo_srl1_rw(1,4000,1,1)
 % =========================================================================
 
-function h2gf_demo_srl1(m,NrIter,spec_eta,config_file)
+function h2gf_demo_srl1_rw(m,NrIter,spec_eta)
 
 addpath(genpath('/cluster/project/tnu/igsandra/tapas/'));
 
@@ -30,15 +30,11 @@ elseif spec_eta == 3
 elseif spec_eta == 4
     eta_v = 40;
 elseif spec_eta == 5
-    eta_v = [1 1 1 1 1 1 1 1 1 1 1 1 1 5 1]';
-    % mu1_0, mu2_0, mu3_0, sa1_0, sa2_0, sa3_0,
-    % rho1, rho2, rho3, ka1, ka2, om1, om2, om3
-    % ze
+    eta_v = [1 1 5 1 1]';
+    % v_0mu, v_0sa, almu, alsa, ze
 elseif spec_eta == 6
-    eta_v = [1 1 1 1 1 1 1 1 1 1 1 1 1 10 1]';
-    % mu1_0, mu2_0, mu3_0, sa1_0, sa2_0, sa3_0,
-    % rho1, rho2, rho3, ka1, ka2, om1, om2, om3
-    % ze
+    eta_v = [1 1 10 1 1]';
+    % v_0mu, v_0sa, almu, alsa, ze
 end
 
 %% Prepare the model
@@ -47,10 +43,10 @@ hgf = struct('c_prc', [], 'c_obs', []);
 % Set up the number of levels
 hgf.c_prc.n_levels = 3;
 % Set up the perceptual function
-hgf.c_prc.prc_fun = @tapas_hgf_binary;
+hgf.c_prc.prc_fun = @tapas_rw_binary;
 
 % Set up the reparametrization function
-hgf.c_prc.transp_prc_fun = @tapas_hgf_binary_transp;
+hgf.c_prc.transp_prc_fun = @tapas_rw_binary_transp;
 
 % Set up the observation function.
 hgf.c_obs.obs_fun = @tapas_unitsq_sgm;
@@ -58,43 +54,9 @@ hgf.c_obs.obs_fun = @tapas_unitsq_sgm;
 hgf.c_obs.transp_obs_fun = @tapas_unitsq_sgm_transp;
 
 % Enter the configuration of the binary hgf
-if config_file == 1
-    config = tapas_hgf_binary_config_estka2_new();
-    configtype = 'estka2';
-elseif config_file == 2
-    config = tapas_hgf_binary_config_estka2mu2_new();
-    configtype = 'estka2mu2';
-elseif config_file == 3
-    config = tapas_hgf_binary_config_estka2mu3_new();
-    configtype = 'estka2mu3';
-elseif config_file == 4
-    config = tapas_hgf_binary_config_estka2om3_new();
-    configtype = 'estka2om3';
-elseif config_file == 5
-    config = tapas_hgf_binary_config_estka2sa2_new();
-    configtype = 'estka2sa2';
-elseif config_file == 6
-    config = tapas_hgf_binary_config_estka2sa3_new();
-    configtype = 'estka2sa3';
-elseif config_file == 7
-    config = tapas_hgf_binary_config_estom2_new();
-    configtype = 'estom2';
-elseif config_file == 8
-    config = tapas_hgf_binary_config_estom2mu2_new();
-    configtype = 'estom2mu2';
-elseif config_file == 9
-    config = tapas_hgf_binary_config_estom2mu3_new();
-    configtype = 'estom2mu3';
-elseif config_file == 10
-    config = tapas_hgf_binary_config_estom2om3_new();
-    configtype = 'estom2om3';
-elseif config_file == 11
-    config = tapas_hgf_binary_config_estom2sa2_new();
-    configtype = 'estom2sa2';
-elseif config_file == 12
-    config = tapas_hgf_binary_config_estom2sa3_new();
-    configtype = 'estom2sa3';
-end
+
+config = tapas_rw_binary_config();
+configtype = 'estrw';
 
 disp(['config file:', configtype]);
 disp('**************************************');
@@ -161,6 +123,6 @@ h2gf_est_srl1 = tapas_h2gf_estimate(data_srl1, hgf, inference, pars);
 
 display(h2gf_est_srl1);
 cd (maskResFolder);
-save(['h2gf_3l_est_srl1_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat'],'-struct','h2gf_est_srl1');
+save(['h2gf_rw_est_srl1_',configtype,'_eta',eta_label,'_', num2str(NrIter),'_',num2str(m),'.mat'],'-struct','h2gf_est_srl1');
 clear h2gf_est_srl1;
 end

@@ -22,8 +22,6 @@ addpath (genpath('/cluster/project/tnu/igsandra/HGF_sim/h2gf/tapas/external/'))
 addpath ('/cluster/project/tnu/igsandra/HGF_sim/h2gf/');
 addpath '/cluster/project/tnu/igsandra/HGF_sim/h2gf/tapas/tools/ti/linear/'
 addpath '/cluster/project/tnu/igsandra/HGF_sim/h2gf/tapas/tools/ti/'
-% workdir = prssi_set_workdir_srl2;
-% options = prssi_set_global_options_srl2(id, workdir);
 options = prssi_set_analysis_options_srl2;
 clear SRL
 
@@ -37,13 +35,18 @@ disp(['This is hgfToolBox_v5.1 srl EEG study 2:', maskModel]);% Go through scans
 num_subjects = length(options.subjectIDs);
 disp(['number of subjects: ', num_subjects])
 
+%randomly assign data position
+subjPosition = randperm(num_subjects);
+
 % Initialize a structure for the data
 data_srl2 = struct('y', cell(num_subjects, 1), ...
-    'u', cell(num_subjects, 1), 'ign', [], 'irr', []);
+    'u', cell(num_subjects, 1));
 
 subjindex = 0;
 for idCell = options.subjectIDs
     subjindex = subjindex+1;
+    subjindexPosition = subjPosition(subjindex);
+    
     disp('_________________________________________')
     id = char(idCell)
     disp('_________________________________________');
@@ -98,16 +101,15 @@ for idCell = options.subjectIDs
     
     SRL.Re.corrects(SRL.Re.irr)=[];
     SRL.Re.observed_choices(SRL.Re.irr)=[];
-    mkdir ([details.behavrootresults]);
-    cd ([details.behavrootresults]);
-    save('SRL.Re.mat','-struct','SRL','Re');
     
     % Fill the responses
-    data_srl2(subjindex).y = SRL.Re.observed_choices(:,1);
+    data_srl2(subjindexPosition).y = SRL.Re.observed_choices(:,1);
     % and experimental manipulations
-    data_srl2(subjindex).u = SRL.Re.corrects(:,1);
-    cd([options.resultsdir, '/srl_all']);
-    save('data_srl2.mat','-struct','data_srl2');
+    data_srl2(subjindexPosition).u = SRL.Re.corrects(:,1);
+    cd([options.maincodedir]);
+    save('data_srl2.mat','data_srl2');
 end
-
+load('data_srl2.mat');
+data_srl2(subjPosition(13)) = [];
+save('data_srl2.mat','data_srl2');
 end

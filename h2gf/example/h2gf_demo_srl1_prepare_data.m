@@ -27,13 +27,18 @@ disp(['This is hgfToolBox_v5.1 srl EEG study 1:', maskModel]);% Go through scans
 num_subjects = length(options.subjectIDs);
 disp(['number of subjects: ', num_subjects])
 
+%randomly assign data position
+subjPosition = randperm(num_subjects);
+    
 % Initialize a structure for the data
 data_srl1 = struct('y', cell(num_subjects, 1), ...
-    'u', cell(num_subjects, 1), 'ign', [], 'irr', []);
+    'u', cell(num_subjects, 1));
 
 subjindex = 0;
 for idCell = options.subjectIDs
     subjindex = subjindex+1;
+    subjindexPosition = subjPosition(subjindex);
+    
     disp('_________________________________________')
     id = char(idCell)
     disp('_________________________________________');
@@ -90,11 +95,13 @@ for idCell = options.subjectIDs
     SRL.Re.observed_choices(SRL.Re.irr)=[];
 
     % Fill the responses
-    data_srl1(subjindex).y = SRL.Re.observed_choices(:,1);
+    data_srl1(subjindexPosition).y = SRL.Re.observed_choices(:,1);
     % and experimental manipulations
-    data_srl1(subjindex).u = SRL.Re.corrects(:,1);
+    data_srl1(subjindexPosition).u = SRL.Re.corrects(:,1);
     cd([options.maincodedir]);
     save('data_srl1.mat','data_srl1');
 end
-
+load('data_srl1.mat');
+data_srl1(subjPosition(12)) = [];
+save('data_srl1.mat','data_srl1');
 end
