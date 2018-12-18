@@ -74,9 +74,7 @@ if verbose.level >= 2
     spm_check_registration( roi_files{:} )
 end
 
-% TODO: what if different geometry of mask and fmri data?
-%       or several fmri files given?
-Vimg = spm_vol(fmri_files{1});
+Vimg = []; for iFile = 1:numel(fmri_files), Vimg = [Vimg; spm_vol(fmri_files{iFile})];end
 Yimg = spm_read_vols(Vimg);
 
 nVolumes = size(Yimg, 4);
@@ -226,7 +224,7 @@ for r = 1:nRois
     end
     
     if verbose.level >=2
-        stringFig = sprintf('Noise_rois: Extracted principal components for ROI %d', r);
+        stringFig = sprintf('Noise\_rois: Extracted principal components for ROI %d', r);
         verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params(); 
         set(gcf, 'Name', stringFig);
         plot(R);

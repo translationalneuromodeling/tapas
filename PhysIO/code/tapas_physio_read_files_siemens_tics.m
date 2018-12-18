@@ -6,7 +6,7 @@ function [C, columnNames] = tapas_physio_read_files_siemens_tics(fileName, fileT
 %
 % IN
 %   fileName    *.log from Siemens VD/VE tics file format
-%   fileType    'ECG', 'PULS', 'RESP', 'Info'
+%   fileType    'ECG', 'PULS', 'RESP', 'Info', 'BIOPAC_TXT'
 %               If not specified, this is read from the last part of the
 %               filename after the last underscore, e.g.
 %               Physio_*_ECG.log -> log
@@ -55,7 +55,11 @@ if nargin < 2
 end
 
 
-switch fileType
+switch upper(fileType)
+    case 'BIOPAC_TXT'
+        strColumnHeader = '.*RESP.*';
+        parsePatternPerNColumns{4} = '%f %f %f %d';
+        nEmptyLinesAfterHeader(4) = 0;
     case 'INFO' % header is a subset of
         % Cologne:
         %   Volume_ID Slice_ID AcqTime_Tics
@@ -99,19 +103,23 @@ while ~haveFoundColumnHeader
     haveFoundColumnHeader = any(regexp(upper(strLine), strColumnHeader));
 end
 
-columnNames = regexp(strLine, '([\w]*)', 'tokens'); 
-columnNames = [columnNames{:}]; % cell of cell into cell of strings
+switch upper(fileType)
+    case 'BIOPAC_TXT' % bad column names with spaces...e.g. 'RESP - RSP100C'
+        columnNames = regexp(strLine, '([\t])', 'split');
+        nColumns = numel(columnNames);
+    otherwise
+        columnNames = regexp(strLine, '([\w]*)', 'tokens');
+        columnNames = [columnNames{:}]; % cell of cell into cell of strings
+        nColumns = numel(regexp(strLine, ' *')) + 1; % columns are separated by arbitrary number of spaces
+end
 fclose(fid);
 
-nColumns = numel(regexp(strLine, ' *')) + 1; % columns are separated by arbitrary number of spaces
 nHeaderLines = nHeaderLines + nEmptyLinesAfterHeader(nColumns); % since empty line after header for CMRR files (not in Cologne!)
 
 fid = fopen(fileName);
 
-switch fileType
-    case 'INFO'
-        C = textscan(fid, parsePatternPerNColumns{nColumns}, 'HeaderLines', nHeaderLines);
-    case {'PULS', 'RESP'}
+switch upper(fileType)
+    case {'INFO', 'PULS', 'RESP', 'BIOPAC_TXT'}
         C = textscan(fid, parsePatternPerNColumns{nColumns}, 'HeaderLines', nHeaderLines);
     case {'ECG'}
         C = textscan(fid, parsePatternPerNColumns{nColumns}, 'HeaderLines', nHeaderLines);

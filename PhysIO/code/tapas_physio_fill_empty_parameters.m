@@ -58,6 +58,8 @@ if isempty(physio.log_files.sampling_interval)
             else
                 physio.log_files.sampling_interval = 1/500;
             end
+        case 'biopac_txt'
+            physio.log_files.sampling_interval = 1/1000;
         case 'ge'
             physio.log_files.sampling_interval = 25e-3;
         case {'siemens_tics', 'siemens_hcp'}

@@ -44,7 +44,7 @@ function [c, r, t, cpulse, acq_codes] = tapas_physio_read_physlogfiles_biopac_ma
 %
 % Author: Lars Kasper
 % Created: 2016-08-15
-% Copyright (C) 2013 Institute for Biomedical Engineering, ETH/Uni Zurich.
+% Copyright (C) 2016 Institute for Biomedical Engineering, ETH/Uni Zurich.
 %
 % This file is part of the PhysIO toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL

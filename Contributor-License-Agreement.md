@@ -14,6 +14,7 @@ Name                     | Company/Institution/Address | City      | Country | E
 ------------------------ | --------------------------- | --------- | ------- | ----------------------
 Lars Kasper              | TNU, University of Zurich   | Zurich    | CH      | mrikasper
 Eduardo Aponte           | TNU, University of Zurich   | Zurich    | CH      | tnutapas
+Daniel Hoffmann Ayala    | Technical University        | Munich    | D       | DanielHoffmannAyala
 Benoît Béranger          | CENIR, ICM                  | Paris     | FR      | benoitberanger
 **- Add Entry here -**   | **- Add Entry here -**      | **Add**   | **Add** | **Add**                    
 
