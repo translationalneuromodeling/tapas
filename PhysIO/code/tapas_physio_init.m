@@ -11,7 +11,7 @@ function isPhysioCorrectlyInitialized = tapas_physio_init()
 %   tapas_physio_init()
 %
 %   See also
-%
+
 % Author: Lars Kasper
 % Created: 2018-02-17
 % Copyright (C) 2018 TNU, Institute for Biomedical Engineering,
@@ -72,7 +72,7 @@ isVerbose = false; % we will try to create link, don't warn yet
 
 if ~isPhysioVisibleForSpmBatchEditor
     fprintf('No link found. Trying to create one...');
-    cmdString = tapas_physio_create_spm_toolbox_link();
+    cmdString = tapas_physio_create_spm_toolbox_link(pathPhysIO);
     
     % try again...
     [isPhysioVisibleForSpmBatchEditor, pathSpm, pathPhysIO] = ...

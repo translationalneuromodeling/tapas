@@ -1,7 +1,7 @@
 TAPAS PhysIO Toolbox 
 ====================
 
-*Current version: 2018.1.2*
+*Current version: 2018.1.3*
 
 > Copyright (C) 2012-2018  
 > Lars Kasper  
@@ -242,9 +242,12 @@ References
 
 ### Main Toolbox Reference
 
-1. Kasper, L., Bollmann, S., Diaconescu, A.O., Hutton, C., Heinzle, J., Iglesias, S., Hauser, T.U., Sebold, M., Manjaly, Z.-M., Pruessmann, K.P., Stephan, K.E., 2017. The PhysIO Toolbox for Modeling Physiological Noise in fMRI Data. Journal of Neuroscience Methods 276, 56–72. doi:10.1016/j.jneumeth.2016.10.019
+1. Kasper, L., Bollmann, S., Diaconescu, A.O., Hutton, C., Heinzle, J., Iglesias, 
+S., Hauser, T.U., Sebold, M., Manjaly, Z.-M., Pruessmann, K.P., Stephan, K.E., 2017. 
+The PhysIO Toolbox for Modeling Physiological Noise in fMRI Data. 
+Journal of Neuroscience Methods 276, 56–72. doi:10.1016/j.jneumeth.2016.10.019
 
-### Related Papers (Implemented noise correction algorithms)
+### Related Papers (Implemented noise correction algorithms and optimal parameter choices)
 
 #### RETROICOR 
 2. Glover, G.H., Li, T.Q. & Ress, D. Image‐based method for retrospective correction
@@ -261,24 +264,33 @@ Imaging 28, 1337‐1344 (2008).
 5. Behzadi, Y., Restom, K., Liau, J., Liu, T.T., 2007. A component based noise
 correction method (CompCor) for BOLD and perfusion based fMRI. NeuroImage 37,
 90–101. doi:10.1016/j.neuroimage.2007.04.042
-    
+
 #### RVT
 6. Birn, R.M., Smith, M.A., Jones, T.B., Bandettini, P.A., 2008. The respiration response
 function: The temporal dynamics of fMRI s ignal fluctuations related to changes in
 respiration. NeuroImage 40, 644–654. doi:10.1016/j.neuroimage.2007.11.059
-    
+7. Jo, H.J., Saad, Z.S., Simmons, W.K., Milbury, L.A., Cox, R.W., 2010. 
+Mapping sources of correlation in resting state FMRI, with artifact detection 
+and removal. NeuroImage 52, 571–582. https://doi.org/10.1016/j.neuroimage.2010.04.246  
+*regressor delay suggestions*
+
 #### HRV
-7. Chang, C., Cunningham, J.P., Glover, G.H., 2009. Influence of heart rate on the
+8. Chang, C., Cunningham, J.P., Glover, G.H., 2009. Influence of heart rate on the
 BOLD signal: The cardiac response function. NeuroImage 44, 857–869.
 doi:10.1016/j.neuroimage.2008.09.029
-    
+9. Shmueli, K., van Gelderen, P., de Zwart, J.A., Horovitz, S.G., Fukunaga, M., 
+Jansma, J.M., Duyn, J.H., 2007. Low-frequency fluctuations in the cardiac rate 
+as a source of variance in the resting-state fMRI BOLD signal. 
+NeuroImage 38, 306–320. https://doi.org/10.1016/j.neuroimage.2007.07.037  
+*regressor delay suggestions*
+
 #### Motion (Censoring, Framewise Displacement)
-8. Siegel, J.S., Power, J.D., Dubis, J.W., Vogel, A.C., Church, J.A., Schlaggar, B.L.,
+10. Siegel, J.S., Power, J.D., Dubis, J.W., Vogel, A.C., Church, J.A., Schlaggar, B.L.,
 Petersen, S.E., 2014. Statistical improvements in functional magnetic resonance
 imaging analyses produced by censoring high-motion data points. Hum. Brain Mapp.
 35, 1981–1996. doi:10.1002/hbm.22307
 
-9. Power, J.D., Barnes, K.A., Snyder, A.Z., Schlaggar, B.L., Petersen, S.E., 2012. Spurious but systematic correlations in functional connectivity MRI networks arise from subject motion. NeuroImage 59, 2142–2154. https://doi.org/10.1016/j.neuroimage.2011.10.018
+11. Power, J.D., Barnes, K.A., Snyder, A.Z., Schlaggar, B.L., Petersen, S.E., 2012. Spurious but systematic correlations in functional connectivity MRI networks arise from subject motion. NeuroImage 59, 2142–2154. https://doi.org/10.1016/j.neuroimage.2011.10.018
 
 
 Copying/License
