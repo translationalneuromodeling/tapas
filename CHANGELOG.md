@@ -1,6 +1,12 @@
 # Changelog
 TAPAS toolbox 
 
+## [Unreleased]
+
+### Added
+- Automatic plotting of the seria model.
+- Example for flat model for seria.
+
 ## [3.0.0] 2018-09-09
 
 ### Added
