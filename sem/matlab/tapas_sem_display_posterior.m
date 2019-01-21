@@ -44,11 +44,11 @@ nconds = numel(conds);
 
 for i = 1:nconds
     ax = subplot(nconds, 2, (i - 1) * 2 + 1);
-    title(sprintf('Pro. condition %d', i));
+    title(sprintf('Pro. condition %d', i - 1));
     ylabel('# saccs.')
     xlabel('time')
     ax = subplot(nconds, 2, (i - 1) * 2 + 2);
-    title(sprintf('Anti. condition %d', i));
+    title(sprintf('Anti. condition %d', i - 1));
     ylabel('# saccs.')
     xlabel('time')
 end
