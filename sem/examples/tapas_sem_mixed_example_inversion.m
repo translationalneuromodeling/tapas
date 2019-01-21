@@ -68,7 +68,7 @@ ptheta.x = eye(4);
 ptheta.mixed = ones(4, 1)';
 pars = struct();
 
-pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
+pars.T = ones(4, 1) * linspace(0.1, 1, 1).^5;
 pars.nburnin = 4000;
 pars.niter = 4000;
 pars.ndiag = 500;
@@ -79,6 +79,7 @@ display(ptheta);
 inference = struct();
 tic
 posterior = tapas_sem_mixed_estimate(data, ptheta, inference, pars);
+tapas_sem_display_posterior(posterior)
 toc
 
 display(posterior);

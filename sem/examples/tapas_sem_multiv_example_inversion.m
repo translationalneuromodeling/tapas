@@ -83,6 +83,7 @@ display(ptheta);
 inference = struct();
 tic
 posterior = tapas_sem_multiv_estimate(data, ptheta, inference, pars);
+tapas_sem_display_posterior(posterior)
 toc
 
 display(posterior)

@@ -37,12 +37,14 @@ case 'seria'
             ptheta.llh = @c_seria_multi_later;
         case 'wald'
             ptheta.llh = @c_seria_multi_wald;
+        otherwise
+            error('parametric function not defined')
     end
 
     ptheta.jm = [...
         eye(19)
         zeros(3, 8) eye(3) zeros(3, 8)];
-   ptheta.p0(11) = tapas_logit([0.005], 1);
+    ptheta.p0(11) = tapas_logit([0.005], 1);
 case 'prosa'
     ptheta = tapas_sem_prosa_ptheta(); % Choose at convinience.
     switch param
@@ -58,6 +60,8 @@ case 'prosa'
         ptheta.llh = @c_prosa_multi_later;
     case 'wald'
         ptheta.llh = @c_prosa_multi_wald;
+    otherwise
+        error('parametric function not defined')
     end
 
     ptheta.jm = [...
@@ -78,11 +82,11 @@ pars.verbose = 1;
 display(ptheta);
 inference = struct();
 inference.kernel_scale = 0.1 * 0.1;
-tic
+
 posterior = tapas_sem_hier_estimate(data, ptheta, inference, pars);
-toc
 
 display(posterior);
+tapas_sem_display_posterior(posterior)
 
 end
 
