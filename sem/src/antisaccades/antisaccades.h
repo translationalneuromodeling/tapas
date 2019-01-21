@@ -204,8 +204,19 @@ typedef struct
     int dim_theta;
 } SERIA_MODEL;
 
-// Other numerical
+// Summaries of subjects actions
 
+typedef struct
+{
+    double p_inhib_failure;
+    double p_late_pro;
+    double rt_inhib_failure;
+    double rt_late_pro;
+    double rt_anti;
+} SERIA_SUMMARY;
+
+
+// Other numerical
 double
 lcosh(double x);
 // Logarithm of cosine hyperbolicus of x. Behaves better for large abs(x)
@@ -410,8 +421,6 @@ double later_lsf(double x, double mu, double sigma);
 // mu       Location parameter of the corresponding Gaussian
 // sigma    Scale of the corresponding Gaussian
 
-
-
 double wald_lpdf(double x, double mu, double sigma);
 // Log pdf of the later likelihood
 // x        Time
@@ -465,8 +474,6 @@ double later_sf(double x, double mu, double sigma);
 // x        Time
 // mu       Location parameter of the corresponding Gaussian
 // sigma    Scale of the corresponding Gaussian
-
-
 
 double ngamma(double x, double a, double b, double c0, double c1);
 // Unnormalized nested incomplete gamma function.
@@ -547,7 +554,6 @@ nlognorm_gslint(double t0, double x, double mu1, double mu2, double sig1,
 // sig2     -- Scale parameter of the inner lognormal function.
 //
 // Uses gsldouble
-
 
 double nlater_gslint(double t0, double x, double mu1, double mu2, double sig1,
        double sig2);

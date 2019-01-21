@@ -107,8 +107,11 @@ for i = 1 : nburnin + niter
     if i > 1 && mod(i-1, pars.kup) == 0
         diagnostics = diagnostics/pars.kup;
         if pars.verbose
-            fprintf(1, 'Iter %d, diagnostics:  ', i);
+            fprintf(1, 'Iter %d\n', i);
+            fprintf(1, 'Acceptance rate:\n')
             fprintf(1, '%0.2f ', diagnostics);
+            fprintf(1, '\n');
+            fprintf(1, 'Likelihood:\n')
             fprintf(1, '%0.2f ', ollh);
             fprintf(1, '\n');
             if i > nburnin && nt > 1
@@ -122,7 +125,6 @@ for i = 1 : nburnin + niter
         diagnostics(:) = 0;
     end
     ntheta = propose_sample(otheta, ptheta, htheta, ok);
-    %ntheta = tapas_sem_seri_gibbs_eta(y, u, ntheta, ptheta, T);
     nllh = llh(data, ntheta);
 
     nllh = sum(nllh, 1);
@@ -312,6 +314,9 @@ function [nhtheta] = init_htheta(ptheta, htheta)
 [np] = size(ptheta.jm, 1);
 
 nhtheta = htheta;
+if ~isfield(htheta, 'pk')
+    htheta.pk = eye(ptheta.ndims);
+end
 % TODO
 np = np/size(htheta.pk, 1);
 

@@ -12,7 +12,15 @@ function [] = tapas_sem_display_posterior(posterior)
 
 % Plot the data.
 data = posterior.data;
-model = posterior.model.graph{1}.htheta.model;
+try
+    model = posterior.model.graph{1}.htheta.model;
+catch err
+    try
+        model = posterior.ptheta;
+    catch
+        error('tapas:sem:display_posterior', 'Improper input')
+    end
+end
 
 for i = 1:numel(data)
     figure
