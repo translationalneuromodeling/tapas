@@ -310,9 +310,16 @@ tic
 % Estimate the model.
 posterior = tapas_sem_flat_estimate(data, ptheta, htheta, pars);
 toc
-
-display(posterior)
+tapas_sem_display_posterior(posterior)
+posterior
 ``` 
+The command `tapas_sem_display_posterior` plots the histogram of the RT 
+and the fits. Each row represents one of the conditions. The left column
+represents prosaccades, and the right column antisaccades. In the example,
+prosaccade trials are coded with 0, and antisaccade trials with 1.
+
+<img src="misc/fits.png" width="250" align="right"/>
+
 
 The variable `ptheta` represent the parameters of the model. It is a 
 structure with several fields explained in the table below.

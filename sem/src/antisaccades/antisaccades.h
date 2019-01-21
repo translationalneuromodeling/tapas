@@ -34,7 +34,7 @@
 // Absolute error tolerance
 #define SEM_TOL 0.00001
 // Relative error tolerance
-#define SEM_RTOL 0.001
+#define SEM_RTOL 0.0001
 // Maximum shape parameter gamma distribution
 #define SEM_GAMMA_MAX_SHAPE 30
 

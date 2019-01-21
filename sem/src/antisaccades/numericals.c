@@ -627,14 +627,8 @@ ninvgamma_gslint(double xs, double xe, double a, double b, double c0,
     af.function = &dninvgamma;
     af.params = pars;
 
-    gsl_integration_workspace *ws = gsl_integration_workspace_alloc(3);
-    gsl_integration_qag(&af, xs, xe, SEM_TOL, SEM_RTOL, 3, GSL_INTEG_GAUSS15, 
-        ws, &v, &aberr);
-    gsl_integration_workspace_free(ws);
-    /*
-    SOONER_GSLERROR(gsl_integration_qng(&af, xs, xe, SEM_TOL, SEM_RTOL, &v,
+     SOONER_GSLERROR(gsl_integration_qng(&af, xs, xe, SEM_TOL, SEM_RTOL, &v,
                 &aberr, &neval));
-    */
 
     if (aberr > 0.001)
     {
