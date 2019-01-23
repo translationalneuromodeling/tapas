@@ -123,8 +123,8 @@ fclose(fid);
 
 nHeaderLines = nHeaderLines + nEmptyLinesAfterHeader(nColumns); % since empty line after header for CMRR files (not in Cologne!)
 
+% now read the rest of the file
 fid = fopen(fileName);
-
 switch upper(fileType)
     case {'BIDS', 'BIOPAC_TXT', 'INFO', 'PULS', 'RESP'}
         C = textscan(fid, parsePatternPerNColumns{nColumns}, 'HeaderLines', nHeaderLines);
@@ -133,3 +133,4 @@ switch upper(fileType)
         if nColumns == 4 % CMRR, different ECG channels possible!
         end
 end
+fclose(fid);

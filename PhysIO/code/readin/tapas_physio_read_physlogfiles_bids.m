@@ -87,7 +87,8 @@ isZipped = strcmpi(ext, '.gz');
 
 if isZipped
     fileJson = regexprep(fileName, '\.tsv\.gz', '\.json');
-    fileName  = gunzip(fileName,tempname); % tempname is matlab inbuilt
+    tempFilePath = tempname;  % tempname is matlab inbuilt
+    fileName  = gunzip(fileName, tempFilePath);
     fileName = fileName{1};
 else
     fileJson = regexprep(fileName, '\.tsv', '\.json');
@@ -192,5 +193,9 @@ end
 
 %% delete temporary unzipped file
 if isZipped
-    rmdir(fileName, 's');
+    [status,message,messageId] = rmdir(tempFilePath, 's');
+    % warning if deletion failed
+    if status == 0
+        tapas_physio_log(sprintf('%s: %s', messageId, message), verbose, 1)
+    end
 end
