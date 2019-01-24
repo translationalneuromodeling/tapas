@@ -101,10 +101,10 @@ if ~isempty(t) && t(1) > 0 && ~isSiemensTics
     dt = t(2) - t(1);
     nPrependSamples = ceil(t(1)/dt);
     t = [(0:nPrependSamples-1)'*dt;t];
-    if ~isempty(log_files.cardiac)
+    if ~isempty(c)
         c = [zeros(nPrependSamples, 1);c];
     end
-    if ~isempty(log_files.respiration)
+    if ~isempty(r)
         r = [zeros(nPrependSamples,1);r];
     end
     if ~isempty(acq_codes)

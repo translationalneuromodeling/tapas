@@ -5,8 +5,8 @@ function [ons_secs, sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_wi
 % USAGE
 %   function [ons_secs, sqpar] = ...
 %       tapas_physio_crop_scanphysevents_to_acq_window(ons_secs, sqpar)
-%-------------------------------------------------------------------------
-% INPUT:
+%
+% IN
 %   ons_secs    - onsets of all physlog events in seconds
 %               .spulse     = onsets of slice scan acquisition
 %               .cpulse     = onsets of cardiac R-wave peaks
@@ -25,8 +25,7 @@ function [ons_secs, sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_wi
 %            onset_slice    - slice whose scan onset determines the adjustment of the 
 %                             regressor timing to a particular slice for the whole volume
 %
-%-------------------------------------------------------------------------
-% OUTPUT:
+% OUT
 %   ons_secs    - input ons_secs cropped to acquisition window
 %                 .raw - uncropped ons_secs-structure as input into this
 %                 function
@@ -35,7 +34,6 @@ function [ons_secs, sqpar, verbose] = tapas_physio_crop_scanphysevents_to_acq_wi
 %           .Nvols_paradigm - acquired volumes during paradigm running
 %           .meanTR         - mean repetition time (secs) over session
 %
-%-------------------------------------------------------------------------
 % Lars Kasper, August 2011
 % Copyright (C) 2013 Institute for Biomedical Engineering, ETH/Uni Zurich.
 %
