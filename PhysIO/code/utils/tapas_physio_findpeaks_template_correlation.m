@@ -191,39 +191,43 @@ nLimit = numel(cPadded)-halfTemplateWidthInSamples-searchPosition;
 while n <= nLimit
     %search around peak
     for searchPosition = -searchStepsTotal:1:searchStepsTotal
-        startSignalIndex = ...
-            max(1, n-halfTemplateWidthInSamples+searchPosition);
-        endSignalIndex = n+halfTemplateWidthInSamples+searchPosition;
         
-        signalPart = cPadded(startSignalIndex:endSignalIndex);
-          
-        if debug
-            figure(997); hold all;
-            plot(startSignalIndex:endSignalIndex, cPadded(startSignalIndex:endSignalIndex));
-            xlim([0 1000]);
+        % check only, if search indices within bounds of time series
+        if (n+searchPosition) >= 1 && (n+searchPosition+1) <= nLimit
+            
+            startSignalIndex = ...
+                max(1, n-halfTemplateWidthInSamples+searchPosition);
+            endSignalIndex = n+halfTemplateWidthInSamples+searchPosition;
+            
+            signalPart = cPadded(startSignalIndex:endSignalIndex);
+            
+            if debug
+                figure(997); hold all;
+                plot(startSignalIndex:endSignalIndex, cPadded(startSignalIndex:endSignalIndex));
+                xlim([0 1000]);
+            end
+            
+            correlation = tapas_physio_corrcoef12(signalPart, ...
+                zTransformedTemplate, isZTransformed);
+            
+            locationWeight = gaussianWindow(searchPosition+searchStepsTotal+1);
+            amplitudeWeight = abs(cPadded(n+searchPosition+1));
+            correlationWeighted =  locationWeight .* amplitudeWeight .* correlation;
+            similarityToTemplate(n+searchPosition) = correlationWeighted;
+            
+            % collect plot Data
+            plotData.locationWeight(n+searchPosition) = locationWeight;
+            plotData.amplitudeWeight(n+searchPosition) = amplitudeWeight;
+            
+            if searchPosition==0
+                plotData.searchedAt(n+searchPosition) = 1;
+            end
         end
-        
-        correlation = tapas_physio_corrcoef12(signalPart, ...
-            zTransformedTemplate, isZTransformed);
-
-        locationWeight = gaussianWindow(searchPosition+searchStepsTotal+1);
-        amplitudeWeight = abs(cPadded(n+searchPosition+1));
-        correlationWeighted =  locationWeight .* amplitudeWeight .* correlation;
-        similarityToTemplate(n+searchPosition) = correlationWeighted;
-        
-        % collect plot Data
-        plotData.locationWeight(n+searchPosition) = locationWeight;
-        plotData.amplitudeWeight(n+searchPosition) = amplitudeWeight;
-        
-        if searchPosition==0
-            plotData.searchedAt(n+searchPosition) = 1;
-        end
-        
     end
     
     %find largest correlation-peak from all the different search positions
-    indexSearchStart=n-searchStepsTotal;
-    indexSearchEnd=n+searchStepsTotal;
+    indexSearchStart = max(1, n-searchStepsTotal);
+    indexSearchEnd = min(n+searchStepsTotal, nLimit - 1); % -1 because of index shift similarityToTemplate and cPadded
     
     indexSearchRange=indexSearchStart:indexSearchEnd;
     searchRangeValues=similarityToTemplate(indexSearchRange);
