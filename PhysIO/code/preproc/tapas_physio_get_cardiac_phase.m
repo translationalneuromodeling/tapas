@@ -45,12 +45,12 @@ nAverage = min(20, nPulses/2);
 
 % add pulses in beginning, if first onset time of scan before recorded
 % pulses - use guess based on average heart rate
-if scannert(1) < pulset(1)
+if scannert(1) <= pulset(1)
     verbose = tapas_physio_log(...
         'Guessed additional cardiac pulse at time series start for phase estimation', ...
         verbose, 1);
     meanCycleDur = mean(diff(pulset(1:nAverage)));
-    nAddPulses = ceil((pulset(1) - scannert(1))/meanCycleDur);
+    nAddPulses = max(1, ceil((pulset(1) - scannert(1))/meanCycleDur));
     pulset = [pulset(1) - meanCycleDur*(1:nAddPulses)';pulset];
 end
 
