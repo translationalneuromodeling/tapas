@@ -295,21 +295,27 @@ else
     
     % The initial cardiac pulse selection structure: Determines how the
     % majority of cardiac pulses is detected
-    % 'auto'    - auto generation of representative QRS-wave; detection via
+    % default: auto
+    %
+    % 'auto_matched'
+    %           - auto generation of representative QRS-wave; detection via
     %             maximizing auto-correlation with it
-    % 'load_from_logfile' - from phys logfile, detected R-peaks of scanner
+    % 'load_from_logfile' 
+    %           - from phys logfile, detected R-peaks of scanner
     % 'manual'  - via manually selected QRS-wave for autocorrelations
     % 'load'    - from previous manual/auto run
-    preproc.cardiac.initial_cpulse_select.method = 'load_from_logfile';
+    preproc.cardiac.initial_cpulse_select.method = 'auto_matched';
     
     % file containing reference ECG-peak (variable kRpeak)
     % used for method 'manual' or 'load' [default: not set]
     % if method == 'manual', this file is saved after picking the QRS-wave
     % such that results are reproducible
-    preproc.cardiac.initial_cpulse_select.file = '';
+    % default: initial_cpulse_kRpeakfile.mat
+    preproc.cardiac.initial_cpulse_select.file = 'initial_cpulse_kRpeakfile.mat';
     
     % threshold for correlation with QRS-wave to find cardiac pulses
-    preproc.cardiac.initial_cpulse_select.min = [];
+    % default: 0.4
+    preproc.cardiac.initial_cpulse_select.min = 0.4;
     
     % variable saving an example cardiac QRS-wave to correlate with
     % ECG time series

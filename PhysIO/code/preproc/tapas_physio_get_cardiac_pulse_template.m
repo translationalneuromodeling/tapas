@@ -32,16 +32,18 @@ function [pulseCleanedTemplate, cpulse2ndGuess, averageHeartRateInSamples] = ...
 defaults.shortenTemplateFactor = 0.5; 
 defaults.minCycleSamples = ceil(0.5/2e-3);
 defaults.thresh_min = 0.4;
-
+defaults.doNormalizeTemplate = true;
+% outliers below that correlation will be removed for averaging when retrieving final template
+defaults.thresholdHighQualityCorrelation = 0.95; 
 
 args = tapas_physio_propval(varargin, defaults);
 tapas_physio_strip_fields(args);
 
 
-debug = verbose.level >= 3;
+doDebug = verbose.level >= 3;
 dt = t(2) - t(1);
 
-%% Guess peaks in two steps with updated avereage heartrate
+%% Guess peaks in two steps with updated average heartrate
 % First step
 
 [tmp, cpulse1stGuess] = tapas_physio_findpeaks( ...
@@ -62,7 +64,7 @@ if hasFirstGuessPeaks
         'minpeakdistance', round(shortenTemplateFactor*...
         averageHeartRateInSamples));
     
-    if debug
+    if doDebug
         
         nPulses1 = length(cpulse1stGuess);
         nPulses2 = length(cpulse2ndGuess);
@@ -109,8 +111,9 @@ if hasFirstGuessPeaks
         legend(stringLegend);
     end
 else
-    if debug
-        fh = tapas_physio_get_default_fig_params;
+    if doDebug
+        fh = tapas_physio_get_default_fig_params();
+        verbose.fig_handles(end+1,1) = fh;
         subplot(3,1,1);
         plot(t, c, 'k'); title('Finding first peak of cycle, backwards')
     end
@@ -125,87 +128,13 @@ end
 % cut out all data around the detected (presumed) R-peaks
 %   => these are the representative "QRS"-waves
 
+
 halfTemplateWidthInSamples = round(shortenTemplateFactor * ...
     (averageHeartRateInSamples / 2));
 
-% z-transform to have all templates (for averaging) have
-% same norm & be mean-corrected
-doNormalizeTemplate = true;
-nSamplesTemplate = halfTemplateWidthInSamples * 2 + 1;
-nPulses = numel(cpulse2ndGuess);
-template = zeros(nPulses-3,nSamplesTemplate);
 
-for n=2:nPulses-2
-    startTemplate = cpulse2ndGuess(n)-halfTemplateWidthInSamples;
-    endTemplate = cpulse2ndGuess(n)+halfTemplateWidthInSamples;
-    
-    template(n,:) = c(startTemplate:endTemplate);
-    
-    if doNormalizeTemplate
-        template(n,:) = template(n,:) - mean(template(n,:),2);
-        
-        % std-normalized...
-        %template(n,:) = template(n,:)./std(template(n,:),0,2);
-        % max-norm:
-        template(n,:) = template(n,:)./max(abs(template(n,:)));
-    end
-    
-end
-
-%delete first zero-elements of the template
-template(1,:) = [];
-
-% template as average of the found representative waves
-pulseTemplate = mean(template);
-
-if debug
-    figure(fh);
-    subplot(3,1,3);
-    tTemplate = dt*(0:2*halfTemplateWidthInSamples);
-    plot(tTemplate, template');
-    hold all;
-    hp(1) = plot(tTemplate, pulseTemplate', '.--g', 'LineWidth', 3, 'Marker', ...
-        'o');
-    xlabel('t (seconds)');
-    title('Templates of cycle time course and mean template');
-end
-
-% delete the peaks deviating from the mean too
-% much before building the final template
-[~, pulseTemplate] = tapas_physio_corrcoef12(pulseTemplate, pulseTemplate);
-isZtransformed = [0 1];
-
-nTemplates = size(template,1);
-similarityToTemplate = zeros(nTemplates,1);
-for n=1:nTemplates
-    similarityToTemplate(n) = tapas_physio_corrcoef12(template(n,:),pulseTemplate, ...
-        isZtransformed);
-end
-
-%% Final template for peak search from best-matching templates
-
-thresholdHighQualityCorrelation = 0.95;
-
-% minimal number of high quality templates to be achieved, otherwise
-% enforced
-nMinHighQualityTemplates = ceil(0.1 * nPulses); 
-indHighQualityTemplates = find(similarityToTemplate > ...
-    thresholdHighQualityCorrelation);
-
-% if threshold to restrictive, try with new one: 
-% best nMinHighQualityTemplates / nPulses of all found templates used for
-% averaging
-if numel(indHighQualityTemplates) < nMinHighQualityTemplates
-    thresholdHighQualityCorrelation = tapas_physio_prctile(similarityToTemplate, ...
-        1 - nMinHighQualityTemplates/nPulses);
-    indHighQualityTemplates = find(similarityToTemplate > ...
-        thresholdHighQualityCorrelation);
-end
-pulseCleanedTemplate = mean(template(indHighQualityTemplates, :));
-
-if debug
-    hp(2) = plot(tTemplate, pulseCleanedTemplate, '.-g', 'LineWidth', 4, ...
-        'Marker', 'x');
-    legend(hp, 'mean of templates', 'mean of most similar, chosen templates');
-    suptitle(stringTitle);
-end
+[pulseCleanedTemplate, pulseTemplate] = tapas_physio_get_template_from_pulses(...
+    c, cpulse2ndGuess, halfTemplateWidthInSamples, ...
+    verbose, 'doNormalizeTemplate', doNormalizeTemplate, ...
+    'thresholdHighQualityCorrelation', thresholdHighQualityCorrelation, ...
+    'dt', dt);

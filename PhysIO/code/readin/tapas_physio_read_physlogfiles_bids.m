@@ -158,18 +158,33 @@ acq_codes = [];
 if ~isempty(iAcqStart) % otherwise, nothing to read ...
     % iAcqStart is a columns of 0 and 1, 1 for the trigger event of a new
     % volume start
+    
+    % sometimes, trigger is on for several samples; ignore these extended
+    % phases of "on-triggers" as duplicate values, if trigger distance is
+    % very different
+    %
+    % fraction of mean trigger distance; if trigger time difference below that, will be removed
+    outlierThreshold = 0.2;
+
+    idxAcqStart = find(iAcqStart);
+    dAcqStart = diff(idxAcqStart);
+    
+    % + 1 because of diff
+    iAcqOutlier = 1 + find(dAcqStart < outlierThreshold*mean(dAcqStart));
+    iAcqStart(idxAcqStart(iAcqOutlier)) = 0;
+    
     acq_codes = zeros(nSamples,1);
     acq_codes(iAcqStart) = 8; % to match Philips etc. format
     
-    nAcqs = numel(iAcqStart);
+    nAcqs = numel(find(iAcqStart));
     
     if nAcqs >= 1
         % report time of acquisition, as defined in SPM
         meanTR = mean(diff(t(iAcqStart)));
         stdTR = std(diff(t(iAcqStart)));
         verbose = tapas_physio_log(...
-            sprintf('TR = %.3f +/- %.3f s (Estimated mean +/- std time of repetition for one volume)', ...
-            meanTR, stdTR), verbose, 0);
+            sprintf('TR = %.3f +/- %.3f s (Estimated mean +/- std time of repetition for one volume; nTriggers = %d)', ...
+            meanTR, stdTR, nAcqs), verbose, 0);
     end
 end
 

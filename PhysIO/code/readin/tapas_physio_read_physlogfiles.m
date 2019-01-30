@@ -29,8 +29,8 @@ function [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles(
 %   cpulse              time events of R-wave peak in cardiac time series (seconds)
 %   acq_codes           slice/volume start events marked by number <> 0
 %                       for time points in t
-%                       10/20 = scan start/end; 
-%                       1 = ECG pulse; 2 = OXY max; 3 = Resp trigger; 
+%                       10/20 = scan start/end;
+%                       1 = ECG pulse; 2 = OXY max; 3 = Resp trigger;
 %                       8 = scan volume trigger
 %
 % EXAMPLE
@@ -100,15 +100,18 @@ isSiemensTics = strcmpi(log_files.vendor, 'siemens_tics');
 if ~isempty(t) && t(1) > 0 && ~isSiemensTics
     dt = t(2) - t(1);
     nPrependSamples = ceil(t(1)/dt);
-    t = [(0:nPrependSamples-1)'*dt;t];
     if ~isempty(c)
-        c = [zeros(nPrependSamples, 1);c];
+        prependSamples = tapas_physio_simulate_pulse_samples(t, c, nPrependSamples, 'pre', verbose);
+        c = [prependSamples;c];
     end
     if ~isempty(r)
-        r = [zeros(nPrependSamples,1);r];
+        prependSamples = tapas_physio_simulate_pulse_samples(t, r, nPrependSamples, 'pre', verbose);
+        r = [prependSamples;r];
     end
     if ~isempty(acq_codes)
         acq_codes = [zeros(nPrependSamples,1);acq_codes];
     end
+    
+    t = [(0:nPrependSamples-1)'*dt;t]; 
 end
 end
