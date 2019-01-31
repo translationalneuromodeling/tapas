@@ -143,5 +143,5 @@ if doDebug
     hp(2) = plot(tTemplate, pulseCleanedTemplate, '.-g', 'LineWidth', 4, ...
         'Marker', 'x');
     legend(hp, 'mean of templates', 'mean of most similar, chosen templates');
-    suptitle(stringTitle);
+    tapas_physio_suptitle(stringTitle);
 end

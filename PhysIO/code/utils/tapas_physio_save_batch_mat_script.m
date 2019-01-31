@@ -1,4 +1,5 @@
-function physio = tapas_physio_save_batch_mat_script(fileBatchM, pathOutput)
+function physio = tapas_physio_save_batch_mat_script(fileBatchM, pathOutput, ...
+    doRemoveEmptyDefaults)
 % Saves .m-matlabbatch-file as .mat and as spm-independent matlab-script
 %
 %   physio = tapas_physio_save_batch_mat_script(fileBatchM)
@@ -8,6 +9,10 @@ function physio = tapas_physio_save_batch_mat_script(fileBatchM, pathOutput)
 %                   variable
 %   pathOutput      path where new .mat and matlab-script file are saved
 %                   default: same as fileBatchM
+%   doRemoveEmptyDefaults
+%                   If true, matlab batch lines with [] '' {} are not
+%                   printed in output .m files
+%                   default: true
 %
 % OUT
 %   physio          physio-structure, see also tapas_physio_new
@@ -39,14 +44,24 @@ if nargin < 1
 end
 
 % file given run it!
+doSaveBatchM = true;
 if ~ischar(fileBatchM)
     matlabbatch = fileBatchM;
     fileBatchM = fullfile(pwd, 'physio_job.m');
 else
-    run(fileBatchM);
+    [fp,fn,ext] = fileparts(fileBatchM);
+    switch ext
+        case '.mat' % indeed a .mat file
+            fileBatchMat = fileBatchM;
+            fileBatchM = fullfile(fp,[fn '.m']);
+            load(fileBatchMat);
+        case '.m'
+            doSaveBatchM = false; % does exist already
+            fileBatchMat = fullfile(fp,[fn '.mat']);
+            run(fileBatchM);
+    end
 end
 
-fileBatchMat = regexprep(fileBatchM, '\.m', '\.mat');
 fileScript = regexprep(fileBatchM, {'spm_job', 'job'}, 'matlab_script');
 
 if isequal(fileScript,fileBatchM)
@@ -56,11 +71,22 @@ end
 if nargin >=2
     %% replace paths in output file
     pathBatchM =  fileparts(fileBatchM);
-    fileBatchMat = regexprep(fileBatchMat, pathBatchM, pathOutput);
-    fileScript = regexprep(fileScript, pathBatchM, pathOutput);
+    if isempty(pathBatchM)
+        % no path originally
+        fileBatchMOut = fullfile(pathOutput, fileBatchM);
+        fileBatchMat = fullfile(pathOutput, fileBatchMat);
+        fileScript = fullfile(pathOutput, fileScript);
+    else
+        fileBatchMOut = regexprep(fileBatchM, pathBatchM, pathOutput);
+        fileBatchMat = regexprep(fileBatchMat, pathBatchM, pathOutput);
+        fileScript = regexprep(fileScript, pathBatchM, pathOutput);
+    end
+    [~,~] = mkdir(pathOutput);
 end
 
-
+if nargin < 3
+    doRemoveEmptyDefaults = true;
+end
 
 if ~exist('cfg_files', 'file')
     spm_jobman('initcfg');
@@ -83,8 +109,12 @@ run(fileTempJob);
 
 % delete temporary files
 
-delete([fileTemp '.m'], fileTempJob);
-
+if doSaveBatchM
+    delete([fileTemp '.m']);
+    movefile(fileTempJob, fileBatchMOut);
+else
+    delete([fileTemp '.m'], fileTempJob);
+end
 
 % remove newly introduced absolute paths :-(
 pathJob = fileparts(fileBatchM);
@@ -106,10 +136,13 @@ physio = tapas_physio_job2physio(matlabbatch{1}.spm.tools.physio);
 % write out variable strings and remove lines that set empty values
 
 str = gencode(physio)';
-indLineRemove = tapas_physio_find_string(str, ...
-    {'= \[\];', '= {};', '= {''''};', '= '''';'});
-indLineRemove = cell2mat(indLineRemove);
-str(indLineRemove) = [];
+
+if doRemoveEmptyDefaults
+    indLineRemove = tapas_physio_find_string(str, ...
+        {'= \[\];', '= {};', '= {''''};', '= '''';'});
+    indLineRemove = cell2mat(indLineRemove);
+    str(indLineRemove) = [];
+end
 
 % add comments to write and generating line for physio-structure, 
 % and save to matlab_script-file

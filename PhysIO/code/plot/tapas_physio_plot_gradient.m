@@ -60,4 +60,4 @@ for m = 1:4
 end
 
 linkaxes(hs, 'x');
-suptitle(stringTitle);
+tapas_physio_suptitle(stringTitle);

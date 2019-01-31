@@ -90,7 +90,7 @@ if doPlot
     end
     
     xlabel('time (s)')
-    suptitle(stringTitle);
+    tapas_physio_suptitle(stringTitle);
 end
 
 end

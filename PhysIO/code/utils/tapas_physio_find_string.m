@@ -28,6 +28,9 @@ function indexFoundPattern = tapas_physio_find_string(stringArray, searchPattern
 % Created: 2014-11-05
 % Copyright (C) 2014 Institute for Biomedical Engineering, ETH/Uni Zurich.
 
+if ~iscell(stringArray)
+    stringArray = {stringArray};
+end
 
 if nargin < 3
     isExact = false;

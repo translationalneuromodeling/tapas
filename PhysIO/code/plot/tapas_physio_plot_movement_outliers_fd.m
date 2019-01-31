@@ -79,6 +79,6 @@ imagesc(censoring.R_outlier.')
 xlabel('Volume #');
 title('Outlier Mask of Stick (Spike) Regressors for censored volumes');
 
-suptitle(stringTitle);
+tapas_physio_suptitle(stringTitle);
 
 linkaxes(hs, 'x');

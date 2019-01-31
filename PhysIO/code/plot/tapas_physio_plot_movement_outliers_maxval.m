@@ -103,4 +103,4 @@ legend('pitch x (deg)', 'roll y (deg)', 'yaw z (deg)', 'RMS diff rotation (deg)'
 
 xlabel('scans');
 ylabel('rotation (deg)');
-suptitle(stringTitle);
+tapas_physio_suptitle(stringTitle);

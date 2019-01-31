@@ -6,7 +6,7 @@ Current Release
 
 PhysIO_Toolbox_R2018.2.0
 
-January 12, 2018
+January 30, 2018
 
 WIP Release Notes (R2018.2.0)
 -----------------------------
@@ -14,19 +14,22 @@ WIP Release Notes (R2018.2.0)
 
 ### TODO
 - removal of tapas_physio_findpeaks to use current Matlab implementation
+- minimizing Matlab toolbox dependencies (e.g., suptitle)
 - start unit testing framework in folder `code/test` (for BIDS reader,
 and noise_rois model)
+- simulation of physiological recordings before/after actual recordings using extracted pulse templates
 
 ### Added
-- BIDS reader (Brain Imaging Data Structure.
+- BIDS reader and example (Brain Imaging Data Structure, 
 http://bids.neuroimaging.io/bids_spec.pdf) for `*_physio.tsv[.gz]/.json` files
-- Added BioPac txt-File read-in
-- matlab-script examples now contain some comment lines
-    - fixed internal bug that prepended absolute paths to input logfiles in automatic example generation
+- Added BioPac txt-File read-in and example
+- Template example with all physio-fields for matlab script and settings as in default SPM batch
 
 ### Changed
 - put all functions in `code` into subfolders relating to different modules: `readin`, `sync`, `preproc`, `model`, `assess`, `utils` (gitlab-issue #58)
     - updated deployment `tapas_physio_init` because of that
+- matlab-script examples now contain some comment lines
+    - fixed internal bug that prepended absolute paths to input logfiles in automatic example generation
 
 Bugfix Release Notes (R2018.1.3)
 --------------------------------
