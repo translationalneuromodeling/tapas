@@ -24,7 +24,7 @@ function tapas_physio_suptitle(titleString)
 % version 3 or, at your option, any later version). For further details,
 % see the file COPYING or <http://www.gnu.org/licenses/>.
  
-if exist('suptitle',2)
+if exist('suptitle', 'file')
     suptitle(titleString);
 else
     title(titleString);
