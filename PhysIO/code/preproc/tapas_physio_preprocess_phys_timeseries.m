@@ -33,6 +33,7 @@ end
 hasCardiacData = ~isempty(ons_secs.c);
 hasRespData = ~isempty(ons_secs.r);
 hasDetectedCardiacPulses = ~isempty(ons_secs.cpulse);
+hasAcquisitionCodes = ~isempty(ons_secs.acq_codes);
 
 %% Normalize cardiac/respiratory time series to max 1
 
@@ -75,6 +76,10 @@ if t(1) > tStartScan
     if hasRespData
         ons_secs.r = [paddingStart; ons_secs.r];
     end
+    
+    if hasAcquisitionCodes
+        ons_secs.acq_codes = [paddingStart; ons_secs.acq_codes];
+    end
 end
 
 t = ons_secs.t;
@@ -92,6 +97,10 @@ if durationPhysLog < durationScan
     
     if hasRespData
         ons_secs.r = [ons_secs.r; paddingEnd];
+    end
+    
+    if hasAcquisitionCodes
+        ons_secs.acq_codes = [ons_secs.acq_codes; paddingEnd];
     end
 end
 
