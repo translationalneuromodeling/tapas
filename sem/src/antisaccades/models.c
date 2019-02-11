@@ -379,8 +379,6 @@ seria_model_summary(
     
     int np = svals.np; /* Sets the number of parameters */
 
-    // Allocate memory for the output
-    summaries = (SERIA_SUMMARY *) malloc(sizeof(SERIA_SUMMARY) * np);
     SERIA_PARAMETERS params;
     // The parameters
     

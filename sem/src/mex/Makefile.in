@@ -236,7 +236,7 @@ MEXEXT = @mexext@
 IDIR = -I$(abs_top_srcdir)/antisaccades -I$(abs_top_srcdir)
 LDIR = $(abs_top_srcdir)/lib
 BINDIR = $(abs_top_srcdir)/bin
-UTILS := mexutils.c
+UTILS := mexutils.c mexsummaries.c
 UTILS_OBJS = $(UTILS:.c=.o)
 SOURCES := $(wildcard c_*.c)
 OBJS = $(SOURCES:.c=.o)

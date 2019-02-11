@@ -183,8 +183,11 @@ typedef struct
 
 typedef struct
 {
-
-    double inhib_prob; // Probability of an inhibition failure;
+    
+    double rt_late_pro; // Reaction time of a late prosaccade
+    double rt_anti;     // Reaction time of an antisaccade
+    double rt_inhib_fail; // Reaction time of an inhib. fail.
+    double inhib_prob; // Probability of an inhibition failure
     double late_pro_prob; // Probability of a late error
 
 } SERIA_SUMMARY;
@@ -249,15 +252,6 @@ typedef struct
 } SERIA_MODEL;
 
 // Summaries of subjects actions
-
-typedef struct
-{
-    double p_inhib_failure;
-    double p_late_pro;
-    double rt_inhib_failure;
-    double rt_late_pro;
-    double rt_anti;
-} SERIA_SUMMARY;
 
 
 // Other numerical
