@@ -341,6 +341,7 @@ seria_model_n_states_optimized(const ANTIS_INPUT svals, SERIA_MODEL model,
 
     /* Enter arbitrary number of parameters */
     double *old_times = (double *) malloc(np * sizeof( double ));
+
     SERIA_PARAMETERS *ptheta = (SERIA_PARAMETERS *) 
         malloc( np * sizeof(SERIA_PARAMETERS) );
 
@@ -367,3 +368,31 @@ seria_model_n_states_optimized(const ANTIS_INPUT svals, SERIA_MODEL model,
     return 0;
 }
 
+int
+seria_model_summary(
+    const ANTIS_INPUT svals,
+    SERIA_MODEL model, 
+    SERIA_SUMMARY *summaries)
+{
+
+    double *theta = svals.theta;
+    
+    int np = svals.np; /* Sets the number of parameters */
+
+    // Allocate memory for the output
+    summaries = (SERIA_SUMMARY *) malloc(sizeof(SERIA_SUMMARY) * np);
+    SERIA_PARAMETERS params;
+    // The parameters
+    
+    for (int i = 0; i < np; i++)
+    {
+        // Initilize the parameters.
+        model.fill_parameters(theta + i * DIM_SERIA_THETA, &params);
+        
+        // Generate the summary. 
+        seria_summary_abstract(&params, summaries + i);
+    }
+
+    return 0;
+
+};
