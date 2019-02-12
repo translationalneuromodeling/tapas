@@ -43,7 +43,7 @@ seria_summary_parameter(
 }
 
 double
-seria_rt_late_pro(double t, SERIA_PARAMETERS *params)
+seria_late_pro_rt(double t, SERIA_PARAMETERS *params)
 {
     double delay = params->t0 + params->da;
 
@@ -60,7 +60,7 @@ seria_rt_late_pro(double t, SERIA_PARAMETERS *params)
 }
 
 double
-seria_rt_anti(double t, SERIA_PARAMETERS *params)
+seria_anti_rt(double t, SERIA_PARAMETERS *params)
 {
     double delay = params->t0 + params->da;
 
@@ -78,7 +78,7 @@ seria_rt_anti(double t, SERIA_PARAMETERS *params)
 
 
 double
-seria_rt_inhib(double t, SERIA_PARAMETERS *params)
+seria_inhib_rt(double t, SERIA_PARAMETERS *params)
 {
     double delay = params->t0;
 
@@ -89,8 +89,8 @@ seria_rt_inhib(double t, SERIA_PARAMETERS *params)
     t -= delay;
     
     double eval = log(t + delay) +
-        params->early.pdf(t, params->kp, params->tp) +
-        params->early.lsf(t, params->ks, params->ts);
+        params->early.lpdf(t, params->kp, params->tp) +
+        params->stop.lsf(t, params->ks, params->ts);
 
     t -= params->da;
     // Account for the delay
@@ -104,7 +104,7 @@ seria_rt_inhib(double t, SERIA_PARAMETERS *params)
 
 
 double
-seria_inhib_prob(double t, SERIA_PARAMETERS *params)
+seria_inhib_fail_prob(double t, SERIA_PARAMETERS *params)
 {
     
     t -= params->t0;
@@ -112,12 +112,12 @@ seria_inhib_prob(double t, SERIA_PARAMETERS *params)
     if (t <= 0)
         return 0;
     
-    double lp = params->early.lpdf(t, params->kl, params->tl) +
+    double lp = params->early.lpdf(t, params->kp, params->tp) +
         params->stop.lsf(t, params->ks, params->ts);
     
     t -= params->da;
 
-    if ( t >= 0 )
+    if ( t > 0 )
         lp += params->late.lsf(t, params->kl, params->tl) + 
             params->anti.lsf(t, params->ka, params->ta);
          
@@ -128,20 +128,18 @@ seria_inhib_prob(double t, SERIA_PARAMETERS *params)
 }
 
 double
-seria_late_pro(double t, SERIA_PARAMETERS *params)
-{
-    
-    double lp = params->early.lpdf(t, params->kp, params->tp) +
-        params->stop.lsf(t, params->ks, params->ts);
-    
+seria_late_pro_prob(double t, SERIA_PARAMETERS *params)
+{ 
     // Include the delay of the late units
     t -= params->da;
 
-    if ( t > 0 )
+    if ( t < 0 )
     {
-        lp += params->late.lsf(t, params->ka, params->ta) +
-            params->anti.lsf(t, params->kl, params->tl);
+        return 0;
     }
+
+    double lp = params->late.lpdf(t, params->kl, params->tl) +
+        params->anti.lsf(t, params->ka, params->ta);
 
     lp = exp(lp);
 
@@ -170,21 +168,23 @@ seria_summary_abstract(SERIA_PARAMETERS *params, SERIA_SUMMARY *summary)
 {
 
     // Inhibition probability
-    summary->inhib_prob = seria_summary_parameter(seria_inhib_prob, params);
-    summary->late_pro_prob = seria_summary_parameter(seria_late_pro, params);
+    summary->inhib_fail_prob = seria_summary_parameter(
+            seria_inhib_fail_prob, params);
+    summary->late_pro_prob = seria_summary_parameter(
+            seria_late_pro_prob, params);
 
-    summary->rt_late_pro = seria_summary_parameter(seria_rt_late_pro, params);
+    summary->late_pro_rt = seria_summary_parameter(seria_late_pro_rt, params);
     // Normalize the integral
-    summary->rt_late_pro /= summary->late_pro_prob;
+    summary->late_pro_rt /= summary->late_pro_prob;
 
-    summary->rt_anti = seria_summary_parameter(seria_rt_anti, params);
+    summary->anti_rt = seria_summary_parameter(seria_anti_rt, params);
     // Normalize the integral
-    summary->rt_anti /= 1.0 - summary->late_pro_prob;
+    summary->anti_rt /= 1.0 - summary->late_pro_prob;
 
-    summary->rt_inhib_fail = seria_summary_parameter(seria_rt_inhib, 
+    summary->inhib_fail_rt = seria_summary_parameter(seria_inhib_rt, 
             params);
     // Normalize the integral
-    summary->rt_inhib_fail /= summary->inhib_prob;
+    summary->inhib_fail_rt /= summary->inhib_fail_prob;
 
     return 0;
 

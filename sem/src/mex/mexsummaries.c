@@ -13,8 +13,19 @@ seria_set_summary_fields(
     mxArray *late_pro_prob = mxCreateDoubleScalar(summary->late_pro_prob);
     mxSetField(mstruct, index, "late_pro_prob", late_pro_prob);
     
-    mxArray *inhib_prob = mxCreateDoubleScalar(summary->inhib_prob);
-    mxSetField(mstruct, index, "inhib_prob", inhib_prob);
+    mxArray *inhib_fail_prob = mxCreateDoubleScalar(summary->inhib_fail_prob);
+    mxSetField(mstruct, index, "inhib_fail_prob", inhib_fail_prob);
+
+    mxArray *inhib_fail_rt = mxCreateDoubleScalar(summary->inhib_fail_rt);
+    mxSetField(mstruct, index, "inhib_fail_rt", inhib_fail_rt);
+
+    mxArray *late_pro_rt = mxCreateDoubleScalar(summary->late_pro_rt);
+    mxSetField(mstruct, index, "late_pro_rt", late_pro_rt);
+
+    mxArray *anti_rt = mxCreateDoubleScalar(summary->anti_rt);
+    mxSetField(mstruct, index, "anti_rt", anti_rt);
+
+
 
     return 0;
 
@@ -60,6 +71,7 @@ wrapper_seria_summaries(
     model.fill_parameters = reparametrize;
     gsl_set_error_handler_off();
 
+
     for (j = 0; j < nc; j++)
     {
         for (i = 0; i < ns; i++)
@@ -82,8 +94,9 @@ wrapper_seria_summaries(
 
             seria_model_summary(svals, model, summaries);
 
-            int nfields = 2;
-            char *fields[] = {"late_pro_prob", "inhib_prob"};
+            int nfields = 5;
+            char *fields[] = {"late_pro_prob", "inhib_fail_prob", 
+                "late_pro_rt", "anti_rt", "inhib_fail_rt"};
 
             // Create the output
             mxArray *results = mxCreateStructMatrix(
