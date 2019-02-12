@@ -2,8 +2,15 @@
 /* copyright (C) 2019 */
 
 #include "antisaccades.h"
+#include <signal.h>
 
 #define INTSTEPS 200;
+
+void
+intHandler(int dummy)
+{
+    mexErrMsgIdAndTxt("tapas:user_exception", "Stopped by the user");
+}
 
 double
 seria_summary_parameter(
@@ -13,7 +20,6 @@ seria_summary_parameter(
 
     double result;
     double ierror;
-
 
     gsl_integration_workspace *wspace = 
         gsl_integration_workspace_alloc( 1000 );
@@ -147,11 +153,66 @@ seria_late_pro_prob(double t, SERIA_PARAMETERS *params)
 
 }
 
+double
+seria_predicted_anti_prob(double t, SERIA_PARAMETERS *params)
+{
+    
+    // Log likelihood of a prosaccade
+    double llh = seria_llh_abstract(t, ANTISACCADE, *params);
+    if ( isnan(llh) )
+        llh = GSL_NEGINF;
+
+    return exp(llh); 
+
+}
+
+double
+seria_predicted_pro_prob(double t, SERIA_PARAMETERS *params)
+{
+
+    // Log likelihood of a prosaccade
+    double llh = seria_llh_abstract(t, PROSACCADE, *params);
+    if ( isnan(llh) )
+        llh = GSL_NEGINF;
+
+    return exp(llh); 
+
+}
+
+double
+seria_predicted_anti_rt(double t, SERIA_PARAMETERS *params)
+{
+    
+    // Log likelihood of a prosaccade
+    double llh = seria_llh_abstract(t, ANTISACCADE, *params);
+    
+    if ( isnan(llh) )
+        llh = GSL_NEGINF;
+
+    return exp(log(t) + llh); 
+
+}
+
+double
+seria_predicted_pro_rt(double t, SERIA_PARAMETERS *params)
+{
+
+    // Log likelihood of a prosaccade
+    double llh = seria_llh_abstract(t, PROSACCADE, *params);
+    
+    if ( isnan( llh ) )
+        llh = GSL_NEGINF;
+
+    return exp(log(t) + llh); 
+
+}
+
 
 double
 seria_summary_wrapper(double t, void *gsl_int_pars)
 {
-    
+    // Stop by the user if necessary
+    //signal(SIGINT, intHandler); 
     // Cast the input into a function.
     SERIA_GSL_INT_INPUT *pars = (SERIA_GSL_INT_INPUT *) gsl_int_pars;
 
@@ -185,6 +246,19 @@ seria_summary_abstract(SERIA_PARAMETERS *params, SERIA_SUMMARY *summary)
             params);
     // Normalize the integral
     summary->inhib_fail_rt /= summary->inhib_fail_prob;
+
+    summary->predicted_pro_prob = 
+        seria_summary_parameter(seria_predicted_pro_prob, params);
+    summary->predicted_pro_rt = 
+        seria_summary_parameter(seria_predicted_pro_rt, params);
+    summary->predicted_pro_rt /= summary->predicted_pro_prob;
+
+    summary->predicted_anti_prob = 1.0 - summary->predicted_pro_prob;
+    
+    summary->predicted_anti_rt = 
+        seria_summary_parameter(seria_predicted_anti_rt, params);
+    summary->predicted_anti_rt /= summary->predicted_anti_prob;
+
 
     return 0;
 

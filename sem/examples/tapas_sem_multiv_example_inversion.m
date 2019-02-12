@@ -1,10 +1,17 @@
-function [posterior] = tapas_sem_multiv_example_inversion(model, param)
-%% Test 
+function [posterior, summary] = ...
+    tapas_sem_multiv_example_inversion(model, param)
+%% Example for inversion with a single prior for the whole population. 
 %
-% fp -- Pointer to a file for the test output, defaults to 1
-%
+% Input
+%       model       -- String. Either seria or prosa
+%       param       -- String. Parametric distribution.
+% Output
+%       posterior   -- Structure. Contains the posterior estimates.
+%       summary     -- Table. Contains a table with a summary of the 
+%                      posterior.
+
 % aponteeduardo@gmail.com
-% copyright (C) 2015
+% copyright (C) 2018
 %
 
 n = 0;
@@ -72,7 +79,7 @@ end
 
 pars = struct();
 
-pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
+pars.T = ones(4, 1) * linspace(0.1, 1, 1).^5;
 pars.nburnin = 4000;
 pars.niter = 4000;
 pars.ndiag = 500;
@@ -83,7 +90,7 @@ display(ptheta);
 inference = struct();
 tic
 posterior = tapas_sem_multiv_estimate(data, ptheta, inference, pars);
-tapas_sem_display_posterior(posterior)
+summary = tapas_sem_display_posterior(posterior);
 toc
 
 display(posterior)

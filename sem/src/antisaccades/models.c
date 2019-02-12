@@ -393,4 +393,31 @@ seria_model_summary(
 
     return 0;
 
-};
+}
+
+int
+prosa_model_summary(
+    const ANTIS_INPUT svals,
+    PROSA_MODEL model, 
+    PROSA_SUMMARY *summaries)
+{
+
+    double *theta = svals.theta;
+    
+    int np = svals.np; /* Sets the number of parameters */
+
+    PROSA_PARAMETERS params;
+    // The parameters
+    
+    for (int i = 0; i < np; i++)
+    {
+        // Initilize the parameters.
+        model.fill_parameters(theta + i * DIM_PROSA_THETA, &params);
+        
+        // Generate the summary. 
+        prosa_summary_abstract(&params, summaries + i);
+    }
+
+    return 0;
+
+}

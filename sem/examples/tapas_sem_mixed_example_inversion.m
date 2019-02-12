@@ -1,11 +1,18 @@
 function [posterior] = tapas_sem_mixed_example_inversion(model, param)
-%% Test 
+%% Example for inversion with a mixed effects model as prior.
 %
-% fp -- Pointer to a file for the test output, defaults to 1
-%
+% Input
+%       model       -- String. Either seria or prosa
+%       param       -- String. Parametric distribution.
+% Output
+%       posterior   -- Structure. Contains the posterior estimates.
+%       summary     -- Table. Contains a table with a summary of the 
+%                      posterior.
+
 % aponteeduardo@gmail.com
-% copyright (C) 2015
+% copyright (C) 2018
 %
+
 
 n = 0;
 

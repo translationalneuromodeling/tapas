@@ -1,5 +1,5 @@
 function [fits] = tapas_sem_generate_fits(data, samples, model)
-%% 
+%% Generate the fits of the data.
 %
 % Input
 %
@@ -10,6 +10,7 @@ function [fits] = tapas_sem_generate_fits(data, samples, model)
 % copyright (C) 2019
 %
 
+maxsamples = 30;
 nv = 100;
 
 t = data.y.t;
@@ -25,19 +26,24 @@ fits = struct('pro', cell(nconds, 1), 'anti', [], 't', []);
 
 for i = 1:nconds
     fits(i).t = pt;
-    tsamples = {mean([samples{:}], 2)};
+    ns = numel(samples);
+
+    % Downsample the number of elements!
+    spacing = max(1, floor(ns/maxsamples));
+    tsamples = samples(1:spacing:end);
+    % Use the same input array but different parameters
+    tsamples = reshape(tsamples, 1, numel(tsamples));
+
+    % Iterate over arrays because the interface is cluncky for single times
     for a = [0, 1]        
         llh = zeros(nv, 1);
         for j = 1:nv
             tdata = struct(...
                 'y', struct('t', pt(j), 'a', a), ...
                 'u', struct('tt', conds(i)));
-%            tdata = struct(...
-%                'y', struct('t', pt(1:j), 'a', a * ones(j, 1)), ...
-%                'u', struct('tt', conds(i) * ones(j, 1)));
-
             tllh = model.llh(tdata, tsamples);
-%            llh(j) = tllh - sum(llh);
+            % Average the log likelihood
+            tllh = log(mean(exp(tllh)));
             llh(j) = tllh;
         end
         switch a

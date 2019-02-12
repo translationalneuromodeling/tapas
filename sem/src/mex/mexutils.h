@@ -70,4 +70,12 @@ wrapper_seria_summaries(
         const mxArray *prhs[],
         FILL_PARAMETERS_SERIA reparametrize); 
 
+void
+wrapper_prosa_summaries(
+        int nlhs,
+        mxArray *plhs[], 
+        int nrhs,
+        const mxArray *prhs[],
+        FILL_PARAMETERS_PROSA reparametrize); 
+
 #endif // MEXUTILS_H

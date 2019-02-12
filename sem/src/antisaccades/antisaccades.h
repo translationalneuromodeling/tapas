@@ -173,13 +173,9 @@ typedef struct
 
 } SERIA_PARAMETERS;
 
+// --------------------------------------------------------------------------
 // Summaries
-
-
-// PROSA
-
-
-// SERIA
+// --------------------------------------------------------------------------
 
 typedef struct
 {
@@ -189,11 +185,36 @@ typedef struct
     double inhib_fail_rt; // Reaction time of an inhib. fail.
     double inhib_fail_prob; // Probability of an inhibition failure
     double late_pro_prob; // Probability of a late error
+    double predicted_pro_prob; // Predicted probability of pro
+    double predicted_pro_rt; // Predicted probability of pro
+    double predicted_anti_prob; // Predicted probability of anti
+    double predicted_anti_rt; // Predicted probability of anti
 
 } SERIA_SUMMARY;
 
+typedef struct
+{
+    
+    double anti_rt;     // Reaction time of an antisaccade
+    double inhib_fail_rt; // Reaction time of an inhib. fail.
+    double inhib_fail_prob; // Probability of an inhibition failure
+    double predicted_pro_prob; // Predicted probability of pro
+    double predicted_pro_rt; // Predicted probability of pro
+    double predicted_anti_prob; // Predicted probability of anti
+    double predicted_anti_rt; // Predicted probability of anti
+
+} PROSA_SUMMARY;
+
+
+// ------------
+
 typedef double (*SERIA_SUMMARY_FUNCTION)(double time, 
         SERIA_PARAMETERS *params);
+
+typedef double (*PROSA_SUMMARY_FUNCTION)(double time, 
+        PROSA_PARAMETERS *params);
+
+// -------------
 
 typedef struct
 {
@@ -203,6 +224,16 @@ typedef struct
 
 } SERIA_GSL_INT_INPUT;
 
+typedef struct
+{
+    
+    PROSA_SUMMARY_FUNCTION func; // The function to compute
+    PROSA_PARAMETERS *params; // Parameters of the model
+
+} PROSA_GSL_INT_INPUT;
+
+// ---------------
+
 double
 seria_summary_parameter(
         SERIA_SUMMARY_FUNCTION summary_func,
@@ -210,16 +241,22 @@ seria_summary_parameter(
 // Compute the summary parameters from the model.
 
 double
+prosa_summary_parameter(
+        PROSA_SUMMARY_FUNCTION summary_func,
+        PROSA_PARAMETERS *params);
+// Compute the summary parameters from the model.
+
+//-------------------
+
+double
 seria_summary_wrapper(double t, void *gsl_int_pars);
 // Wrapper for numerical integration with gsl. 
 
 double
-seria_inhib_prob(double t, SERIA_PARAMETERS *params);
-// Instant probability of an inhibition failure.
+prosa_summary_wrapper(double t, void *gsl_int_pars);
+// Wrapper for numerical integration with gsl. 
 
-double
-seria_late_pro(double t, SERIA_PARAMETERS *params);
-// Instant probability of a late prosaccade
+//--------------------
 
 // Likelihood typedef functions
 
@@ -252,6 +289,20 @@ typedef struct
 } SERIA_MODEL;
 
 // Summaries of subjects actions
+
+//--------------------
+
+int
+seria_model_summary(
+    const ANTIS_INPUT svals,
+    SERIA_MODEL model, 
+    SERIA_SUMMARY *summaries);
+
+int
+prosa_model_summary(
+    const ANTIS_INPUT svals,
+    PROSA_MODEL model, 
+    PROSA_SUMMARY *summaries);
 
 
 // Other numerical

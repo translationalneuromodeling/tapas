@@ -1,4 +1,4 @@
-function [] = tapas_sem_display_posterior(posterior)
+function [summaries] = tapas_sem_display_posterior(posterior)
 %% Displays a summary of the posterior estimates.
 %
 % Input
@@ -22,16 +22,28 @@ catch err
     end
 end
 
+summaries = [];
 for i = 1:numel(data)
     fig = figure('name', sprintf('Subject #%d', i));
 
     [edges] = tapas_sem_plot_antisaccades(data(i).y, data(i).u);
+    % Edges of the plot
     dt = edges(2) - edges(1);
     samples = posterior.ps_theta(i, :);
     fits = tapas_sem_generate_fits(data(i), samples, model);
     tapas_sem_plot_fits(data(i), fits, dt)
     format_figure(fig, data(i), fits, model);
+    summary = tapas_sem_generate_summary(data(i), samples, model, i);
+    summaries = [summaries; summary];
+
 end
+
+figure('name', 'Summary statistics');
+uitable('Data', summaries{:, :}, ...
+    'ColumnName', summaries.Properties.VariableNames,...
+    'RowName', summaries.Properties.RowNames, ...
+    'Units', 'Normalized', ...
+    'Position',[0, 0, 1, 1]);
 
 end
 

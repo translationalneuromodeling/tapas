@@ -1,11 +1,18 @@
-function [posterior] = tapas_sem_hier_example_inversion(model, param)
-%% Test 
+function [posterior, summary] = tapas_sem_hier_example_inversion(model, param)
+%% Example for inversion with a linear model for the prior. 
 %
-% fp -- Pointer to a file for the test output, defaults to 1
-%
+% Input
+%       model       -- String. Either seria or prosa
+%       param       -- String. Parametric distribution.
+% Output
+%       posterior   -- Structure. Contains the posterior estimates.
+%       summary     -- Table. Contains a table with a summary of the 
+%                      posterior.
+
 % aponteeduardo@gmail.com
-% copyright (C) 2015
+% copyright (C) 2018
 %
+
 
 n = 0;
 
@@ -72,7 +79,7 @@ end
 
 pars = struct();
 
-pars.T = ones(4, 1) * linspace(0.1, 1, 8).^5;
+pars.T = ones(4, 1) * linspace(0.1, 1, 1).^5;
 pars.nburnin = 4000;
 pars.niter = 4000;
 pars.ndiag = 500;
@@ -86,7 +93,7 @@ inference.kernel_scale = 0.1 * 0.1;
 posterior = tapas_sem_hier_estimate(data, ptheta, inference, pars);
 
 display(posterior);
-tapas_sem_display_posterior(posterior)
+summary = tapas_sem_display_posterior(posterior);
 
 end
 

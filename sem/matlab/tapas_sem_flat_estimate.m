@@ -107,7 +107,9 @@ for i = 1 : nburnin + niter
     if i > 1 && mod(i-1, pars.kup) == 0
         diagnostics = diagnostics/pars.kup;
         if pars.verbose
-            fprintf(1, 'Iter %d\n', i);
+            fprintf(1, '--------------\n')
+            fprintf(1, 'Sample: %d\n', i);
+            fprintf(1, '--------------\n')
             fprintf(1, 'Acceptance rate:\n')
             fprintf(1, '%0.2f ', diagnostics);
             fprintf(1, '\n');

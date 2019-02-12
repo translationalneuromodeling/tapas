@@ -72,7 +72,7 @@ end
 
 pars = struct();
 
-pars.T = linspace(0.1, 1, 8).^5;
+pars.T = linspace(0.1, 1, 1).^5;
 pars.nburnin = 4000;
 pars.niter = 4000;
 pars.ndiag = 500;
@@ -87,7 +87,7 @@ posterior = cell(numel(data), 1);
 for i = 1:numel(data)
     posterior = tapas_sem_flat_estimate(data(i), ptheta, inference, pars);
     display(posterior);
-    tapas_sem_display_posterior(posterior)
+    summary = tapas_sem_display_posterior(posterior);
 end
 
 end
