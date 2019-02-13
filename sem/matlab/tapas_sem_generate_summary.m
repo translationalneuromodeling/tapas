@@ -45,7 +45,7 @@ end
 
 results = struct( ...
     'subject', repmat(subject, nconds, 1), ...
-    'conditions', (1:nconds)');
+    'conditions', (0:nconds - 1)');
 
 for i = 1:numel(fields)
     results.(fields{i}) = [array{:, i}]';
