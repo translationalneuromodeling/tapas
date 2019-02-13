@@ -724,7 +724,7 @@ This follows the same process than linux.
 
 Most likely config will fail for one of the following reasons.
 
-#### Has config found gls's header? 
+#### Has config found gsl's header? 
 
 Often after installation, the compiler fails to find gsl's headeers.
 ~~~~
@@ -733,7 +733,7 @@ export CFLAGS="-I:/opt/local/include $CFLAGS"
 ./configure && make
 ~~~~
 
-#### Has config found gls's libraries? 
+#### Has config found gsl's libraries? 
 
 If not type
 ~~~~
