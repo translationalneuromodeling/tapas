@@ -174,5 +174,3 @@ tapas_hgf_binary_plotTraj(h2gf_est.summary(1))
 tapas_fit_plotCorr(h2gf_est.summary(1))
 %%
 tapas_fit_plotResidualDiagnostics(h2gf_est.summary(1))
-%%
-h2gf_est.
