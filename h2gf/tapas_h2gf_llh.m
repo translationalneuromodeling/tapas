@@ -20,11 +20,8 @@ for i = 1:ns
             tvals = ptheta.hgf.p0 + ptheta.hgf.jm * theta.y{i, j};
             [dummy, nx] = tapas_h2gf_gen_state(data(i), tvals, ptheta);
             % Check for any error
-            if any(isnan(nx))
-                llh(i, j) = -inf;
-            else
-                llh(i, j) = tapas_h2gf_obs_fun(data(i), nx, tvals, ptheta);
-            end
+            llh(i, j) = tapas_h2gf_obs_fun(data(i), nx, tvals, ptheta);
+
             if isnan(llh(i, j)) || llh(i, j) == inf
                 llh(i, j) = -inf;
             end
