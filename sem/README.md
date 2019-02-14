@@ -20,6 +20,8 @@
 
 ## Quick start
 
+We have a short video tutorial [here](https://youtu.be/4_g58pOYjX8).
+
 [SERIA](http://www.biorxiv.org/content/early/2017/06/08/109090)
 is a formal statistical model of the probability of
 pro- and antisaccades and the corresponding reaction times (RT). The SEM 
