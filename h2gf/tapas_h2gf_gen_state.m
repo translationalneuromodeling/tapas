@@ -17,18 +17,7 @@ r.u = data.u;
 r.ign = data.ign;
 r.irr = data.irr;
 
-try
-    [dummy, nx] = prc_fun(r, prc, 'trans');
-catch err
-    c = strsplit(err.identifier, ':');
-    if strcmp(c{1}, 'tapas')
-        nx = nan;
-        dummy = nan;
-        return
-    else
-        rethrow(err)
-    end
-end
+[dummy, nx] = prc_fun(r, prc, 'trans');
 
 
 end
