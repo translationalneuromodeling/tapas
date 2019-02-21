@@ -1,5 +1,5 @@
-function [logp, yhat, res] = tapas_softmax_mu3(r, infStates, ptrans)
-% Calculates the log-probability of responses under the softmax model
+function y = tapas_softmax_mu3_wld_sim(r, infStates, p)
+% Simulates observations from a Boltzmann distribution with volatility as temperature
 %
 % --------------------------------------------------------------------------------------------------
 % Copyright (C) 2017-2019 Christoph Mathys, TNU, UZH & ETHZ
@@ -15,13 +15,9 @@ if r.c_obs.predorpost == 2
     pop = 3; % Alternative: posteriors
 end
 
-% Initialize returned log-probabilities, predictions,
-% and residuals as NaNs so that NaN is returned for all
-% irregualar trials
-n = size(infStates,1);
-logp = NaN(n,1);
-yhat = NaN(n,1);
-res  = NaN(n,1);
+% Win- and loss-distortion parameters
+la_wd = ptrans(1);
+la_ld = ptrans(2);
 
 % Assumed structure of infStates:
 % dim 1: time (ie, input sequence number)
@@ -38,13 +34,38 @@ states = squeeze(infStates(:,1,:,pop));
 % Log-volatility trajectory
 mu3 = squeeze(infStates(:,3,1,3));
 
-% Responses
-y = r.y(:,1);
+% Inputs
+u = r.u(:,1);
 
-% Weed irregular trials out from inferred states and responses
-states(r.irr,:) = [];
-mu3(r.irr) = [];
-y(r.irr) = [];
+% True responses underlying belief trajectories
+y_true = r.u(:,2);
+
+% Choice matrix Y corresponding to states
+Y = zeros(size(states));
+Y(sub2ind(size(Y), 1:size(Y,1), y_true')) = 1;
+
+% Choice on previous trial
+Yprev = Y;
+Yprev = [zeros(1,size(Yprev,2)); Yprev];
+Yprev(end,:) = [];
+
+% Wins on previous trial
+wprev = u;
+wprev = [0; wprev];
+wprev(end) = [];
+
+% Losses on previous trial
+lprev = 1 - wprev;
+lprev(1) = 0;
+
+% In matrix form corresponding to states
+Wprev = Yprev;
+Wprev(find(lprev),:) = 0;
+Lprev = Yprev;
+Lprev(find(wprev),:) = 0;
+
+% Win- and loss-distortion
+states = states + la_wd*Wprev + la_ld*Lprev;
 
 % Inverse decision temperature
 be = exp(-mu3);
@@ -57,13 +78,15 @@ Z = repmat(Z,1,nc);
 % Softmax probabilities
 prob = exp(be.*states)./Z;
 
-% Extract probabilities of chosen options
-probc = prob(sub2ind(size(prob), 1:length(y), y'));
+% Initialize random number generator
+rng('shuffle');
 
-% Calculate log-probabilities for non-irregular trials
-reg = ~ismember(1:n,r.irr);
-logp(reg) = log(probc);
-yhat(reg) = probc;
-res(reg) = -log(probc);
+% Draw responses
+n = size(infStates,1);
+y = NaN(n,1);
+
+for j=1:n
+    y(j) = find(mnrnd(1, prob(j,:)));
+end
 
 end

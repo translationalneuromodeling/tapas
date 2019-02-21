@@ -176,7 +176,7 @@ if nargin > 4
     
     % Read configuration of observation model
     try
-        obs_config_fun = str2func([obs_model, '_config']);
+        obs_config_fun = str2func([r.c_sim.obs_model, '_config']);
         r.c_obs = obs_config_fun();
     catch
         r.c_obs = [];
