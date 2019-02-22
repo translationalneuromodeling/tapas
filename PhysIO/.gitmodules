@@ -1,4 +1,0 @@
-[submodule "wikidocs"]
-	path = wikidocs
-	url = git@tnurepository.ethz.ch:physio/physio-public.wiki.git
-	branch = master

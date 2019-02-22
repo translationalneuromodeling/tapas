@@ -9,11 +9,25 @@ function y = tapas_unitsq_sgm_sim(r, infStates, p)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
-mu1hat = infStates(:,1,1);
+% Predictions or posteriors?
+pop = 1; % Default: predictions
+if r.c_obs.predorpost == 2
+    pop = 3; % Alternative: posteriors
+end
+
+% Inverse decision temperature zeta
 ze = p;
 
+% Assumed structure of infStates:
+% dim 1: time (ie, input sequence number)
+% dim 2: HGF level
+% dim 3: 1: muhat, 2: sahat, 3: mu, 4: sa
+
+% Belief trajectories at 1st level
+states = squeeze(infStates(:,1,pop));
+
 % Apply the unit-square sigmoid to the inferred states
-prob = mu1hat.^ze./(mu1hat.^ze+(1-mu1hat).^ze);
+prob = states.^ze./(states.^ze+(1-states).^ze);
 
 % Initialize random number generator
 rng('shuffle');
@@ -21,4 +35,4 @@ rng('shuffle');
 % Simulate
 y = binornd(1, prob);
 
-return;
+end
