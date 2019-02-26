@@ -68,7 +68,7 @@ currentTimer = tic;
 
 
 % check for endogenous DCMs, with no exogenous driving effects
-if ( isempty(DCM.c) || isempty(DCM.U.u) )
+if ( ~isfield(DCM,'c') || isempty(DCM.c) || ~isfield(DCM,'U') || isempty(DCM.U.u) )
     
     % specify empty driving input
     DCM.U.u     = zeros(size(DCM.Y.y,1)*16, 1);
