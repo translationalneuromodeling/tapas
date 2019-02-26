@@ -74,15 +74,37 @@ bN   = zeros(nr,1);
 z    = zeros(nr,D);
 logF = zeros(1,nr);
 
+% define signal array
+yd_pred_rdcm_fft = NaN(size(DCM.Y.y));
+
 
 % default settings for model inversion
-if ( ~isfield(args,'iter') ), args.iter = 100; end
-if ( ~isfield(args,'restrictInputs') ), args.restrictInputs = 1; end
+if ( ~isfield(args,'iter') ),             args.iter = 100; end
+if ( ~isfield(args,'restrictInputs') ),   args.restrictInputs = 1; end
 if ( ~isfield(args,'diagnostics_logF') ), args.diagnostics_logF = 0; end
 
 
+% check if many p0s are estimated - disable output of individual regions
+if ( args.verbose == 0 )
+    DCM.M.noprint = 1;
+end
+
+
+% if progress for regions is outputed
+if ( ~isfield(DCM,'M') || ~isfield(DCM.M,'noprint') || ~DCM.M.noprint )
+    fprintf('\n')
+    reverseStr = '';
+end
+
 % iterate over regions
 for k = ord_regions
+    
+    % output progress of regions
+    if ( ~isfield(DCM,'M') || ~isfield(DCM.M,'noprint') || ~DCM.M.noprint )
+        msg = sprintf('Processing region: %d/%d', k, length(ord_regions));
+        fprintf([reverseStr, msg]);
+        reverseStr = repmat(sprintf('\b'), 1, length(msg));
+    end
     
     % results arrays (per region)
     mN_iter             = cell(args.iter,1);
@@ -120,6 +142,11 @@ for k = ord_regions
             p0 = ones(D,1)*args.p0_temp;
         catch
             p0 = ones(D,1)*0.5;
+        end
+        
+        % inform p0 (e.g., by anatomical information) / information needs to be expressed in DCM.a
+        if ( isfield(args,'p0_inform') && args.p0_inform )
+            p0(1:size(DCM.a,1)) = p0(1:size(DCM.a,1)).*DCM.a(k,:)';
         end
         
         % ensure self-connectivity
@@ -234,10 +261,10 @@ for k = ord_regions
 
             % compute the components of the model evidence
             log_lik = N_eff*(psi(aN_r) - log(bN_r))/2 - N_eff*log(2*pi)/2 - t*QF/2;
-            log_p_weight = 1/2*log(det(l0_r)) - D*log(2*pi)/2 - (mN_r-m0_r)'*l0_r*(mN_r-m0_r)/2 - trace(l0_r*sN_r)/2;
+            log_p_weight = 1/2*tapas_rdcm_spm_logdet(l0_r) - D*log(2*pi)/2 - (mN_r-m0_r)'*l0_r*(mN_r-m0_r)/2 - trace(l0_r*sN_r)/2;
             log_p_prec = a0*log(b0) - gammaln(a0) + (a0-1)*(psi(aN_r) - log(bN_r)) - b0*t;
             log_p_z = sum(log(1-p0(z_idx)) + z_r(z_idx).*log(p0(z_idx)./(1-p0(z_idx))));
-            log_q_weight = 1/2*log(det(sN_r)) + D*(1+log(2*pi))/2;
+            log_q_weight = 1/2*tapas_rdcm_spm_logdet(sN_r) + D*(1+log(2*pi))/2;
             log_q_prec = aN_r - log(bN_r) + gammaln(aN_r) + (1-aN_r)*psi(aN_r);
             log_q_z = sum(-(1-z_r(z_idx)).*log(1-z_r(z_idx)) - z_r(z_idx).*log(z_r(z_idx)));
 
@@ -274,10 +301,10 @@ for k = ord_regions
 
         % compute the components of the model evidence
         log_lik_iter(iter)      = N_eff*(psi(aN_r) - log(bN_r))/2 - N_eff*log(2*pi)/2 - t*QF/2;
-        log_p_weight_iter(iter) = 1/2*log(det(l0_r)) - D*log(2*pi)/2 - (mN_r-m0_r)'*l0_r*(mN_r-m0_r)/2 - trace(l0_r*sN_r)/2;
+        log_p_weight_iter(iter) = 1/2*tapas_rdcm_spm_logdet(l0_r) - D*log(2*pi)/2 - (mN_r-m0_r)'*l0_r*(mN_r-m0_r)/2 - trace(l0_r*sN_r)/2;
         log_p_prec_iter(iter)   = a0*log(b0) - gammaln(a0) + (a0-1)*(psi(aN_r) - log(bN_r)) - b0*t;
         log_p_z_iter(iter)      = sum(log(1-p0(z_idx)) + z_r(z_idx).*log(p0(z_idx)./(1-p0(z_idx))));
-        log_q_weight_iter(iter) = 1/2*log(det(sN_r)) + D*(1+log(2*pi))/2;
+        log_q_weight_iter(iter) = 1/2*tapas_rdcm_spm_logdet(sN_r) + D*(1+log(2*pi))/2;
         log_q_prec_iter(iter)   = aN_r - log(bN_r) + gammaln(aN_r) + (1-aN_r)*psi(aN_r);
         log_q_z_iter(iter)      = sum(-(1-z_r(z_idx)).*log(1-z_r(z_idx)) - z_r(z_idx).*log(z_r(z_idx)));
 
@@ -303,11 +330,13 @@ for k = ord_regions
     % store region-specific parameters
     mN(k,:)             = real(mN_iter{best});
     z(k,:)              = real(z_iter{best});
-    sN{k}               = l0_iter{best};
     sN{k}(idx_x,idx_x)	= real(sN_iter{best});
     aN(k)               = real(aN_iter{best});
     bN(k)               = real(bN_iter{best});
     logF(k)             = logF_iter(best);
+    
+    % get the predicted signal from the GLM (in frequency domain)
+    yd_pred_rdcm_fft(:,k)	= X(:,idx_x) * mN_iter{best};
     
     % store the region-specific components of logF (for diagnostics)
     if ( args.diagnostics_logF )
@@ -321,6 +350,7 @@ for k = ord_regions
     else
         logF_term = [];
     end
+    
     
     % clear the region-specific parameters
     clear mN_iter z_iter l0_iter sN_iter aN_iter bN_iter logF_iter
@@ -340,5 +370,9 @@ output{1}.priors.p0 = args.p0_temp;
 
 % store the rDCM variant
 output{1}.inversion = 'tapas_rdcm_sparse';
+
+% store the true and predicted temporal derivatives (in frequency domain)
+output{1}.temp.yd_source_fft    = Y;
+output{1}.temp.yd_pred_rdcm_fft = yd_pred_rdcm_fft;
 
 end

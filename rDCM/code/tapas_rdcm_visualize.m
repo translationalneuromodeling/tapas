@@ -1,4 +1,4 @@
-function tapas_rdcm_visualize(output, DCM, options, plot_regions)
+function tapas_rdcm_visualize(output, DCM, options, plot_regions, plot_mode)
 % tapas_rdcm_visualize(output, DCM, options, plot_regions)
 % 
 % Generates a simple graphical output of the rDCM results. 
@@ -8,6 +8,8 @@ function tapas_rdcm_visualize(output, DCM, options, plot_regions)
 %   	DCM             - model structure
 %       options         - estimation options
 %       plot_regions    - array of region indices
+%       plot_mode       - plot power spectral density (of temporal derivative) 
+%                         or BOLD signal time series
 %
 %   Output: 
 %
@@ -31,8 +33,13 @@ function tapas_rdcm_visualize(output, DCM, options, plot_regions)
 % ----------------------------------------------------------------------
 
 
+% default if no plot mode is specified
+if ( nargin < 5 || isempty(plot_mode) )
+    plot_mode = 1;
+end
+
 % default if no regions are specified
-if ( nargin < 4 )
+if ( nargin < 4 || isempty(plot_regions) )
     plot_regions = 1;
 end
 
@@ -68,11 +75,18 @@ if ( options.visualize )
             ylabel('region (to)','FontSize',12)
 
             % get the samples to plot
-            y_source_reshape    = reshape(output.signal.y_source,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
-            y_pred_rdcm_reshape = reshape(output.signal.y_pred_rdcm,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
-            y_source_reshape    = y_source_reshape(:,plot_regions);
-            y_pred_rdcm_reshape	= y_pred_rdcm_reshape(:,plot_regions);
-
+            if ( plot_mode == 1 )
+                y_source_reshape    = reshape(output.signal.yd_source_fft,length(output.signal.yd_source_fft)/size(output.Ep.A,1),size(output.Ep.A,1));
+                y_pred_rdcm_reshape = reshape(output.signal.yd_pred_rdcm_fft,length(output.signal.yd_pred_rdcm_fft)/size(output.Ep.A,1),size(output.Ep.A,1));
+                y_source_reshape    = abs(y_source_reshape(:,plot_regions)).^2;
+                y_pred_rdcm_reshape	= abs(y_pred_rdcm_reshape(:,plot_regions)).^2;
+            elseif ( plot_mode == 2 )
+                y_source_reshape    = reshape(output.signal.y_source,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
+                y_pred_rdcm_reshape = reshape(output.signal.y_pred_rdcm,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
+                y_source_reshape    = y_source_reshape(:,plot_regions);
+                y_pred_rdcm_reshape	= y_pred_rdcm_reshape(:,plot_regions);
+            end
+                
             % visualize true and predicted BOLD signal
             subplot(2,1,2)
             hold on
@@ -81,10 +95,15 @@ if ( options.visualize )
             yl = ylim;
             for int = 1:size(y_pred_rdcm_reshape,2)-1, plot([int*size(y_pred_rdcm_reshape,1) int*size(y_pred_rdcm_reshape,1)],yl,'k.-'), end
             xlim([0 numel(y_source_reshape)])
-            legend(ha,{'true','predicted'},'Location','SE')
-            title('true and prediced time series','FontSize',14);
-            ylabel('BOLD','FontSize',12)
+            legend(ha,{'true','predicted'},'Location','NE')
             xlabel('sample index','FontSize',12)
+            if ( plot_mode == 1 )
+                title('true and prediced power spectral density','FontSize',14);
+                ylabel('PSD','FontSize',12)
+            elseif ( plot_mode == 2 )
+                title('true and prediced time series','FontSize',14);
+                ylabel('BOLD','FontSize',12)
+            end
 
         else
 
@@ -142,12 +161,20 @@ if ( options.visualize )
             xlabel('region (from)','FontSize',12)
             ylabel('region (to)','FontSize',12)
 
+            
             % get the samples to plot
-            y_source_reshape    = reshape(output.signal.y_source,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
-            y_pred_rdcm_reshape = reshape(output.signal.y_pred_rdcm,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
-            y_source_reshape    = y_source_reshape(:,plot_regions);
-            y_pred_rdcm_reshape	= y_pred_rdcm_reshape(:,plot_regions);
-
+            if ( plot_mode == 1 )
+                y_source_reshape    = reshape(output.signal.yd_source_fft,length(output.signal.yd_source_fft)/size(output.Ep.A,1),size(output.Ep.A,1));
+                y_pred_rdcm_reshape = reshape(output.signal.yd_pred_rdcm_fft,length(output.signal.yd_pred_rdcm_fft)/size(output.Ep.A,1),size(output.Ep.A,1));
+                y_source_reshape    = abs(y_source_reshape(:,plot_regions)).^2;
+                y_pred_rdcm_reshape	= abs(y_pred_rdcm_reshape(:,plot_regions)).^2;
+            elseif ( plot_mode == 2 )
+                y_source_reshape    = reshape(output.signal.y_source,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
+                y_pred_rdcm_reshape = reshape(output.signal.y_pred_rdcm,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
+                y_source_reshape    = y_source_reshape(:,plot_regions);
+                y_pred_rdcm_reshape	= y_pred_rdcm_reshape(:,plot_regions);
+            end
+            
             % visualize measured and predicted BOLD signal
             subplot(2,1,2);
             hold on
@@ -156,10 +183,15 @@ if ( options.visualize )
             yl = ylim;
             for int = 1:size(y_pred_rdcm_reshape,2)-1, plot([int*size(y_pred_rdcm_reshape,1) int*size(y_pred_rdcm_reshape,1)],yl,'k.-'), end
             xlim([0 numel(y_source_reshape)])
-            legend(ha,{'true','predicted'},'Location','SE')
-            title('true and prediced time series','FontSize',14);
-            ylabel('BOLD','FontSize',12)
+            legend(ha,{'true','predicted'},'Location','NE')
             xlabel('sample index','FontSize',12)
+            if ( plot_mode == 1 )
+                title('true and prediced power spectral density','FontSize',14);
+                ylabel('PSD','FontSize',12)
+            elseif ( plot_mode == 2 )
+                title('true and prediced time series','FontSize',14);
+                ylabel('BOLD','FontSize',12)
+            end
 
         else
 
