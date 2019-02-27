@@ -20,7 +20,11 @@ yhat = la + infStates(:,1,1);
 n = length(yhat);
 
 % Initialize random number generator
-rng('shuffle');
+if isnan(r.c_sim.seed)
+    rng('shuffle');
+else
+    rng(r.c_sim.seed);
+end
 
 % Simulate
 y = yhat +sqrt(ze)*randn(n, 1);

@@ -42,7 +42,11 @@ Z = repmat(Z,1,nc);
 prob = exp(be.*states)./Z;
 
 % Initialize random number generator
-rng('shuffle');
+if isnan(r.c_sim.seed)
+    rng('shuffle');
+else
+    rng(r.c_sim.seed);
+end
 
 % Draw responses
 n = size(infStates,1);

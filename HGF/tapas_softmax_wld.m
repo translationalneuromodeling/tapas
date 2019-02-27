@@ -83,11 +83,11 @@ Lprev(find(wprev),:) = 0;
 states = states + la_wd*Wprev + la_ld*Lprev;
 
 % Partition functions
-Z = sum(exp(be*states),2);
+Z = sum(exp(be.*states),2);
 Z = repmat(Z,1,nc);
 
 % Softmax probabilities
-prob = exp(be*states)./Z;
+prob = exp(be.*states)./Z;
 
 % Extract probabilities of chosen options
 probc = prob(sub2ind(size(prob), 1:length(y), y'));
