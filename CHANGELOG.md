@@ -1,6 +1,10 @@
 # Changelog
 TAPAS toolbox 
 
+Please include the following line for rDCM in the "Changed" section of the new TAPAS release
+- New version of the rDCM toolbox (v1.1). Details in tapas/rDCM/CHANGELOG.md.
+
+
 ## [3.0.1] 2018-10-17
 
 ### Fixed
