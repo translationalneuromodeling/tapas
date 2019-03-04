@@ -247,7 +247,7 @@ There are currently four methods to fit models:
 |Multiv.  | Multi. subject  | Uses a linear model to construct a parametric prior from the population. | `tapas_sem_multiv_estimate.m` |
 |Mixed    | Multi. subject  | Uses a mixed effects model to construct a parametric prior from the population. | `tapas_sem_mixed_estimate.m` |
 
-These methods are explain in some detail below.
+These methods are explained in some detail below.
 
 ### Single subject inference 
 <img src="misc/flat_model.png" width="250" align="right"/>
@@ -263,8 +263,8 @@ prior is encoded by \(\mu\). Note that \(u\) encodes the subject specific
 conditions.
 
 An example can be found in 
-`tapas/sem/examples/tapas_sem_flat_example_estimate.m`. Below we have
-commented an abbreviated form of the example.
+`tapas/sem/examples/tapas_sem_flat_example_estimate.m`. Below, we have
+commented an abbreviated version of the example.
 
 #### Example
 ```matlab
@@ -361,9 +361,8 @@ The columns of the table are
 | Subject | 1           | Index of the subject in the data struct |
 | Condition | 1         | |
 | late_pro_prob | 0.79 | Probability of a late prosaccade. This is the probability that the late prosaccade unit hits threshold before the antisaccade unit.|
-| inhib_fail_prob | 0.62 | Probability of an inhibition failure. This is 
-the probability that the early unit hits threshold before all other units |
-| late_pro_rt | 3.67 | Mean RT of a late prosaccade. The scale is tenths of a second.|
+| inhib_fail_prob | 0.62 | Probability of an inhibition failure. This is the probability that the early unit hits threshold before all other units |
+| late_pro_rt | 3.67 | Mean RT of late prosaccades. The scale is tenths of a second.|
 | anti_rt | 3.35 | Mean RT of the antisaccade unit.| 
 | inhib_fail_rt | 1.95 | Mean RT of inhibition failures.|
 | predicted_pro_rt | 2.49 | Predicted prosaccade RT. This should be similar to the empirical value |
@@ -372,9 +371,8 @@ the probability that the early unit hits threshold before all other units |
 | predicted_anti_prob | 3.28 | Predicted antisaccade probability. |
 
 The predicted values are the expected RT and error rate based on the 
-estimated parameters. Other values correspond to predictions of the model
-that are not directly observable, as the probability of an inhibition failure
-and the corresponding RT. These statistics are explained in more
+estimated parameters. Other values are predictions of the model
+that are not directly observable. These statistics are explained in more
 details [here](https://doi.org/10.1152/jn.00240.2018).
 
 ### Hierarchical inference 
@@ -382,7 +380,7 @@ details [here](https://doi.org/10.1152/jn.00240.2018).
 
 SEM offers the option to use a hierarchical model to pool information 
 from several subjects. This method treats the mean of the parameters across
-subjects as a latent variable and thereby it offers a form of regularization
+subjects as a latent variable and therefore it offers a form of regularization
 based on observations from the population. 
 
 The graphical representation of this model is displayed on the right. Note 
@@ -440,7 +438,7 @@ data =
 
 ```
 
-The output of `tapas_sem_hier_estimate` has the following fields:
+The output of `tapas_sem_hier_estimate` has the fields:
 
 | Field | Example value | Explanation |
 |:-----:|:-------------:|-------------|
@@ -728,7 +726,7 @@ Most likely config will fail for one of the following reasons.
 
 #### Has config found gsl's header? 
 
-Often after installation, the compiler fails to find gsl's headeers.
+Often after installation, the compiler fails to find gsl's headers.
 ~~~~
 export C_INCLUDE_PATH="$C_INCLUDE_PATH:/opt/local/include"
 export CFLAGS="-I:/opt/local/include $CFLAGS"
@@ -751,8 +749,8 @@ export PATH=$PATH:your-matlab-path
 
 ## Python package 
 
-This toolbox can be installed as python package. Although no inference
-algorithm is currently implemented, it can be potentially used in combination
+This toolbox can be installed as a python package. Although no inference
+algorithm is currently implemented, it can be used in combination
 with packages implementing maximum likelihood estimators or the 
 Metropolis-Hasting algorithm. After installation it can be imported as
 ~~~~
@@ -777,5 +775,5 @@ pip install -r requirements.txt
 ~~~~
 
 aponteeduardo@gmail.com
-copyright (C) 2015-2018
+copyright (C) 2015-2019
 
