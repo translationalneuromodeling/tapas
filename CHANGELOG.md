@@ -4,6 +4,7 @@ TAPAS toolbox
 ## [Unreleased]
 
 ### Added
+- Get revision info from Matlab.
 - Automatic plotting of the seria model.
 - Example for flat model for seria.
 - Improved the documentation of SERIA.
