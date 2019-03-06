@@ -56,33 +56,32 @@ hgf.c_obs.priorsas = 1;
 hgf.empirical_priors = struct('eta', []);
 hgf.empirical_priors.eta = 1;
 %% Data simulation
-% Now let us assume that our datasets are from 32 different subjects.
+% We choose a range of values for the parameters $\omega_2$ (evolution rate 
+% at the second level) and $\omega_3$ (evolution rate at the third level). The 
+% rest of the parameters are held constant.
 
-num_subjects = 32;
+om2_values = [-5, -3.5, -2];
+om3_values = [-8, -5, -2];
+
+[om2, om3] = meshgrid(om2_values, om3_values);
+om2 = om2(:)';
+om3 = om3(:)';
+gridsize = length(om2);
 %% 
-% For our simulations, we choose a range of values for the parameters $\omega_2$ 
-% (tonic volatility at the second level) and $\zeta$ (inverse decision noise). 
-% The rest of the parameters will be held constant.
+% We choose a range of response noise levels (i.e., values of the parameter 
+% $\zeta$). Higher values of $\zeta$ mean _less_ noise.
 
-om2 = [-5.0, -4.8, -4.7, -4.6, -4.5, -4.4, -4.3, -4.2,...
-       -4.1, -4.0, -3.9, -3.8, -3.7, -3.6, -3.5, -3.4,...
-       -3.3, -3.2, -3.1, -3.0, -3.0, -2.9, -2.9, -2.9,...
-       -2.8, -2.8, -2.8, -2.7, -2.7, -2.6, -2.6, -2.4];
-
-ze = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.0, 1.1,...
-      1.1, 1.2, 1.2, 1.3, 1.3, 1.4, 1.4, 1.5,...
-      1.6, 1.6, 1.7, 1.7, 1.7, 1.8, 1.8, 1.9,...
-      1.9, 2.0, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5];
+ze = [1, 4, 8];
+numnoiselevels = length(ze);
 %% 
-% We randomly permute the elements of $\zeta$ such that there is no systematic 
-% association between high values of $\omega_2$ and high values of $\zeta$.
+% Finally, we choose a number of simulations per grid point.
 
-ze = ze(randperm(length(ze))); 
+numsim = 8;
 %% 
-% Then we initialize structure arrays for the simulations and for the 'data' 
+%  Then we initialize structure arrays for the simulations and for the 'data' 
 % argument of tapas_h2gf_estimate().
 
-sim = struct('u', [],...
+sim = struct('u', cell(gridsize, numnoiselevels, numsim),...
              'ign', [],...
              'c_sim', [],...
              'p_prc', [],...
@@ -93,7 +92,7 @@ sim = struct('u', [],...
              'y', []);
 
 %%
-data = struct('y', cell(num_subjects, 1),...
+data = struct('y', cell(gridsize, numnoiselevels, numsim),...
               'u', [],...
               'ign', [],...
               'irr', []);
@@ -103,29 +102,35 @@ data = struct('y', cell(num_subjects, 1),...
 
 [~, u] = tapas_h2gf_load_example_data();
 %%
-for i = 1:num_subjects
-    sim(i) = tapas_simModel(u,...
-                            'tapas_hgf_binary', [NaN,...
-                                                1,...
-                                                1,...
-                                                NaN,...
-                                                1,...
-                                                1,...
-                                                NaN,...
-                                                0,...
-                                                0,...
-                                                1,...
-                                                1,...
-                                                NaN,...
-                                                om2(i),...
-                                                -6],...
-                         'tapas_unitsq_sgm', ze(i));
-    % Simulated responses
-    data(i).y = sim(i).y;
-    % Experimental inputs
-    data(i).u = sim(i).u;
+for i = 1:gridsize
+    for j = 1:numnoiselevels
+        for k = 1:numsim
+            % Simulation
+            sim(i,j,k) = tapas_simModel(u,...
+                                        'tapas_hgf_binary', [NaN,...
+                                                             1,...
+                                                             1,...
+                                                             NaN,...
+                                                             1,...
+                                                             1,...
+                                                             NaN,...
+                                                             0,...
+                                                             0,...
+                                                             1,...
+                                                             1,...
+                                                             NaN,...
+                                                             om2(i),...
+                                                             om3(i)],...
+                                        'tapas_unitsq_sgm', ze(j),...
+                                        i*j*k);
+            % Simulated responses
+            data(i,j,k).y = sim(i,j,k).y;
+            % Inputs
+            data(i,j,k).u = sim(i,j,k).u;
+        end
+    end
 end
-clear i u om2 ze
+clear i j k
 %% Sampler configuration
 % The h2gf uses sampling for inference on parameter values. To configure the 
 % sampler, we first need to initialize the structure holding the parameters of 
@@ -149,24 +154,26 @@ pars.nchains = 8;
 %% 
 % Parameters not explicitly defined here take the default values set in 
 % tapas_h2gf_inference.m.
+%% Estimation of a single dataset
+% Each of our simulated datasets contains data from as many virtual subjects 
+% as there are points in our simulation grid (i.e., N = gridsize). We start by 
+% estimating the first of our simulated datasets at the lowest noise level (i.e., 
+% highest $\zeta$). This corresponds to the workflow when working with actual 
+% data.
 % 
-% Before proceeding, we declutter the workspace.
-
-clear num_subjects
-%% Estimation
-% Before we can run the estimation, we still need to initialize a structure 
-% holding the results of the inference.
+% First, we initialize a structure holding the results of the inference.
 
 inference = struct();
 %% 
-% Finally, we can run the estimation.
+% Then we run the estimation.
 
-h2gf_est = tapas_h2gf_estimate(data, hgf, inference, pars);
+h2gf_est = tapas_h2gf_estimate(data(:,numnoiselevels,1), hgf, inference, pars);
 %% 
 % We can now look at the belief trajectories of individual subjects. These 
 % are the trajectories implied by the median posterior parameter values.
 
 tapas_hgf_binary_plotTraj(h2gf_est.summary(1))
+tapas_hgf_binary_plotTraj(h2gf_est.summary(gridsize))
 %% 
 % All the plotting and diagnostic functions from the HGF Toolbox work with 
 % the 'summary' substructure of the h2gf output.
@@ -174,3 +181,103 @@ tapas_hgf_binary_plotTraj(h2gf_est.summary(1))
 tapas_fit_plotCorr(h2gf_est.summary(1))
 %%
 tapas_fit_plotResidualDiagnostics(h2gf_est.summary(1))
+%% Estimation of all datasets
+% In order to assess whether the parameters we varied ($\omega_2$ and $\omega_3$) 
+% can be recovered, and how recovery is affected by response noise, we need to 
+% estimate all datasets at all noise levels. In the interest of time, the estimation 
+% is commented out here, and we simply load estimates made previously. To perform 
+% your own estimation, uncomment the estimation and comment the loading of the 
+% estimates instead.
+
+% est = struct('data', cell(numnoiselevels, numsim),...
+%              'model', [],...
+%              'inference', [],...
+%              'samples_theta', [],...
+%              'fe', [],...
+%              'llh', [],...
+%              'accuracy', [],...
+%              'T', [],...
+%              'hgf', [],...
+%              'summary', []);
+%%
+% for i = 1:numnoiselevels
+%     for j = 1:numsim
+%         est(i,j) = tapas_h2gf_estimate(data(:,i,j), hgf, inference, pars);
+%     end
+% end
+% clear i j
+%%
+load('h2gf_demo_est.mat')
+%% 
+% We gather the estimates of $\omega_2$ and $\omega_3$ for all grid points, 
+% noise levels, and simulated datasets.
+
+om2_est = NaN(gridsize, numnoiselevels, numsim);
+om3_est = NaN(gridsize, numnoiselevels, numsim);
+%%
+for i = 1:gridsize
+    for j = 1:numnoiselevels
+        for k = 1:numsim
+            om2_est(i,j,k) = est(j,k).summary(i).p_prc.om(2);
+            om3_est(i,j,k) = est(j,k).summary(i).p_prc.om(3);
+        end
+    end
+end
+clear i j k
+%% 
+% Plotting the distribution of median samples of $\omega_2$ for all grid 
+% points shows that unless noise is very high, this parameter can be recovered.
+
+figure;
+subplot(1,3,1);
+boxplot(squeeze(om2_est(:,1,:))');
+ylim([-5.5 -1.4])
+title('\zeta = 1')
+xlabel('Grid point');
+ylabel('Estimate');
+subplot(1,3,2);
+boxplot(squeeze(om2_est(:,2,:))');
+ylim([-5.5 -1.4])
+title('\zeta = 4')
+xlabel('Grid point');
+subplot(1,3,3);
+boxplot(squeeze(om2_est(:,3,:))');
+ylim([-5.5 -1.4])
+title('\zeta = 8')
+xlabel('Grid point');
+%% 
+% On the other hannd, plotting the distribution of median samples of $\omega_3$ 
+% for all grid points shows that this parameter is not recoverable regardless 
+% of noise level.
+
+figure;
+subplot(1,3,1);
+boxplot(squeeze(om3_est(:,1,:))');
+ylim([-7.8 -4.0])
+title('\zeta = 1')
+xlabel('Grid point');
+ylabel('Estimate');
+subplot(1,3,2);
+boxplot(squeeze(om3_est(:,2,:))');
+ylim([-7.8 -4.0])
+title('\zeta = 4')
+xlabel('Grid point');
+subplot(1,3,3);
+boxplot(squeeze(om3_est(:,3,:))');
+ylim([-7.8 -4.0])
+title('\zeta = 8')
+xlabel('Grid point');
+%% 
+% In order to understand how well the model is able to do under our different 
+% noise conditions, we calculate the mean log-likelihood for each noise level.
+
+meanllh = zeros(1,numnoiselevels);
+
+for i = 1:numnoiselevels
+    for j = 1:numsim
+        meanllh(i) = meanllh(i) + mean(est(i,j).llh{1},'all')/numsim;
+    end
+end
+clear i j
+
+meanllh
