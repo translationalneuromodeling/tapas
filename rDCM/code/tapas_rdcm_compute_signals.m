@@ -38,8 +38,8 @@ output.signal.y_source = DCM.Y.y(:);
 if strcmp(options.type,'s')
     
     % noise-free signal
-    DCM = tapas_rdcm_generate(DCM, options, Inf);
-    output.signal.y_clean = DCM.Y.y(:);
+    DCMs = tapas_rdcm_generate(DCM, options, Inf);
+    output.signal.y_clean = DCMs.Y.y(:);
     
     % compute the MSE of the noisy data
     output.residuals.y_mse_clean = mean((output.signal.y_source - output.signal.y_clean).^2);
@@ -54,6 +54,13 @@ else
         output.residuals.y_mse_vl   = [];
     end
 end
+
+
+% store true or measured temporal derivative (in frequency domain)
+yd_source_fft                           = output.temp.yd_source_fft;
+yd_source_fft(~isfinite(yd_source_fft))  = 0;
+output.signal.yd_source_fft             = yd_source_fft(:);
+
 
 % adding the constant baseline
 DCM.U.u(:,end+1) = ones(size(DCM.U.u,1),1);
@@ -77,17 +84,33 @@ if ( isfield(output,'Ip') )
     DCM.Tp.C = DCM.Tp.C .* [output.Ip.C, ones(size(DCM.Tp.baseline))];
 end
 
-% generate predicted signal (tapas_rdcm_generate)
-DCM = tapas_rdcm_generate(DCM, options, Inf);
-output.signal.y_pred_rdcm = DCM.Y.y(:);
 
-% compute the MSE of predicted signal
-output.residuals.y_mse_rdcm = mean((output.signal.y_source - output.signal.y_pred_rdcm).^2);
-output.residuals.R_rdcm     = output.signal.y_source - output.signal.y_pred_rdcm;
+% generate predicted signal (tapas_rdcm_generate)
+DCM_rDCM = tapas_rdcm_generate(DCM, options, Inf);
+output.signal.y_pred_rdcm = DCM_rDCM.Y.y(:);
+
+% store predicted temporal derivative (in frequency domain)
+yd_pred_rdcm_fft                = output.temp.yd_pred_rdcm_fft;
+output.signal.yd_pred_rdcm_fft  = yd_pred_rdcm_fft(:);
+
+% remove the temp structure
+output = rmfield(output,'temp'); 
+
 
 % asign the region names
 if ( isfield(DCM.Y,'name') )
     output.signal.name = DCM.Y.name;
 end
+
+
+% compute the MSE of predicted signal
+output.residuals.y_mse_rdcm     = mean((output.signal.y_source - output.signal.y_pred_rdcm).^2);
+output.residuals.R_rdcm         = output.signal.y_source - output.signal.y_pred_rdcm;
+
+
+% store the driving inputs
+output.inputs.u     = DCM.U.u;
+output.inputs.name  = DCM.U.name;
+output.inputs.dt    = DCM.U.dt;
 
 end
