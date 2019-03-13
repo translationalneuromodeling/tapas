@@ -614,7 +614,7 @@ ninvgamma_gslint(double xs, double xe, double a, double b, double c0,
     double pars[5];
     double v;
     double aberr;
-    int neval; 
+    size_t neval; 
 
     SOONER_GSLERROR( gsl_sf_lngamma_e(a, &gr) );
 

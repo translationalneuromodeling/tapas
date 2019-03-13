@@ -63,8 +63,8 @@ saccades is triggered at time
 units hit threshold at a later point. When the inhibitory unit hits threshold
 before the early unit, early prosaccades are stopped. In
 this case, the two late units (that represent voluntary, pro- and
-antisaccades) can generate reactions depending on their hit times. In
-particular, if the antisaccade unit hits threshold at time \(t\) before the
+antisaccades) can generate reactions depending on their hit times. 
+If the antisaccade unit hits threshold at time \(t\) before the
 late prosaccade unit, an antisaccade at time \(t\) is generated, and
 similarly so for prosaccades.
 
@@ -172,7 +172,7 @@ by integers starting at 0.
 For example, if in an experiment pro- and antisaccade trials are mixed in
 a single block, it is possible to code these two types of trials as 0 and 1.
 A complete set of parameters (11x1 vector) is initialized for each condition.
-The two set of parameters are then stacked in a single vector of dimensionality
+The two sets of parameters are then stacked in a single vector of dimensionality
 22x1. 
 
 In the example below, there are 4 trials (two pro., two anti.), from two
@@ -194,8 +194,8 @@ data = stuct('y', [], 'u')
 ```
 
 ## Constraints
-It is possible to enforce constraints on the parameters of a model
-across conditions of a single subject using a *projection matrix*. 
+It is possible to enforce constraints on the model parameters 
+across conditions using a *projection matrix*. 
 This matrix, *J*, should have *M* times 11 rows and *K* columns, 
 where *M* is the number of conditions and *K* is the number of free 
 parameters.
@@ -224,7 +224,7 @@ ans =
 
     13    14    15    16    17    18    19     9    10    11
 ```
-When multiplying the vector *v* and matrix *J*, we enforce the
+When multiplying the vector *v* and matrix *J*, we force the
 last 3 entries to be equal to the 9th to 11th entries. This 
 provides a method to code constraints in the parameter space.
 Note that the number of conditions encoded in `u.tt` should be the same
@@ -257,7 +257,7 @@ prior. Several conditions can be coded in `data.u.tt` and constraints
 across conditions can be implemented using a projection matrix as explained
 above.
 
-On the left the Bayesian network that represents the 
+On the left, the Bayesian network that represents the 
 model is displayed. The responses \(y\) are fitted using parameters \(\theta\), whose
 prior is encoded by \(\mu\). Note that \(u\) encodes the subject specific 
 conditions.
@@ -320,7 +320,7 @@ prosaccade trials are coded with 0, and antisaccade trials with 1.
   
 ![fits](misc/example_fit.png)
 
-The variable `ptheta` represent the parameters of the model. It is a 
+The variable `ptheta` represents the parameters of the model. It is a 
 structure with several fields explained in the table below.
 
 | Field | Example value | Explanation |
@@ -371,7 +371,7 @@ The columns of the table are
 | predicted_anti_prob | 3.28 | Predicted antisaccade probability. |
 
 The predicted values are the expected RT and error rate based on the 
-estimated parameters. Other values are predictions of the model
+parameter estimates. Other values are predictions of the model
 that are not directly observable. These statistics are explained in more
 details [here](https://doi.org/10.1152/jn.00240.2018).
 
@@ -379,9 +379,9 @@ details [here](https://doi.org/10.1152/jn.00240.2018).
 <img src="misc/hier_model.png" width="300" align="right"/>
 
 SEM offers the option to use a hierarchical model to pool information 
-from several subjects. This method treats the mean of the parameters across
-subjects as a latent variable and therefore it offers a form of regularization
-based on observations from the population. 
+across subjects. This method treats the mean of the parameters across
+subjects as a latent variable, which is also estimated. It offers a form 
+of regularization based on observations from the population.
 
 The graphical representation of this model is displayed on the right. Note 
 that now data from \(i=1,...,N\) subjects is fitted simultaneously. 
@@ -389,7 +389,7 @@ The population mean is represented by the latent variable \(\mu\) which is
 inferred from the parameters \(\theta_i\). In addition, the variance of the
 population \(\sigma^2\) is also estimated.
 
-Data from different subjects should be entered as different columns of
+Data from different subjects should be entered as rows in 
 the `data` structure array.
 
 #### Example
@@ -424,7 +424,7 @@ toc
 
 display(posterior);
 ```
-The example data is a structure array of dimension 4x1.
+The example data is a structure array of dimensions 4x1.
 
 ```matlab
 K>> display(data)
@@ -453,14 +453,13 @@ The output of `tapas_sem_hier_estimate` has the fields:
 ### Parametric hierarchical inference
 <img src="misc/multiv_model.png" width="300" align="right"/>
 
-While the previous method provides an option to pool information across
-subjects, it does not provide a method to model the impact of any experimental
-manipulation. This can be
-done through a linear model that parametrically defines the prior 
+While the previous method pools information across
+subjects, it cannot model the effect of any experimental manipulation. 
+With parametric hierarchical inference, a linear model defines the prior 
 distribution of each subject.
 
-The graphical model on the right extends the previous model by allowing a
-parametric empirical prior for each subject, based on the independent 
+The graphical model on the right extends the previous model by defining a
+parametric empirical prior for each subject, based on independent 
 variables \(x_i\). 
 
 Developing the example above, we can assume that subjects 1 and 2 received
@@ -475,7 +474,7 @@ X =
      1    -1
      1    -1
 ```
-Note that the first column of `X` represents the population mean, or 
+Note that the first column of `X` represents the population mean or 
 intercept, and the second column represent the contrast of treatment A and B.
 
 #### Example
@@ -519,9 +518,11 @@ display(posterior);
 ### Parametric mixed effects 
 <img src="misc/mixed_model.png" width="300" align="right"/>
 
-A final generalization is the extension of the parametric model above to a 
-mixed effects model. This type of models contains some coefficients
-\(B_R\) whose prior mean \(B_{0,R}\) is modeled as a latent variable. 
+The parametric prior above can be extended into a mixed effects model.
+This type of models contains some coefficients
+\(B_R\) whose prior mean \(B_{0,R}\) is treated as a latent variable. 
+In other words, the mean of the coefficients \(B_R\) is itself a parameter
+that is estimated from the model.
 On the right, the graphical representation of the mixed effects model is 
 displayed. 
 
@@ -557,8 +558,9 @@ To do this, we group regressors 2 to 4 in the variable `ptheta.mixed`
 ```matlab
 ptheta.mixed = [0 1 1 1];
 ```
-These groups regressors and generates the random effect population mean
-\(B0,R\). Currently, it is only possible to use one random effect.
+These groups regressors 2 to 4 and generates the random effect 
+population mean \(B0,R\). Currently, it is only possible to model only one
+random effect.
 
 #### Example
 This example is adapted from 
@@ -751,8 +753,8 @@ export PATH=$PATH:your-matlab-path
 
 This toolbox can be installed as a python package. Although no inference
 algorithm is currently implemented, it can be used in combination
-with packages implementing maximum likelihood estimators or the 
-Metropolis-Hasting algorithm. After installation it can be imported as
+with packages implementing maximum likelihood estimation or the 
+Metropolis-Hasting algorithm. After installation, it can be imported as
 ~~~~
 from tapas.sem.antisaccades import likelihoods as seria
 ~~~~
@@ -761,7 +763,7 @@ This contains all the models described in the original
 
 ### Python installation
 
-This toolbox can be install as an usual python package using
+This toolbox can be install as a python package using
 ~~~~
 sudo python setup.py install 
 ~~~~

@@ -6,12 +6,6 @@
 
 #define INTSTEPS 200;
 
-void
-intHandler(int dummy)
-{
-    mexErrMsgIdAndTxt("tapas:user_exception", "Stopped by the user");
-}
-
 double
 seria_summary_parameter(
         SERIA_SUMMARY_FUNCTION summary_func,
@@ -212,7 +206,6 @@ double
 seria_summary_wrapper(double t, void *gsl_int_pars)
 {
     // Stop by the user if necessary
-    //signal(SIGINT, intHandler); 
     // Cast the input into a function.
     SERIA_GSL_INT_INPUT *pars = (SERIA_GSL_INT_INPUT *) gsl_int_pars;
 
