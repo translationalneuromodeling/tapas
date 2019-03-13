@@ -356,6 +356,8 @@ The results from the model are
 In addition, `tapas_sem_display_posterior` generates a table with some
 summary statistics computed by the model.
 
+<img src="misc/summary_stats.png" width="800"/>
+
 The columns of the table are
 
 | Column | Example value | Explanation |
