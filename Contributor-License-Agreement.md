@@ -14,6 +14,7 @@ Name                     | Company/Institution/Address | City      | Country | E
 ------------------------ | --------------------------- | --------- | ------- | ----------------------
 Lars Kasper              | TNU, University of Zurich   | Zurich    | CH      | mrikasper
 Eduardo Aponte           | TNU, University of Zurich   | Zurich    | CH      | tnutapas
+Niklas Bürgi             | SNS, University of Zurich   | Zurich    | CH      | nbuergi
 **- Add Entry here -**   | **- Add Entry here -**      | **Add**   | **Add** | **Add**                    
 
 (hereinafter referred to as "Contributor")

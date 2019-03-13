@@ -12,16 +12,19 @@ function y = tapas_softmax_binary_sim(r, infStates, p)
 mu1hat = infStates(:,1,1);
 be = p;
 
-if size(mu1hat,2) == 1
+if size(r.u,2) == 1
     if ~any(mu1hat<0) && ~any(mu1hat>1)
         % Apply the logistic sigmoid to the inferred states
         prob = tapas_sgm(be.*(2.*mu1hat-1),1);
     else
         error('tapas:hgf:SoftMaxBinary:InfStatesIncompatible', 'infStates incompatible with tapas_softmax_binary observation model.')
     end
-else
+elseif size(r.u,2) == 3
+    % Gather the reward values
+    r0 = r.u(:,2);
+    r1 = r.u(:,3);
     % Apply the logistic sigmoid to the inferred states
-    prob = tapas_sgm(be.*(mu1hat(:,1)-mu1hat(:,2)),1);
+    prob = tapas_sgm(be.*(r1.*mu1hat-r0.*(1-mu1hat)),1);
 end
 
 % Initialize random number generator
