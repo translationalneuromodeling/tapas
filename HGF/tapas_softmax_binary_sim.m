@@ -30,7 +30,11 @@ states = squeeze(infStates(:,1,pop));
 prob = tapas_sgm(be.*(2.*states-1),1);
 
 % Initialize random number generator
-rng('shuffle');
+if isnan(r.c_sim.seed)
+    rng('shuffle');
+else
+    rng(r.c_sim.seed);
+end
 
 % Simulate
 y = binornd(1, prob);

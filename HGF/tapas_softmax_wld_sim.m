@@ -19,8 +19,8 @@ end
 be = p;
 
 % Win- and loss-distortion parameters
-la_wd = ptrans(1);
-la_ld = ptrans(2);
+la_wd = p(1);
+la_ld = p(2);
 
 % Assumed structure of infStates:
 % dim 1: time (ie, input sequence number)
@@ -71,14 +71,18 @@ Lprev(find(wprev),:) = 0;
 states = states + la_wd*Wprev + la_ld*Lprev;
 
 % Partition functions
-Z = sum(exp(be*states),2);
+Z = sum(exp(be.*states),2);
 Z = repmat(Z,1,nc);
 
 % Softmax probabilities
-prob = exp(be*states)./Z;
+prob = exp(be.*states)./Z;
 
 % Initialize random number generator
-rng('shuffle');
+if isnan(r.c_sim.seed)
+    rng('shuffle');
+else
+    rng(r.c_sim.seed);
+end
 
 % Draw responses
 n = size(infStates,1);

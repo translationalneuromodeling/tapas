@@ -689,7 +689,7 @@ function [ bError ] = fnc_check_response( response, jacobian )
 % Checks for NaNs and Infs in DCM response and jacobian matrix.
 
 bError = any(isnan(response(:))) || any(isinf(response(:))) || ...
-         any(isnan(jacobian(:))) || any(isnan(jacobian(:)));
+         any(isnan(jacobian(:))) || any(isinf(jacobian(:)));
 
 end
 

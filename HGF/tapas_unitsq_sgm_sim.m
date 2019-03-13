@@ -30,7 +30,11 @@ states = squeeze(infStates(:,1,pop));
 prob = states.^ze./(states.^ze+(1-states).^ze);
 
 % Initialize random number generator
-rng('shuffle');
+if isnan(r.c_sim.seed)
+    rng('shuffle');
+else
+    rng(r.c_sim.seed);
+end
 
 % Simulate
 y = binornd(1, prob);

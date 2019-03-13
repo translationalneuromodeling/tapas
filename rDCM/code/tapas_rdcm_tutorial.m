@@ -49,6 +49,7 @@ options.SNR             = 3;
 options.y_dt            = 0.5;
 options.p0_all          = 0.15;  % single p0 value (for computational efficiency)
 options.iter            = 100;
+options.filter_str      = 5;
 options.restrictInputs  = 1;
 
 
@@ -86,7 +87,7 @@ toc(currentTimer)
 plot_regions = [1 12];
 
 % visualize the results
-tapas_rdcm_visualize(output, DCM, options, plot_regions)
+tapas_rdcm_visualize(output, DCM, options, plot_regions, 2)
 
 
 

@@ -1,17 +1,14 @@
 # Changelog
 TAPAS toolbox 
 
-## [3.0.1] 2018-10-17
+## [Unreleased]
 
 ### Fixed
 - PhysIO R2018.1.2: fixed bug for 3D nifti array read-in in tapas_physio_create_noise_rois_regressors (github issue #24, gitlab #52)
+- Huge: minor bugs.
 
 ### Added
 - PhysIO R2018.1.2: BioPac txt-file reader (for single file, resp/cardiac/trigger data in different columns)
-
-## [3.0.0] 2018-09-09
-
-### Added
 - tapas\_get\_tapas\_revision.m outputs the branch and hash of the repository.
 - Revision is printed when initializing tapas.
 - Contributor License Agreement (CLA) file
@@ -29,6 +26,9 @@ TAPAS toolbox
     https://doi.org/10.1016/j.neuroimage.2018.05.058
 
 ### Changed
+- New version of the HGF toolbox (v5.3). Details in tapas/HGF/README.md
+- New version of the rDCM toolbox (v1.1). Details in tapas/rDCM/CHANGELOG.md.
+- Huge: Improved documentation.
 - README.md to include reference to CONTRIBUTING.md and explanation of CLA
 - Dropped 4 digits versioning for 3.
 - The version of tapas is now read from misc/log\_tapas.txt. It is the first

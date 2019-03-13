@@ -16,8 +16,8 @@ if r.c_obs.predorpost == 2
 end
 
 % Win- and loss-distortion parameters
-la_wd = ptrans(1);
-la_ld = ptrans(2);
+la_wd = p(1);
+la_ld = p(2);
 
 % Assumed structure of infStates:
 % dim 1: time (ie, input sequence number)
@@ -79,7 +79,11 @@ Z = repmat(Z,1,nc);
 prob = exp(be.*states)./Z;
 
 % Initialize random number generator
-rng('shuffle');
+if isnan(r.c_sim.seed)
+    rng('shuffle');
+else
+    rng(r.c_sim.seed);
+end
 
 % Draw responses
 n = size(infStates,1);

@@ -50,14 +50,39 @@ rngSeed = rng();
 
 
 % display
-fprintf('\n========================================================\n')
-fprintf('Regression dynamic causal modeling (rDCM) \n')
-fprintf('========================================================\n\n')
+if ( ~isfield(DCM,'M') || ~isfield(DCM.M,'noprint') || ~DCM.M.noprint )
+    fprintf('\n========================================================\n')
+    fprintf('Regression dynamic causal modeling (rDCM) \n')
+    fprintf('========================================================\n\n')
+end
 
 
 % load the DCM
 if ~isstruct(DCM)
     DCM = load(DCM);
+end
+
+
+% get time
+currentTimer = tic;
+
+
+% check for endogenous DCMs, with no exogenous driving effects
+if ( ~isfield(DCM,'c') || isempty(DCM.c) || ~isfield(DCM,'U') || isempty(DCM.U.u) )
+    
+    % specify empty driving input
+    DCM.U.u     = zeros(size(DCM.Y.y,1)*16, 1);
+    DCM.U.name  = {'null'};
+    DCM.U.dt    = DCM.Y.dt/16;
+    
+    % specify effective connectivity matrices
+    DCM.b = zeros(DCM.n, DCM.n, size(DCM.U.u,2));
+    DCM.c = zeros(DCM.n, size(DCM.U.u,2));
+    DCM.d = zeros(DCM.n, DCM.n, 0);
+    
+    % no inputs - don't filter frequencies
+    options.filter_str = 0;
+    
 end
 
 
@@ -70,7 +95,9 @@ options = tapas_rdcm_set_options(DCM, options, type);
 
 
 % display start
-fprintf('Run model inversion\n')
+if ( ~isfield(DCM,'M') || ~isfield(DCM.M,'noprint') || ~DCM.M.noprint )
+    fprintf('Run model inversion\n')
+end
 
 
 % evaluate results (model inversion)
@@ -83,7 +110,7 @@ elseif ( methods == 2 )
     
     % specify the default grid for optimizing sparsity hyperparameter p0
     if ( ~isfield(options,'p0_all') )
-        options.p0_all	= 0.05:0.05:0.95;
+        options.p0_all = 0.05:0.05:0.95;
     end
     
     % result array for all p0
@@ -96,6 +123,7 @@ elseif ( methods == 2 )
     % prune driving inputs or not
     if ( isfield(options,'restrictInputs') ), args.restrictInputs = options.restrictInputs; end
     
+    
     % iterate over p0 values
     for p0_counter = 1:length(options.p0_all)
         
@@ -105,19 +133,28 @@ elseif ( methods == 2 )
         % specify the number of permutations (per brain region)
         if ( isfield(options,'iter') ), args.iter = options.iter; end
         
+        % specify whether to inform p0 (e.g., by anatomical information)
+        if ( isfield(options,'p0_inform') ), args.p0_inform = options.p0_inform; end
+        
+        % output progress of regions
+        if ( length(options.p0_all) ~= 1 ), args.verbose = 0; else, args.verbose = 1; end
+        
         % output progress
-        msg = sprintf('Processing p0: %d/%d', p0_counter, length(options.p0_all));
-        fprintf([reverseStr, msg]);
-        reverseStr = repmat(sprintf('\b'), 1, length(msg));
+        if ( ~isfield(DCM,'M') || ~isfield(DCM.M,'noprint') || ~DCM.M.noprint )
+            msg = sprintf('Processing p0: %d/%d', p0_counter, length(options.p0_all));
+            fprintf([reverseStr, msg]);
+            reverseStr = repmat(sprintf('\b'), 1, length(msg));
+        end
         
         % rDCM (with sparsity constraints)
-         output_temp            = tapas_rdcm_sparse(DCM, X, Y, args);
-         output_all{p0_counter} = output_temp{1};
+        output_temp	= tapas_rdcm_sparse(DCM, X, Y, args);
+        output_all{p0_counter} = output_temp{1};
         
         % get the negative free energy
         F_all(p0_counter) = output_all{p0_counter}.logF;
         
     end
+    
     
     % find optimal hyperparameter settings (p0)
     [~, F_max_ind] = max(F_all);
@@ -127,11 +164,21 @@ elseif ( methods == 2 )
     
 end
 
+
+% output elapsed time
+time_rDCM_VBinv = toc(currentTimer);
+
+
 % display finalizing
-fprintf('\nFinalize results\n')
+if ( ~isfield(DCM,'M') || ~isfield(DCM.M,'noprint') || ~DCM.M.noprint )
+    fprintf('\nFinalize results\n')
+end
 
 % evaluate statistics and predicted signal
 output = tapas_rdcm_compute_statistics(DCM, output, options);
+
+% store the run time
+output.time.time_rDCM_VBinv = time_rDCM_VBinv;
 
 % store the random number seed and the version number
 output.rngSeed = rngSeed;
