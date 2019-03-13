@@ -26,6 +26,7 @@ TAPAS toolbox
     https://doi.org/10.1016/j.neuroimage.2018.05.058
 
 ### Changed
+- New version of the HGF toolbox (v5.3). Details in tapas/HGF/README.md
 - New version of the rDCM toolbox (v1.1). Details in tapas/rDCM/CHANGELOG.md.
 - Huge: Improved documentation.
 - README.md to include reference to CONTRIBUTING.md and explanation of CLA
