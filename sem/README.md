@@ -20,7 +20,7 @@
 
 ## Quick start
 
-We have a short video tutorial [here](https://youtu.be/4_g58pOYjX8).
+We have a short video tutorial [here](https://youtu.be/XpTMrWBG_nw).
 
 [SERIA](http://www.biorxiv.org/content/early/2017/06/08/109090)
 is a formal statistical model of the probability of
@@ -208,6 +208,8 @@ a single vector, we need a matrix that enforces that
 the entries 9 to 11 are equal to the entries 20 to 22. Note that this implies
 that the model has effectively 19, and not 22 parameters. This can be 
 accomplished as shown below.
+
+<img src="misc/constraint_matrix.png" width="300" align="right"/>
 
 ```matlab
 K>>J = [eye(19);
