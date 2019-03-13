@@ -1,8 +1,10 @@
-function [logp, yhat, res] = tapas_softmax(r, infStates, ptrans)
+function [logp, yhat, res] = tapas_softmax_wld(r, infStates, ptrans)
 % Calculates the log-probability of responses under the softmax model
+% with phasic volatility exp(mu3) as the decision temperature and parameters
+% accounting for win- and loss-distortion of state values.
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2013-2019 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2019 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -17,6 +19,10 @@ end
 
 % Transform beta to its native space
 be = exp(ptrans(1));
+
+% Win- and loss-distortion parameters
+la_wd = ptrans(1);
+la_ld = ptrans(2);
 
 % Initialize returned log-probabilities, predictions,
 % and residuals as NaNs so that NaN is returned for all
@@ -38,19 +44,50 @@ nc = size(infStates,3);
 % Belief trajectories at 1st level
 states = squeeze(infStates(:,1,:,pop));
 
+% Inputs
+u = r.u(:,1);
+
 % Responses
 y = r.y(:,1);
 
-% Weed irregular trials out from inferred states and responses
+% Weed irregular trials out from inferred states, inputs, and responses
 states(r.irr,:) = [];
+u(r.irr) = [];
 y(r.irr) = [];
 
+% Choice matrix Y corresponding to states
+Y = zeros(size(states));
+Y(sub2ind(size(Y), 1:size(Y,1), y')) = 1;
+
+% Choice on previous trial
+Yprev = Y;
+Yprev = [zeros(1,size(Yprev,2)); Yprev];
+Yprev(end,:) = [];
+
+% Wins on previous trial
+wprev = u;
+wprev = [0; wprev];
+wprev(end) = [];
+
+% Losses on previous trial
+lprev = 1 - wprev;
+lprev(1) = 0;
+
+% In matrix form corresponding to states
+Wprev = Yprev;
+Wprev(find(lprev),:) = 0;
+Lprev = Yprev;
+Lprev(find(wprev),:) = 0;
+
+% Win- and loss-distortion
+states = states + la_wd*Wprev + la_ld*Lprev;
+
 % Partition functions
-Z = sum(exp(be*states),2);
+Z = sum(exp(be.*states),2);
 Z = repmat(Z,1,nc);
 
 % Softmax probabilities
-prob = exp(be*states)./Z;
+prob = exp(be.*states)./Z;
 
 % Extract probabilities of chosen options
 probc = prob(sub2ind(size(prob), 1:length(y), y'));

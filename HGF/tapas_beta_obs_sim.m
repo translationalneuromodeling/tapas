@@ -30,7 +30,11 @@ al = mu.*nu;
 be = nu - al;
 
 % Initialize random number generator
-rng('shuffle');
+if isnan(r.c_sim.seed)
+    rng('shuffle');
+else
+    rng(r.c_sim.seed);
+end
 
 % Simulate
 y = betarnd(al, be);
