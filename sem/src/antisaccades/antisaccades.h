@@ -352,6 +352,13 @@ seria_summary_abstract(SERIA_PARAMETERS *params, SERIA_SUMMARY *summary);
 // params       -- Parameters of the seria model.
 // summary      -- Output structure containing the relevant parameters.
 
+int
+prosa_summary_abstract(PROSA_PARAMETERS *params, PROSA_SUMMARY *summary);
+// Summary of the parameters.
+//
+// params       -- Parameters of the prosa model.
+// summary      -- Output structure containing the relevant parameters.
+
 
 // Models
 
