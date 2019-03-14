@@ -96,7 +96,6 @@ cdef wrapper_reparametrize_seria(
 
     return ntheta
 
-
 cdef wrapper_reparametrize_prosa(
         np.ndarray[np.float64_t, ndim=1, mode="c"] theta,
         FILL_PARAMETERS_PROSA fparam):
@@ -118,6 +117,70 @@ cdef wrapper_reparametrize_prosa(
         'p0' : cparams[0].p0}
 
     return ntheta
+
+
+cdef wrapper_summaries_seria(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta,
+        FILL_PARAMETERS_SERIA f_init_parameters):
+
+    # C struct with summary
+    cdef SERIA_SUMMARY c_summary[1]
+    # C struct with parameters
+    cdef SERIA_PARAMETERS c_params[1]
+
+    assert len(theta) == DIM_SERIA_THETA, 'Please check len(theta)'
+   
+    # Initilize the parametes 
+    f_init_parameters(<np.float64_t *> theta.data, c_params)
+
+    # Fill the summary
+    seria_summary_abstract(c_params, c_summary)
+
+    # Python dictionary with the summary
+    p_summary = {
+        'late_pro_rt' : c_summary[0].late_pro_rt,
+        'anti_rt' : c_summary[0].anti_rt,
+        'inhib_fail_rt' : c_summary[0].inhib_fail_rt,
+        'inhib_fail_prob' : c_summary[0].inhib_fail_prob,
+        'late_pro_prob' : c_summary[0].late_pro_prob,
+        'predicted_pro_prob' : c_summary[0].predicted_pro_prob,
+        'predicted_pro_rt' : c_summary[0].predicted_pro_rt,
+        'predicted_anti_prob' : c_summary[0].predicted_anti_prob,
+        'predicted_anti_rt' : c_summary[0].predicted_anti_rt,
+        }
+
+    return p_summary
+
+
+cdef wrapper_summaries_prosa(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta,
+        FILL_PARAMETERS_PROSA f_init_parameters):
+
+    # C struct with summary
+    cdef PROSA_SUMMARY c_summary[1]
+    # C struct with parameters
+    cdef PROSA_PARAMETERS c_params[1]
+
+    assert len(theta) == DIM_PROSA_THETA, 'Please check len(theta)'
+   
+    # Initilize the parametes 
+    f_init_parameters(<np.float64_t *> theta.data, c_params)
+
+    # Fill the summary
+    prosa_summary_abstract(c_params, c_summary)
+
+    # Python dictionary with the summary
+    p_summary = {
+        'anti_rt' : c_summary[0].anti_rt,
+        'inhib_fail_rt' : c_summary[0].inhib_fail_rt,
+        'inhib_fail_prob' : c_summary[0].inhib_fail_prob,
+        'predicted_pro_prob' : c_summary[0].predicted_pro_prob,
+        'predicted_pro_rt' : c_summary[0].predicted_pro_rt,
+        'predicted_anti_prob' : c_summary[0].predicted_anti_prob,
+        'predicted_anti_rt' : c_summary[0].predicted_anti_rt,
+        }
+
+    return p_summary
 
 # ===========================================================================
 
