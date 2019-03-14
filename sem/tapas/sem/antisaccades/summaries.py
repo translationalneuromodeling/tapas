@@ -84,7 +84,7 @@ class SummarySeria(SummaryStats):
         return None
 
 
-class SummarySeriaInvgamma(SummaryDora):
+class SummarySeriaInvgamma(SummarySeria):
 
     def __int__(self, *args, **kargs):
 
@@ -93,7 +93,7 @@ class SummarySeriaInvgamma(SummaryDora):
         return
 
 
-class SummarySeriaMixedgamma(SummaryDora):
+class SummarySeriaMixedgamma(SummarySeria):
     """Summary of the DORA model using the mixed gamma combination."""
 
     def __int__(self, *args, **kargs):
@@ -164,7 +164,7 @@ class SummarySeriaMixedgamma(SummaryDora):
         return results
 
 
-class SummarySeriaLognorm(SummaryDora):
+class SummarySeriaLognorm(SummarySeria):
     """Summary of the DORA model using the mixed gamma combination."""
 
     def __int__(self, *args, **kargs):
