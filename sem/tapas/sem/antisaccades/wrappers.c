@@ -524,6 +524,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include <stdio.h>
 #include "numpy/arrayobject.h"
 #include "numpy/ufuncobject.h"
+#include "gsl/gsl_errno.h"
 #include "src/antisaccades/antisaccades.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -985,7 +986,7 @@ typedef npy_longdouble __pyx_t_5numpy_longdouble_t;
  * DTYPE = np.float
  * ctypedef np.float_t DTYPE_t             # <<<<<<<<<<<<<<
  * 
- * cdef extern from "src/antisaccades/antisaccades.h":
+ * cdef extern from "gsl/gsl_errno.h":
  */
 typedef __pyx_t_5numpy_float_t __pyx_t_5tapas_3sem_12antisaccades_8wrappers_DTYPE_t;
 /* Declarations.proto */
@@ -3033,132 +3034,150 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_se
  *     # Initilize the parametes
  *     f_init_parameters(<np.float64_t *> theta.data, c_params)             # <<<<<<<<<<<<<<
  * 
- *     # Fill the summary
+ *     # Otherwise python goes crazy
  */
   __pyx_v_f_init_parameters(((__pyx_t_5numpy_float64_t *)__pyx_v_theta->data), __pyx_v_c_params);
 
   /* "tapas/sem/antisaccades/wrappers.pyx":137
  * 
+ *     # Otherwise python goes crazy
+ *     gsl_set_error_handler_off()             # <<<<<<<<<<<<<<
+ * 
+ *     # Fill the summary
+ */
+  gsl_set_error_handler_off();
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":140
+ * 
  *     # Fill the summary
  *     seria_summary_abstract(c_params, c_summary)             # <<<<<<<<<<<<<<
  * 
- *     # Python dictionary with the summary
+ *     # Turn it on again
  */
   seria_summary_abstract(__pyx_v_c_params, __pyx_v_c_summary);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":141
+  /* "tapas/sem/antisaccades/wrappers.pyx":143
+ * 
+ *     # Turn it on again
+ *     gsl_set_error_handler(NULL)             # <<<<<<<<<<<<<<
+ * 
+ *     # Python dictionary with the summary
+ */
+  gsl_set_error_handler(NULL);
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":147
  *     # Python dictionary with the summary
  *     p_summary = {
  *         'late_pro_rt' : c_summary[0].late_pro_rt,             # <<<<<<<<<<<<<<
  *         'anti_rt' : c_summary[0].anti_rt,
  *         'inhib_fail_rt' : c_summary[0].inhib_fail_rt,
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(9); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(9); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).late_pro_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).late_pro_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_late_pro_rt, __pyx_t_3) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_late_pro_rt, __pyx_t_3) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":142
+  /* "tapas/sem/antisaccades/wrappers.pyx":148
  *     p_summary = {
  *         'late_pro_rt' : c_summary[0].late_pro_rt,
  *         'anti_rt' : c_summary[0].anti_rt,             # <<<<<<<<<<<<<<
  *         'inhib_fail_rt' : c_summary[0].inhib_fail_rt,
  *         'inhib_fail_prob' : c_summary[0].inhib_fail_prob,
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).anti_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).anti_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 148, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_anti_rt, __pyx_t_3) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_anti_rt, __pyx_t_3) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":143
+  /* "tapas/sem/antisaccades/wrappers.pyx":149
  *         'late_pro_rt' : c_summary[0].late_pro_rt,
  *         'anti_rt' : c_summary[0].anti_rt,
  *         'inhib_fail_rt' : c_summary[0].inhib_fail_rt,             # <<<<<<<<<<<<<<
  *         'inhib_fail_prob' : c_summary[0].inhib_fail_prob,
  *         'late_pro_prob' : c_summary[0].late_pro_prob,
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).inhib_fail_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 143, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).inhib_fail_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_inhib_fail_rt, __pyx_t_3) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_inhib_fail_rt, __pyx_t_3) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":144
+  /* "tapas/sem/antisaccades/wrappers.pyx":150
  *         'anti_rt' : c_summary[0].anti_rt,
  *         'inhib_fail_rt' : c_summary[0].inhib_fail_rt,
  *         'inhib_fail_prob' : c_summary[0].inhib_fail_prob,             # <<<<<<<<<<<<<<
  *         'late_pro_prob' : c_summary[0].late_pro_prob,
  *         'predicted_pro_prob' : c_summary[0].predicted_pro_prob,
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).inhib_fail_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).inhib_fail_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_inhib_fail_prob, __pyx_t_3) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_inhib_fail_prob, __pyx_t_3) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":145
+  /* "tapas/sem/antisaccades/wrappers.pyx":151
  *         'inhib_fail_rt' : c_summary[0].inhib_fail_rt,
  *         'inhib_fail_prob' : c_summary[0].inhib_fail_prob,
  *         'late_pro_prob' : c_summary[0].late_pro_prob,             # <<<<<<<<<<<<<<
  *         'predicted_pro_prob' : c_summary[0].predicted_pro_prob,
  *         'predicted_pro_rt' : c_summary[0].predicted_pro_rt,
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).late_pro_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).late_pro_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 151, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_late_pro_prob, __pyx_t_3) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_late_pro_prob, __pyx_t_3) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":146
+  /* "tapas/sem/antisaccades/wrappers.pyx":152
  *         'inhib_fail_prob' : c_summary[0].inhib_fail_prob,
  *         'late_pro_prob' : c_summary[0].late_pro_prob,
  *         'predicted_pro_prob' : c_summary[0].predicted_pro_prob,             # <<<<<<<<<<<<<<
  *         'predicted_pro_rt' : c_summary[0].predicted_pro_rt,
  *         'predicted_anti_prob' : c_summary[0].predicted_anti_prob,
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_pro_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 146, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_pro_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_pro_prob, __pyx_t_3) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_pro_prob, __pyx_t_3) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":147
+  /* "tapas/sem/antisaccades/wrappers.pyx":153
  *         'late_pro_prob' : c_summary[0].late_pro_prob,
  *         'predicted_pro_prob' : c_summary[0].predicted_pro_prob,
  *         'predicted_pro_rt' : c_summary[0].predicted_pro_rt,             # <<<<<<<<<<<<<<
  *         'predicted_anti_prob' : c_summary[0].predicted_anti_prob,
  *         'predicted_anti_rt' : c_summary[0].predicted_anti_rt,
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_pro_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 147, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_pro_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 153, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_pro_rt, __pyx_t_3) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_pro_rt, __pyx_t_3) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":148
+  /* "tapas/sem/antisaccades/wrappers.pyx":154
  *         'predicted_pro_prob' : c_summary[0].predicted_pro_prob,
  *         'predicted_pro_rt' : c_summary[0].predicted_pro_rt,
  *         'predicted_anti_prob' : c_summary[0].predicted_anti_prob,             # <<<<<<<<<<<<<<
  *         'predicted_anti_rt' : c_summary[0].predicted_anti_rt,
  *         }
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_anti_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_anti_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 154, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_anti_prob, __pyx_t_3) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_anti_prob, __pyx_t_3) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":149
+  /* "tapas/sem/antisaccades/wrappers.pyx":155
  *         'predicted_pro_rt' : c_summary[0].predicted_pro_rt,
  *         'predicted_anti_prob' : c_summary[0].predicted_anti_prob,
  *         'predicted_anti_rt' : c_summary[0].predicted_anti_rt,             # <<<<<<<<<<<<<<
  *         }
  * 
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_anti_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_anti_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 155, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_anti_rt, __pyx_t_3) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_anti_rt, __pyx_t_3) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_p_summary = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":152
+  /* "tapas/sem/antisaccades/wrappers.pyx":158
  *         }
  * 
  *     return p_summary             # <<<<<<<<<<<<<<
@@ -3200,7 +3219,7 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_se
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":155
+/* "tapas/sem/antisaccades/wrappers.pyx":161
  * 
  * 
  * cdef wrapper_summary_prosa(             # <<<<<<<<<<<<<<
@@ -3226,11 +3245,11 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_pr
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 155, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 161, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":164
+  /* "tapas/sem/antisaccades/wrappers.pyx":170
  *     cdef PROSA_PARAMETERS c_params[1]
  * 
  *     assert len(theta) == DIM_PROSA_THETA, 'Please check len(theta)'             # <<<<<<<<<<<<<<
@@ -3239,121 +3258,139 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_pr
  */
   #ifndef CYTHON_WITHOUT_ASSERTIONS
   if (unlikely(!Py_OptimizeFlag)) {
-    __pyx_t_1 = PyObject_Length(((PyObject *)__pyx_v_theta)); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 164, __pyx_L1_error)
+    __pyx_t_1 = PyObject_Length(((PyObject *)__pyx_v_theta)); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 170, __pyx_L1_error)
     if (unlikely(!((__pyx_t_1 == DIM_PROSA_THETA) != 0))) {
       PyErr_SetObject(PyExc_AssertionError, __pyx_kp_s_Please_check_len_theta);
-      __PYX_ERR(0, 164, __pyx_L1_error)
+      __PYX_ERR(0, 170, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":167
+  /* "tapas/sem/antisaccades/wrappers.pyx":173
  * 
  *     # Initilize the parametes
  *     f_init_parameters(<np.float64_t *> theta.data, c_params)             # <<<<<<<<<<<<<<
  * 
- *     # Fill the summary
+ *     # Otherwise python goes crazy
  */
   __pyx_v_f_init_parameters(((__pyx_t_5numpy_float64_t *)__pyx_v_theta->data), __pyx_v_c_params);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":170
+  /* "tapas/sem/antisaccades/wrappers.pyx":176
+ * 
+ *     # Otherwise python goes crazy
+ *     gsl_set_error_handler_off()             # <<<<<<<<<<<<<<
+ * 
+ *     # Fill the summary
+ */
+  gsl_set_error_handler_off();
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":179
  * 
  *     # Fill the summary
  *     prosa_summary_abstract(c_params, c_summary)             # <<<<<<<<<<<<<<
  * 
- *     # Python dictionary with the summary
+ *     # Turn it on again
  */
   prosa_summary_abstract(__pyx_v_c_params, __pyx_v_c_summary);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":174
+  /* "tapas/sem/antisaccades/wrappers.pyx":182
+ * 
+ *     # Turn it on again
+ *     gsl_set_error_handler(NULL)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  gsl_set_error_handler(NULL);
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":187
  *     # Python dictionary with the summary
  *     p_summary = {
  *         'anti_rt' : c_summary[0].anti_rt,             # <<<<<<<<<<<<<<
  *         'inhib_fail_rt' : c_summary[0].inhib_fail_rt,
  *         'inhib_fail_prob' : c_summary[0].inhib_fail_prob,
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 174, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).anti_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 174, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).anti_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_anti_rt, __pyx_t_3) < 0) __PYX_ERR(0, 174, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_anti_rt, __pyx_t_3) < 0) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":175
+  /* "tapas/sem/antisaccades/wrappers.pyx":188
  *     p_summary = {
  *         'anti_rt' : c_summary[0].anti_rt,
  *         'inhib_fail_rt' : c_summary[0].inhib_fail_rt,             # <<<<<<<<<<<<<<
  *         'inhib_fail_prob' : c_summary[0].inhib_fail_prob,
  *         'predicted_pro_prob' : c_summary[0].predicted_pro_prob,
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).inhib_fail_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 175, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).inhib_fail_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 188, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_inhib_fail_rt, __pyx_t_3) < 0) __PYX_ERR(0, 174, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_inhib_fail_rt, __pyx_t_3) < 0) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":176
+  /* "tapas/sem/antisaccades/wrappers.pyx":189
  *         'anti_rt' : c_summary[0].anti_rt,
  *         'inhib_fail_rt' : c_summary[0].inhib_fail_rt,
  *         'inhib_fail_prob' : c_summary[0].inhib_fail_prob,             # <<<<<<<<<<<<<<
  *         'predicted_pro_prob' : c_summary[0].predicted_pro_prob,
  *         'predicted_pro_rt' : c_summary[0].predicted_pro_rt,
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).inhib_fail_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 176, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).inhib_fail_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 189, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_inhib_fail_prob, __pyx_t_3) < 0) __PYX_ERR(0, 174, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_inhib_fail_prob, __pyx_t_3) < 0) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":177
+  /* "tapas/sem/antisaccades/wrappers.pyx":190
  *         'inhib_fail_rt' : c_summary[0].inhib_fail_rt,
  *         'inhib_fail_prob' : c_summary[0].inhib_fail_prob,
  *         'predicted_pro_prob' : c_summary[0].predicted_pro_prob,             # <<<<<<<<<<<<<<
  *         'predicted_pro_rt' : c_summary[0].predicted_pro_rt,
  *         'predicted_anti_prob' : c_summary[0].predicted_anti_prob,
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_pro_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 177, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_pro_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_pro_prob, __pyx_t_3) < 0) __PYX_ERR(0, 174, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_pro_prob, __pyx_t_3) < 0) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":178
+  /* "tapas/sem/antisaccades/wrappers.pyx":191
  *         'inhib_fail_prob' : c_summary[0].inhib_fail_prob,
  *         'predicted_pro_prob' : c_summary[0].predicted_pro_prob,
  *         'predicted_pro_rt' : c_summary[0].predicted_pro_rt,             # <<<<<<<<<<<<<<
  *         'predicted_anti_prob' : c_summary[0].predicted_anti_prob,
  *         'predicted_anti_rt' : c_summary[0].predicted_anti_rt,
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_pro_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 178, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_pro_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 191, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_pro_rt, __pyx_t_3) < 0) __PYX_ERR(0, 174, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_pro_rt, __pyx_t_3) < 0) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":179
+  /* "tapas/sem/antisaccades/wrappers.pyx":192
  *         'predicted_pro_prob' : c_summary[0].predicted_pro_prob,
  *         'predicted_pro_rt' : c_summary[0].predicted_pro_rt,
  *         'predicted_anti_prob' : c_summary[0].predicted_anti_prob,             # <<<<<<<<<<<<<<
  *         'predicted_anti_rt' : c_summary[0].predicted_anti_rt,
  *         }
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_anti_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 179, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_anti_prob); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_anti_prob, __pyx_t_3) < 0) __PYX_ERR(0, 174, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_anti_prob, __pyx_t_3) < 0) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":180
+  /* "tapas/sem/antisaccades/wrappers.pyx":193
  *         'predicted_pro_rt' : c_summary[0].predicted_pro_rt,
  *         'predicted_anti_prob' : c_summary[0].predicted_anti_prob,
  *         'predicted_anti_rt' : c_summary[0].predicted_anti_rt,             # <<<<<<<<<<<<<<
  *         }
  * 
  */
-  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_anti_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 180, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_c_summary[0]).predicted_anti_rt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 193, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_anti_rt, __pyx_t_3) < 0) __PYX_ERR(0, 174, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_predicted_anti_rt, __pyx_t_3) < 0) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_p_summary = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":183
+  /* "tapas/sem/antisaccades/wrappers.pyx":196
  *         }
  * 
  *     return p_summary             # <<<<<<<<<<<<<<
@@ -3365,7 +3402,7 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_pr
   __pyx_r = __pyx_v_p_summary;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":155
+  /* "tapas/sem/antisaccades/wrappers.pyx":161
  * 
  * 
  * cdef wrapper_summary_prosa(             # <<<<<<<<<<<<<<
@@ -3395,7 +3432,7 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_pr
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":187
+/* "tapas/sem/antisaccades/wrappers.pyx":200
  * # ===========================================================================
  * 
  * def p_seria_model_n_states_gamma(             # <<<<<<<<<<<<<<
@@ -3441,23 +3478,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_1p_seria_model_n_
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_gamma", 1, 4, 4, 1); __PYX_ERR(0, 187, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_gamma", 1, 4, 4, 1); __PYX_ERR(0, 200, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_gamma", 1, 4, 4, 2); __PYX_ERR(0, 187, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_gamma", 1, 4, 4, 2); __PYX_ERR(0, 200, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_gamma", 1, 4, 4, 3); __PYX_ERR(0, 187, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_gamma", 1, 4, 4, 3); __PYX_ERR(0, 200, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_gamma") < 0)) __PYX_ERR(0, 187, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_gamma") < 0)) __PYX_ERR(0, 200, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -3474,16 +3511,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_1p_seria_model_n_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_gamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 187, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_gamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 200, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_model_n_states_gamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 188, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 189, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 190, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 191, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 201, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 202, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 203, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 204, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_p_seria_model_n_states_gamma(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -3526,26 +3563,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_p_seria_model_n_s
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 187, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 200, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 187, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 200, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 187, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 200, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 187, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 200, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":193
+  /* "tapas/sem/antisaccades/wrappers.pyx":206
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_gamma,             # <<<<<<<<<<<<<<
@@ -3554,20 +3591,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_p_seria_model_n_s
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":194
+  /* "tapas/sem/antisaccades/wrappers.pyx":207
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_gamma,
  *         seria_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_gamma, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 193, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_gamma, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 206, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":187
+  /* "tapas/sem/antisaccades/wrappers.pyx":200
  * # ===========================================================================
  * 
  * def p_seria_model_n_states_gamma(             # <<<<<<<<<<<<<<
@@ -3601,7 +3638,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_p_seria_model_n_s
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":197
+/* "tapas/sem/antisaccades/wrappers.pyx":210
  * 
  * 
  * def p_reparametrize_seria_gamma(             # <<<<<<<<<<<<<<
@@ -3616,7 +3653,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_3p_reparametrize_
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_seria_gamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 198, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 211, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_2p_reparametrize_seria_gamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -3642,23 +3679,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_2p_reparametrize_
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 197, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 210, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":200
+  /* "tapas/sem/antisaccades/wrappers.pyx":213
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_gamma)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_gamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_gamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 213, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":202
+  /* "tapas/sem/antisaccades/wrappers.pyx":215
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_gamma)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -3670,7 +3707,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_2p_reparametrize_
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":197
+  /* "tapas/sem/antisaccades/wrappers.pyx":210
  * 
  * 
  * def p_reparametrize_seria_gamma(             # <<<<<<<<<<<<<<
@@ -3699,7 +3736,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_2p_reparametrize_
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":204
+/* "tapas/sem/antisaccades/wrappers.pyx":217
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_gamma(             # <<<<<<<<<<<<<<
@@ -3745,23 +3782,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_5p_seria_early_ll
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_gamma", 1, 4, 4, 1); __PYX_ERR(0, 204, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_gamma", 1, 4, 4, 1); __PYX_ERR(0, 217, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_gamma", 1, 4, 4, 2); __PYX_ERR(0, 204, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_gamma", 1, 4, 4, 2); __PYX_ERR(0, 217, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_gamma", 1, 4, 4, 3); __PYX_ERR(0, 204, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_gamma", 1, 4, 4, 3); __PYX_ERR(0, 217, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_early_llh_n_states_gamma") < 0)) __PYX_ERR(0, 204, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_early_llh_n_states_gamma") < 0)) __PYX_ERR(0, 217, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -3778,16 +3815,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_5p_seria_early_ll
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_gamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 204, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_gamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 217, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_early_llh_n_states_gamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 205, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 206, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 207, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 208, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 218, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 219, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 220, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 221, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_4p_seria_early_llh_n_states_gamma(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -3830,26 +3867,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_4p_seria_early_ll
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 204, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 217, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 204, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 217, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 204, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 217, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 204, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 217, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":210
+  /* "tapas/sem/antisaccades/wrappers.pyx":223
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_gamma,             # <<<<<<<<<<<<<<
@@ -3858,20 +3895,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_4p_seria_early_ll
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":211
+  /* "tapas/sem/antisaccades/wrappers.pyx":224
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_gamma,
  *         seria_early_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * def p_seria_model_n_states_invgamma(
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_gamma, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 210, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_gamma, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 223, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":204
+  /* "tapas/sem/antisaccades/wrappers.pyx":217
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_gamma(             # <<<<<<<<<<<<<<
@@ -3905,7 +3942,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_4p_seria_early_ll
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":213
+/* "tapas/sem/antisaccades/wrappers.pyx":226
  *         seria_early_llh_abstract, t, a, u, theta)
  * 
  * def p_seria_model_n_states_invgamma(             # <<<<<<<<<<<<<<
@@ -3951,23 +3988,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_7p_seria_model_n_
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_invgamma", 1, 4, 4, 1); __PYX_ERR(0, 213, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_invgamma", 1, 4, 4, 1); __PYX_ERR(0, 226, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_invgamma", 1, 4, 4, 2); __PYX_ERR(0, 213, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_invgamma", 1, 4, 4, 2); __PYX_ERR(0, 226, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_invgamma", 1, 4, 4, 3); __PYX_ERR(0, 213, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_invgamma", 1, 4, 4, 3); __PYX_ERR(0, 226, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_invgamma") < 0)) __PYX_ERR(0, 213, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_invgamma") < 0)) __PYX_ERR(0, 226, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -3984,16 +4021,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_7p_seria_model_n_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_invgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 213, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_invgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 226, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_model_n_states_invgamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 214, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 215, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 216, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 217, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 227, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 228, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 229, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 230, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_6p_seria_model_n_states_invgamma(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -4036,26 +4073,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_6p_seria_model_n_
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 213, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 226, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 213, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 226, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 213, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 226, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 213, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 226, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":219
+  /* "tapas/sem/antisaccades/wrappers.pyx":232
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_invgamma,             # <<<<<<<<<<<<<<
@@ -4064,20 +4101,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_6p_seria_model_n_
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":220
+  /* "tapas/sem/antisaccades/wrappers.pyx":233
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_invgamma,
  *         seria_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_invgamma, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 219, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_invgamma, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 232, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":213
+  /* "tapas/sem/antisaccades/wrappers.pyx":226
  *         seria_early_llh_abstract, t, a, u, theta)
  * 
  * def p_seria_model_n_states_invgamma(             # <<<<<<<<<<<<<<
@@ -4111,7 +4148,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_6p_seria_model_n_
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":223
+/* "tapas/sem/antisaccades/wrappers.pyx":236
  * 
  * 
  * def p_reparametrize_seria_invgamma(             # <<<<<<<<<<<<<<
@@ -4126,7 +4163,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_9p_reparametrize_
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_seria_invgamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 224, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 237, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_8p_reparametrize_seria_invgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -4152,23 +4189,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_8p_reparametrize_
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 223, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 236, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":226
+  /* "tapas/sem/antisaccades/wrappers.pyx":239
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_invgamma)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_invgamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_invgamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 239, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":228
+  /* "tapas/sem/antisaccades/wrappers.pyx":241
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_invgamma)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -4180,7 +4217,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_8p_reparametrize_
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":223
+  /* "tapas/sem/antisaccades/wrappers.pyx":236
  * 
  * 
  * def p_reparametrize_seria_invgamma(             # <<<<<<<<<<<<<<
@@ -4209,7 +4246,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_8p_reparametrize_
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":230
+/* "tapas/sem/antisaccades/wrappers.pyx":243
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_invgamma(             # <<<<<<<<<<<<<<
@@ -4255,23 +4292,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_11p_seria_early_l
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_invgamma", 1, 4, 4, 1); __PYX_ERR(0, 230, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_invgamma", 1, 4, 4, 1); __PYX_ERR(0, 243, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_invgamma", 1, 4, 4, 2); __PYX_ERR(0, 230, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_invgamma", 1, 4, 4, 2); __PYX_ERR(0, 243, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_invgamma", 1, 4, 4, 3); __PYX_ERR(0, 230, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_invgamma", 1, 4, 4, 3); __PYX_ERR(0, 243, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_early_llh_n_states_invgamma") < 0)) __PYX_ERR(0, 230, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_early_llh_n_states_invgamma") < 0)) __PYX_ERR(0, 243, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -4288,16 +4325,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_11p_seria_early_l
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_invgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 230, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_invgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 243, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_early_llh_n_states_invgamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 231, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 232, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 233, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 234, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 244, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 245, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 246, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 247, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_10p_seria_early_llh_n_states_invgamma(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -4340,26 +4377,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_10p_seria_early_l
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 230, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 243, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 230, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 243, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 230, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 243, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 230, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 243, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":236
+  /* "tapas/sem/antisaccades/wrappers.pyx":249
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_invgamma,             # <<<<<<<<<<<<<<
@@ -4368,20 +4405,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_10p_seria_early_l
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":237
+  /* "tapas/sem/antisaccades/wrappers.pyx":250
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_invgamma,
  *         seria_early_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * ##
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_invgamma, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 236, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_invgamma, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 249, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":230
+  /* "tapas/sem/antisaccades/wrappers.pyx":243
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_invgamma(             # <<<<<<<<<<<<<<
@@ -4415,7 +4452,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_10p_seria_early_l
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":240
+/* "tapas/sem/antisaccades/wrappers.pyx":253
  * ##
  * 
  * def p_seria_model_n_states_mixedgamma(             # <<<<<<<<<<<<<<
@@ -4461,23 +4498,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_13p_seria_model_n
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_mixedgamma", 1, 4, 4, 1); __PYX_ERR(0, 240, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_mixedgamma", 1, 4, 4, 1); __PYX_ERR(0, 253, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_mixedgamma", 1, 4, 4, 2); __PYX_ERR(0, 240, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_mixedgamma", 1, 4, 4, 2); __PYX_ERR(0, 253, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_mixedgamma", 1, 4, 4, 3); __PYX_ERR(0, 240, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_mixedgamma", 1, 4, 4, 3); __PYX_ERR(0, 253, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_mixedgamma") < 0)) __PYX_ERR(0, 240, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_mixedgamma") < 0)) __PYX_ERR(0, 253, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -4494,16 +4531,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_13p_seria_model_n
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_mixedgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 240, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_mixedgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 253, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_model_n_states_mixedgamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 241, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 242, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 243, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 244, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 254, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 255, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 256, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 257, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_12p_seria_model_n_states_mixedgamma(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -4546,26 +4583,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_12p_seria_model_n
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 240, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 253, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 240, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 253, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 240, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 253, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 240, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 253, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":246
+  /* "tapas/sem/antisaccades/wrappers.pyx":259
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_mixedgamma,             # <<<<<<<<<<<<<<
@@ -4574,20 +4611,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_12p_seria_model_n
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":247
+  /* "tapas/sem/antisaccades/wrappers.pyx":260
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_mixedgamma,
  *         seria_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_mixedgamma, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 246, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_mixedgamma, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 259, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":240
+  /* "tapas/sem/antisaccades/wrappers.pyx":253
  * ##
  * 
  * def p_seria_model_n_states_mixedgamma(             # <<<<<<<<<<<<<<
@@ -4621,7 +4658,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_12p_seria_model_n
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":250
+/* "tapas/sem/antisaccades/wrappers.pyx":263
  * 
  * 
  * def p_reparametrize_seria_mixedgamma(             # <<<<<<<<<<<<<<
@@ -4636,7 +4673,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_15p_reparametrize
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_seria_mixedgamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 251, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 264, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_14p_reparametrize_seria_mixedgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -4662,23 +4699,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_14p_reparametrize
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 250, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 263, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":253
+  /* "tapas/sem/antisaccades/wrappers.pyx":266
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_mixedgamma)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_mixedgamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 253, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_mixedgamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 266, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":255
+  /* "tapas/sem/antisaccades/wrappers.pyx":268
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_mixedgamma)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -4690,7 +4727,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_14p_reparametrize
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":250
+  /* "tapas/sem/antisaccades/wrappers.pyx":263
  * 
  * 
  * def p_reparametrize_seria_mixedgamma(             # <<<<<<<<<<<<<<
@@ -4719,7 +4756,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_14p_reparametrize
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":257
+/* "tapas/sem/antisaccades/wrappers.pyx":270
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_mixedgamma(             # <<<<<<<<<<<<<<
@@ -4765,23 +4802,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_17p_seria_early_l
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_mixedgamma", 1, 4, 4, 1); __PYX_ERR(0, 257, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_mixedgamma", 1, 4, 4, 1); __PYX_ERR(0, 270, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_mixedgamma", 1, 4, 4, 2); __PYX_ERR(0, 257, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_mixedgamma", 1, 4, 4, 2); __PYX_ERR(0, 270, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_mixedgamma", 1, 4, 4, 3); __PYX_ERR(0, 257, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_mixedgamma", 1, 4, 4, 3); __PYX_ERR(0, 270, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_early_llh_n_states_mixedgamma") < 0)) __PYX_ERR(0, 257, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_early_llh_n_states_mixedgamma") < 0)) __PYX_ERR(0, 270, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -4798,16 +4835,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_17p_seria_early_l
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_mixedgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 257, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_mixedgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 270, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_early_llh_n_states_mixedgamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 258, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 259, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 260, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 261, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 271, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 272, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 273, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 274, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_16p_seria_early_llh_n_states_mixedgamma(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -4850,26 +4887,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_16p_seria_early_l
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 257, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 270, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 257, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 270, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 257, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 270, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 257, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 270, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":263
+  /* "tapas/sem/antisaccades/wrappers.pyx":276
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_gamma,             # <<<<<<<<<<<<<<
@@ -4878,20 +4915,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_16p_seria_early_l
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":264
+  /* "tapas/sem/antisaccades/wrappers.pyx":277
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_gamma,
  *         seria_early_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * ##
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_gamma, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_gamma, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 276, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":257
+  /* "tapas/sem/antisaccades/wrappers.pyx":270
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_mixedgamma(             # <<<<<<<<<<<<<<
@@ -4925,7 +4962,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_16p_seria_early_l
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":267
+/* "tapas/sem/antisaccades/wrappers.pyx":280
  * ##
  * 
  * def p_seria_model_n_states_lognorm(             # <<<<<<<<<<<<<<
@@ -4971,23 +5008,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_19p_seria_model_n
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_lognorm", 1, 4, 4, 1); __PYX_ERR(0, 267, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_lognorm", 1, 4, 4, 1); __PYX_ERR(0, 280, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_lognorm", 1, 4, 4, 2); __PYX_ERR(0, 267, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_lognorm", 1, 4, 4, 2); __PYX_ERR(0, 280, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_lognorm", 1, 4, 4, 3); __PYX_ERR(0, 267, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_lognorm", 1, 4, 4, 3); __PYX_ERR(0, 280, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_lognorm") < 0)) __PYX_ERR(0, 267, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_lognorm") < 0)) __PYX_ERR(0, 280, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -5004,16 +5041,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_19p_seria_model_n
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_lognorm", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 267, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_lognorm", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 280, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_model_n_states_lognorm", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 268, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 269, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 270, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 271, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 281, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 282, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 283, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 284, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_18p_seria_model_n_states_lognorm(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -5056,26 +5093,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_18p_seria_model_n
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 267, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 280, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 267, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 280, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 267, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 280, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 267, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 280, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":273
+  /* "tapas/sem/antisaccades/wrappers.pyx":286
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_lognorm,             # <<<<<<<<<<<<<<
@@ -5084,20 +5121,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_18p_seria_model_n
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":274
+  /* "tapas/sem/antisaccades/wrappers.pyx":287
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_lognorm,
  *         seria_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_lognorm, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 273, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_lognorm, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 286, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":267
+  /* "tapas/sem/antisaccades/wrappers.pyx":280
  * ##
  * 
  * def p_seria_model_n_states_lognorm(             # <<<<<<<<<<<<<<
@@ -5131,7 +5168,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_18p_seria_model_n
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":277
+/* "tapas/sem/antisaccades/wrappers.pyx":290
  * 
  * 
  * def p_reparametrize_seria_lognorm(             # <<<<<<<<<<<<<<
@@ -5146,7 +5183,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_21p_reparametrize
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_seria_lognorm (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 278, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 291, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_20p_reparametrize_seria_lognorm(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -5172,23 +5209,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_20p_reparametrize
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 277, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 290, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":280
+  /* "tapas/sem/antisaccades/wrappers.pyx":293
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_lognorm)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_lognorm); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 280, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_lognorm); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 293, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":282
+  /* "tapas/sem/antisaccades/wrappers.pyx":295
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_lognorm)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -5200,7 +5237,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_20p_reparametrize
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":277
+  /* "tapas/sem/antisaccades/wrappers.pyx":290
  * 
  * 
  * def p_reparametrize_seria_lognorm(             # <<<<<<<<<<<<<<
@@ -5229,7 +5266,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_20p_reparametrize
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":284
+/* "tapas/sem/antisaccades/wrappers.pyx":297
  *     return ntheta
  * 
  * def p_seria_ealry_llh_n_states_lognorm(             # <<<<<<<<<<<<<<
@@ -5275,23 +5312,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_23p_seria_ealry_l
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_ealry_llh_n_states_lognorm", 1, 4, 4, 1); __PYX_ERR(0, 284, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_ealry_llh_n_states_lognorm", 1, 4, 4, 1); __PYX_ERR(0, 297, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_ealry_llh_n_states_lognorm", 1, 4, 4, 2); __PYX_ERR(0, 284, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_ealry_llh_n_states_lognorm", 1, 4, 4, 2); __PYX_ERR(0, 297, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_ealry_llh_n_states_lognorm", 1, 4, 4, 3); __PYX_ERR(0, 284, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_ealry_llh_n_states_lognorm", 1, 4, 4, 3); __PYX_ERR(0, 297, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_ealry_llh_n_states_lognorm") < 0)) __PYX_ERR(0, 284, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_ealry_llh_n_states_lognorm") < 0)) __PYX_ERR(0, 297, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -5308,16 +5345,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_23p_seria_ealry_l
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_ealry_llh_n_states_lognorm", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 284, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_ealry_llh_n_states_lognorm", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 297, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_ealry_llh_n_states_lognorm", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 285, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 286, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 287, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 288, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 298, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 299, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 300, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 301, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_22p_seria_ealry_llh_n_states_lognorm(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -5360,26 +5397,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_22p_seria_ealry_l
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 284, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 297, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 284, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 297, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 284, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 297, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 284, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 297, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":290
+  /* "tapas/sem/antisaccades/wrappers.pyx":303
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_lognorm,             # <<<<<<<<<<<<<<
@@ -5388,20 +5425,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_22p_seria_ealry_l
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":291
+  /* "tapas/sem/antisaccades/wrappers.pyx":304
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_lognorm,
  *         seria_early_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * ##
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_lognorm, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_lognorm, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 303, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":284
+  /* "tapas/sem/antisaccades/wrappers.pyx":297
  *     return ntheta
  * 
  * def p_seria_ealry_llh_n_states_lognorm(             # <<<<<<<<<<<<<<
@@ -5435,7 +5472,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_22p_seria_ealry_l
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":294
+/* "tapas/sem/antisaccades/wrappers.pyx":307
  * 
  * ##
  * def p_seria_model_n_states_later(             # <<<<<<<<<<<<<<
@@ -5481,23 +5518,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_25p_seria_model_n
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_later", 1, 4, 4, 1); __PYX_ERR(0, 294, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_later", 1, 4, 4, 1); __PYX_ERR(0, 307, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_later", 1, 4, 4, 2); __PYX_ERR(0, 294, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_later", 1, 4, 4, 2); __PYX_ERR(0, 307, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_later", 1, 4, 4, 3); __PYX_ERR(0, 294, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_later", 1, 4, 4, 3); __PYX_ERR(0, 307, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_later") < 0)) __PYX_ERR(0, 294, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_later") < 0)) __PYX_ERR(0, 307, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -5514,16 +5551,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_25p_seria_model_n
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_later", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 294, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_later", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 307, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_model_n_states_later", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 295, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 296, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 297, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 298, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 308, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 309, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 310, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 311, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_24p_seria_model_n_states_later(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -5566,26 +5603,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_24p_seria_model_n
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 294, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 307, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 294, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 307, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 294, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 307, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 294, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 307, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":300
+  /* "tapas/sem/antisaccades/wrappers.pyx":313
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_later,             # <<<<<<<<<<<<<<
@@ -5594,20 +5631,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_24p_seria_model_n
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":301
+  /* "tapas/sem/antisaccades/wrappers.pyx":314
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_later,
  *         seria_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_later, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_later, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 313, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":294
+  /* "tapas/sem/antisaccades/wrappers.pyx":307
  * 
  * ##
  * def p_seria_model_n_states_later(             # <<<<<<<<<<<<<<
@@ -5641,7 +5678,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_24p_seria_model_n
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":304
+/* "tapas/sem/antisaccades/wrappers.pyx":317
  * 
  * 
  * def p_reparametrize_seria_later(             # <<<<<<<<<<<<<<
@@ -5656,7 +5693,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_27p_reparametrize
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_seria_later (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 305, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 318, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_26p_reparametrize_seria_later(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -5682,23 +5719,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_26p_reparametrize
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 304, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 317, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":307
+  /* "tapas/sem/antisaccades/wrappers.pyx":320
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_later)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_later); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_later); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 320, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":309
+  /* "tapas/sem/antisaccades/wrappers.pyx":322
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_later)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -5710,7 +5747,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_26p_reparametrize
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":304
+  /* "tapas/sem/antisaccades/wrappers.pyx":317
  * 
  * 
  * def p_reparametrize_seria_later(             # <<<<<<<<<<<<<<
@@ -5739,7 +5776,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_26p_reparametrize
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":311
+/* "tapas/sem/antisaccades/wrappers.pyx":324
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_later(             # <<<<<<<<<<<<<<
@@ -5785,23 +5822,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_29p_seria_early_l
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_later", 1, 4, 4, 1); __PYX_ERR(0, 311, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_later", 1, 4, 4, 1); __PYX_ERR(0, 324, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_later", 1, 4, 4, 2); __PYX_ERR(0, 311, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_later", 1, 4, 4, 2); __PYX_ERR(0, 324, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_later", 1, 4, 4, 3); __PYX_ERR(0, 311, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_later", 1, 4, 4, 3); __PYX_ERR(0, 324, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_early_llh_n_states_later") < 0)) __PYX_ERR(0, 311, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_early_llh_n_states_later") < 0)) __PYX_ERR(0, 324, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -5818,16 +5855,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_29p_seria_early_l
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_later", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 311, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_later", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 324, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_early_llh_n_states_later", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 312, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 313, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 314, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 315, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 325, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 326, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 327, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 328, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_28p_seria_early_llh_n_states_later(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -5870,26 +5907,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_28p_seria_early_l
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 311, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 324, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 311, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 324, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 311, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 324, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 311, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 324, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":317
+  /* "tapas/sem/antisaccades/wrappers.pyx":330
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_later,             # <<<<<<<<<<<<<<
@@ -5898,20 +5935,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_28p_seria_early_l
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":318
+  /* "tapas/sem/antisaccades/wrappers.pyx":331
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_later,
  *         seria_early_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * ##
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_later, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 317, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_later, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 330, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":311
+  /* "tapas/sem/antisaccades/wrappers.pyx":324
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_later(             # <<<<<<<<<<<<<<
@@ -5945,7 +5982,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_28p_seria_early_l
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":322
+/* "tapas/sem/antisaccades/wrappers.pyx":335
  * ##
  * 
  * def p_seria_model_n_states_wald(             # <<<<<<<<<<<<<<
@@ -5991,23 +6028,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_31p_seria_model_n
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_wald", 1, 4, 4, 1); __PYX_ERR(0, 322, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_wald", 1, 4, 4, 1); __PYX_ERR(0, 335, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_wald", 1, 4, 4, 2); __PYX_ERR(0, 322, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_wald", 1, 4, 4, 2); __PYX_ERR(0, 335, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_wald", 1, 4, 4, 3); __PYX_ERR(0, 322, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_wald", 1, 4, 4, 3); __PYX_ERR(0, 335, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_wald") < 0)) __PYX_ERR(0, 322, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_model_n_states_wald") < 0)) __PYX_ERR(0, 335, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -6024,16 +6061,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_31p_seria_model_n
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_wald", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 322, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_model_n_states_wald", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 335, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_model_n_states_wald", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 323, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 324, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 325, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 326, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 336, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 337, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 338, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 339, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_30p_seria_model_n_states_wald(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -6076,26 +6113,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_30p_seria_model_n
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 322, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 335, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 322, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 335, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 322, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 335, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 322, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 335, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":328
+  /* "tapas/sem/antisaccades/wrappers.pyx":341
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_wald,             # <<<<<<<<<<<<<<
@@ -6104,20 +6141,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_30p_seria_model_n
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":329
+  /* "tapas/sem/antisaccades/wrappers.pyx":342
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_wald,
  *         seria_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_wald, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 328, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_wald, seria_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 341, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":322
+  /* "tapas/sem/antisaccades/wrappers.pyx":335
  * ##
  * 
  * def p_seria_model_n_states_wald(             # <<<<<<<<<<<<<<
@@ -6151,7 +6188,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_30p_seria_model_n
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":332
+/* "tapas/sem/antisaccades/wrappers.pyx":345
  * 
  * 
  * def p_reparametrize_seria_wald(             # <<<<<<<<<<<<<<
@@ -6166,7 +6203,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_33p_reparametrize
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_seria_wald (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 333, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 346, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_32p_reparametrize_seria_wald(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -6192,23 +6229,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_32p_reparametrize
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 332, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 345, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":335
+  /* "tapas/sem/antisaccades/wrappers.pyx":348
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_wald)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_wald); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 335, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(((PyArrayObject *)__pyx_v_theta), reparametrize_seria_wald); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 348, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":337
+  /* "tapas/sem/antisaccades/wrappers.pyx":350
  *     ntheta = wrapper_reparametrize_seria(theta, reparametrize_seria_wald)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -6220,7 +6257,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_32p_reparametrize
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":332
+  /* "tapas/sem/antisaccades/wrappers.pyx":345
  * 
  * 
  * def p_reparametrize_seria_wald(             # <<<<<<<<<<<<<<
@@ -6249,7 +6286,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_32p_reparametrize
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":339
+/* "tapas/sem/antisaccades/wrappers.pyx":352
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_wald(             # <<<<<<<<<<<<<<
@@ -6295,23 +6332,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_35p_seria_early_l
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_wald", 1, 4, 4, 1); __PYX_ERR(0, 339, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_wald", 1, 4, 4, 1); __PYX_ERR(0, 352, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_wald", 1, 4, 4, 2); __PYX_ERR(0, 339, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_wald", 1, 4, 4, 2); __PYX_ERR(0, 352, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_wald", 1, 4, 4, 3); __PYX_ERR(0, 339, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_wald", 1, 4, 4, 3); __PYX_ERR(0, 352, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_early_llh_n_states_wald") < 0)) __PYX_ERR(0, 339, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_seria_early_llh_n_states_wald") < 0)) __PYX_ERR(0, 352, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -6328,16 +6365,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_35p_seria_early_l
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_wald", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 339, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_seria_early_llh_n_states_wald", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 352, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_seria_early_llh_n_states_wald", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 340, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 341, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 342, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 343, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 353, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 354, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 355, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 356, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_34p_seria_early_llh_n_states_wald(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -6380,26 +6417,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_34p_seria_early_l
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 339, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 352, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 339, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 352, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 339, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 352, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 339, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 352, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":345
+  /* "tapas/sem/antisaccades/wrappers.pyx":358
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_wald,             # <<<<<<<<<<<<<<
@@ -6408,20 +6445,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_34p_seria_early_l
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":346
+  /* "tapas/sem/antisaccades/wrappers.pyx":359
  * 
  *     return wrapper_seria_model_n_states(reparametrize_seria_wald,
  *         seria_early_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * ##
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_wald, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 345, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_model_n_states(reparametrize_seria_wald, seria_early_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":339
+  /* "tapas/sem/antisaccades/wrappers.pyx":352
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_wald(             # <<<<<<<<<<<<<<
@@ -6455,7 +6492,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_34p_seria_early_l
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":350
+/* "tapas/sem/antisaccades/wrappers.pyx":363
  * ##
  * 
  * def p_prosa_model_n_states_gamma(             # <<<<<<<<<<<<<<
@@ -6501,23 +6538,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_37p_prosa_model_n
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_gamma", 1, 4, 4, 1); __PYX_ERR(0, 350, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_gamma", 1, 4, 4, 1); __PYX_ERR(0, 363, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_gamma", 1, 4, 4, 2); __PYX_ERR(0, 350, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_gamma", 1, 4, 4, 2); __PYX_ERR(0, 363, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_gamma", 1, 4, 4, 3); __PYX_ERR(0, 350, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_gamma", 1, 4, 4, 3); __PYX_ERR(0, 363, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_gamma") < 0)) __PYX_ERR(0, 350, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_gamma") < 0)) __PYX_ERR(0, 363, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -6534,16 +6571,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_37p_prosa_model_n
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_gamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 350, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_gamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 363, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_prosa_model_n_states_gamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 351, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 352, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 353, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 354, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 364, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 365, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 366, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 367, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_36p_prosa_model_n_states_gamma(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -6586,26 +6623,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_36p_prosa_model_n
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 350, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 363, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 350, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 363, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 350, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 363, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 350, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 363, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":356
+  /* "tapas/sem/antisaccades/wrappers.pyx":369
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_gamma,             # <<<<<<<<<<<<<<
@@ -6614,20 +6651,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_36p_prosa_model_n
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":357
+  /* "tapas/sem/antisaccades/wrappers.pyx":370
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_gamma,
  *         prosa_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_gamma, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_gamma, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 369, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":350
+  /* "tapas/sem/antisaccades/wrappers.pyx":363
  * ##
  * 
  * def p_prosa_model_n_states_gamma(             # <<<<<<<<<<<<<<
@@ -6661,7 +6698,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_36p_prosa_model_n
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":360
+/* "tapas/sem/antisaccades/wrappers.pyx":373
  * 
  * 
  * def p_reparametrize_prosa_gamma(             # <<<<<<<<<<<<<<
@@ -6676,7 +6713,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_39p_reparametrize
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_prosa_gamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 361, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 374, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_38p_reparametrize_prosa_gamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -6702,23 +6739,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_38p_reparametrize
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 360, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 373, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":363
+  /* "tapas/sem/antisaccades/wrappers.pyx":376
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_gamma)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_gamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 363, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_gamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 376, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":365
+  /* "tapas/sem/antisaccades/wrappers.pyx":378
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_gamma)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -6730,7 +6767,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_38p_reparametrize
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":360
+  /* "tapas/sem/antisaccades/wrappers.pyx":373
  * 
  * 
  * def p_reparametrize_prosa_gamma(             # <<<<<<<<<<<<<<
@@ -6759,7 +6796,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_38p_reparametrize
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":367
+/* "tapas/sem/antisaccades/wrappers.pyx":380
  *     return ntheta
  * 
  * def p_prosa_model_n_states_invgamma(             # <<<<<<<<<<<<<<
@@ -6805,23 +6842,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_41p_prosa_model_n
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_invgamma", 1, 4, 4, 1); __PYX_ERR(0, 367, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_invgamma", 1, 4, 4, 1); __PYX_ERR(0, 380, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_invgamma", 1, 4, 4, 2); __PYX_ERR(0, 367, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_invgamma", 1, 4, 4, 2); __PYX_ERR(0, 380, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_invgamma", 1, 4, 4, 3); __PYX_ERR(0, 367, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_invgamma", 1, 4, 4, 3); __PYX_ERR(0, 380, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_invgamma") < 0)) __PYX_ERR(0, 367, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_invgamma") < 0)) __PYX_ERR(0, 380, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -6838,16 +6875,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_41p_prosa_model_n
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_invgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 367, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_invgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 380, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_prosa_model_n_states_invgamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 368, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 369, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 370, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 371, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 381, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 382, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 383, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 384, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_40p_prosa_model_n_states_invgamma(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -6890,26 +6927,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_40p_prosa_model_n
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 367, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 380, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 367, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 380, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 367, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 380, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 367, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 380, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":373
+  /* "tapas/sem/antisaccades/wrappers.pyx":386
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_invgamma,             # <<<<<<<<<<<<<<
@@ -6918,20 +6955,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_40p_prosa_model_n
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":374
+  /* "tapas/sem/antisaccades/wrappers.pyx":387
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_invgamma,
  *         prosa_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_invgamma, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 373, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_invgamma, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 386, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":367
+  /* "tapas/sem/antisaccades/wrappers.pyx":380
  *     return ntheta
  * 
  * def p_prosa_model_n_states_invgamma(             # <<<<<<<<<<<<<<
@@ -6965,7 +7002,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_40p_prosa_model_n
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":377
+/* "tapas/sem/antisaccades/wrappers.pyx":390
  * 
  * 
  * def p_reparametrize_prosa_invgamma(             # <<<<<<<<<<<<<<
@@ -6980,7 +7017,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_43p_reparametrize
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_prosa_invgamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 378, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 391, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_42p_reparametrize_prosa_invgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -7006,23 +7043,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_42p_reparametrize
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 377, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 390, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":380
+  /* "tapas/sem/antisaccades/wrappers.pyx":393
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_invgamma)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_invgamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 380, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_invgamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 393, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":382
+  /* "tapas/sem/antisaccades/wrappers.pyx":395
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_invgamma)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -7034,7 +7071,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_42p_reparametrize
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":377
+  /* "tapas/sem/antisaccades/wrappers.pyx":390
  * 
  * 
  * def p_reparametrize_prosa_invgamma(             # <<<<<<<<<<<<<<
@@ -7063,7 +7100,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_42p_reparametrize
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":384
+/* "tapas/sem/antisaccades/wrappers.pyx":397
  *     return ntheta
  * 
  * def p_prosa_model_n_states_mixedgamma(             # <<<<<<<<<<<<<<
@@ -7109,23 +7146,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_45p_prosa_model_n
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_mixedgamma", 1, 4, 4, 1); __PYX_ERR(0, 384, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_mixedgamma", 1, 4, 4, 1); __PYX_ERR(0, 397, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_mixedgamma", 1, 4, 4, 2); __PYX_ERR(0, 384, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_mixedgamma", 1, 4, 4, 2); __PYX_ERR(0, 397, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_mixedgamma", 1, 4, 4, 3); __PYX_ERR(0, 384, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_mixedgamma", 1, 4, 4, 3); __PYX_ERR(0, 397, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_mixedgamma") < 0)) __PYX_ERR(0, 384, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_mixedgamma") < 0)) __PYX_ERR(0, 397, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -7142,16 +7179,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_45p_prosa_model_n
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_mixedgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 384, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_mixedgamma", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 397, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_prosa_model_n_states_mixedgamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 385, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 386, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 387, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 388, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 398, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 399, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 400, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 401, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_44p_prosa_model_n_states_mixedgamma(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -7194,26 +7231,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_44p_prosa_model_n
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 384, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 397, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 384, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 397, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 384, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 397, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 384, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 397, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":390
+  /* "tapas/sem/antisaccades/wrappers.pyx":403
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_mixedgamma,             # <<<<<<<<<<<<<<
@@ -7222,20 +7259,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_44p_prosa_model_n
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":391
+  /* "tapas/sem/antisaccades/wrappers.pyx":404
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_mixedgamma,
  *         prosa_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_mixedgamma, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 390, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_mixedgamma, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 403, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":384
+  /* "tapas/sem/antisaccades/wrappers.pyx":397
  *     return ntheta
  * 
  * def p_prosa_model_n_states_mixedgamma(             # <<<<<<<<<<<<<<
@@ -7269,7 +7306,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_44p_prosa_model_n
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":394
+/* "tapas/sem/antisaccades/wrappers.pyx":407
  * 
  * 
  * def p_reparametrize_prosa_mixedgamma(             # <<<<<<<<<<<<<<
@@ -7284,7 +7321,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_47p_reparametrize
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_prosa_mixedgamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 395, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 408, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_46p_reparametrize_prosa_mixedgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -7310,23 +7347,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_46p_reparametrize
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 394, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 407, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":397
+  /* "tapas/sem/antisaccades/wrappers.pyx":410
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_mixedgamma)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_mixedgamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 397, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_mixedgamma); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 410, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":399
+  /* "tapas/sem/antisaccades/wrappers.pyx":412
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_mixedgamma)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -7338,7 +7375,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_46p_reparametrize
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":394
+  /* "tapas/sem/antisaccades/wrappers.pyx":407
  * 
  * 
  * def p_reparametrize_prosa_mixedgamma(             # <<<<<<<<<<<<<<
@@ -7367,7 +7404,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_46p_reparametrize
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":401
+/* "tapas/sem/antisaccades/wrappers.pyx":414
  *     return ntheta
  * 
  * def p_prosa_model_n_states_lognorm(             # <<<<<<<<<<<<<<
@@ -7413,23 +7450,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_49p_prosa_model_n
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_lognorm", 1, 4, 4, 1); __PYX_ERR(0, 401, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_lognorm", 1, 4, 4, 1); __PYX_ERR(0, 414, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_lognorm", 1, 4, 4, 2); __PYX_ERR(0, 401, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_lognorm", 1, 4, 4, 2); __PYX_ERR(0, 414, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_lognorm", 1, 4, 4, 3); __PYX_ERR(0, 401, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_lognorm", 1, 4, 4, 3); __PYX_ERR(0, 414, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_lognorm") < 0)) __PYX_ERR(0, 401, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_lognorm") < 0)) __PYX_ERR(0, 414, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -7446,16 +7483,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_49p_prosa_model_n
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_lognorm", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 401, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_lognorm", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 414, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_prosa_model_n_states_lognorm", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 402, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 403, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 404, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 405, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 415, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 416, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 417, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 418, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_48p_prosa_model_n_states_lognorm(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -7498,26 +7535,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_48p_prosa_model_n
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 401, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 414, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 401, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 414, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 401, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 414, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 401, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 414, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":407
+  /* "tapas/sem/antisaccades/wrappers.pyx":420
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_lognorm,             # <<<<<<<<<<<<<<
@@ -7526,20 +7563,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_48p_prosa_model_n
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":408
+  /* "tapas/sem/antisaccades/wrappers.pyx":421
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_lognorm,
  *         prosa_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_lognorm, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 407, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_lognorm, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 420, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":401
+  /* "tapas/sem/antisaccades/wrappers.pyx":414
  *     return ntheta
  * 
  * def p_prosa_model_n_states_lognorm(             # <<<<<<<<<<<<<<
@@ -7573,7 +7610,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_48p_prosa_model_n
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":411
+/* "tapas/sem/antisaccades/wrappers.pyx":424
  * 
  * 
  * def p_reparametrize_prosa_lognorm(             # <<<<<<<<<<<<<<
@@ -7588,7 +7625,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_51p_reparametrize
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_prosa_lognorm (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 412, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 425, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_50p_reparametrize_prosa_lognorm(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -7614,23 +7651,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_50p_reparametrize
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 411, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 424, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":414
+  /* "tapas/sem/antisaccades/wrappers.pyx":427
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_lognorm)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_lognorm); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 414, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_lognorm); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 427, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":416
+  /* "tapas/sem/antisaccades/wrappers.pyx":429
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_lognorm)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -7642,7 +7679,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_50p_reparametrize
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":411
+  /* "tapas/sem/antisaccades/wrappers.pyx":424
  * 
  * 
  * def p_reparametrize_prosa_lognorm(             # <<<<<<<<<<<<<<
@@ -7671,7 +7708,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_50p_reparametrize
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":418
+/* "tapas/sem/antisaccades/wrappers.pyx":431
  *     return ntheta
  * 
  * def p_prosa_model_n_states_later(             # <<<<<<<<<<<<<<
@@ -7717,23 +7754,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_53p_prosa_model_n
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_later", 1, 4, 4, 1); __PYX_ERR(0, 418, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_later", 1, 4, 4, 1); __PYX_ERR(0, 431, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_later", 1, 4, 4, 2); __PYX_ERR(0, 418, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_later", 1, 4, 4, 2); __PYX_ERR(0, 431, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_later", 1, 4, 4, 3); __PYX_ERR(0, 418, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_later", 1, 4, 4, 3); __PYX_ERR(0, 431, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_later") < 0)) __PYX_ERR(0, 418, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_later") < 0)) __PYX_ERR(0, 431, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -7750,16 +7787,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_53p_prosa_model_n
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_later", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 418, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_later", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 431, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_prosa_model_n_states_later", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 419, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 420, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 421, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 422, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 432, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 433, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 434, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 435, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_52p_prosa_model_n_states_later(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -7802,26 +7839,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_52p_prosa_model_n
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 418, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 431, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 418, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 431, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 418, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 431, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 418, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 431, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":424
+  /* "tapas/sem/antisaccades/wrappers.pyx":437
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_later,             # <<<<<<<<<<<<<<
@@ -7830,20 +7867,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_52p_prosa_model_n
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":425
+  /* "tapas/sem/antisaccades/wrappers.pyx":438
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_later,
  *         prosa_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_later, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 424, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_later, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 437, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":418
+  /* "tapas/sem/antisaccades/wrappers.pyx":431
  *     return ntheta
  * 
  * def p_prosa_model_n_states_later(             # <<<<<<<<<<<<<<
@@ -7877,7 +7914,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_52p_prosa_model_n
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":428
+/* "tapas/sem/antisaccades/wrappers.pyx":441
  * 
  * 
  * def p_reparametrize_prosa_later(             # <<<<<<<<<<<<<<
@@ -7892,7 +7929,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_55p_reparametrize
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_prosa_later (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 429, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 442, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_54p_reparametrize_prosa_later(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -7918,23 +7955,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_54p_reparametrize
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 428, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 441, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":431
+  /* "tapas/sem/antisaccades/wrappers.pyx":444
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_later)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_later); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 431, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_later); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 444, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":433
+  /* "tapas/sem/antisaccades/wrappers.pyx":446
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_later)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -7946,7 +7983,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_54p_reparametrize
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":428
+  /* "tapas/sem/antisaccades/wrappers.pyx":441
  * 
  * 
  * def p_reparametrize_prosa_later(             # <<<<<<<<<<<<<<
@@ -7975,7 +8012,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_54p_reparametrize
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":435
+/* "tapas/sem/antisaccades/wrappers.pyx":448
  *     return ntheta
  * 
  * def p_prosa_model_n_states_wald(             # <<<<<<<<<<<<<<
@@ -8021,23 +8058,23 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_57p_prosa_model_n
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_wald", 1, 4, 4, 1); __PYX_ERR(0, 435, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_wald", 1, 4, 4, 1); __PYX_ERR(0, 448, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_u)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_wald", 1, 4, 4, 2); __PYX_ERR(0, 435, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_wald", 1, 4, 4, 2); __PYX_ERR(0, 448, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_wald", 1, 4, 4, 3); __PYX_ERR(0, 435, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_wald", 1, 4, 4, 3); __PYX_ERR(0, 448, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_wald") < 0)) __PYX_ERR(0, 435, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "p_prosa_model_n_states_wald") < 0)) __PYX_ERR(0, 448, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -8054,16 +8091,16 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_57p_prosa_model_n
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_wald", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 435, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("p_prosa_model_n_states_wald", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 448, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_prosa_model_n_states_wald", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 436, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 437, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 438, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 439, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_t), __pyx_ptype_5numpy_ndarray, 1, "t", 0))) __PYX_ERR(0, 449, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_5numpy_ndarray, 1, "a", 0))) __PYX_ERR(0, 450, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_u), __pyx_ptype_5numpy_ndarray, 1, "u", 0))) __PYX_ERR(0, 451, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 452, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_56p_prosa_model_n_states_wald(__pyx_self, __pyx_v_t, __pyx_v_a, __pyx_v_u, __pyx_v_theta);
 
   /* function exit code */
@@ -8106,26 +8143,26 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_56p_prosa_model_n
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 435, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_t.rcbuffer->pybuffer, (PyObject*)__pyx_v_t, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 448, __pyx_L1_error)
   }
   __pyx_pybuffernd_t.diminfo[0].strides = __pyx_pybuffernd_t.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_t.diminfo[0].shape = __pyx_pybuffernd_t.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 435, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_a.rcbuffer->pybuffer, (PyObject*)__pyx_v_a, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 448, __pyx_L1_error)
   }
   __pyx_pybuffernd_a.diminfo[0].strides = __pyx_pybuffernd_a.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_a.diminfo[0].shape = __pyx_pybuffernd_a.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 435, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_u.rcbuffer->pybuffer, (PyObject*)__pyx_v_u, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 448, __pyx_L1_error)
   }
   __pyx_pybuffernd_u.diminfo[0].strides = __pyx_pybuffernd_u.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_u.diminfo[0].shape = __pyx_pybuffernd_u.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 435, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 448, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":441
+  /* "tapas/sem/antisaccades/wrappers.pyx":454
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_wald,             # <<<<<<<<<<<<<<
@@ -8134,20 +8171,20 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_56p_prosa_model_n
  */
   __Pyx_XDECREF(__pyx_r);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":442
+  /* "tapas/sem/antisaccades/wrappers.pyx":455
  * 
  *     return wrapper_prosa_model_n_states(reparametrize_prosa_wald,
  *         prosa_llh_abstract, t, a, u, theta)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_wald, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 441, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(reparametrize_prosa_wald, prosa_llh_abstract, ((PyArrayObject *)__pyx_v_t), ((PyArrayObject *)__pyx_v_a), ((PyArrayObject *)__pyx_v_u), ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 454, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":435
+  /* "tapas/sem/antisaccades/wrappers.pyx":448
  *     return ntheta
  * 
  * def p_prosa_model_n_states_wald(             # <<<<<<<<<<<<<<
@@ -8181,7 +8218,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_56p_prosa_model_n
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":445
+/* "tapas/sem/antisaccades/wrappers.pyx":458
  * 
  * 
  * def p_reparametrize_prosa_wald(             # <<<<<<<<<<<<<<
@@ -8196,7 +8233,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_59p_reparametrize
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_reparametrize_prosa_wald (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 446, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 459, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_58p_reparametrize_prosa_wald(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -8222,23 +8259,23 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_58p_reparametrize
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 445, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 458, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":448
+  /* "tapas/sem/antisaccades/wrappers.pyx":461
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_wald)             # <<<<<<<<<<<<<<
  * 
  *     return ntheta
  */
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_wald); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 448, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(((PyArrayObject *)__pyx_v_theta), reparametrize_prosa_wald); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 461, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ntheta = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":450
+  /* "tapas/sem/antisaccades/wrappers.pyx":463
  *     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_wald)
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
@@ -8250,7 +8287,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_58p_reparametrize
   __pyx_r = __pyx_v_ntheta;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":445
+  /* "tapas/sem/antisaccades/wrappers.pyx":458
  * 
  * 
  * def p_reparametrize_prosa_wald(             # <<<<<<<<<<<<<<
@@ -8279,7 +8316,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_58p_reparametrize
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":459
+/* "tapas/sem/antisaccades/wrappers.pyx":472
  * # Seria
  * 
  * def p_summary_seria_gamma(             # <<<<<<<<<<<<<<
@@ -8294,7 +8331,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_61p_summary_seria
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_seria_gamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 460, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 473, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_60p_summary_seria_gamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -8319,11 +8356,11 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_60p_summary_seria
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 459, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 472, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":462
+  /* "tapas/sem/antisaccades/wrappers.pyx":475
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_seria(reparametrize_seria_gamma, theta)             # <<<<<<<<<<<<<<
@@ -8331,13 +8368,13 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_60p_summary_seria
  * def p_summary_seria_invgamma(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_gamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 462, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_gamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 475, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":459
+  /* "tapas/sem/antisaccades/wrappers.pyx":472
  * # Seria
  * 
  * def p_summary_seria_gamma(             # <<<<<<<<<<<<<<
@@ -8365,7 +8402,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_60p_summary_seria
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":464
+/* "tapas/sem/antisaccades/wrappers.pyx":477
  *     return wrapper_summary_seria(reparametrize_seria_gamma, theta)
  * 
  * def p_summary_seria_invgamma(             # <<<<<<<<<<<<<<
@@ -8380,7 +8417,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_63p_summary_seria
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_seria_invgamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 465, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 478, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_62p_summary_seria_invgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -8405,11 +8442,11 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_62p_summary_seria
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 464, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 477, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":467
+  /* "tapas/sem/antisaccades/wrappers.pyx":480
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_seria(reparametrize_seria_invgamma, theta)             # <<<<<<<<<<<<<<
@@ -8417,13 +8454,13 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_62p_summary_seria
  * def p_summary_seria_lognorm(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_invgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 467, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_invgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 480, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":464
+  /* "tapas/sem/antisaccades/wrappers.pyx":477
  *     return wrapper_summary_seria(reparametrize_seria_gamma, theta)
  * 
  * def p_summary_seria_invgamma(             # <<<<<<<<<<<<<<
@@ -8451,7 +8488,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_62p_summary_seria
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":469
+/* "tapas/sem/antisaccades/wrappers.pyx":482
  *     return wrapper_summary_seria(reparametrize_seria_invgamma, theta)
  * 
  * def p_summary_seria_lognorm(             # <<<<<<<<<<<<<<
@@ -8466,7 +8503,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_65p_summary_seria
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_seria_lognorm (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 470, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 483, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_64p_summary_seria_lognorm(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -8491,11 +8528,11 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_64p_summary_seria
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 469, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 482, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":472
+  /* "tapas/sem/antisaccades/wrappers.pyx":485
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_seria(reparametrize_seria_lognorm, theta)             # <<<<<<<<<<<<<<
@@ -8503,13 +8540,13 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_64p_summary_seria
  * def p_summary_seria_mixedgamma(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_lognorm, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 472, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_lognorm, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 485, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":469
+  /* "tapas/sem/antisaccades/wrappers.pyx":482
  *     return wrapper_summary_seria(reparametrize_seria_invgamma, theta)
  * 
  * def p_summary_seria_lognorm(             # <<<<<<<<<<<<<<
@@ -8537,7 +8574,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_64p_summary_seria
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":474
+/* "tapas/sem/antisaccades/wrappers.pyx":487
  *     return wrapper_summary_seria(reparametrize_seria_lognorm, theta)
  * 
  * def p_summary_seria_mixedgamma(             # <<<<<<<<<<<<<<
@@ -8552,7 +8589,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_67p_summary_seria
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_seria_mixedgamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 475, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 488, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_66p_summary_seria_mixedgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -8577,11 +8614,11 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_66p_summary_seria
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 474, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 487, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":477
+  /* "tapas/sem/antisaccades/wrappers.pyx":490
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_seria(reparametrize_seria_mixedgamma, theta)             # <<<<<<<<<<<<<<
@@ -8589,13 +8626,13 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_66p_summary_seria
  * def p_summary_seria_later(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_mixedgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 477, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_mixedgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 490, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":474
+  /* "tapas/sem/antisaccades/wrappers.pyx":487
  *     return wrapper_summary_seria(reparametrize_seria_lognorm, theta)
  * 
  * def p_summary_seria_mixedgamma(             # <<<<<<<<<<<<<<
@@ -8623,7 +8660,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_66p_summary_seria
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":479
+/* "tapas/sem/antisaccades/wrappers.pyx":492
  *     return wrapper_summary_seria(reparametrize_seria_mixedgamma, theta)
  * 
  * def p_summary_seria_later(             # <<<<<<<<<<<<<<
@@ -8638,7 +8675,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_69p_summary_seria
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_seria_later (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 480, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 493, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_68p_summary_seria_later(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -8663,11 +8700,11 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_68p_summary_seria
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 479, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 492, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":482
+  /* "tapas/sem/antisaccades/wrappers.pyx":495
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_seria(reparametrize_seria_later, theta)             # <<<<<<<<<<<<<<
@@ -8675,13 +8712,13 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_68p_summary_seria
  * def p_summary_seria_wald(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_later, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 482, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_later, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 495, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":479
+  /* "tapas/sem/antisaccades/wrappers.pyx":492
  *     return wrapper_summary_seria(reparametrize_seria_mixedgamma, theta)
  * 
  * def p_summary_seria_later(             # <<<<<<<<<<<<<<
@@ -8709,7 +8746,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_68p_summary_seria
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":484
+/* "tapas/sem/antisaccades/wrappers.pyx":497
  *     return wrapper_summary_seria(reparametrize_seria_later, theta)
  * 
  * def p_summary_seria_wald(             # <<<<<<<<<<<<<<
@@ -8724,7 +8761,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_71p_summary_seria
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_seria_wald (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 485, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 498, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_70p_summary_seria_wald(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -8749,11 +8786,11 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_70p_summary_seria
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 484, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 497, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":487
+  /* "tapas/sem/antisaccades/wrappers.pyx":500
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_seria(reparametrize_seria_wald, theta)             # <<<<<<<<<<<<<<
@@ -8761,13 +8798,13 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_70p_summary_seria
  * # Prosa
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_wald, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 487, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_wald, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 500, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":484
+  /* "tapas/sem/antisaccades/wrappers.pyx":497
  *     return wrapper_summary_seria(reparametrize_seria_later, theta)
  * 
  * def p_summary_seria_wald(             # <<<<<<<<<<<<<<
@@ -8795,7 +8832,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_70p_summary_seria
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":491
+/* "tapas/sem/antisaccades/wrappers.pyx":504
  * # Prosa
  * 
  * def p_summary_prosa_gamma(             # <<<<<<<<<<<<<<
@@ -8810,7 +8847,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_73p_summary_prosa
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_prosa_gamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 492, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 505, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_72p_summary_prosa_gamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -8835,11 +8872,11 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_72p_summary_prosa
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 491, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 504, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":494
+  /* "tapas/sem/antisaccades/wrappers.pyx":507
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_prosa(reparametrize_prosa_gamma, theta)             # <<<<<<<<<<<<<<
@@ -8847,13 +8884,13 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_72p_summary_prosa
  * def p_summary_prosa_invgamma(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_gamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 494, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_gamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 507, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":491
+  /* "tapas/sem/antisaccades/wrappers.pyx":504
  * # Prosa
  * 
  * def p_summary_prosa_gamma(             # <<<<<<<<<<<<<<
@@ -8881,7 +8918,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_72p_summary_prosa
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":496
+/* "tapas/sem/antisaccades/wrappers.pyx":509
  *     return wrapper_summary_prosa(reparametrize_prosa_gamma, theta)
  * 
  * def p_summary_prosa_invgamma(             # <<<<<<<<<<<<<<
@@ -8896,7 +8933,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_75p_summary_prosa
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_prosa_invgamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 497, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 510, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_74p_summary_prosa_invgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -8921,11 +8958,11 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_74p_summary_prosa
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 496, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 509, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":499
+  /* "tapas/sem/antisaccades/wrappers.pyx":512
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_prosa(reparametrize_prosa_invgamma, theta)             # <<<<<<<<<<<<<<
@@ -8933,13 +8970,13 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_74p_summary_prosa
  * def p_summary_prosa_lognorm(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_invgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 499, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_invgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 512, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":496
+  /* "tapas/sem/antisaccades/wrappers.pyx":509
  *     return wrapper_summary_prosa(reparametrize_prosa_gamma, theta)
  * 
  * def p_summary_prosa_invgamma(             # <<<<<<<<<<<<<<
@@ -8967,7 +9004,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_74p_summary_prosa
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":501
+/* "tapas/sem/antisaccades/wrappers.pyx":514
  *     return wrapper_summary_prosa(reparametrize_prosa_invgamma, theta)
  * 
  * def p_summary_prosa_lognorm(             # <<<<<<<<<<<<<<
@@ -8982,7 +9019,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_77p_summary_prosa
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_prosa_lognorm (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 502, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 515, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_76p_summary_prosa_lognorm(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -9007,11 +9044,11 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_76p_summary_prosa
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 501, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 514, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":504
+  /* "tapas/sem/antisaccades/wrappers.pyx":517
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_prosa(reparametrize_prosa_lognorm, theta)             # <<<<<<<<<<<<<<
@@ -9019,13 +9056,13 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_76p_summary_prosa
  * def p_summary_prosa_mixedgamma(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_lognorm, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 504, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_lognorm, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 517, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":501
+  /* "tapas/sem/antisaccades/wrappers.pyx":514
  *     return wrapper_summary_prosa(reparametrize_prosa_invgamma, theta)
  * 
  * def p_summary_prosa_lognorm(             # <<<<<<<<<<<<<<
@@ -9053,7 +9090,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_76p_summary_prosa
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":506
+/* "tapas/sem/antisaccades/wrappers.pyx":519
  *     return wrapper_summary_prosa(reparametrize_prosa_lognorm, theta)
  * 
  * def p_summary_prosa_mixedgamma(             # <<<<<<<<<<<<<<
@@ -9068,7 +9105,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_79p_summary_prosa
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_prosa_mixedgamma (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 507, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 520, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_78p_summary_prosa_mixedgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -9093,11 +9130,11 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_78p_summary_prosa
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 506, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 519, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":509
+  /* "tapas/sem/antisaccades/wrappers.pyx":522
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_prosa(reparametrize_prosa_mixedgamma, theta)             # <<<<<<<<<<<<<<
@@ -9105,13 +9142,13 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_78p_summary_prosa
  * def p_summary_prosa_later(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_mixedgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 509, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_mixedgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 522, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":506
+  /* "tapas/sem/antisaccades/wrappers.pyx":519
  *     return wrapper_summary_prosa(reparametrize_prosa_lognorm, theta)
  * 
  * def p_summary_prosa_mixedgamma(             # <<<<<<<<<<<<<<
@@ -9139,7 +9176,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_78p_summary_prosa
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":511
+/* "tapas/sem/antisaccades/wrappers.pyx":524
  *     return wrapper_summary_prosa(reparametrize_prosa_mixedgamma, theta)
  * 
  * def p_summary_prosa_later(             # <<<<<<<<<<<<<<
@@ -9154,7 +9191,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_81p_summary_prosa
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_prosa_later (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 512, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 525, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_80p_summary_prosa_later(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -9179,11 +9216,11 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_80p_summary_prosa
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 511, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 524, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":514
+  /* "tapas/sem/antisaccades/wrappers.pyx":527
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_prosa(reparametrize_prosa_later, theta)             # <<<<<<<<<<<<<<
@@ -9191,13 +9228,13 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_80p_summary_prosa
  * def p_summary_prosa_wald(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_later, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 514, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_later, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 527, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":511
+  /* "tapas/sem/antisaccades/wrappers.pyx":524
  *     return wrapper_summary_prosa(reparametrize_prosa_mixedgamma, theta)
  * 
  * def p_summary_prosa_later(             # <<<<<<<<<<<<<<
@@ -9225,7 +9262,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_80p_summary_prosa
   return __pyx_r;
 }
 
-/* "tapas/sem/antisaccades/wrappers.pyx":516
+/* "tapas/sem/antisaccades/wrappers.pyx":529
  *     return wrapper_summary_prosa(reparametrize_prosa_later, theta)
  * 
  * def p_summary_prosa_wald(             # <<<<<<<<<<<<<<
@@ -9240,7 +9277,7 @@ static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_83p_summary_prosa
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("p_summary_prosa_wald (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 517, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 530, __pyx_L1_error)
   __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_82p_summary_prosa_wald(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
 
   /* function exit code */
@@ -9265,24 +9302,24 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_82p_summary_prosa
   __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 516, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 529, __pyx_L1_error)
   }
   __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":519
+  /* "tapas/sem/antisaccades/wrappers.pyx":532
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  *     return wrapper_summary_prosa(reparametrize_prosa_wald, theta)             # <<<<<<<<<<<<<<
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_wald, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 519, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_wald, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 532, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":516
+  /* "tapas/sem/antisaccades/wrappers.pyx":529
  *     return wrapper_summary_prosa(reparametrize_prosa_later, theta)
  * 
  * def p_summary_prosa_wald(             # <<<<<<<<<<<<<<
@@ -12135,509 +12172,509 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":187
+  /* "tapas/sem/antisaccades/wrappers.pyx":200
  * # ===========================================================================
  * 
  * def p_seria_model_n_states_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__10 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 187, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 200, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
-  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_gamma, 187, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 187, __pyx_L1_error)
+  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_gamma, 200, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 200, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":197
+  /* "tapas/sem/antisaccades/wrappers.pyx":210
  * 
  * 
  * def p_reparametrize_seria_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__12 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 197, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 210, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
-  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_gamma, 197, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 197, __pyx_L1_error)
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_gamma, 210, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 210, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":204
+  /* "tapas/sem/antisaccades/wrappers.pyx":217
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__14 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 204, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 217, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
-  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_early_llh_n_states_gamma, 204, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 204, __pyx_L1_error)
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_early_llh_n_states_gamma, 217, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 217, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":213
+  /* "tapas/sem/antisaccades/wrappers.pyx":226
  *         seria_early_llh_abstract, t, a, u, theta)
  * 
  * def p_seria_model_n_states_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__16 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 213, __pyx_L1_error)
+  __pyx_tuple__16 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 226, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__16);
   __Pyx_GIVEREF(__pyx_tuple__16);
-  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_invgamma, 213, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 213, __pyx_L1_error)
+  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_invgamma, 226, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 226, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":223
+  /* "tapas/sem/antisaccades/wrappers.pyx":236
  * 
  * 
  * def p_reparametrize_seria_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__18 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __pyx_tuple__18 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 236, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__18);
   __Pyx_GIVEREF(__pyx_tuple__18);
-  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_invgamma, 223, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_invgamma, 236, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 236, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":230
+  /* "tapas/sem/antisaccades/wrappers.pyx":243
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__20 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 230, __pyx_L1_error)
+  __pyx_tuple__20 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 243, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__20);
   __Pyx_GIVEREF(__pyx_tuple__20);
-  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_early_llh_n_states_invga, 230, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 230, __pyx_L1_error)
+  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_early_llh_n_states_invga, 243, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 243, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":240
+  /* "tapas/sem/antisaccades/wrappers.pyx":253
  * ##
  * 
  * def p_seria_model_n_states_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__22 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 240, __pyx_L1_error)
+  __pyx_tuple__22 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 253, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__22);
   __Pyx_GIVEREF(__pyx_tuple__22);
-  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_mixedgamm, 240, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 240, __pyx_L1_error)
+  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_mixedgamm, 253, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 253, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":250
+  /* "tapas/sem/antisaccades/wrappers.pyx":263
  * 
  * 
  * def p_reparametrize_seria_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__24 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 250, __pyx_L1_error)
+  __pyx_tuple__24 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__24);
   __Pyx_GIVEREF(__pyx_tuple__24);
-  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_mixedgamma, 250, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 250, __pyx_L1_error)
+  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_mixedgamma, 263, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 263, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":257
+  /* "tapas/sem/antisaccades/wrappers.pyx":270
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__26 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 257, __pyx_L1_error)
+  __pyx_tuple__26 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 270, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__26);
   __Pyx_GIVEREF(__pyx_tuple__26);
-  __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_early_llh_n_states_mixed, 257, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 257, __pyx_L1_error)
+  __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_early_llh_n_states_mixed, 270, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 270, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":267
+  /* "tapas/sem/antisaccades/wrappers.pyx":280
  * ##
  * 
  * def p_seria_model_n_states_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__28 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 267, __pyx_L1_error)
+  __pyx_tuple__28 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 280, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__28);
   __Pyx_GIVEREF(__pyx_tuple__28);
-  __pyx_codeobj__29 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_lognorm, 267, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__29)) __PYX_ERR(0, 267, __pyx_L1_error)
+  __pyx_codeobj__29 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_lognorm, 280, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__29)) __PYX_ERR(0, 280, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":277
+  /* "tapas/sem/antisaccades/wrappers.pyx":290
  * 
  * 
  * def p_reparametrize_seria_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__30 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_tuple__30 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__30);
   __Pyx_GIVEREF(__pyx_tuple__30);
-  __pyx_codeobj__31 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__30, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_lognorm, 277, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__31)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_codeobj__31 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__30, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_lognorm, 290, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__31)) __PYX_ERR(0, 290, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":284
+  /* "tapas/sem/antisaccades/wrappers.pyx":297
  *     return ntheta
  * 
  * def p_seria_ealry_llh_n_states_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__32 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(0, 284, __pyx_L1_error)
+  __pyx_tuple__32 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__32);
   __Pyx_GIVEREF(__pyx_tuple__32);
-  __pyx_codeobj__33 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__32, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_ealry_llh_n_states_logno, 284, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__33)) __PYX_ERR(0, 284, __pyx_L1_error)
+  __pyx_codeobj__33 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__32, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_ealry_llh_n_states_logno, 297, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__33)) __PYX_ERR(0, 297, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":294
+  /* "tapas/sem/antisaccades/wrappers.pyx":307
  * 
  * ##
  * def p_seria_model_n_states_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__34 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__34)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __pyx_tuple__34 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__34)) __PYX_ERR(0, 307, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__34);
   __Pyx_GIVEREF(__pyx_tuple__34);
-  __pyx_codeobj__35 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__34, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_later, 294, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__35)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __pyx_codeobj__35 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__34, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_later, 307, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__35)) __PYX_ERR(0, 307, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":304
+  /* "tapas/sem/antisaccades/wrappers.pyx":317
  * 
  * 
  * def p_reparametrize_seria_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__36 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__36)) __PYX_ERR(0, 304, __pyx_L1_error)
+  __pyx_tuple__36 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__36)) __PYX_ERR(0, 317, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__36);
   __Pyx_GIVEREF(__pyx_tuple__36);
-  __pyx_codeobj__37 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__36, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_later, 304, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__37)) __PYX_ERR(0, 304, __pyx_L1_error)
+  __pyx_codeobj__37 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__36, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_later, 317, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__37)) __PYX_ERR(0, 317, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":311
+  /* "tapas/sem/antisaccades/wrappers.pyx":324
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__38 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(0, 311, __pyx_L1_error)
+  __pyx_tuple__38 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(0, 324, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__38);
   __Pyx_GIVEREF(__pyx_tuple__38);
-  __pyx_codeobj__39 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__38, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_early_llh_n_states_later, 311, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__39)) __PYX_ERR(0, 311, __pyx_L1_error)
+  __pyx_codeobj__39 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__38, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_early_llh_n_states_later, 324, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__39)) __PYX_ERR(0, 324, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":322
+  /* "tapas/sem/antisaccades/wrappers.pyx":335
  * ##
  * 
  * def p_seria_model_n_states_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__40 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(0, 322, __pyx_L1_error)
+  __pyx_tuple__40 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(0, 335, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__40);
   __Pyx_GIVEREF(__pyx_tuple__40);
-  __pyx_codeobj__41 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__40, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_wald, 322, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__41)) __PYX_ERR(0, 322, __pyx_L1_error)
+  __pyx_codeobj__41 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__40, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_model_n_states_wald, 335, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__41)) __PYX_ERR(0, 335, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":332
+  /* "tapas/sem/antisaccades/wrappers.pyx":345
  * 
  * 
  * def p_reparametrize_seria_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__42 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__42)) __PYX_ERR(0, 332, __pyx_L1_error)
+  __pyx_tuple__42 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__42)) __PYX_ERR(0, 345, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__42);
   __Pyx_GIVEREF(__pyx_tuple__42);
-  __pyx_codeobj__43 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__42, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_wald, 332, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__43)) __PYX_ERR(0, 332, __pyx_L1_error)
+  __pyx_codeobj__43 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__42, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_seria_wald, 345, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__43)) __PYX_ERR(0, 345, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":339
+  /* "tapas/sem/antisaccades/wrappers.pyx":352
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__44 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__44)) __PYX_ERR(0, 339, __pyx_L1_error)
+  __pyx_tuple__44 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__44)) __PYX_ERR(0, 352, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__44);
   __Pyx_GIVEREF(__pyx_tuple__44);
-  __pyx_codeobj__45 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__44, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_early_llh_n_states_wald, 339, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__45)) __PYX_ERR(0, 339, __pyx_L1_error)
+  __pyx_codeobj__45 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__44, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_seria_early_llh_n_states_wald, 352, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__45)) __PYX_ERR(0, 352, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":350
+  /* "tapas/sem/antisaccades/wrappers.pyx":363
  * ##
  * 
  * def p_prosa_model_n_states_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__46 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__46)) __PYX_ERR(0, 350, __pyx_L1_error)
+  __pyx_tuple__46 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__46)) __PYX_ERR(0, 363, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__46);
   __Pyx_GIVEREF(__pyx_tuple__46);
-  __pyx_codeobj__47 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__46, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_gamma, 350, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__47)) __PYX_ERR(0, 350, __pyx_L1_error)
+  __pyx_codeobj__47 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__46, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_gamma, 363, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__47)) __PYX_ERR(0, 363, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":360
+  /* "tapas/sem/antisaccades/wrappers.pyx":373
  * 
  * 
  * def p_reparametrize_prosa_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__48 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__48)) __PYX_ERR(0, 360, __pyx_L1_error)
+  __pyx_tuple__48 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__48)) __PYX_ERR(0, 373, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__48);
   __Pyx_GIVEREF(__pyx_tuple__48);
-  __pyx_codeobj__49 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__48, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_gamma, 360, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__49)) __PYX_ERR(0, 360, __pyx_L1_error)
+  __pyx_codeobj__49 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__48, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_gamma, 373, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__49)) __PYX_ERR(0, 373, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":367
+  /* "tapas/sem/antisaccades/wrappers.pyx":380
  *     return ntheta
  * 
  * def p_prosa_model_n_states_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__50 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__50)) __PYX_ERR(0, 367, __pyx_L1_error)
+  __pyx_tuple__50 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__50)) __PYX_ERR(0, 380, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__50);
   __Pyx_GIVEREF(__pyx_tuple__50);
-  __pyx_codeobj__51 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__50, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_invgamma, 367, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__51)) __PYX_ERR(0, 367, __pyx_L1_error)
+  __pyx_codeobj__51 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__50, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_invgamma, 380, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__51)) __PYX_ERR(0, 380, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":377
+  /* "tapas/sem/antisaccades/wrappers.pyx":390
  * 
  * 
  * def p_reparametrize_prosa_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__52 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__52)) __PYX_ERR(0, 377, __pyx_L1_error)
+  __pyx_tuple__52 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__52)) __PYX_ERR(0, 390, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__52);
   __Pyx_GIVEREF(__pyx_tuple__52);
-  __pyx_codeobj__53 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__52, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_invgamma, 377, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__53)) __PYX_ERR(0, 377, __pyx_L1_error)
+  __pyx_codeobj__53 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__52, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_invgamma, 390, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__53)) __PYX_ERR(0, 390, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":384
+  /* "tapas/sem/antisaccades/wrappers.pyx":397
  *     return ntheta
  * 
  * def p_prosa_model_n_states_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__54 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__54)) __PYX_ERR(0, 384, __pyx_L1_error)
+  __pyx_tuple__54 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__54)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__54);
   __Pyx_GIVEREF(__pyx_tuple__54);
-  __pyx_codeobj__55 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__54, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_mixedgamm, 384, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__55)) __PYX_ERR(0, 384, __pyx_L1_error)
+  __pyx_codeobj__55 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__54, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_mixedgamm, 397, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__55)) __PYX_ERR(0, 397, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":394
+  /* "tapas/sem/antisaccades/wrappers.pyx":407
  * 
  * 
  * def p_reparametrize_prosa_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__56 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__56)) __PYX_ERR(0, 394, __pyx_L1_error)
+  __pyx_tuple__56 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__56)) __PYX_ERR(0, 407, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__56);
   __Pyx_GIVEREF(__pyx_tuple__56);
-  __pyx_codeobj__57 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__56, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_mixedgamma, 394, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__57)) __PYX_ERR(0, 394, __pyx_L1_error)
+  __pyx_codeobj__57 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__56, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_mixedgamma, 407, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__57)) __PYX_ERR(0, 407, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":401
+  /* "tapas/sem/antisaccades/wrappers.pyx":414
  *     return ntheta
  * 
  * def p_prosa_model_n_states_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__58 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__58)) __PYX_ERR(0, 401, __pyx_L1_error)
+  __pyx_tuple__58 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__58)) __PYX_ERR(0, 414, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__58);
   __Pyx_GIVEREF(__pyx_tuple__58);
-  __pyx_codeobj__59 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__58, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_lognorm, 401, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__59)) __PYX_ERR(0, 401, __pyx_L1_error)
+  __pyx_codeobj__59 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__58, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_lognorm, 414, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__59)) __PYX_ERR(0, 414, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":411
+  /* "tapas/sem/antisaccades/wrappers.pyx":424
  * 
  * 
  * def p_reparametrize_prosa_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__60 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__60)) __PYX_ERR(0, 411, __pyx_L1_error)
+  __pyx_tuple__60 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__60)) __PYX_ERR(0, 424, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__60);
   __Pyx_GIVEREF(__pyx_tuple__60);
-  __pyx_codeobj__61 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__60, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_lognorm, 411, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__61)) __PYX_ERR(0, 411, __pyx_L1_error)
+  __pyx_codeobj__61 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__60, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_lognorm, 424, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__61)) __PYX_ERR(0, 424, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":418
+  /* "tapas/sem/antisaccades/wrappers.pyx":431
  *     return ntheta
  * 
  * def p_prosa_model_n_states_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__62 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__62)) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_tuple__62 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__62)) __PYX_ERR(0, 431, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__62);
   __Pyx_GIVEREF(__pyx_tuple__62);
-  __pyx_codeobj__63 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__62, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_later, 418, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__63)) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_codeobj__63 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__62, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_later, 431, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__63)) __PYX_ERR(0, 431, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":428
+  /* "tapas/sem/antisaccades/wrappers.pyx":441
  * 
  * 
  * def p_reparametrize_prosa_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__64 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__64)) __PYX_ERR(0, 428, __pyx_L1_error)
+  __pyx_tuple__64 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__64)) __PYX_ERR(0, 441, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__64);
   __Pyx_GIVEREF(__pyx_tuple__64);
-  __pyx_codeobj__65 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__64, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_later, 428, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__65)) __PYX_ERR(0, 428, __pyx_L1_error)
+  __pyx_codeobj__65 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__64, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_later, 441, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__65)) __PYX_ERR(0, 441, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":435
+  /* "tapas/sem/antisaccades/wrappers.pyx":448
  *     return ntheta
  * 
  * def p_prosa_model_n_states_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_tuple__66 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__66)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_tuple__66 = PyTuple_Pack(4, __pyx_n_s_t, __pyx_n_s_a, __pyx_n_s_u, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__66)) __PYX_ERR(0, 448, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__66);
   __Pyx_GIVEREF(__pyx_tuple__66);
-  __pyx_codeobj__67 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__66, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_wald, 435, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__67)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_codeobj__67 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__66, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_prosa_model_n_states_wald, 448, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__67)) __PYX_ERR(0, 448, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":445
+  /* "tapas/sem/antisaccades/wrappers.pyx":458
  * 
  * 
  * def p_reparametrize_prosa_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__68 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__68)) __PYX_ERR(0, 445, __pyx_L1_error)
+  __pyx_tuple__68 = PyTuple_Pack(2, __pyx_n_s_theta, __pyx_n_s_ntheta); if (unlikely(!__pyx_tuple__68)) __PYX_ERR(0, 458, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__68);
   __Pyx_GIVEREF(__pyx_tuple__68);
-  __pyx_codeobj__69 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__68, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_wald, 445, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__69)) __PYX_ERR(0, 445, __pyx_L1_error)
+  __pyx_codeobj__69 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__68, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_wald, 458, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__69)) __PYX_ERR(0, 458, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":459
+  /* "tapas/sem/antisaccades/wrappers.pyx":472
  * # Seria
  * 
  * def p_summary_seria_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__70 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__70)) __PYX_ERR(0, 459, __pyx_L1_error)
+  __pyx_tuple__70 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__70)) __PYX_ERR(0, 472, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__70);
   __Pyx_GIVEREF(__pyx_tuple__70);
-  __pyx_codeobj__71 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__70, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_gamma, 459, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__71)) __PYX_ERR(0, 459, __pyx_L1_error)
+  __pyx_codeobj__71 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__70, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_gamma, 472, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__71)) __PYX_ERR(0, 472, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":464
+  /* "tapas/sem/antisaccades/wrappers.pyx":477
  *     return wrapper_summary_seria(reparametrize_seria_gamma, theta)
  * 
  * def p_summary_seria_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__72 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__72)) __PYX_ERR(0, 464, __pyx_L1_error)
+  __pyx_tuple__72 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__72)) __PYX_ERR(0, 477, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__72);
   __Pyx_GIVEREF(__pyx_tuple__72);
-  __pyx_codeobj__73 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__72, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_invgamma, 464, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__73)) __PYX_ERR(0, 464, __pyx_L1_error)
+  __pyx_codeobj__73 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__72, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_invgamma, 477, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__73)) __PYX_ERR(0, 477, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":469
+  /* "tapas/sem/antisaccades/wrappers.pyx":482
  *     return wrapper_summary_seria(reparametrize_seria_invgamma, theta)
  * 
  * def p_summary_seria_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__74 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__74)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __pyx_tuple__74 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__74)) __PYX_ERR(0, 482, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__74);
   __Pyx_GIVEREF(__pyx_tuple__74);
-  __pyx_codeobj__75 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__74, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_lognorm, 469, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__75)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __pyx_codeobj__75 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__74, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_lognorm, 482, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__75)) __PYX_ERR(0, 482, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":474
+  /* "tapas/sem/antisaccades/wrappers.pyx":487
  *     return wrapper_summary_seria(reparametrize_seria_lognorm, theta)
  * 
  * def p_summary_seria_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__76 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__76)) __PYX_ERR(0, 474, __pyx_L1_error)
+  __pyx_tuple__76 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__76)) __PYX_ERR(0, 487, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__76);
   __Pyx_GIVEREF(__pyx_tuple__76);
-  __pyx_codeobj__77 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__76, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_mixedgamma, 474, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__77)) __PYX_ERR(0, 474, __pyx_L1_error)
+  __pyx_codeobj__77 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__76, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_mixedgamma, 487, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__77)) __PYX_ERR(0, 487, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":479
+  /* "tapas/sem/antisaccades/wrappers.pyx":492
  *     return wrapper_summary_seria(reparametrize_seria_mixedgamma, theta)
  * 
  * def p_summary_seria_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__78 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__78)) __PYX_ERR(0, 479, __pyx_L1_error)
+  __pyx_tuple__78 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__78)) __PYX_ERR(0, 492, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__78);
   __Pyx_GIVEREF(__pyx_tuple__78);
-  __pyx_codeobj__79 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__78, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_later, 479, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__79)) __PYX_ERR(0, 479, __pyx_L1_error)
+  __pyx_codeobj__79 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__78, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_later, 492, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__79)) __PYX_ERR(0, 492, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":484
+  /* "tapas/sem/antisaccades/wrappers.pyx":497
  *     return wrapper_summary_seria(reparametrize_seria_later, theta)
  * 
  * def p_summary_seria_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__80 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__80)) __PYX_ERR(0, 484, __pyx_L1_error)
+  __pyx_tuple__80 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__80)) __PYX_ERR(0, 497, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__80);
   __Pyx_GIVEREF(__pyx_tuple__80);
-  __pyx_codeobj__81 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__80, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_wald, 484, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__81)) __PYX_ERR(0, 484, __pyx_L1_error)
+  __pyx_codeobj__81 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__80, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_wald, 497, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__81)) __PYX_ERR(0, 497, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":491
+  /* "tapas/sem/antisaccades/wrappers.pyx":504
  * # Prosa
  * 
  * def p_summary_prosa_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__82 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__82)) __PYX_ERR(0, 491, __pyx_L1_error)
+  __pyx_tuple__82 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__82)) __PYX_ERR(0, 504, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__82);
   __Pyx_GIVEREF(__pyx_tuple__82);
-  __pyx_codeobj__83 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__82, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_gamma, 491, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__83)) __PYX_ERR(0, 491, __pyx_L1_error)
+  __pyx_codeobj__83 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__82, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_gamma, 504, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__83)) __PYX_ERR(0, 504, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":496
+  /* "tapas/sem/antisaccades/wrappers.pyx":509
  *     return wrapper_summary_prosa(reparametrize_prosa_gamma, theta)
  * 
  * def p_summary_prosa_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__84 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__84)) __PYX_ERR(0, 496, __pyx_L1_error)
+  __pyx_tuple__84 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__84)) __PYX_ERR(0, 509, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__84);
   __Pyx_GIVEREF(__pyx_tuple__84);
-  __pyx_codeobj__85 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__84, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_invgamma, 496, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__85)) __PYX_ERR(0, 496, __pyx_L1_error)
+  __pyx_codeobj__85 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__84, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_invgamma, 509, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__85)) __PYX_ERR(0, 509, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":501
+  /* "tapas/sem/antisaccades/wrappers.pyx":514
  *     return wrapper_summary_prosa(reparametrize_prosa_invgamma, theta)
  * 
  * def p_summary_prosa_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__86 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__86)) __PYX_ERR(0, 501, __pyx_L1_error)
+  __pyx_tuple__86 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__86)) __PYX_ERR(0, 514, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__86);
   __Pyx_GIVEREF(__pyx_tuple__86);
-  __pyx_codeobj__87 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__86, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_lognorm, 501, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__87)) __PYX_ERR(0, 501, __pyx_L1_error)
+  __pyx_codeobj__87 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__86, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_lognorm, 514, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__87)) __PYX_ERR(0, 514, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":506
+  /* "tapas/sem/antisaccades/wrappers.pyx":519
  *     return wrapper_summary_prosa(reparametrize_prosa_lognorm, theta)
  * 
  * def p_summary_prosa_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__88 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__88)) __PYX_ERR(0, 506, __pyx_L1_error)
+  __pyx_tuple__88 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__88)) __PYX_ERR(0, 519, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__88);
   __Pyx_GIVEREF(__pyx_tuple__88);
-  __pyx_codeobj__89 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__88, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_mixedgamma, 506, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__89)) __PYX_ERR(0, 506, __pyx_L1_error)
+  __pyx_codeobj__89 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__88, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_mixedgamma, 519, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__89)) __PYX_ERR(0, 519, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":511
+  /* "tapas/sem/antisaccades/wrappers.pyx":524
  *     return wrapper_summary_prosa(reparametrize_prosa_mixedgamma, theta)
  * 
  * def p_summary_prosa_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__90 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__90)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __pyx_tuple__90 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__90)) __PYX_ERR(0, 524, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__90);
   __Pyx_GIVEREF(__pyx_tuple__90);
-  __pyx_codeobj__91 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__90, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_later, 511, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__91)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __pyx_codeobj__91 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__90, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_later, 524, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__91)) __PYX_ERR(0, 524, __pyx_L1_error)
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":516
+  /* "tapas/sem/antisaccades/wrappers.pyx":529
  *     return wrapper_summary_prosa(reparametrize_prosa_later, theta)
  * 
  * def p_summary_prosa_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_tuple__92 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__92)) __PYX_ERR(0, 516, __pyx_L1_error)
+  __pyx_tuple__92 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__92)) __PYX_ERR(0, 529, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__92);
   __Pyx_GIVEREF(__pyx_tuple__92);
-  __pyx_codeobj__93 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__92, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_wald, 516, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__93)) __PYX_ERR(0, 516, __pyx_L1_error)
+  __pyx_codeobj__93 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__92, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_wald, 529, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__93)) __PYX_ERR(0, 529, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -12821,508 +12858,508 @@ static int __pyx_pymod_exec_wrappers(PyObject *__pyx_pyinit_module)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":187
+  /* "tapas/sem/antisaccades/wrappers.pyx":200
  * # ===========================================================================
  * 
  * def p_seria_model_n_states_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_1p_seria_model_n_states_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 187, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_1p_seria_model_n_states_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 187, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 200, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":197
+  /* "tapas/sem/antisaccades/wrappers.pyx":210
  * 
  * 
  * def p_reparametrize_seria_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_3p_reparametrize_seria_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 197, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_3p_reparametrize_seria_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 210, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 197, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 210, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":204
+  /* "tapas/sem/antisaccades/wrappers.pyx":217
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_5p_seria_early_llh_n_states_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 204, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_5p_seria_early_llh_n_states_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 217, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_early_llh_n_states_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 204, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_early_llh_n_states_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 217, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":213
+  /* "tapas/sem/antisaccades/wrappers.pyx":226
  *         seria_early_llh_abstract, t, a, u, theta)
  * 
  * def p_seria_model_n_states_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_7p_seria_model_n_states_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 213, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_7p_seria_model_n_states_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 213, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 226, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":223
+  /* "tapas/sem/antisaccades/wrappers.pyx":236
  * 
  * 
  * def p_reparametrize_seria_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_9p_reparametrize_seria_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_9p_reparametrize_seria_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 236, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 223, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 236, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":230
+  /* "tapas/sem/antisaccades/wrappers.pyx":243
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_11p_seria_early_llh_n_states_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 230, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_11p_seria_early_llh_n_states_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 243, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_early_llh_n_states_invga, __pyx_t_1) < 0) __PYX_ERR(0, 230, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_early_llh_n_states_invga, __pyx_t_1) < 0) __PYX_ERR(0, 243, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":240
+  /* "tapas/sem/antisaccades/wrappers.pyx":253
  * ##
  * 
  * def p_seria_model_n_states_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_13p_seria_model_n_states_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_13p_seria_model_n_states_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 253, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_mixedgamm, __pyx_t_1) < 0) __PYX_ERR(0, 240, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_mixedgamm, __pyx_t_1) < 0) __PYX_ERR(0, 253, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":250
+  /* "tapas/sem/antisaccades/wrappers.pyx":263
  * 
  * 
  * def p_reparametrize_seria_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_15p_reparametrize_seria_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 250, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_15p_reparametrize_seria_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_mixedgamma, __pyx_t_1) < 0) __PYX_ERR(0, 250, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_mixedgamma, __pyx_t_1) < 0) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":257
+  /* "tapas/sem/antisaccades/wrappers.pyx":270
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_17p_seria_early_llh_n_states_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 257, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_17p_seria_early_llh_n_states_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 270, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_early_llh_n_states_mixed, __pyx_t_1) < 0) __PYX_ERR(0, 257, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_early_llh_n_states_mixed, __pyx_t_1) < 0) __PYX_ERR(0, 270, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":267
+  /* "tapas/sem/antisaccades/wrappers.pyx":280
  * ##
  * 
  * def p_seria_model_n_states_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_19p_seria_model_n_states_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 267, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_19p_seria_model_n_states_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 280, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 267, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 280, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":277
+  /* "tapas/sem/antisaccades/wrappers.pyx":290
  * 
  * 
  * def p_reparametrize_seria_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_21p_reparametrize_seria_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_21p_reparametrize_seria_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 277, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":284
+  /* "tapas/sem/antisaccades/wrappers.pyx":297
  *     return ntheta
  * 
  * def p_seria_ealry_llh_n_states_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_23p_seria_ealry_llh_n_states_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 284, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_23p_seria_ealry_llh_n_states_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_ealry_llh_n_states_logno, __pyx_t_1) < 0) __PYX_ERR(0, 284, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_ealry_llh_n_states_logno, __pyx_t_1) < 0) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":294
+  /* "tapas/sem/antisaccades/wrappers.pyx":307
  * 
  * ##
  * def p_seria_model_n_states_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_25p_seria_model_n_states_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_25p_seria_model_n_states_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_later, __pyx_t_1) < 0) __PYX_ERR(0, 294, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_later, __pyx_t_1) < 0) __PYX_ERR(0, 307, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":304
+  /* "tapas/sem/antisaccades/wrappers.pyx":317
  * 
  * 
  * def p_reparametrize_seria_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_27p_reparametrize_seria_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 304, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_27p_reparametrize_seria_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 317, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_later, __pyx_t_1) < 0) __PYX_ERR(0, 304, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_later, __pyx_t_1) < 0) __PYX_ERR(0, 317, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":311
+  /* "tapas/sem/antisaccades/wrappers.pyx":324
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_29p_seria_early_llh_n_states_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 311, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_29p_seria_early_llh_n_states_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 324, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_early_llh_n_states_later, __pyx_t_1) < 0) __PYX_ERR(0, 311, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_early_llh_n_states_later, __pyx_t_1) < 0) __PYX_ERR(0, 324, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":322
+  /* "tapas/sem/antisaccades/wrappers.pyx":335
  * ##
  * 
  * def p_seria_model_n_states_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_31p_seria_model_n_states_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 322, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_31p_seria_model_n_states_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 335, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_wald, __pyx_t_1) < 0) __PYX_ERR(0, 322, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_model_n_states_wald, __pyx_t_1) < 0) __PYX_ERR(0, 335, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":332
+  /* "tapas/sem/antisaccades/wrappers.pyx":345
  * 
  * 
  * def p_reparametrize_seria_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_33p_reparametrize_seria_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 332, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_33p_reparametrize_seria_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 345, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_wald, __pyx_t_1) < 0) __PYX_ERR(0, 332, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_seria_wald, __pyx_t_1) < 0) __PYX_ERR(0, 345, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":339
+  /* "tapas/sem/antisaccades/wrappers.pyx":352
  *     return ntheta
  * 
  * def p_seria_early_llh_n_states_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_35p_seria_early_llh_n_states_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 339, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_35p_seria_early_llh_n_states_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 352, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_early_llh_n_states_wald, __pyx_t_1) < 0) __PYX_ERR(0, 339, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_seria_early_llh_n_states_wald, __pyx_t_1) < 0) __PYX_ERR(0, 352, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":350
+  /* "tapas/sem/antisaccades/wrappers.pyx":363
  * ##
  * 
  * def p_prosa_model_n_states_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_37p_prosa_model_n_states_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 350, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_37p_prosa_model_n_states_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 363, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 350, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 363, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":360
+  /* "tapas/sem/antisaccades/wrappers.pyx":373
  * 
  * 
  * def p_reparametrize_prosa_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_39p_reparametrize_prosa_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 360, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_39p_reparametrize_prosa_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 373, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 360, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 373, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":367
+  /* "tapas/sem/antisaccades/wrappers.pyx":380
  *     return ntheta
  * 
  * def p_prosa_model_n_states_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_41p_prosa_model_n_states_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 367, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_41p_prosa_model_n_states_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 380, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 367, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 380, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":377
+  /* "tapas/sem/antisaccades/wrappers.pyx":390
  * 
  * 
  * def p_reparametrize_prosa_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_43p_reparametrize_prosa_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 377, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_43p_reparametrize_prosa_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 390, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 377, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 390, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":384
+  /* "tapas/sem/antisaccades/wrappers.pyx":397
  *     return ntheta
  * 
  * def p_prosa_model_n_states_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_45p_prosa_model_n_states_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 384, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_45p_prosa_model_n_states_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_mixedgamm, __pyx_t_1) < 0) __PYX_ERR(0, 384, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_mixedgamm, __pyx_t_1) < 0) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":394
+  /* "tapas/sem/antisaccades/wrappers.pyx":407
  * 
  * 
  * def p_reparametrize_prosa_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_47p_reparametrize_prosa_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 394, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_47p_reparametrize_prosa_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 407, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_mixedgamma, __pyx_t_1) < 0) __PYX_ERR(0, 394, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_mixedgamma, __pyx_t_1) < 0) __PYX_ERR(0, 407, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":401
+  /* "tapas/sem/antisaccades/wrappers.pyx":414
  *     return ntheta
  * 
  * def p_prosa_model_n_states_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_49p_prosa_model_n_states_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 401, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_49p_prosa_model_n_states_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 414, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 401, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 414, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":411
+  /* "tapas/sem/antisaccades/wrappers.pyx":424
  * 
  * 
  * def p_reparametrize_prosa_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_51p_reparametrize_prosa_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 411, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_51p_reparametrize_prosa_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 424, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 411, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 424, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":418
+  /* "tapas/sem/antisaccades/wrappers.pyx":431
  *     return ntheta
  * 
  * def p_prosa_model_n_states_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_53p_prosa_model_n_states_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_53p_prosa_model_n_states_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 431, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_later, __pyx_t_1) < 0) __PYX_ERR(0, 418, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_later, __pyx_t_1) < 0) __PYX_ERR(0, 431, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":428
+  /* "tapas/sem/antisaccades/wrappers.pyx":441
  * 
  * 
  * def p_reparametrize_prosa_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_55p_reparametrize_prosa_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 428, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_55p_reparametrize_prosa_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 441, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_later, __pyx_t_1) < 0) __PYX_ERR(0, 428, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_later, __pyx_t_1) < 0) __PYX_ERR(0, 441, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":435
+  /* "tapas/sem/antisaccades/wrappers.pyx":448
  *     return ntheta
  * 
  * def p_prosa_model_n_states_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_57p_prosa_model_n_states_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_57p_prosa_model_n_states_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 448, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_wald, __pyx_t_1) < 0) __PYX_ERR(0, 435, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_prosa_model_n_states_wald, __pyx_t_1) < 0) __PYX_ERR(0, 448, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":445
+  /* "tapas/sem/antisaccades/wrappers.pyx":458
  * 
  * 
  * def p_reparametrize_prosa_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_59p_reparametrize_prosa_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 445, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_59p_reparametrize_prosa_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 458, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_wald, __pyx_t_1) < 0) __PYX_ERR(0, 445, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_wald, __pyx_t_1) < 0) __PYX_ERR(0, 458, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":459
+  /* "tapas/sem/antisaccades/wrappers.pyx":472
  * # Seria
  * 
  * def p_summary_seria_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_61p_summary_seria_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 459, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_61p_summary_seria_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 472, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 459, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 472, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":464
+  /* "tapas/sem/antisaccades/wrappers.pyx":477
  *     return wrapper_summary_seria(reparametrize_seria_gamma, theta)
  * 
  * def p_summary_seria_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_63p_summary_seria_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 464, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_63p_summary_seria_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 477, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 464, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 477, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":469
+  /* "tapas/sem/antisaccades/wrappers.pyx":482
  *     return wrapper_summary_seria(reparametrize_seria_invgamma, theta)
  * 
  * def p_summary_seria_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_65p_summary_seria_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_65p_summary_seria_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 482, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 469, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 482, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":474
+  /* "tapas/sem/antisaccades/wrappers.pyx":487
  *     return wrapper_summary_seria(reparametrize_seria_lognorm, theta)
  * 
  * def p_summary_seria_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_67p_summary_seria_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 474, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_67p_summary_seria_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 487, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_mixedgamma, __pyx_t_1) < 0) __PYX_ERR(0, 474, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_mixedgamma, __pyx_t_1) < 0) __PYX_ERR(0, 487, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":479
+  /* "tapas/sem/antisaccades/wrappers.pyx":492
  *     return wrapper_summary_seria(reparametrize_seria_mixedgamma, theta)
  * 
  * def p_summary_seria_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_69p_summary_seria_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 479, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_69p_summary_seria_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 492, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_later, __pyx_t_1) < 0) __PYX_ERR(0, 479, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_later, __pyx_t_1) < 0) __PYX_ERR(0, 492, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":484
+  /* "tapas/sem/antisaccades/wrappers.pyx":497
  *     return wrapper_summary_seria(reparametrize_seria_later, theta)
  * 
  * def p_summary_seria_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_71p_summary_seria_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 484, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_71p_summary_seria_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 497, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_wald, __pyx_t_1) < 0) __PYX_ERR(0, 484, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_wald, __pyx_t_1) < 0) __PYX_ERR(0, 497, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":491
+  /* "tapas/sem/antisaccades/wrappers.pyx":504
  * # Prosa
  * 
  * def p_summary_prosa_gamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_73p_summary_prosa_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 491, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_73p_summary_prosa_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 504, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 491, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 504, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":496
+  /* "tapas/sem/antisaccades/wrappers.pyx":509
  *     return wrapper_summary_prosa(reparametrize_prosa_gamma, theta)
  * 
  * def p_summary_prosa_invgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_75p_summary_prosa_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 496, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_75p_summary_prosa_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 509, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 496, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 509, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":501
+  /* "tapas/sem/antisaccades/wrappers.pyx":514
  *     return wrapper_summary_prosa(reparametrize_prosa_invgamma, theta)
  * 
  * def p_summary_prosa_lognorm(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_77p_summary_prosa_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 501, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_77p_summary_prosa_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 514, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 501, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 514, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":506
+  /* "tapas/sem/antisaccades/wrappers.pyx":519
  *     return wrapper_summary_prosa(reparametrize_prosa_lognorm, theta)
  * 
  * def p_summary_prosa_mixedgamma(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_79p_summary_prosa_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 506, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_79p_summary_prosa_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 519, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_mixedgamma, __pyx_t_1) < 0) __PYX_ERR(0, 506, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_mixedgamma, __pyx_t_1) < 0) __PYX_ERR(0, 519, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":511
+  /* "tapas/sem/antisaccades/wrappers.pyx":524
  *     return wrapper_summary_prosa(reparametrize_prosa_mixedgamma, theta)
  * 
  * def p_summary_prosa_later(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_81p_summary_prosa_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_81p_summary_prosa_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 524, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_later, __pyx_t_1) < 0) __PYX_ERR(0, 511, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_later, __pyx_t_1) < 0) __PYX_ERR(0, 524, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "tapas/sem/antisaccades/wrappers.pyx":516
+  /* "tapas/sem/antisaccades/wrappers.pyx":529
  *     return wrapper_summary_prosa(reparametrize_prosa_later, theta)
  * 
  * def p_summary_prosa_wald(             # <<<<<<<<<<<<<<
  *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_83p_summary_prosa_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 516, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_83p_summary_prosa_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 529, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_wald, __pyx_t_1) < 0) __PYX_ERR(0, 516, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_wald, __pyx_t_1) < 0) __PYX_ERR(0, 529, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "tapas/sem/antisaccades/wrappers.pyx":1

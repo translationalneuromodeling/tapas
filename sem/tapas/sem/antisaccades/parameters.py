@@ -18,7 +18,14 @@ import likelihoods
 
 class Parameters(containers.AlgebraicObject):
     ''' Abstract class. '''
-    pass
+    
+    @classmethod
+    def make_dict(clc, samples):
+        '''Return a dictionary from a vector of samples.'''
+
+        sdict = dict(zip(clc.fields, samples))
+
+        return sdict
 
 
 class ParametersProsa(Parameters):

@@ -38,6 +38,14 @@ class SummaryStats(containers.AlgebraicObject):
         if samples is None:
             super(SummaryStats, self).__init__()
         else:
+            try:
+                samples = samples.get_raw_values()
+                samples = np.array(samples)
+            except AttributeError:
+                # Try to get the raw values. If it does not work, let it
+                # break afterwards
+                pass
+
             results = self.summary_statistics(samples)
             super(SummaryStats, self).__init__(results)
 

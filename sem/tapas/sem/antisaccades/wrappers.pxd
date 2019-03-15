@@ -8,6 +8,16 @@ cimport numpy as np
 DTYPE = np.float
 ctypedef np.float_t DTYPE_t
 
+cdef extern from "gsl/gsl_errno.h":
+
+    ctypedef void gsl_error_handler_t (const char * reason, const char * file,
+                                              int line, int gsl_errno);
+    cdef:
+        gsl_error_handler_t * gsl_set_error_handler(
+                gsl_error_handler_t * new_handler);
+
+        gsl_error_handler_t * gsl_set_error_handler_off();
+
 cdef extern from "src/antisaccades/antisaccades.h":
 
     cdef int DIM_PROSA_THETA

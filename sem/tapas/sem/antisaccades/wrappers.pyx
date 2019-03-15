@@ -133,8 +133,14 @@ cdef wrapper_summary_seria(
     # Initilize the parametes 
     f_init_parameters(<np.float64_t *> theta.data, c_params)
 
+    # Otherwise python goes crazy
+    gsl_set_error_handler_off()
+
     # Fill the summary
     seria_summary_abstract(c_params, c_summary)
+    
+    # Turn it on again
+    gsl_set_error_handler(NULL)
 
     # Python dictionary with the summary
     p_summary = {
@@ -166,8 +172,15 @@ cdef wrapper_summary_prosa(
     # Initilize the parametes 
     f_init_parameters(<np.float64_t *> theta.data, c_params)
 
+    # Otherwise python goes crazy
+    gsl_set_error_handler_off()
+
     # Fill the summary
     prosa_summary_abstract(c_params, c_summary)
+    
+    # Turn it on again
+    gsl_set_error_handler(NULL)
+
 
     # Python dictionary with the summary
     p_summary = {

@@ -16,7 +16,7 @@ seria_summary_parameter(
     double ierror;
 
     gsl_integration_workspace *wspace = 
-        gsl_integration_workspace_alloc( 1000 );
+        gsl_integration_workspace_alloc( 4000 );
 
     SERIA_GSL_INT_INPUT input;
     
@@ -32,7 +32,7 @@ seria_summary_parameter(
             0.0000000001, // Lower boundary
             SEM_TOL, 
             SEM_RTOL, 
-            1000, // Limit the number of iterations
+            4000, // Limit the number of iterations
             wspace, 
             &result, &ierror);
 
