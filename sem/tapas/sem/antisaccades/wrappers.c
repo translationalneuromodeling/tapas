@@ -1517,6 +1517,8 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_seria_mode
 static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_prosa_model_n_states(FILL_PARAMETERS_PROSA, PROSA_LLH, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyArrayObject *); /*proto*/
 static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_seria(PyArrayObject *, FILL_PARAMETERS_SERIA); /*proto*/
 static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametrize_prosa(PyArrayObject *, FILL_PARAMETERS_PROSA); /*proto*/
+static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(FILL_PARAMETERS_SERIA, PyArrayObject *); /*proto*/
+static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(FILL_PARAMETERS_PROSA, PyArrayObject *); /*proto*/
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t = { "float64_t", NULL, sizeof(__pyx_t_5numpy_float64_t), { 0 }, 0, 'R', 0, 0 };
 #define __Pyx_MODULE_NAME "tapas.sem.antisaccades.wrappers"
 extern int __pyx_module_is_main_tapas__sem__antisaccades__wrappers;
@@ -1566,9 +1568,21 @@ static const char __pyx_k_predicted_anti_rt[] = "predicted_anti_rt";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_predicted_pro_prob[] = "predicted_pro_prob";
 static const char __pyx_k_predicted_anti_prob[] = "predicted_anti_prob";
+static const char __pyx_k_p_summary_prosa_wald[] = "p_summary_prosa_wald";
+static const char __pyx_k_p_summary_seria_wald[] = "p_summary_seria_wald";
+static const char __pyx_k_p_summary_prosa_gamma[] = "p_summary_prosa_gamma";
+static const char __pyx_k_p_summary_prosa_later[] = "p_summary_prosa_later";
+static const char __pyx_k_p_summary_seria_gamma[] = "p_summary_seria_gamma";
+static const char __pyx_k_p_summary_seria_later[] = "p_summary_seria_later";
 static const char __pyx_k_Please_check_len_theta[] = "Please check len(theta)";
+static const char __pyx_k_p_summary_prosa_lognorm[] = "p_summary_prosa_lognorm";
+static const char __pyx_k_p_summary_seria_lognorm[] = "p_summary_seria_lognorm";
+static const char __pyx_k_p_summary_prosa_invgamma[] = "p_summary_prosa_invgamma";
+static const char __pyx_k_p_summary_seria_invgamma[] = "p_summary_seria_invgamma";
 static const char __pyx_k_p_reparametrize_prosa_wald[] = "p_reparametrize_prosa_wald";
 static const char __pyx_k_p_reparametrize_seria_wald[] = "p_reparametrize_seria_wald";
+static const char __pyx_k_p_summary_prosa_mixedgamma[] = "p_summary_prosa_mixedgamma";
+static const char __pyx_k_p_summary_seria_mixedgamma[] = "p_summary_seria_mixedgamma";
 static const char __pyx_k_ndarray_is_not_C_contiguous[] = "ndarray is not C contiguous";
 static const char __pyx_k_p_prosa_model_n_states_wald[] = "p_prosa_model_n_states_wald";
 static const char __pyx_k_p_reparametrize_prosa_gamma[] = "p_reparametrize_prosa_gamma";
@@ -1671,6 +1685,18 @@ static PyObject *__pyx_n_s_p_seria_model_n_states_later;
 static PyObject *__pyx_n_s_p_seria_model_n_states_lognorm;
 static PyObject *__pyx_n_s_p_seria_model_n_states_mixedgamm;
 static PyObject *__pyx_n_s_p_seria_model_n_states_wald;
+static PyObject *__pyx_n_s_p_summary_prosa_gamma;
+static PyObject *__pyx_n_s_p_summary_prosa_invgamma;
+static PyObject *__pyx_n_s_p_summary_prosa_later;
+static PyObject *__pyx_n_s_p_summary_prosa_lognorm;
+static PyObject *__pyx_n_s_p_summary_prosa_mixedgamma;
+static PyObject *__pyx_n_s_p_summary_prosa_wald;
+static PyObject *__pyx_n_s_p_summary_seria_gamma;
+static PyObject *__pyx_n_s_p_summary_seria_invgamma;
+static PyObject *__pyx_n_s_p_summary_seria_later;
+static PyObject *__pyx_n_s_p_summary_seria_lognorm;
+static PyObject *__pyx_n_s_p_summary_seria_mixedgamma;
+static PyObject *__pyx_n_s_p_summary_seria_wald;
 static PyObject *__pyx_n_s_predicted_anti_prob;
 static PyObject *__pyx_n_s_predicted_anti_rt;
 static PyObject *__pyx_n_s_predicted_pro_prob;
@@ -1719,6 +1745,18 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_52p_prosa_model_n
 static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_54p_reparametrize_prosa_later(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
 static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_56p_prosa_model_n_states_wald(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_t, PyArrayObject *__pyx_v_a, PyArrayObject *__pyx_v_u, PyArrayObject *__pyx_v_theta); /* proto */
 static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_58p_reparametrize_prosa_wald(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_60p_summary_seria_gamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_62p_summary_seria_invgamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_64p_summary_seria_lognorm(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_66p_summary_seria_mixedgamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_68p_summary_seria_later(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_70p_summary_seria_wald(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_72p_summary_prosa_gamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_74p_summary_prosa_invgamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_76p_summary_prosa_lognorm(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_78p_summary_prosa_mixedgamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_80p_summary_prosa_later(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_82p_summary_prosa_wald(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static PyObject *__pyx_tuple_;
@@ -1760,6 +1798,18 @@ static PyObject *__pyx_tuple__62;
 static PyObject *__pyx_tuple__64;
 static PyObject *__pyx_tuple__66;
 static PyObject *__pyx_tuple__68;
+static PyObject *__pyx_tuple__70;
+static PyObject *__pyx_tuple__72;
+static PyObject *__pyx_tuple__74;
+static PyObject *__pyx_tuple__76;
+static PyObject *__pyx_tuple__78;
+static PyObject *__pyx_tuple__80;
+static PyObject *__pyx_tuple__82;
+static PyObject *__pyx_tuple__84;
+static PyObject *__pyx_tuple__86;
+static PyObject *__pyx_tuple__88;
+static PyObject *__pyx_tuple__90;
+static PyObject *__pyx_tuple__92;
 static PyObject *__pyx_codeobj__11;
 static PyObject *__pyx_codeobj__13;
 static PyObject *__pyx_codeobj__15;
@@ -1790,6 +1840,18 @@ static PyObject *__pyx_codeobj__63;
 static PyObject *__pyx_codeobj__65;
 static PyObject *__pyx_codeobj__67;
 static PyObject *__pyx_codeobj__69;
+static PyObject *__pyx_codeobj__71;
+static PyObject *__pyx_codeobj__73;
+static PyObject *__pyx_codeobj__75;
+static PyObject *__pyx_codeobj__77;
+static PyObject *__pyx_codeobj__79;
+static PyObject *__pyx_codeobj__81;
+static PyObject *__pyx_codeobj__83;
+static PyObject *__pyx_codeobj__85;
+static PyObject *__pyx_codeobj__87;
+static PyObject *__pyx_codeobj__89;
+static PyObject *__pyx_codeobj__91;
+static PyObject *__pyx_codeobj__93;
 
 /* "tapas/sem/antisaccades/wrappers.pyx":9
  * cimport wrappers
@@ -2922,12 +2984,12 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_reparametr
 /* "tapas/sem/antisaccades/wrappers.pyx":122
  * 
  * 
- * cdef wrapper_summaries_seria(             # <<<<<<<<<<<<<<
- *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta,
- *         FILL_PARAMETERS_SERIA f_init_parameters):
+ * cdef wrapper_summary_seria(             # <<<<<<<<<<<<<<
+ *         FILL_PARAMETERS_SERIA f_init_parameters,
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  */
 
-static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summaries_seria(PyArrayObject *__pyx_v_theta, FILL_PARAMETERS_SERIA __pyx_v_f_init_parameters) {
+static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(FILL_PARAMETERS_SERIA __pyx_v_f_init_parameters, PyArrayObject *__pyx_v_theta) {
   SERIA_SUMMARY __pyx_v_c_summary[1];
   SERIA_PARAMETERS __pyx_v_c_params[1];
   PyObject *__pyx_v_p_summary = NULL;
@@ -2938,7 +3000,7 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summaries_
   Py_ssize_t __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  __Pyx_RefNannySetupContext("wrapper_summaries_seria", 0);
+  __Pyx_RefNannySetupContext("wrapper_summary_seria", 0);
   __pyx_pybuffer_theta.pybuffer.buf = NULL;
   __pyx_pybuffer_theta.refcount = 0;
   __pyx_pybuffernd_theta.data = NULL;
@@ -3111,9 +3173,9 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summaries_
   /* "tapas/sem/antisaccades/wrappers.pyx":122
  * 
  * 
- * cdef wrapper_summaries_seria(             # <<<<<<<<<<<<<<
- *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta,
- *         FILL_PARAMETERS_SERIA f_init_parameters):
+ * cdef wrapper_summary_seria(             # <<<<<<<<<<<<<<
+ *         FILL_PARAMETERS_SERIA f_init_parameters,
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  */
 
   /* function exit code */
@@ -3126,7 +3188,7 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summaries_
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.wrapper_summaries_seria", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.wrapper_summary_seria", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   goto __pyx_L2;
   __pyx_L0:;
@@ -3141,12 +3203,12 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summaries_
 /* "tapas/sem/antisaccades/wrappers.pyx":155
  * 
  * 
- * cdef wrapper_summaries_prosa(             # <<<<<<<<<<<<<<
- *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta,
- *         FILL_PARAMETERS_PROSA f_init_parameters):
+ * cdef wrapper_summary_prosa(             # <<<<<<<<<<<<<<
+ *         FILL_PARAMETERS_PROSA f_init_parameters,
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  */
 
-static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summaries_prosa(PyArrayObject *__pyx_v_theta, FILL_PARAMETERS_PROSA __pyx_v_f_init_parameters) {
+static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(FILL_PARAMETERS_PROSA __pyx_v_f_init_parameters, PyArrayObject *__pyx_v_theta) {
   PROSA_SUMMARY __pyx_v_c_summary[1];
   PROSA_PARAMETERS __pyx_v_c_params[1];
   PyObject *__pyx_v_p_summary = NULL;
@@ -3157,7 +3219,7 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summaries_
   Py_ssize_t __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  __Pyx_RefNannySetupContext("wrapper_summaries_prosa", 0);
+  __Pyx_RefNannySetupContext("wrapper_summary_prosa", 0);
   __pyx_pybuffer_theta.pybuffer.buf = NULL;
   __pyx_pybuffer_theta.refcount = 0;
   __pyx_pybuffernd_theta.data = NULL;
@@ -3306,9 +3368,9 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summaries_
   /* "tapas/sem/antisaccades/wrappers.pyx":155
  * 
  * 
- * cdef wrapper_summaries_prosa(             # <<<<<<<<<<<<<<
- *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta,
- *         FILL_PARAMETERS_PROSA f_init_parameters):
+ * cdef wrapper_summary_prosa(             # <<<<<<<<<<<<<<
+ *         FILL_PARAMETERS_PROSA f_init_parameters,
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
  */
 
   /* function exit code */
@@ -3321,7 +3383,7 @@ static PyObject *__pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summaries_
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.wrapper_summaries_prosa", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.wrapper_summary_prosa", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   goto __pyx_L2;
   __pyx_L0:;
@@ -8181,6 +8243,7 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_58p_reparametrize
  * 
  *     return ntheta             # <<<<<<<<<<<<<<
  * 
+ * 
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_ntheta);
@@ -8211,6 +8274,1037 @@ static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_58p_reparametrize
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XDECREF(__pyx_v_ntheta);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":459
+ * # Seria
+ * 
+ * def p_summary_seria_gamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_61p_summary_seria_gamma(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_61p_summary_seria_gamma = {"p_summary_seria_gamma", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_61p_summary_seria_gamma, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_61p_summary_seria_gamma(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_seria_gamma (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 460, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_60p_summary_seria_gamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_60p_summary_seria_gamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_seria_gamma", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 459, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":462
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_seria(reparametrize_seria_gamma, theta)             # <<<<<<<<<<<<<<
+ * 
+ * def p_summary_seria_invgamma(
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_gamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 462, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":459
+ * # Seria
+ * 
+ * def p_summary_seria_gamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_seria_gamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":464
+ *     return wrapper_summary_seria(reparametrize_seria_gamma, theta)
+ * 
+ * def p_summary_seria_invgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_63p_summary_seria_invgamma(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_63p_summary_seria_invgamma = {"p_summary_seria_invgamma", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_63p_summary_seria_invgamma, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_63p_summary_seria_invgamma(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_seria_invgamma (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 465, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_62p_summary_seria_invgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_62p_summary_seria_invgamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_seria_invgamma", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 464, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":467
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_seria(reparametrize_seria_invgamma, theta)             # <<<<<<<<<<<<<<
+ * 
+ * def p_summary_seria_lognorm(
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_invgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 467, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":464
+ *     return wrapper_summary_seria(reparametrize_seria_gamma, theta)
+ * 
+ * def p_summary_seria_invgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_seria_invgamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":469
+ *     return wrapper_summary_seria(reparametrize_seria_invgamma, theta)
+ * 
+ * def p_summary_seria_lognorm(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_65p_summary_seria_lognorm(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_65p_summary_seria_lognorm = {"p_summary_seria_lognorm", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_65p_summary_seria_lognorm, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_65p_summary_seria_lognorm(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_seria_lognorm (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 470, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_64p_summary_seria_lognorm(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_64p_summary_seria_lognorm(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_seria_lognorm", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 469, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":472
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_seria(reparametrize_seria_lognorm, theta)             # <<<<<<<<<<<<<<
+ * 
+ * def p_summary_seria_mixedgamma(
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_lognorm, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 472, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":469
+ *     return wrapper_summary_seria(reparametrize_seria_invgamma, theta)
+ * 
+ * def p_summary_seria_lognorm(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_seria_lognorm", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":474
+ *     return wrapper_summary_seria(reparametrize_seria_lognorm, theta)
+ * 
+ * def p_summary_seria_mixedgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_67p_summary_seria_mixedgamma(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_67p_summary_seria_mixedgamma = {"p_summary_seria_mixedgamma", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_67p_summary_seria_mixedgamma, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_67p_summary_seria_mixedgamma(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_seria_mixedgamma (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 475, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_66p_summary_seria_mixedgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_66p_summary_seria_mixedgamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_seria_mixedgamma", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 474, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":477
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_seria(reparametrize_seria_mixedgamma, theta)             # <<<<<<<<<<<<<<
+ * 
+ * def p_summary_seria_later(
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_mixedgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 477, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":474
+ *     return wrapper_summary_seria(reparametrize_seria_lognorm, theta)
+ * 
+ * def p_summary_seria_mixedgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_seria_mixedgamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":479
+ *     return wrapper_summary_seria(reparametrize_seria_mixedgamma, theta)
+ * 
+ * def p_summary_seria_later(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_69p_summary_seria_later(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_69p_summary_seria_later = {"p_summary_seria_later", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_69p_summary_seria_later, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_69p_summary_seria_later(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_seria_later (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 480, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_68p_summary_seria_later(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_68p_summary_seria_later(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_seria_later", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 479, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":482
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_seria(reparametrize_seria_later, theta)             # <<<<<<<<<<<<<<
+ * 
+ * def p_summary_seria_wald(
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_later, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 482, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":479
+ *     return wrapper_summary_seria(reparametrize_seria_mixedgamma, theta)
+ * 
+ * def p_summary_seria_later(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_seria_later", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":484
+ *     return wrapper_summary_seria(reparametrize_seria_later, theta)
+ * 
+ * def p_summary_seria_wald(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_71p_summary_seria_wald(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_71p_summary_seria_wald = {"p_summary_seria_wald", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_71p_summary_seria_wald, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_71p_summary_seria_wald(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_seria_wald (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 485, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_70p_summary_seria_wald(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_70p_summary_seria_wald(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_seria_wald", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 484, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":487
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_seria(reparametrize_seria_wald, theta)             # <<<<<<<<<<<<<<
+ * 
+ * # Prosa
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_seria(reparametrize_seria_wald, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 487, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":484
+ *     return wrapper_summary_seria(reparametrize_seria_later, theta)
+ * 
+ * def p_summary_seria_wald(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_seria_wald", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":491
+ * # Prosa
+ * 
+ * def p_summary_prosa_gamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_73p_summary_prosa_gamma(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_73p_summary_prosa_gamma = {"p_summary_prosa_gamma", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_73p_summary_prosa_gamma, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_73p_summary_prosa_gamma(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_prosa_gamma (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 492, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_72p_summary_prosa_gamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_72p_summary_prosa_gamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_prosa_gamma", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 491, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":494
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_prosa(reparametrize_prosa_gamma, theta)             # <<<<<<<<<<<<<<
+ * 
+ * def p_summary_prosa_invgamma(
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_gamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 494, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":491
+ * # Prosa
+ * 
+ * def p_summary_prosa_gamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_prosa_gamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":496
+ *     return wrapper_summary_prosa(reparametrize_prosa_gamma, theta)
+ * 
+ * def p_summary_prosa_invgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_75p_summary_prosa_invgamma(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_75p_summary_prosa_invgamma = {"p_summary_prosa_invgamma", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_75p_summary_prosa_invgamma, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_75p_summary_prosa_invgamma(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_prosa_invgamma (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 497, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_74p_summary_prosa_invgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_74p_summary_prosa_invgamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_prosa_invgamma", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 496, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":499
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_prosa(reparametrize_prosa_invgamma, theta)             # <<<<<<<<<<<<<<
+ * 
+ * def p_summary_prosa_lognorm(
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_invgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 499, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":496
+ *     return wrapper_summary_prosa(reparametrize_prosa_gamma, theta)
+ * 
+ * def p_summary_prosa_invgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_prosa_invgamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":501
+ *     return wrapper_summary_prosa(reparametrize_prosa_invgamma, theta)
+ * 
+ * def p_summary_prosa_lognorm(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_77p_summary_prosa_lognorm(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_77p_summary_prosa_lognorm = {"p_summary_prosa_lognorm", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_77p_summary_prosa_lognorm, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_77p_summary_prosa_lognorm(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_prosa_lognorm (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 502, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_76p_summary_prosa_lognorm(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_76p_summary_prosa_lognorm(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_prosa_lognorm", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 501, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":504
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_prosa(reparametrize_prosa_lognorm, theta)             # <<<<<<<<<<<<<<
+ * 
+ * def p_summary_prosa_mixedgamma(
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_lognorm, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 504, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":501
+ *     return wrapper_summary_prosa(reparametrize_prosa_invgamma, theta)
+ * 
+ * def p_summary_prosa_lognorm(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_prosa_lognorm", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":506
+ *     return wrapper_summary_prosa(reparametrize_prosa_lognorm, theta)
+ * 
+ * def p_summary_prosa_mixedgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_79p_summary_prosa_mixedgamma(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_79p_summary_prosa_mixedgamma = {"p_summary_prosa_mixedgamma", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_79p_summary_prosa_mixedgamma, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_79p_summary_prosa_mixedgamma(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_prosa_mixedgamma (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 507, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_78p_summary_prosa_mixedgamma(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_78p_summary_prosa_mixedgamma(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_prosa_mixedgamma", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 506, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":509
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_prosa(reparametrize_prosa_mixedgamma, theta)             # <<<<<<<<<<<<<<
+ * 
+ * def p_summary_prosa_later(
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_mixedgamma, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 509, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":506
+ *     return wrapper_summary_prosa(reparametrize_prosa_lognorm, theta)
+ * 
+ * def p_summary_prosa_mixedgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_prosa_mixedgamma", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":511
+ *     return wrapper_summary_prosa(reparametrize_prosa_mixedgamma, theta)
+ * 
+ * def p_summary_prosa_later(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_81p_summary_prosa_later(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_81p_summary_prosa_later = {"p_summary_prosa_later", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_81p_summary_prosa_later, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_81p_summary_prosa_later(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_prosa_later (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 512, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_80p_summary_prosa_later(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_80p_summary_prosa_later(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_prosa_later", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 511, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":514
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_prosa(reparametrize_prosa_later, theta)             # <<<<<<<<<<<<<<
+ * 
+ * def p_summary_prosa_wald(
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_later, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 514, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":511
+ *     return wrapper_summary_prosa(reparametrize_prosa_mixedgamma, theta)
+ * 
+ * def p_summary_prosa_later(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_prosa_later", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "tapas/sem/antisaccades/wrappers.pyx":516
+ *     return wrapper_summary_prosa(reparametrize_prosa_later, theta)
+ * 
+ * def p_summary_prosa_wald(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_83p_summary_prosa_wald(PyObject *__pyx_self, PyObject *__pyx_v_theta); /*proto*/
+static PyMethodDef __pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_83p_summary_prosa_wald = {"p_summary_prosa_wald", (PyCFunction)__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_83p_summary_prosa_wald, METH_O, 0};
+static PyObject *__pyx_pw_5tapas_3sem_12antisaccades_8wrappers_83p_summary_prosa_wald(PyObject *__pyx_self, PyObject *__pyx_v_theta) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("p_summary_prosa_wald (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_theta), __pyx_ptype_5numpy_ndarray, 1, "theta", 0))) __PYX_ERR(0, 517, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5tapas_3sem_12antisaccades_8wrappers_82p_summary_prosa_wald(__pyx_self, ((PyArrayObject *)__pyx_v_theta));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5tapas_3sem_12antisaccades_8wrappers_82p_summary_prosa_wald(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_theta) {
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_theta;
+  __Pyx_Buffer __pyx_pybuffer_theta;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("p_summary_prosa_wald", 0);
+  __pyx_pybuffer_theta.pybuffer.buf = NULL;
+  __pyx_pybuffer_theta.refcount = 0;
+  __pyx_pybuffernd_theta.data = NULL;
+  __pyx_pybuffernd_theta.rcbuffer = &__pyx_pybuffer_theta;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_theta.rcbuffer->pybuffer, (PyObject*)__pyx_v_theta, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 516, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_theta.diminfo[0].strides = __pyx_pybuffernd_theta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_theta.diminfo[0].shape = __pyx_pybuffernd_theta.rcbuffer->pybuffer.shape[0];
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":519
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ *     return wrapper_summary_prosa(reparametrize_prosa_wald, theta)             # <<<<<<<<<<<<<<
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_5tapas_3sem_12antisaccades_8wrappers_wrapper_summary_prosa(reparametrize_prosa_wald, ((PyArrayObject *)__pyx_v_theta)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 519, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":516
+ *     return wrapper_summary_prosa(reparametrize_prosa_later, theta)
+ * 
+ * def p_summary_prosa_wald(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("tapas.sem.antisaccades.wrappers.p_summary_prosa_wald", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_theta.rcbuffer->pybuffer);
+  __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -10898,6 +11992,18 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_p_seria_model_n_states_lognorm, __pyx_k_p_seria_model_n_states_lognorm, sizeof(__pyx_k_p_seria_model_n_states_lognorm), 0, 0, 1, 1},
   {&__pyx_n_s_p_seria_model_n_states_mixedgamm, __pyx_k_p_seria_model_n_states_mixedgamm, sizeof(__pyx_k_p_seria_model_n_states_mixedgamm), 0, 0, 1, 1},
   {&__pyx_n_s_p_seria_model_n_states_wald, __pyx_k_p_seria_model_n_states_wald, sizeof(__pyx_k_p_seria_model_n_states_wald), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_prosa_gamma, __pyx_k_p_summary_prosa_gamma, sizeof(__pyx_k_p_summary_prosa_gamma), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_prosa_invgamma, __pyx_k_p_summary_prosa_invgamma, sizeof(__pyx_k_p_summary_prosa_invgamma), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_prosa_later, __pyx_k_p_summary_prosa_later, sizeof(__pyx_k_p_summary_prosa_later), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_prosa_lognorm, __pyx_k_p_summary_prosa_lognorm, sizeof(__pyx_k_p_summary_prosa_lognorm), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_prosa_mixedgamma, __pyx_k_p_summary_prosa_mixedgamma, sizeof(__pyx_k_p_summary_prosa_mixedgamma), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_prosa_wald, __pyx_k_p_summary_prosa_wald, sizeof(__pyx_k_p_summary_prosa_wald), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_seria_gamma, __pyx_k_p_summary_seria_gamma, sizeof(__pyx_k_p_summary_seria_gamma), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_seria_invgamma, __pyx_k_p_summary_seria_invgamma, sizeof(__pyx_k_p_summary_seria_invgamma), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_seria_later, __pyx_k_p_summary_seria_later, sizeof(__pyx_k_p_summary_seria_later), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_seria_lognorm, __pyx_k_p_summary_seria_lognorm, sizeof(__pyx_k_p_summary_seria_lognorm), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_seria_mixedgamma, __pyx_k_p_summary_seria_mixedgamma, sizeof(__pyx_k_p_summary_seria_mixedgamma), 0, 0, 1, 1},
+  {&__pyx_n_s_p_summary_seria_wald, __pyx_k_p_summary_seria_wald, sizeof(__pyx_k_p_summary_seria_wald), 0, 0, 1, 1},
   {&__pyx_n_s_predicted_anti_prob, __pyx_k_predicted_anti_prob, sizeof(__pyx_k_predicted_anti_prob), 0, 0, 1, 1},
   {&__pyx_n_s_predicted_anti_rt, __pyx_k_predicted_anti_rt, sizeof(__pyx_k_predicted_anti_rt), 0, 0, 1, 1},
   {&__pyx_n_s_predicted_pro_prob, __pyx_k_predicted_pro_prob, sizeof(__pyx_k_predicted_pro_prob), 0, 0, 1, 1},
@@ -11388,6 +12494,150 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__68);
   __Pyx_GIVEREF(__pyx_tuple__68);
   __pyx_codeobj__69 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__68, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_reparametrize_prosa_wald, 445, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__69)) __PYX_ERR(0, 445, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":459
+ * # Seria
+ * 
+ * def p_summary_seria_gamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__70 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__70)) __PYX_ERR(0, 459, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__70);
+  __Pyx_GIVEREF(__pyx_tuple__70);
+  __pyx_codeobj__71 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__70, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_gamma, 459, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__71)) __PYX_ERR(0, 459, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":464
+ *     return wrapper_summary_seria(reparametrize_seria_gamma, theta)
+ * 
+ * def p_summary_seria_invgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__72 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__72)) __PYX_ERR(0, 464, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__72);
+  __Pyx_GIVEREF(__pyx_tuple__72);
+  __pyx_codeobj__73 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__72, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_invgamma, 464, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__73)) __PYX_ERR(0, 464, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":469
+ *     return wrapper_summary_seria(reparametrize_seria_invgamma, theta)
+ * 
+ * def p_summary_seria_lognorm(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__74 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__74)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__74);
+  __Pyx_GIVEREF(__pyx_tuple__74);
+  __pyx_codeobj__75 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__74, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_lognorm, 469, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__75)) __PYX_ERR(0, 469, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":474
+ *     return wrapper_summary_seria(reparametrize_seria_lognorm, theta)
+ * 
+ * def p_summary_seria_mixedgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__76 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__76)) __PYX_ERR(0, 474, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__76);
+  __Pyx_GIVEREF(__pyx_tuple__76);
+  __pyx_codeobj__77 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__76, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_mixedgamma, 474, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__77)) __PYX_ERR(0, 474, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":479
+ *     return wrapper_summary_seria(reparametrize_seria_mixedgamma, theta)
+ * 
+ * def p_summary_seria_later(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__78 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__78)) __PYX_ERR(0, 479, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__78);
+  __Pyx_GIVEREF(__pyx_tuple__78);
+  __pyx_codeobj__79 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__78, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_later, 479, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__79)) __PYX_ERR(0, 479, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":484
+ *     return wrapper_summary_seria(reparametrize_seria_later, theta)
+ * 
+ * def p_summary_seria_wald(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__80 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__80)) __PYX_ERR(0, 484, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__80);
+  __Pyx_GIVEREF(__pyx_tuple__80);
+  __pyx_codeobj__81 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__80, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_seria_wald, 484, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__81)) __PYX_ERR(0, 484, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":491
+ * # Prosa
+ * 
+ * def p_summary_prosa_gamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__82 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__82)) __PYX_ERR(0, 491, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__82);
+  __Pyx_GIVEREF(__pyx_tuple__82);
+  __pyx_codeobj__83 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__82, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_gamma, 491, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__83)) __PYX_ERR(0, 491, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":496
+ *     return wrapper_summary_prosa(reparametrize_prosa_gamma, theta)
+ * 
+ * def p_summary_prosa_invgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__84 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__84)) __PYX_ERR(0, 496, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__84);
+  __Pyx_GIVEREF(__pyx_tuple__84);
+  __pyx_codeobj__85 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__84, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_invgamma, 496, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__85)) __PYX_ERR(0, 496, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":501
+ *     return wrapper_summary_prosa(reparametrize_prosa_invgamma, theta)
+ * 
+ * def p_summary_prosa_lognorm(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__86 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__86)) __PYX_ERR(0, 501, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__86);
+  __Pyx_GIVEREF(__pyx_tuple__86);
+  __pyx_codeobj__87 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__86, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_lognorm, 501, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__87)) __PYX_ERR(0, 501, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":506
+ *     return wrapper_summary_prosa(reparametrize_prosa_lognorm, theta)
+ * 
+ * def p_summary_prosa_mixedgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__88 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__88)) __PYX_ERR(0, 506, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__88);
+  __Pyx_GIVEREF(__pyx_tuple__88);
+  __pyx_codeobj__89 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__88, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_mixedgamma, 506, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__89)) __PYX_ERR(0, 506, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":511
+ *     return wrapper_summary_prosa(reparametrize_prosa_mixedgamma, theta)
+ * 
+ * def p_summary_prosa_later(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__90 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__90)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__90);
+  __Pyx_GIVEREF(__pyx_tuple__90);
+  __pyx_codeobj__91 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__90, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_later, 511, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__91)) __PYX_ERR(0, 511, __pyx_L1_error)
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":516
+ *     return wrapper_summary_prosa(reparametrize_prosa_later, theta)
+ * 
+ * def p_summary_prosa_wald(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_tuple__92 = PyTuple_Pack(1, __pyx_n_s_theta); if (unlikely(!__pyx_tuple__92)) __PYX_ERR(0, 516, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__92);
+  __Pyx_GIVEREF(__pyx_tuple__92);
+  __pyx_codeobj__93 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__92, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_tapas_sem_antisaccades_wrappers, __pyx_n_s_p_summary_prosa_wald, 516, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__93)) __PYX_ERR(0, 516, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -11929,6 +13179,150 @@ static int __pyx_pymod_exec_wrappers(PyObject *__pyx_pyinit_module)
   __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_59p_reparametrize_prosa_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 445, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_reparametrize_prosa_wald, __pyx_t_1) < 0) __PYX_ERR(0, 445, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":459
+ * # Seria
+ * 
+ * def p_summary_seria_gamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_61p_summary_seria_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 459, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 459, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":464
+ *     return wrapper_summary_seria(reparametrize_seria_gamma, theta)
+ * 
+ * def p_summary_seria_invgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_63p_summary_seria_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 464, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 464, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":469
+ *     return wrapper_summary_seria(reparametrize_seria_invgamma, theta)
+ * 
+ * def p_summary_seria_lognorm(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_65p_summary_seria_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 469, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":474
+ *     return wrapper_summary_seria(reparametrize_seria_lognorm, theta)
+ * 
+ * def p_summary_seria_mixedgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_67p_summary_seria_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 474, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_mixedgamma, __pyx_t_1) < 0) __PYX_ERR(0, 474, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":479
+ *     return wrapper_summary_seria(reparametrize_seria_mixedgamma, theta)
+ * 
+ * def p_summary_seria_later(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_69p_summary_seria_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 479, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_later, __pyx_t_1) < 0) __PYX_ERR(0, 479, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":484
+ *     return wrapper_summary_seria(reparametrize_seria_later, theta)
+ * 
+ * def p_summary_seria_wald(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_71p_summary_seria_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 484, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_seria_wald, __pyx_t_1) < 0) __PYX_ERR(0, 484, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":491
+ * # Prosa
+ * 
+ * def p_summary_prosa_gamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_73p_summary_prosa_gamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 491, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_gamma, __pyx_t_1) < 0) __PYX_ERR(0, 491, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":496
+ *     return wrapper_summary_prosa(reparametrize_prosa_gamma, theta)
+ * 
+ * def p_summary_prosa_invgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_75p_summary_prosa_invgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 496, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_invgamma, __pyx_t_1) < 0) __PYX_ERR(0, 496, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":501
+ *     return wrapper_summary_prosa(reparametrize_prosa_invgamma, theta)
+ * 
+ * def p_summary_prosa_lognorm(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_77p_summary_prosa_lognorm, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 501, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_lognorm, __pyx_t_1) < 0) __PYX_ERR(0, 501, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":506
+ *     return wrapper_summary_prosa(reparametrize_prosa_lognorm, theta)
+ * 
+ * def p_summary_prosa_mixedgamma(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_79p_summary_prosa_mixedgamma, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 506, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_mixedgamma, __pyx_t_1) < 0) __PYX_ERR(0, 506, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":511
+ *     return wrapper_summary_prosa(reparametrize_prosa_mixedgamma, theta)
+ * 
+ * def p_summary_prosa_later(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_81p_summary_prosa_later, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_later, __pyx_t_1) < 0) __PYX_ERR(0, 511, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "tapas/sem/antisaccades/wrappers.pyx":516
+ *     return wrapper_summary_prosa(reparametrize_prosa_later, theta)
+ * 
+ * def p_summary_prosa_wald(             # <<<<<<<<<<<<<<
+ *         np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_5tapas_3sem_12antisaccades_8wrappers_83p_summary_prosa_wald, NULL, __pyx_n_s_tapas_sem_antisaccades_wrappers_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 516, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_p_summary_prosa_wald, __pyx_t_1) < 0) __PYX_ERR(0, 516, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "tapas/sem/antisaccades/wrappers.pyx":1

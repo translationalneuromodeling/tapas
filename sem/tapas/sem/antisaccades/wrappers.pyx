@@ -119,9 +119,9 @@ cdef wrapper_reparametrize_prosa(
     return ntheta
 
 
-cdef wrapper_summaries_seria(
-        np.ndarray[np.float64_t, ndim=1, mode="c"] theta,
-        FILL_PARAMETERS_SERIA f_init_parameters):
+cdef wrapper_summary_seria(
+        FILL_PARAMETERS_SERIA f_init_parameters,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
 
     # C struct with summary
     cdef SERIA_SUMMARY c_summary[1]
@@ -152,9 +152,9 @@ cdef wrapper_summaries_seria(
     return p_summary
 
 
-cdef wrapper_summaries_prosa(
-        np.ndarray[np.float64_t, ndim=1, mode="c"] theta,
-        FILL_PARAMETERS_PROSA f_init_parameters):
+cdef wrapper_summary_prosa(
+        FILL_PARAMETERS_PROSA f_init_parameters, 
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
 
     # C struct with summary
     cdef PROSA_SUMMARY c_summary[1]
@@ -448,4 +448,73 @@ def p_reparametrize_prosa_wald(
     ntheta = wrapper_reparametrize_prosa(theta, reparametrize_prosa_wald)
 
     return ntheta
+
+
+# ============================================================================
+# Summaries
+# ============================================================================
+
+# Seria
+
+def p_summary_seria_gamma(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_seria(reparametrize_seria_gamma, theta)
+
+def p_summary_seria_invgamma(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_seria(reparametrize_seria_invgamma, theta)
+
+def p_summary_seria_lognorm(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_seria(reparametrize_seria_lognorm, theta)
+
+def p_summary_seria_mixedgamma(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_seria(reparametrize_seria_mixedgamma, theta)
+
+def p_summary_seria_later(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_seria(reparametrize_seria_later, theta)
+
+def p_summary_seria_wald(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_seria(reparametrize_seria_wald, theta)
+
+# Prosa
+
+def p_summary_prosa_gamma(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_prosa(reparametrize_prosa_gamma, theta)
+
+def p_summary_prosa_invgamma(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_prosa(reparametrize_prosa_invgamma, theta)
+
+def p_summary_prosa_lognorm(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_prosa(reparametrize_prosa_lognorm, theta)
+
+def p_summary_prosa_mixedgamma(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_prosa(reparametrize_prosa_mixedgamma, theta)
+
+def p_summary_prosa_later(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_prosa(reparametrize_prosa_later, theta)
+
+def p_summary_prosa_wald(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_summary_prosa(reparametrize_prosa_wald, theta)
 
