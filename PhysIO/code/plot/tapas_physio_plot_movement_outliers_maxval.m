@@ -64,7 +64,7 @@ end
 nOutlierTrans = numel(iOutlierTrans);
 nOutlierRot = numel(iOutlierRot);
 
-stringTitle = 'Motion Quality Control - MAXVAL thresholds per direction';
+stringTitle = 'Model: Motion Quality Control - MAXVAL thresholds per direction';
 
 fh = tapas_physio_get_default_fig_params();
 set(fh, 'Name', stringTitle);

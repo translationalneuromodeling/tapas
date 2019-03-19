@@ -178,7 +178,7 @@ end
 %% Show some plots of (interpolated) channel data
 if DEBUG
     fh = tapas_physio_get_default_fig_params();
-    set(fh, 'Name', 'Raw ECG Siemens Tics data, split into channels')
+    set(fh, 'Name', 'Read-In: Raw ECG Siemens Tics data, split into channels')
     verbose.fig_handles(end+1) = fh;
     
     

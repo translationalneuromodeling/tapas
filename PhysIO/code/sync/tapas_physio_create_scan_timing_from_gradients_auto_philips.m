@@ -346,7 +346,7 @@ end
 %% Plot template for volume repetition
 function fh = plot_template(t, templateGradientVolume)
 
-stringTitle = 'Template Gradient Timecourse during 1 Slice';
+stringTitle = 'Sync: Template Gradient Timecourse during 1 Slice';
 fh = tapas_physio_get_default_fig_params();
 set(gcf, 'Name', stringTitle);
 
@@ -361,7 +361,7 @@ end
 function fh = plot_volume_events(VOLLOCS, t, G, ...
     templateGradientVolume, secondGuessVOLLOCS)
 
-stringTitle = 'Template Gradient Timecourse during 1 Volume';
+stringTitle = 'Sync: Template Gradient Timecourse during 1 Volume';
 fh = tapas_physio_get_default_fig_params();
 set(gcf, 'Name', stringTitle);
 
@@ -391,7 +391,7 @@ end
 function fh = plot_slice_events(LOCS, t, G, ...
     templateGradientSlice, secondGuessLOCS)
 
-stringTitle = 'Template Gradient Timecourse during 1 Slice';
+stringTitle = 'Sync: Template Gradient Timecourse during 1 Slice';
 fh = tapas_physio_get_default_fig_params();
 set(gcf, 'Name', stringTitle);
 
@@ -437,7 +437,7 @@ end
 %% Plot all raw gradient time-courses
 function [fh, fs] = plot_raw_gradients(t, y, acq_codes)
 fh = tapas_physio_get_default_fig_params();
-set(gcf,'Name', 'Thresholding Gradient for slice acq start detection');
+set(gcf,'Name', 'Sync: Thresholding Gradient for slice acq start detection');
 for i=1:3, fs(i) = subplot(3,1,i); end
 
 axes(fs(1));
@@ -454,7 +454,7 @@ end
 
 
 legend('abs(G_x^2+G_y^2+G_z^2)', 'gradient x', 'gradient y', 'gradient z');
-title('Raw Gradient Time-courses');
+title('Sync: Raw Gradient Time-courses');
 end
 
 

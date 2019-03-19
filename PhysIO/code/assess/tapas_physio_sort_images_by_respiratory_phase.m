@@ -96,7 +96,9 @@ nVols = sqpar.Nscans;
 [h, respPhaseArray] = hist(r_phase, nRespiratoryPhases);
 
 if verbose
+    stringTitle = 'Assess: Number of slice/volume occurences of each respiratory phase';
     fh(1) = tapas_physio_get_default_fig_params();
+    set(gcf, 'Name', stringTitle);
     bar(respPhaseArray,h); xlabel('respiratory phase'); ylabel('counts');
 end
 
@@ -132,7 +134,9 @@ end
 
 %% Plot respiratory phase per slice and volume
 if verbose
+    stringTitle = 'Assess: Respiratory phase per slice and volume';
     fh(2) = tapas_physio_get_default_fig_params();
+    set(gcf, 'Name', stringTitle);
     imagesc(iPhaseVolSliceArray);
     xlabel('Volumes'); ylabel('slice');
     title('respiratory phase per slice and volume');
@@ -156,7 +160,7 @@ for iPhase = 1:nRespiratoryPhases
 end
 
 if verbose
-    stringTitle = 'Count of volumes falling into phase/slice bin';
+    stringTitle = 'Assess: Count of volumes falling into phase/slice bin';
     fh(3) = tapas_physio_get_default_fig_params();
     set(fh(3), 'Name', stringTitle);
     imagesc(nVolPerPhaseSlice);

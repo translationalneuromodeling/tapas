@@ -122,7 +122,7 @@ end
 function fh = plot_interpolation(tOrig, yOrig, tInterp, yInterp, ...
     stringOrigInterp)
 fh = tapas_physio_get_default_fig_params;
-stringTitle = sprintf('Interpolation of %s signal', stringOrigInterp{1});
+stringTitle = sprintf('Read-In: Interpolation of %s signal', stringOrigInterp{1});
 set(fh, 'Name', stringTitle);
 plot(tOrig, yOrig, 'go--');  hold all;
 plot(tInterp, yInterp,'r.');

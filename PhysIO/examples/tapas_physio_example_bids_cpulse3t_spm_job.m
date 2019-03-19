@@ -3,9 +3,9 @@
 % spm SPM - SPM12 (7219)
 % cfg_basicio BasicIO - Unknown
 %-----------------------------------------------------------------------
-matlabbatch{1}.spm.tools.physio.save_dir = {'physio_test'};
+matlabbatch{1}.spm.tools.physio.save_dir = {'physio_out'};
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'BIDS';
-matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'sub-s002_task-fnclearning_run-01_physio.tsv'};
+matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'sub-s998_task-random_run-99_physio.tsv'};
 matlabbatch{1}.spm.tools.physio.log_files.respiration = {''};
 matlabbatch{1}.spm.tools.physio.log_files.scan_timing = {''};
 matlabbatch{1}.spm.tools.physio.log_files.sampling_interval = [];

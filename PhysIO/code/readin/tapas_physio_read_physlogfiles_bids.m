@@ -2,11 +2,17 @@ function [c, r, t, cpulse, acq_codes, verbose] = ...
     tapas_physio_read_physlogfiles_bids(log_files, cardiac_modality, ...
     verbose, varargin)
 % Reads in 3-column tsv-file from BIDS Data (cardiac, respiratory, trigger),
-% assuming log_files-meta information to be in .json-file
+% assuming log_files-meta information to be in an accompanying .json-file
 % Note: if a JSON file of the same file name exists (but .json instead of .tsv)
 % column order of physiological recordings will be read from there as well
 % as values for sampling_interval and relative_start_acquisition, if they were
 % empty before
+% 
+% Details of the Brain Imaging Data Structure (BIDS) standard for peripheral
+% physiological recordings can be found here: 
+%
+% https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/
+% 06-physiological-and-other-continous-recordings.html
 %
 % [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles_biopac_txt(...
 %    log_files, cardiac_modality, verbose, varargin)
@@ -192,7 +198,7 @@ end
 %% Plot, if wanted
 
 if DEBUG
-    stringTitle = 'Raw BIDS physlog data (TSV file)';
+    stringTitle = 'Read-In: Raw BIDS physlog data (TSV file)';
     verbose.fig_handles(end+1) = ...
         tapas_physio_plot_raw_physdata_siemens_hcp(t, c, r, acq_codes, ...
         stringTitle);

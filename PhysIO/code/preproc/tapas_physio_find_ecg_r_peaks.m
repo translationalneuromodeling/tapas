@@ -54,7 +54,7 @@ iSamples = 1:nSamples;
 if manual_mode
     %% Plot ECG curve, central part and already detected input events
     fh = tapas_physio_get_default_fig_params();
-    set(fh, 'Name', 'Detection of R-wave from measured ECG-timecourse');
+    set(fh, 'Name', 'Preproc: Detection of R-wave from measured ECG-timecourse');
     subplot(3,1,1); hold off;
     
     plot(t(iSamples), y(iSamples)); hold all;

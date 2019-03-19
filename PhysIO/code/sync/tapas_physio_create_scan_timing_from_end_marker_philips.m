@@ -145,7 +145,7 @@ end
     
     if verbose.level>=1
         verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-        set(gcf,'Name', 'Thresholding Gradient for slice acq start detection');
+        set(gcf,'Name', 'Sync: Thresholding Gradient for slice acq start detection');
         fs(1) = subplot(1,1,1);
         plot(t, y(:,7:9));
         legend('gradient x', 'gradient y', 'gradient z');

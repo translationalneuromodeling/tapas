@@ -39,7 +39,7 @@ vendor        = cfg_menu;
 vendor.tag    = 'vendor';
 vendor.name   = 'vendor';
 vendor.help   = {' Vendor Name depending on your MR Scanner/Physiological recording system'
-    '                       ''BIDS'' - Brain Imaging Data Structure (https://bids-specification.readthedocs.io/en/latest/04-modality-specific-files/04-physiological-and-other-continous-recordings.html)'
+    '                       ''BIDS'' - Brain Imaging Data Structure (https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continous-recordings.html)'
     '                       ''Biopac_Txt'' - exported txt files from Biopac system (4 columns, [Resp PPU GSR Trigger]'
     '                       ''Biopac_Mat'' - exported mat files from Biopac system'
     '                       ''BrainProducts'' - .eeg files from BrainProducts EEG system'
