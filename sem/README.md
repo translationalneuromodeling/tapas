@@ -753,6 +753,11 @@ export PATH=$PATH:your-matlab-path
 ./configure && make
 ~~~~
 
+To find the matlabroot directory, in the matlab console type
+~~~~
+matlabroot
+~~~~
+
 ## Python package 
 
 This toolbox can be installed as a python package. Although no inference
