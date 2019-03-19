@@ -26,6 +26,11 @@ TAPAS toolbox
     https://doi.org/10.1016/j.neuroimage.2018.05.058
 
 ### Changed
+- New version of the PhysIO Toolbox (R2019a-v7.1.0)
+    - BIDS and BioPac readers; code sorted in modules (`readin`, `preproc` etc.), 
+      also reflected in figure names
+    - Updated and extended all examples, and introduced unit testing
+    - Full details in tapas/PhysIO/CHANGELOG.md
 - New version of the HGF toolbox (v5.3). Details in tapas/HGF/README.md
 - New version of the rDCM toolbox (v1.1). Details in tapas/rDCM/CHANGELOG.md.
 - Huge: Improved documentation.
