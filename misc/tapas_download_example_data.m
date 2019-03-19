@@ -1,10 +1,19 @@
 function [] = tapas_download_example_data(version)
-%% Downloads example data and installs it in tapas/examples/.
+%% Download example data and install it in tapas/examples/.
 %
 % Input
-%       version     -- The tapas version that is desired.
+%       version     -- String with the desired release. If empty it defaults
+%                      to the current version.
 % Output
 %       
+% Examples:
+%
+% Download the latest version:
+% tapas_download_example_data(); 
+%
+% Download data from release 3.0.0
+% tapas_download_example_data('3.0.0')          
+%
 
 % aponteeduardo@gmail.com
 % copyright (C) 2018
