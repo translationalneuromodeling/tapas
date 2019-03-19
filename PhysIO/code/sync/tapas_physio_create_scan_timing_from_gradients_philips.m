@@ -221,8 +221,8 @@ end
 if verbose.level>=1
     
     % Depict all gradients, raw
-    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf,'Name', 'Thresholding Gradient for slice acq start detection');
+    verbose.fig_handles(end+1,1) = tapas_physio_get_default_fig_params();
+    set(gcf,'Name', 'Sync: Thresholding Gradient for slice acq start detection');
     fs(1) = subplot(3,1,1); 
     
     plot(t, sqrt(sum(y(:,7:9).^2,2)), '--k');
@@ -238,7 +238,7 @@ if verbose.level>=1
     
     
     legend('abs(G_x^2+G_y^2+G_z^2)', 'gradient x', 'gradient y', 'gradient z');
-    title('Raw Gradient Time-courses');
+    title('Sync: Raw Gradient Time-courses');
     
     % Plot gradient thresholding for slice timing determination
     fs(2) = subplot(3,1,2);

@@ -116,7 +116,8 @@ end
 [h, cardiacPhaseArray] = hist(c_phase, nCardiacPhases);
 
 if verbose
-    stringTitle = 'Number of slice/volume occurences of each cardiac phase';
+    stringTitle = 'Assess: Number of slice/volume occurences of each cardiac
+    phase';
     fh(1) = tapas_physio_get_default_fig_params();
     set(gcf, 'Name', stringTitle);
     bar(cardiacPhaseArray,h); xlabel('cardiac phase'); ylabel('counts');
@@ -155,7 +156,7 @@ end
 
 %% Plot cardiac phase per slice and volume
 if verbose
-    stringTitle = 'Cardiac phase per slice and volume';
+    stringTitle = 'Assess: Cardiac phase per slice and volume';
     fh(2) = tapas_physio_get_default_fig_params();
     set(gcf, 'Name', stringTitle);
     imagesc(iPhaseVolSliceArray);
@@ -186,7 +187,7 @@ for iPhase = 1:nCardiacPhases
 end
 
 if verbose
-    stringTitle = 'Count of volumes falling into phase/slice bin';
+    stringTitle = 'Assess: Count of volumes falling into phase/slice bin';
     fh(3) = tapas_physio_get_default_fig_params();
     set(fh(3), 'Name', stringTitle);
     imagesc(nVolPerPhaseSlice);

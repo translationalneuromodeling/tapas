@@ -116,7 +116,7 @@ feqht = cumsumh/sumh*pi;
 
 fh = tapas_physio_get_default_fig_params();
 set(fh, 'Name', ...
-   'get_respiratory_phase: histogram for respiratory phase estimation');
+   'Preproc: get_respiratory_phase: histogram for respiratory phase estimation');
 
 hs(1) = subplot(2,2,1);
 plot(t,pulset); 

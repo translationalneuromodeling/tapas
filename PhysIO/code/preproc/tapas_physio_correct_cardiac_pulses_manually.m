@@ -24,23 +24,26 @@ percentile = thresh_cardiac.percentile;
 upperThresh = thresh_cardiac.upper_thresh;
 lowerThresh = thresh_cardiac.lower_thresh;
 
+%% Select additional pulses
 [outliersHigh,outliersLow, verbose] = tapas_physio_cardiac_detect_outliers(...
     ons_secs.cpulse, percentile, upperThresh, lowerThresh, verbose);
 if any(outliersHigh)
-    %disp('Press Enter to proceed to manual peak selection!');
-    %pause;
     additionalPulse=[];
-    fh2=figure;
-    for outk=1:length(outliersHigh)
-        s=0;
-        while ~(s==1)
+    fh2 = figure('Name', 'Preproc: Manual Pulse Selection Window');
+    outk = 0;
+    doQuitSelection = false;
+    while (outk < length(outliersHigh)) && ~doQuitSelection
+        s = 0;
+        outk = outk + 1;
+        while s==0
             indStart = outliersHigh(outk)-1; indEnd = outliersHigh(outk)+2;
             ind=find(ons_secs.t>=ons_secs.cpulse(indStart), 1, 'first')-100:find(ons_secs.t<=ons_secs.cpulse(indEnd), 1, 'last')+100;
             figure(fh2); clf;
             plot(ons_secs.t(ind),ons_secs.c(ind),'r')
             hold on;
             plot(ons_secs.cpulse(indStart:indEnd),ones(4,1)*max(ons_secs.c(ind)),'ok')
-            inpNum=input('How many triggers do you want to set? Enter a number between 0 and 10 : ');
+            inpNum=input(...
+                'How many triggers do you want to set? Enter a number between 0 and 10 : ');
             I1=[];
             for ii=1:inpNum
                 figure(fh2);
@@ -49,7 +52,11 @@ if any(outliersHigh)
                 
             end
             
-            s=input('If you agree with the selected triggers, press 1 (then enter) : ');
+            fprintf('If you agree with the selected triggers, press 1 (then enter);\n');
+            fprintf('If you want to repeat, press 0;\n');
+            s=input('If you want to quit the manual selection,, press -1 : ');
+            doQuitSelection = s==-1;
+          
             if isempty(s)
                 s=0;
             end
@@ -59,12 +66,18 @@ if any(outliersHigh)
     ons_secs.cpulse = sort([ons_secs.cpulse;additionalPulse]);
     close(fh2);
 end
+
+% closes detected outlier figure, since no longer up to date after
+% selection
 close(verbose.fig_handles(end));
 verbose.fig_handles(end) = [];
 
+
+%% Remove superfluous pulses
 [outliersHigh,outliersLow, verbose] = tapas_physio_cardiac_detect_outliers(...
     ons_secs.cpulse, percentile, upperThresh, lowerThresh, verbose);
 
+doQuitSelection = false;
 nPulses = length(ons_secs.cpulse);
 finalIndex=1:nPulses;
 
@@ -73,9 +86,7 @@ nWindow = 10;
 %show windows with suspicious outliers only
 for indStart = round(nWindow/2):nWindow-2:nPulses
     indEnd = indStart+nWindow-1;
-    if any(ismember(outliersLow, indStart:indEnd))
-        %disp('Press Enter to proceed to manual peak deletion!');
-        %pause;
+    if any(ismember(outliersLow, indStart:indEnd)) && ~doQuitSelection
         fh3=figure('Position', [500 500 1000 500]);
         ind=find(ons_secs.t>=ons_secs.cpulse(indStart), 1, 'first')-100:find(ons_secs.t<=ons_secs.cpulse(indEnd), 1, 'last')+100;
         figure(fh3); clf;
@@ -90,7 +101,8 @@ for indStart = round(nWindow/2):nWindow-2:nPulses
         
         delInd= [];
         
-        delInd=input('Enter the indices of pulses you want to delete (0 if none, put multiple in [], e.g. [19,20]): ');
+        fprintf('Enter the indices of pulses you want to delete.\n');
+        delInd=input('(0 if none, -1 to quit, multiple indices in [], e.g. [19,20]): ');
         
         if ~isempty(delInd) && any(find(delInd~=0))
             plot(ons_secs.cpulse(delInd),max(ons_secs.c(ind))*ones(size(delInd)), 'rx', 'MarkerSize',20);
@@ -102,19 +114,26 @@ for indStart = round(nWindow/2):nWindow-2:nPulses
 end
 ons_secs.cpulse = sort(ons_secs.cpulse(finalIndex));
 
+% closes detected outlier figure, since no longer up to date after
+% selection
 close(verbose.fig_handles(end));
 verbose.fig_handles(end) = [];
 
+
+%% Check for outliers again and continue recursively, if wanted
 [outliersHigh,outliersLow, verbose] = tapas_physio_cardiac_detect_outliers(...
     ons_secs.cpulse, percentile, upperThresh, lowerThresh, verbose);
 
-close(verbose.fig_handles(end));
-verbose.fig_handles(end) = [];
-
 % recursively determine outliers
 if ~isempty(outliersHigh) || ~isempty(outliersLow)
-     doManualCorrectionAgain = input('More outliers detected after correction. Do you want to remove them? (1=yes, 0=no; ENTER)');
+
+    doManualCorrectionAgain = input('More outliers detected after correction. Do you want to remove them? (1=yes, 0=no; ENTER)');
     if doManualCorrectionAgain
+    
+        % will be recalculated later
+        close(verbose.fig_handles(end));
+        verbose.fig_handles(end) = [];
+        
         [ons_secs, outliersHigh, outliersLow] = ...
             tapas_physio_correct_cardiac_pulses_manually(ons_secs, ...
             thresh_cardiac, verbose);

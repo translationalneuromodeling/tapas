@@ -70,17 +70,17 @@ end
 %% Plot orthogonalisation
 if verbose.level
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf, 'Name', 'RETROICOR GLM regressors');
+    set(gcf, 'Name', 'Model: RETROICOR GLM regressors');
     
     switch lower(orthogonalise)
         case {'n', 'none'}
             imagesc(R); 
-            title({'Physiological regressor matrix for GLM', ...
+            title({'Model: Physiological regressor matrix for GLM', ...
                 '- including input confound regressors -'});
             colormap gray; xlabel('regressor');ylabel('scan volume');
             
         otherwise
-            subplot(1,3,1); imagesc(R); title({'Physiological regressor matrix for GLM'...
+            subplot(1,3,1); imagesc(R); title({'Model: Physiological regressor matrix for GLM'...
                 ' - specified regressors orthogonalized - '}); 
             colormap gray; xlabel('regressor');ylabel('scan volume');
             subplot(1,3,2);

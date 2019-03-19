@@ -10,9 +10,9 @@ function [R_noise_rois, noise_rois, verbose] = tapas_physio_create_noise_rois_re
 % automatically
 %
 % Approach similar to the one described as aCompCor:
-% Behzadi, Y., Restom, K., Liau, J., Liu, T.T., 2007. 
-% A component based noise correction method (CompCor) for BOLD and 
-% perfusion based fMRI. NeuroImage 37, 90?101. 
+% Behzadi, Y., Restom, K., Liau, J., Liu, T.T., 2007.
+% A component based noise correction method (CompCor) for BOLD and
+% perfusion based fMRI. NeuroImage 37, 90?101.
 % doi:10.1016/j.neuroimage.2007.04.042
 %
 % IN
@@ -82,7 +82,11 @@ Yimg = reshape(Yimg, [], nVolumes);
 R_noise_rois = [];
 for r = 1:nRois
     
-    Vroi = spm_vol(roi_files{r});
+    nComponents =  n_components(r);
+    threshold = thresholds(r);
+    fileRoi = roi_files{r};
+    
+    Vroi = spm_vol(fileRoi);
     
     hasRoiDifferentGeometry = any(any(abs(Vroi.mat - Vimg(1).mat) > 1e-5)) | ...
         any(Vroi.dim-Vimg(1).dim(1:3));
@@ -112,18 +116,42 @@ for r = 1:nRois
         spm_jobman('run', matlabbatch);
         
         % update header link to new reslice mask-file
-        Vroi = spm_vol(spm_file(roi_files{r}, 'prefix', 'r'));
+        Vroi = spm_vol(spm_file(fileRoi, 'prefix', 'r'));
     end
-        
+    
     roi = spm_read_vols(Vroi); % 3D matrix of the ROI
-    roi(roi <  thresholds(r)) = 0;
-    roi(roi >= thresholds(r)) = 1;
+    roi(roi <  threshold) = 0;
+    roi(roi >= threshold) = 1;
+    
+    nVoxelsInRoi = sum(roi(:)>0);
+    
+    if nVoxelsInRoi == 0
+        verbose = tapas_physio_log(sprintf(['No voxels in Noise ROI mask no. %d.\n' ...
+            'Please reduce threshold %f!'], ...
+            r, threshold), verbose, 2);
+    elseif (nComponents >= 1 && nVoxelsInRoi < (nComponents + 1)) % less voxels in roi than PCA components (and mean) requested
+        verbose = tapas_physio_log(sprintf(['Not enough voxels in Noise ROI mask no. %d\n' ...
+            '%d voxels remain, but %d (+1 for mean) components requested.\n' ...
+            'Please reduce threshold %f!'],  r, nVoxelsInRoi, ...
+            nComponents, threshold), verbose, 2);
+    end
     
     % crop pixel, if desired
     for iter = 1 : n_voxel_crop(r)
         roi = spm_erode(roi);                    % using spm_erode, a compiled mex file
         % roi= imerode(roi, strel('sphere', 1)); % using imerode (+ strel) from Image Processing Toolbox
         % NB : the result is exactly the same with spm_erode or imerode
+        nVoxelsInRoi = sum(roi(:)>0);
+        if nVoxelsInRoi == 0
+            verbose = tapas_physio_log(sprintf(['No voxels in Noise ROI mask no. %d\n' ...
+                'after eroding %d pixel(s); Please reduce nVoxels for cropping!'], ...
+                r, iter), verbose, 2);
+        elseif (nComponents >= 1 && nVoxelsInRoi < (nComponents + 1)) % less voxels in roi than PCA components (and mean) requested
+            verbose = tapas_physio_log(sprintf(['Not enough voxels in Noise ROI mask no. %d\n' ...
+                'after eroding %d pixel(s); %d voxels remain, but %d (+1 for mean) ' ...
+                'components requested.\nPlease reduce nVoxels for cropping!'], ...
+                r, iter, nVoxelsInRoi, nComponents), verbose, 2);
+        end
     end
     
     % Write the final noise ROIs in a volume, after relice, threshold and erosion
@@ -148,22 +176,22 @@ for r = 1:nRois
     
     %% mean and linear trend removal according to CompCor pub
     % design matrix
-     X = ones(nVolumes,1);
-     X(:,2) = 1:nVolumes;
-     % fit 1st order polynomial to time series data in each voxel
-     for n_roi_voxel = 1:size(Yroi,1)
-         % extract data
-         raw_Y = Yroi(n_roi_voxel,:)';
-         % estimate betas
-         beta = X\raw_Y;
-         % fitted data
-         fit_Y = X*beta;
-         % detrend data
-         detrend_Y = raw_Y - fit_Y;  
-         
-         % overwrite Yroi
-         Yroi(n_roi_voxel,:) = detrend_Y;
-     end
+    X = ones(nVolumes,1);
+    X(:,2) = 1:nVolumes;
+    % fit 1st order polynomial to time series data in each voxel
+    for n_roi_voxel = 1:size(Yroi,1)
+        % extract data
+        raw_Y = Yroi(n_roi_voxel,:)';
+        % estimate betas
+        beta = X\raw_Y;
+        % fitted data
+        fit_Y = X*beta;
+        % detrend data
+        detrend_Y = raw_Y - fit_Y;
+        
+        % overwrite Yroi
+        Yroi(n_roi_voxel,:) = detrend_Y;
+    end
     
     
     
@@ -174,7 +202,7 @@ for r = 1:nRois
     
     % COEFF = [nVolumes, nPCs]  principal components (PCs) ordered by variance
     %                           explained
-    % SCORE = [nVoxel, nPCs]    loads of each component in each voxel, i.e. 
+    % SCORE = [nVoxel, nPCs]    loads of each component in each voxel, i.e.
     %                           specific contribution of each component in
     %                           a voxel's variance
     % LATENT = [nPCs, 1]        eigenvalues of data covariance matrix,
@@ -187,11 +215,9 @@ for r = 1:nRois
     % MU = [1, nVolumes]        mean of all time series
     [COEFF, SCORE, LATENT, TSQUARED, EXPLAINED, MU] = pca(Yroi);
     
-    % components either via number or threshold of variance explained
-    if n_components(r) >= 1
-        nComponents = n_components(r); 
-    else
-        nComponents = find(cumsum(EXPLAINED)/100 > n_components(r), 1, 'first');
+    % components defined via threshold of variance explained
+    if nComponents < 1
+        nComponents = find(cumsum(EXPLAINED)/100 > nComponents, 1, 'first');
     end
     
     % save to return
@@ -218,8 +244,8 @@ for r = 1:nRois
     end
     
     if verbose.level >=2
-        stringFig = sprintf('Noise\_rois: Extracted principal components for ROI %d', r);
-        verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params(); 
+        stringFig = sprintf('Model: Noise\\_rois: Extracted principal components for ROI %d', r);
+        verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
         set(gcf, 'Name', stringFig);
         plot(R);
         legend(stringLegend);
@@ -235,7 +261,7 @@ for r = 1:nRois
         Vpc = Vroi;
         Vpc.fname = fullfile(fpFmri, sprintf('pc%02d_scores_%s.nii',c, fnRoi));
         % saved as float, since was masked before
-        Vpc.dt = [spm_type('float32') 1]; 
+        Vpc.dt = [spm_type('float32') 1];
         pcScores = zeros(Vpc.dim);
         pcScores(roi(:)==1) = SCORE(:, c);
         spm_write_vol(Vpc, pcScores);

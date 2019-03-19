@@ -28,7 +28,7 @@ function  fh = tapas_physio_plot_movement_outliers_fd(rp, quality_measures, ...
 %
 
 fh = tapas_physio_get_default_fig_params();
-stringTitle = 'Motion Quality Control - Framewise Displacement';
+stringTitle = 'Model: Motion Quality Control - Framewise Displacement';
 set(fh, 'Name', stringTitle);
 
 colors = [

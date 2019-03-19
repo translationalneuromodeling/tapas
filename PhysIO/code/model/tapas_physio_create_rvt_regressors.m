@@ -56,7 +56,7 @@ rvt = rvt/max(rvt); % normalize for reasonable range of regressor
 
 if verbose.level >=2
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf, 'Name', 'Convolution Respiration RVT X RRF');
+    set(gcf, 'Name', 'Model: Convolution Respiration RVT X RRF');
     subplot(2,2,1)
     plot(sample_points,rvt, 'g');xlabel('time (seconds)');
     title('Respiratory volume per time');

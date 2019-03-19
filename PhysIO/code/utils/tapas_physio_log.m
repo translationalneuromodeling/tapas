@@ -29,7 +29,10 @@ function [verbose, msg] = tapas_physio_log(msg, verbose, warningLevel)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
-
+if nargin < 2 || isempty(verbose)
+   tmpPhysio = tapas_physio_new();
+   verbose = tmpPhysio.verbose;
+end 
 
 if nargin < 3
     warningLevel = 0;

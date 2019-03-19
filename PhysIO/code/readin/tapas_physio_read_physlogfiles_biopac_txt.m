@@ -129,7 +129,7 @@ end
 %% Plot, if wanted
 
 if DEBUG
-    stringTitle = 'Raw BioPac physlog data (TXT Export)'
+    stringTitle = 'Read-In: Raw BioPac physlog data (TXT Export)';
     verbose.fig_handles(end+1) = ...
         tapas_physio_plot_raw_physdata_siemens_hcp(t, c, r, acq_codes, ...
         stringTitle);

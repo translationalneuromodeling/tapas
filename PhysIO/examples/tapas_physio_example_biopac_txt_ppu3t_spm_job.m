@@ -3,7 +3,7 @@
 % spm SPM - SPM12 (7219)
 % cfg_basicio BasicIO - Unknown
 %-----------------------------------------------------------------------
-matlabbatch{1}.spm.tools.physio.save_dir = {''};
+matlabbatch{1}.spm.tools.physio.save_dir = {'physio_out'};
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'Biopac_Txt';
 matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'Biopac_Physio_Data_Export.txt'};
 matlabbatch{1}.spm.tools.physio.log_files.respiration = {'Biopac_Physio_Data_Export.txt'};

@@ -99,7 +99,7 @@ nGainSwitches = numel(idxGainSwitch);
 if nGainSwitches > 0
     
     if doPlot
-        stringTitle = 'Detected Gradient Gain Fluctuations';
+        stringTitle = 'Sync: Detected Gradient Gain Fluctuations';
         verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
         set(gcf, 'Name', stringTitle);
         hs(1) = subplot(2,1,1);

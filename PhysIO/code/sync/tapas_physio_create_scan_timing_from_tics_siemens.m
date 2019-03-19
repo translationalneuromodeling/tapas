@@ -98,7 +98,7 @@ VOLLOCS = LOCS(indVolStarts);
 
 if DEBUG
    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-   stringTitle = 'Extracted Sequence Timing Siemens';
+   stringTitle = 'Sync: Extracted Sequence Timing Siemens';
    set(gcf, 'Name', stringTitle);
    stem(t(LOCS), ones(size(LOCS))); hold all;
    stem(t(VOLLOCS), 1.5*ones(size(VOLLOCS)));
