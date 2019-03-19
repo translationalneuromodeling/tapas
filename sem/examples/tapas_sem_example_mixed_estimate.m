@@ -1,11 +1,18 @@
-function [posterior] = tapas_sem_flat_example_inversion(model, param)
-%% Test 
+function [posterior] = tapas_sem_example_mixed_estimate(model, param)
+%% Example for inversion with a mixed effects model as prior.
 %
-% fp -- Pointer to a file for the test output, defaults to 1
-%
+% Input
+%       model       -- String. Either seria or prosa
+%       param       -- String. Parametric distribution.
+% Output
+%       posterior   -- Structure. Contains the posterior estimates.
+%       summary     -- Table. Contains a table with a summary of the 
+%                      posterior.
+
 % aponteeduardo@gmail.com
-% copyright (C) 2015
+% copyright (C) 2018
 %
+
 
 n = 0;
 
@@ -37,14 +44,11 @@ case 'seria'
             ptheta.llh = @c_seria_multi_later;
         case 'wald'
             ptheta.llh = @c_seria_multi_wald;
-        otherwise
-            error('parametric function not defined')
     end
 
     ptheta.jm = [...
         eye(19)
         zeros(3, 8) eye(3) zeros(3, 8)];
-    ptheta.p0(11) = tapas_logit([0.005], 1);
 case 'prosa'
     ptheta = tapas_sem_prosa_ptheta(); % Choose at convinience.
     switch param
@@ -60,19 +64,18 @@ case 'prosa'
         ptheta.llh = @c_prosa_multi_later;
     case 'wald'
         ptheta.llh = @c_prosa_multi_wald;
-    otherwise
-        error('parametric function not defined')
     end
 
     ptheta.jm = [...
         eye(15)
         zeros(3, 6) eye(3) zeros(3, 6)];
-
 end
 
+ptheta.x = eye(4);
+ptheta.mixed = ones(4, 1)';
 pars = struct();
 
-pars.T = linspace(0.1, 1, 1).^5;
+pars.T = ones(4, 1) * linspace(0.1, 1, 1).^5;
 pars.nburnin = 4000;
 pars.niter = 4000;
 pars.ndiag = 500;
@@ -81,14 +84,12 @@ pars.verbose = 1;
 
 display(ptheta);
 inference = struct();
-inference.kernel_scale = 0.1 * 0.1;
+tic
+posterior = tapas_sem_mixed_estimate(data, ptheta, inference, pars);
+tapas_sem_display_posterior(posterior)
+toc
 
-posterior = cell(numel(data), 1);
-for i = 1:numel(data)
-    posterior = tapas_sem_flat_estimate(data(i), ptheta, inference, pars);
-    display(posterior);
-    summary = tapas_sem_display_posterior(posterior);
-end
+display(posterior);
 
 end
 

@@ -1,4 +1,4 @@
-function [posterior, summary] = tapas_sem_hier_example_inversion(model, param)
+function [posterior, summary] = tapas_sem_example_hier_estimate(model, param)
 %% Example for inversion with a linear model for the prior. 
 %
 % Input

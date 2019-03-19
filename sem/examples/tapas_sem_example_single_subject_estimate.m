@@ -1,6 +1,5 @@
-function [posterior, summary] = ...
-    tapas_sem_multiv_example_inversion(model, param)
-%% Example for inversion with a single prior for the whole population. 
+function [posterior] = tapas_sem_example_single_subject_estimate(model, param)
+%% Example for estimate for single subjects.
 %
 % Input
 %       model       -- String. Either seria or prosa
@@ -13,6 +12,7 @@ function [posterior, summary] = ...
 % aponteeduardo@gmail.com
 % copyright (C) 2018
 %
+
 
 n = 0;
 
@@ -44,14 +44,14 @@ case 'seria'
             ptheta.llh = @c_seria_multi_later;
         case 'wald'
             ptheta.llh = @c_seria_multi_wald;
+        otherwise
+            error('parametric function not defined')
     end
 
     ptheta.jm = [...
         eye(19)
         zeros(3, 8) eye(3) zeros(3, 8)];
-
-    ptheta.x = ones(4, 1);
-
+    ptheta.p0(11) = tapas_logit([0.005], 1);
 case 'prosa'
     ptheta = tapas_sem_prosa_ptheta(); % Choose at convinience.
     switch param
@@ -67,19 +67,19 @@ case 'prosa'
         ptheta.llh = @c_prosa_multi_later;
     case 'wald'
         ptheta.llh = @c_prosa_multi_wald;
+    otherwise
+        error('parametric function not defined')
     end
 
     ptheta.jm = [...
         eye(15)
         zeros(3, 6) eye(3) zeros(3, 6)];
 
-    ptheta.x = ones(4, 1);
-
 end
 
 pars = struct();
 
-pars.T = ones(4, 1) * linspace(0.1, 1, 1).^5;
+pars.T = linspace(0.1, 1, 1).^5;
 pars.nburnin = 4000;
 pars.niter = 4000;
 pars.ndiag = 500;
@@ -88,12 +88,16 @@ pars.verbose = 1;
 
 display(ptheta);
 inference = struct();
-tic
-posterior = tapas_sem_multiv_estimate(data, ptheta, inference, pars);
-summary = tapas_sem_display_posterior(posterior);
-toc
+inference.kernel_scale = 0.1 * 0.1;
 
-display(posterior)
+posterior = cell(numel(data), 1);
+for i = 1:numel(data)
+    posterior = tapas_sem_single_subject_estimate(...
+        data(i), ptheta, inference, pars);
+    display(posterior);
+    summary = tapas_sem_display_posterior(posterior);
+end
+
 end
 
 function [data] = load_data()

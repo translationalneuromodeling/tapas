@@ -25,7 +25,7 @@ We have a short video tutorial [here](https://youtu.be/XpTMrWBG_nw).
 [SERIA](http://www.biorxiv.org/content/early/2017/06/08/109090)
 is a formal statistical model of the probability of
 pro- and antisaccades and the corresponding reaction times (RT). The SEM 
-toolbox includes several methods for fitting SERIA based on the
+toolbox includes several methods of fitting SERIA based on the
 [Metropolis-Hastings algorithm](https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm).
 These methods are all implemented in MATLAB.
 
@@ -38,10 +38,10 @@ tapas_sem_flat_example_inversion();
 ```
 
 This will load example data and estimate parameters. The data 
-consists of a list of trials with trial type (pro- or antisaccade), the
+consist of a list of trials with trial type (pro- or antisaccade), the
 action performed (pro- or antisaccade) and RT. 
 
-The file `tapas/sem/examples/tapas_sem_flat_example_inversion.m`
+The file `tapas/sem/examples/tapas_sem_example_estimate_single_subject.m`
 can be used as a template for other analyses.
 
 ## The model
@@ -244,7 +244,7 @@ There are currently four methods to fit models:
 
 | Name | Multiple/single subject | Description | Function |
 |:----:|:-------------------:|-------------|----------|
-|Flat  | Single subject     | Fits a single subject. | `tapas_sem_flat_estimate.m` |
+|Single subject  | Single subject     | Fits a single subject. | `tapas_sem_single_subject_estimate.m` |
 |Hier.    | Multi. subject    | Uses the population mean as prior of the parameters. | `tapas_sem_hier_estimate.m` |
 |Multiv.  | Multi. subject  | Uses a linear model to construct a parametric prior from the population. | `tapas_sem_multiv_estimate.m` |
 |Mixed    | Multi. subject  | Uses a mixed effects model to construct a parametric prior from the population. | `tapas_sem_mixed_estimate.m` |
@@ -265,7 +265,7 @@ prior is encoded by \(\mu\). Note that \(u\) encodes the subject specific
 conditions.
 
 An example can be found in 
-`tapas/sem/examples/tapas_sem_flat_example_estimate.m`. Below, we have
+`tapas/sem/examples/tapas_sem_example_single_subject_estimate.m`. Below, we have
 commented an abbreviated version of the example.
 
 #### Example
@@ -310,7 +310,7 @@ pars.verbose = 1;
 display(ptheta);
 tic
 % Estimate the model.
-posterior = tapas_sem_flat_estimate(data, ptheta, htheta, pars);
+posterior = tapas_sem_single_subject_estimate(data, ptheta, htheta, pars);
 toc
 tapas_sem_display_posterior(posterior)
 posterior
@@ -398,7 +398,7 @@ the `data` structure array.
 
 #### Example
 This example is adapted from the file 
-`tapas/sem/examples/tapas_seria_hier_example_inversion.m`
+`tapas/sem/examples/tapas_sem_example_hier_estimate.m`
 
 ```matlab
 [data] = prepare_data();
@@ -483,7 +483,7 @@ intercept, and the second column represent the contrast of treatment A and B.
 
 #### Example
 This example is adapted from 
-`tapas/sem/examples/tapas_sem_multiv_example_estimate.m`.
+`tapas/sem/examples/tapas_sem_example_multiv_estimate.m`.
 
 ```matlab
 [data] = prepare_data();
@@ -568,7 +568,7 @@ random effect.
 
 #### Example
 This example is adapted from 
-`tapas/sem/examples/tapas_sem_mixed_example_estimate.m` and is almost
+`tapas/sem/examples/tapas_sem_example_mixed_estimate.m` and is almost
 identical to the examples from the sections above. In the example data, 
 there are 4 observations from 4 subjects. We use a single regressor for
 each subject in the line `ptheta.x = eye(4)`,
@@ -604,7 +604,7 @@ toc
 display(posterior);
 
 ```
-The structure returned has the same fields as 'tapas_sem_hier_estimate'.
+The output structure has the same fields as 'tapas_sem_hier_estimate'.
 
 ## Parameter interpretation
 The parameters returned by the model are mostly in log scale and represent

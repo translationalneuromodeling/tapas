@@ -1,4 +1,5 @@
-function [ps, fe] = tapas_sem_flat_estimate(data, ptheta, htheta, pars)
+function [ps, fe] = ...
+    tapas_sem_single_subject_estimate(data, ptheta, htheta, pars)
 %% Estimates the posterior probability of the parameters using MCMC combined
 % with path sampling.
 %
