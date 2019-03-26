@@ -52,7 +52,11 @@ pv = tapas_sgm(mu2, 1).*(1-tapas_sgm(mu2, 1)).*exp(mu3); % transform down to 1st
 logrt = be0 +be1.*surp +be2.*bernv +be3.*inferv +be4.*pv;
 
 % Initialize random number generator
-rng('shuffle');
+if isnan(r.c_sim.seed)
+    rng('shuffle');
+else
+    rng(r.c_sim.seed);
+end
 
 % Simulate
 y = logrt+sqrt(ze)*randn(n, 1);

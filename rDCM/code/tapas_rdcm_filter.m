@@ -1,4 +1,4 @@
-function [y_fft, idx] = tapas_rdcm_filter(y_fft, u_fft, h_fft, Ny)
+function [y_fft, idx] = tapas_rdcm_filter(y_fft, u_fft, h_fft, Ny, options)
 % [y_fft, idx] = tapas_rdcm_filter(y_fft, u_fft, h_fft, Ny)
 % 
 % Specifies informative frequencies and filters the Fourier-transformed 
@@ -9,6 +9,7 @@ function [y_fft, idx] = tapas_rdcm_filter(y_fft, u_fft, h_fft, Ny)
 %       u_fft       - Fourier-transformed driving inputs
 %       h_fft       - Fourier-transformed HRF
 %       Ny          - intial length of signal (necessary for padding detection)
+%       options     - estimation options
 %
 %   Output:
 %       y_fft       - filtered Fourier-transformed signal
@@ -61,7 +62,7 @@ str_idx = h_idx & u_idx & y_idx;
 %% filtering by comapring to noise variance
 
 % relative threshold of signal compare to noise
-thr = 5;
+thr = options.filter_str;
 
 % real and imaginary signal
 y_real = real(y_fft);

@@ -36,24 +36,24 @@ function [physio, R, ons_secs] = tapas_physio_main_create_regressors(varargin)
 %               Chang et al2009, NI 44
 %
 % See also tapas_physio_new
-%
+
 % Author: Lars Kasper
 % Created: 2011-08-01
-% Copyright (C) 2013 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.
+% Copyright (C) 2011-2018 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.
 %
-% This file is part of the PhysIO toolbox, which is released under the terms of the GNU General Public
+% This file is part of the TAPAS PhysIO Toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
-%
-% $Id$
-%
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 0. Set Default parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% include subfolders of code to path as well
+pathThis = fileparts(mfilename('fullpath'));
+addpath(genpath(pathThis)); 
 
 % These parameters could become toolbox inputs...
 minConstantIntervalAlertSeconds     = 0.2;

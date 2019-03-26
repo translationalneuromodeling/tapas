@@ -4,18 +4,75 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-PhysIO_Toolbox_R2018.1.1
+*Current version: PhysIO Toolbox Release R2019a, v7.1.0*
 
-September 05, 2018
+March 19, 2019
 
-Bugfix Release Notes (R2018.1.1)
--------------------------------
+
+Minor Release Notes (R2019a, v7.1.0)
+------------------------------------
+
+### Added
+- BIDS reader and example (Brain Imaging Data Structure, 
+http://bids.neuroimaging.io/bids_spec.pdf) for `*_physio.tsv[.gz]/.json` files
+- Added BioPac txt-File read-in and example
+- Template example with all physio-fields for matlab script and settings as in default SPM batch
+- Started unit testing framework in folder `tests`
+    - example functions for findpeaks and BIDS readin
+    - reference data saved with example data in subfolder `TestReferenceResults`
+    - reference data reflects physio structure after running example scripts
+    with PhysIO R2019a
+
+### Changed
+- put all functions in `code` into subfolders relating to different modules:
+  `readin`, `sync`, `preproc`, `model`, `assess`, `utils` (gitlab-issue #58)
+    - updated deployment `tapas_physio_init` because of that
+    - updated figure names to reflect respective code module
+- matlab-script examples now contain more comments
+    - fixed internal bug that prepended absolute paths to input logfiles in automatic example generation
+- `tapas_physio_create_noise_rois_regressors` with more flexible ROI reslicing 
+  options (speed-up) and uses `spm_erode` (no Matlab image processing toolbox needed),
+  thanks to a [contribution by Benoît Béranger](https://github.com/translationalneuromodeling/tapas/pull/34)
+- introduced semantic version numbers for all previous releases, and changed
+Release numbering to R<YEAR><LETTER> style
+- extended documentation (FAQ, new read-in BIDS)
+- several bugfixes (Sep 18 - Mar 19), see 
+  [GitHub Issues](https://github.com/translationalneuromodeling/tapas/issues?q=label:physio)
+
+### Removed
+- `tapas_physio_findpeaks` now refers to current Matlab signal processing
+toolbox implementation, instead of copy of older version
+- some Matlab toolbox dependencies by custom simplified functions (e.g.,
+`suptitle`)
+
+
+Bugfix Release Notes (R2018.1.3, v7.0.3)
+----------------------------------------
+
+### Changed
+- fixed bug for matching of Philips SCANPHYSLOG-files (Gitlab #62), if 
+  physlogs were acquired on different days, but similar times
+
+
+Bugfix Release Notes (R2018.1.2, v7.0.2)
+----------------------------------------
+
+### Added
+- BioPac txt-file reader (for single file, resp/cardiac/trigger data in different columns)
+
+### Changed
+- fixed bug for 3D nifti array read-in in tapas_physio_create_noise_rois_regressors (github issue #24, gitlab #52)
+
+
+Bugfix Release Notes (R2018.1.1, v7.0.1)
+----------------------------------------
 
 ### Changed
 - documentation.{html,pdf} export nicer with different FAQ numbering
 
-Major Release Notes (R2018.1)
------------------------------
+
+Major Release Notes (R2018.1, v7.0.0)
+-------------------------------------
 
 ### Added
 - initialization function `tapas_physio_init()` to check Matlab paths, including SPM for batch processing
@@ -29,8 +86,9 @@ Major Release Notes (R2018.1)
 - Updated `README.md` to reflect changes to example download, new references
 - Extended Wiki documentation, in particular examples and read-in formats
 
-Minor Release Notes (R2017.3)
------------------------------
+
+Minor Release Notes (R2017.3, v6.3.0)
+-------------------------------------
 
 - Included references to external [ETH gitlab physio-doc repo and wiki](https://gitlab.ethz.ch/physio/physio-doc)
 - New Human Connectome Project reader for preprocessed Siemens 3-column logfiles (`*Physio_log.txt`)
@@ -43,8 +101,9 @@ Minor Release Notes (R2017.3)
 - updated README about documentation, new support policy and [TAPAS on GitHub](https://translationalneuromodeling.github.io/tapas)
 - extended FAQ
 
-Minor Release Notes (R2017.2)
------------------------------
+
+Minor Release Notes (R2017.2, v6.2.0)
+-------------------------------------
 
 - Included Markdown-based documentation via Wiki (also CITATION, LICENSE, CHANGELOG.md)
 - Included FAQ in Wiki
@@ -52,8 +111,9 @@ Minor Release Notes (R2017.2)
 - Bugfix and Typo correction
 - Philips SCANPYHSLOG for their software release 5.1.7.
 
-Minor Release Notes (R2017.1)
------------------------------
+
+Minor Release Notes (R2017.1, v6.1.0)
+-------------------------------------
 
 - Substantially improved Siemens interface, both for VB/VD and 3T/7T releases
     - several bugfixes
@@ -61,8 +121,9 @@ Minor Release Notes (R2017.1)
 - New functionality tapas_physio_overlay_contrasts.m to display non-physio 
   contrasts automatically as well
 
-Major Release Notes (r904 / R2016.1)
-------------------------------------
+
+Major Release Notes (r904 / R2016.1, v6.0.0)
+--------------------------------------------
 
 - Software version for accepted PhysIO Toolbox Paper: doi:10.1016/j.jneumeth.2016.10.019
 - Tested and expanded versions of examples
@@ -73,8 +134,9 @@ Major Release Notes (r904 / R2016.1)
 - Improved Read-in capabilities (Siemens respiration data, BioPac .mat)
 - Migration from svn (r904) to git (tnurepository) for version control
 
-Major Release Notes (r835)
---------------------------
+
+Major Release Notes (r835, v5.0.0)
+----------------------------------
 
 - Software version for Toolbox Paper submission
 - Noise ROIs modeling
@@ -85,8 +147,9 @@ Major Release Notes (r835)
 - consistent module naming (scan_timing, preproc)
 - Visualisation improvement (color schemes, legends)
 
-Minor Release Notes (r666)
---------------------------
+
+Minor Release Notes (r666, v4.1.0)
+----------------------------------
 
 - Compatibility tested for SPM12, small bugfixes Batch Dependencies
 - Cleaner Batch Interface with grouped sub-menus (cfg_choice)
@@ -97,16 +160,19 @@ Minor Release Notes (r666)
 - All peak detections (cardiac/respiratory) now via auto_matched algorithm
 - Adapt plots/saving for Matlab R2014b
 
-Major Release Notes (r534)
---------------------------
+
+Major Release Notes (r534, v4.0.0)
+----------------------------------
 
 - Read-in of Siemens plain text log files; new example dataset for Siemens
-- Speed up and debugging of auto-detection method for noisy cardiac data => new method thresh.cardiac.initial_cpulse_select.method = ???auto_matched???
+- Speed up and debugging of auto-detection method for noisy cardiac data => new
+method thresh.cardiac.initial_cpulse_select.method = 'auto_matched'
 - Error handling for temporary breathing belt failures (Eduardo Aponte, TNU Zurich)
 - slice-wise regressors can be created by setting sqpar.onset_slice to a index vector of slices
 
-Major Release Notes (r497)
---------------------------
+
+Major Release Notes (r497, v3.0.0)
+----------------------------------
 
 - SPM matlabbatch GUI implemented (Call via Batch -> SPM -> Tools -> TAPAS PhysIO Toolbox)
 - improved, automatic heartbeat detection for noisy ECG now standard for ECG and Pulse oximetry (courtesy of Steffen Bollmann)
@@ -114,8 +180,9 @@ Major Release Notes (r497)
 - job .m/.mat-files created for all example datasets
 - bugfixes cpulse-initial-select method-handling (auto/manual/load)
 
-Major Release Notes (r429)
---------------------------
+
+Major Release Notes (r429, v2.0.0)
+----------------------------------
 
 - Cardiac and Respiratory response function regressors integrated in workflow (heart rate and breathing volume computation)
 - Handling of Cardiac and Respiratory Logfiles only
@@ -123,14 +190,16 @@ Major Release Notes (r429)
 - read-in of custom log files, e.g. for BrainVoyager peripheral data
 - more informative plots and commenting (especially in tapas_physio_new).
 
-Minor Release Notes (r354)
---------------------------
+
+Minor Release Notes (r354, v1.1.0)
+----------------------------------
 
 - computation of heart and breathing rate in Philips/PPU/main_PPU.m
 - prefix of functions with tapas_*
 
-Major Release Notes (r241)
---------------------------
+
+Major Release Notes (r241, v1.0.0)
+----------------------------------
 
 - complete modularization of reading/preprocessing/regressor creation for peripheral physiological data
 - manual selection of missed heartbeats in ECG/pulse oximetry (courtesy of Jakob Heinzle)
@@ -140,4 +209,3 @@ Major Release Notes (r241)
 - consistent function names (prefixed by "physio_")
 
 NOTE: Your main_ECG/PPU.m etc. scripts from previous versions (<=r159) will not work with this one any more. Please adapt one of the example scripts for your needs (~5 min of work). The main benefit of this version is a complete new variable structure that is more sustainable and makes the code more readable.
-

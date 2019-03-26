@@ -81,37 +81,24 @@ if ( isempty(z_cut) && args.evalCp == 1 )
     % empty covariance matrix
     output.Cp = sparse(D,D);
     
+    % get the number of A matrix entries
+    nr_A    = numel(output.Ep.A);
+    nr_A_B  = numel(output.Ep.A(1,:))+numel(output.Ep.B(1,:,:))+numel(output.Ep.B(1,:,1));
+    
     % asign the covariances among the endogenous connections
     for k = 1:nr
-        if ( size(sN{k},1) <= size(output.Ep.A,1) )
-            output.Cp(1+size(output.Ep.A,1)*(k-1):size(output.Ep.A,1)*(k-1)+size(sN{k},1),1+size(output.Ep.A,1)*(k-1):size(output.Ep.A,1)*(k-1)+size(sN{k},1)) = sN{k};
-        else
-            output.Cp(1+size(output.Ep.A,1)*(k-1):size(output.Ep.A,1)*(k-1)+size(output.Ep.A,1),1+size(output.Ep.A,1)*(k-1):size(output.Ep.A,1)*(k-1)+size(output.Ep.A,1)) = sN{k}(1:size(output.Ep.A,1),1:size(output.Ep.A,1));
-        end
+        output.Cp(1+size(output.Ep.A,1)*(k-1):size(output.Ep.A,1)*(k-1)+size(output.Ep.A,1),1+size(output.Ep.A,1)*(k-1):size(output.Ep.A,1)*(k-1)+size(output.Ep.A,1)) = sN{k}(1:size(output.Ep.A,1),1:size(output.Ep.A,1));
     end
-
-    % set a counter
-    counter = 0;
-
-    % define the covariances with the driving inputs
+    
+    % asign the covariances among the driving inputs
     for k = 1:nr
-        if ( size(sN{k},1) > size(output.Ep.A,1) )
-
-            % get the covariance
-            temp = sN{k}(1:size(output.Ep.A,1),size(output.Ep.A,1)+size(output.Ep.B,1)*size(output.Ep.B,3)+1:end);
-            new = temp(:,end);
-
-            % set the covariances between endogenous and driving parameters
-            output.Cp(1+size(output.Ep.A,1)*(k-1):size(output.Ep.A,1)*(k-1)+size(output.Ep.A,1),numel(output.Ep.A)+(k+size(output.Ep.A,1)*counter)) = new;
-            output.Cp(numel(output.Ep.A)+(k+size(output.Ep.A,1)*counter),1+size(output.Ep.A,1)*(k-1):size(output.Ep.A,1)*(k-1)+size(output.Ep.A,1)) = new';
-
-            % variance of driving paramters
-            output.Cp(numel(output.Ep.A)+(k+size(output.Ep.A,1)*counter),numel(output.Ep.A)+(k+size(output.Ep.A,1)*counter)) = sN{k}(end,end);
-
-            % increase counter
-            counter = counter + 1;
-            
-        end
+        output.Cp(1+nr_A+size(output.Ep.C,2)*(k-1):size(output.Ep.C,2)*(k-1)+nr_A+size(output.Ep.C,2),1+nr_A+size(output.Ep.C,2)*(k-1):size(output.Ep.C,2)*(k-1)+nr_A+size(output.Ep.C,2)) = sN{k}(nr_A_B+1:nr_A_B+size(output.Ep.C,2),nr_A_B+1:nr_A_B+size(output.Ep.C,2));
+    end
+    
+    % asign the cross-covariance terms
+    for k = 1:nr
+        output.Cp(1+nr_A+size(output.Ep.C,2)*(k-1):size(output.Ep.C,2)*(k-1)+nr_A+size(output.Ep.C,2),1+size(output.Ep.A,2)*(k-1):size(output.Ep.A,2)*(k-1)+size(output.Ep.A,2)) = sN{k}(nr_A_B+1:nr_A_B+size(output.Ep.C,2),1:size(output.Ep.A,2));
+        output.Cp(1+size(output.Ep.A,2)*(k-1):size(output.Ep.A,2)*(k-1)+size(output.Ep.A,2),1+nr_A+size(output.Ep.C,2)*(k-1):size(output.Ep.C,2)*(k-1)+nr_A+size(output.Ep.C,2)) = sN{k}(1:size(output.Ep.A,2),nr_A_B+1:nr_A_B+size(output.Ep.C,2));
     end
 end
 

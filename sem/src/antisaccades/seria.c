@@ -96,12 +96,12 @@ seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 {
 
     double t0 = params.t0;
-    double p0 = params.p0;
+    // double p0 = params.p0;
 
     double kp = params.kp;
     double tp = params.tp;
-    double ka = params.ka;
-    double ta = params.ta;
+    // double ka = params.ka;
+    // double ta = params.ta;
     double kl = params.kl;
     double tl = params.tl;
     double ks = params.ks;
@@ -110,7 +110,7 @@ seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params)
     double da = params.da;
 
     double fllh = GSL_NEGINF;
-    double sllh = GSL_NEGINF;
+    // double sllh = GSL_NEGINF;
 
     double cumint = params.cumint;
 

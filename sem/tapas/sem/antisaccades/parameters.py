@@ -18,7 +18,14 @@ import likelihoods
 
 class Parameters(containers.AlgebraicObject):
     ''' Abstract class. '''
-    pass
+    
+    @classmethod
+    def make_dict(clc, samples):
+        '''Return a dictionary from a vector of samples.'''
+
+        sdict = dict(zip(clc.fields, samples))
+
+        return sdict
 
 
 class ParametersProsa(Parameters):
@@ -39,7 +46,7 @@ class ParametersSeria(Parameters):
     pass
 
 
-class ParametersSeriaGamma(ParametersDora):
+class ParametersSeriaGamma(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):
@@ -57,7 +64,7 @@ class ParametersSeriaGamma(ParametersDora):
         return likelihoods.seria_early_llh_n_states_gamma(t, a, tt, theta)
 
 
-class ParametersSeriaInvgamma(ParametersDora):
+class ParametersSeriaInvgamma(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):
@@ -75,7 +82,7 @@ class ParametersSeriaInvgamma(ParametersDora):
         return likelihoods.seria_early_llh_n_states_invgamma(t, a, tt, theta)
 
 
-class ParametersSeriaMixedgamma(ParametersDora):
+class ParametersSeriaMixedgamma(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):
@@ -92,7 +99,7 @@ class ParametersSeriaMixedgamma(ParametersDora):
 
         return likelihoods.seria_early_llh_n_states_mixedgamma(t, a, tt, theta)
 
-class ParametersSeriaLognorm(ParametersDora):
+class ParametersSeriaLognorm(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):
@@ -110,7 +117,7 @@ class ParametersSeriaLognorm(ParametersDora):
         return likelihoods.seria_early_llh_n_states_lognorm(t, aa, tt, theta)
 
 
-class ParametersSeriaLater(ParametersDora):
+class ParametersSeriaLater(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):
@@ -128,7 +135,7 @@ class ParametersSeriaLater(ParametersDora):
         return likelihoods.seria_early_llh_n_states_later(t, aa, tt, theta)
 
 
-class ParametersSeriaWald(ParametersDora):
+class ParametersSeriaWald(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):

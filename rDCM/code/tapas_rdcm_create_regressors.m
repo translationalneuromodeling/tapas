@@ -83,7 +83,11 @@ else
 end
 
 % filtering -> find informative frequencies
-[y_fft, idx] = tapas_rdcm_filter(y_fft, u_fft, h_fft, size(y, 1));
+if ( options.filter_str ~= 0 )
+    [y_fft, idx] = tapas_rdcm_filter(y_fft, u_fft, h_fft, size(y, 1), options);
+else
+    idx = ones(size(y_fft));
+end
 
 % coefficients to transform fourier of the function to the fourier of the derivative
 coef = exp(2 * pi * ic * (0 : Ny - 1)' / Ny) - 1;
@@ -135,6 +139,6 @@ DCM.U.u = DCM.U.u(:,1:end-1);
 args.P      = P;
 args.r_dt   = r_dt;
 args.type   = options.type;
-args.evalCp =  options.evalCp;
+args.evalCp = options.evalCp;
 
 end
