@@ -6,7 +6,7 @@ u = load('example_binary_input.txt');
 %% 
 % The inputs are simply a time series of 320 0s and 1s. This is the input 
 % sequence used in the task of Iglesias et al. (2013), _Neuron_, *80*(2), 519-530.
-%%
+
 scrsz = get(0,'ScreenSize');
 outerpos = [0.2*scrsz(3),0.7*scrsz(4),0.8*scrsz(3),0.3*scrsz(4)];
 figure('OuterPosition', outerpos)
@@ -31,17 +31,18 @@ axis([1, 320, -0.1, 1.1])
 % 
 % * The first argument, which would normally be the observed responses, is empty 
 % (ie, []) here because the optimal parameter values are independent of any responses.
-% * The second argument is the perceptual model, _hgf_binary_ here. We need 
-% to use the prefix 'tapas_' and the suffix '_config' in order to find the correct 
+% * The second argument is the inputs _u._
+% * The third argument is the perceptual model, _hgf_binary_ here. We need to 
+% use the prefix 'tapas_' and the suffix '_config' in order to find the correct 
 % configuration file
-% * The third argument is the response model, _bayes_optimal_binary_ here. Again 
-% we need to use the same prefix and suffix. In fact, bayes_optimal_binary is 
-% a kind of pseudo-response model because instead of providing response probabilities 
+% * The fourth argument is the response model, _bayes_optimal_binary_ here. 
+% Again we need to use the same prefix and suffix. In fact, bayes_optimal_binary 
+% is a kind of pseudo-response model because instead of providing response probabilities 
 % it simply calculates the Shannon surprise elicited by each new input given the 
 % current perceptual state.
-% * The fourth argument is the optimization algorithm to be used, _quasinewton_optim_ 
+% * The fifth argument is the optimization algorithm to be used, _quasinewton_optim_ 
 % here, which is a variant of the Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm.
-%%
+
 bopars = tapas_fitModel([],...
                          u,...
                          'tapas_hgf_binary_config',...
@@ -74,13 +75,15 @@ bopars = tapas_fitModel([],...
 % that, we simply choose values for $\omega$. Here, we take $\omega_2=-2.5$ and 
 % $\omega_3=-6$. But in addition to the perceptual model _hgf_binary_, we now 
 % need a response model. Here, we take the unit square sigmoid model, _unitsq_sgm_, 
-% with parameter $\zeta=5$.
-%%
+% with parameter $\zeta=5$. The last argument is an optional seed for the random 
+% number generator.
+
 sim = tapas_simModel(u,...
                      'tapas_hgf_binary',...
                      [NaN 0 1 NaN 1 1 NaN 0 0 1 1 NaN -2.5 -6],...
                      'tapas_unitsq_sgm',...
-                     5);
+                     5,...
+                     12345);
 %% 
 % The general meaning of the arguments supplied to simModel is explained 
 % in the manual and in the file _tapas_simModel.m_. The specific meaning of each 
@@ -89,12 +92,12 @@ sim = tapas_simModel(u,...
 %% Plot simulated responses
 % We can plot our simulated responses $y$ using the plotting function for _hgf_binary_ 
 % models.
-%%
+
 tapas_hgf_binary_plotTraj(sim)
 %% Recover parameter values from simulated responses
 % We can now try to recover the parameters we put into the simulation ($\omega_2=-2.5$ 
 % and $\omega_3=-6$) using fitModel.
-%%
+
 est = tapas_fitModel(sim.y,...
                      sim.u,...
                      'tapas_hgf_binary_config',...
@@ -121,7 +124,7 @@ est = tapas_fitModel(sim.y,...
 % -1). In these cases the two parameters cannot be identified independently and 
 % one of them needs to be fixed. The other parameter can then be estimated conditional 
 % on the value of the one that has been fixed.
-%%
+
 tapas_fit_plotCorr(est)
 %% 
 % In this case, there is nothing to worry about. Unless their correlation 
@@ -129,7 +132,7 @@ tapas_fit_plotCorr(est)
 % describe distinct aspects of the data.
 % 
 % The posterior parameter correlation matrix is stored in est.optim.Corr,
-%%
+
 disp(est.optim.Corr)
 %% 
 % while the posterior parameter covariance matrix is stored in est.optim.Sigma
@@ -139,7 +142,7 @@ disp(est.optim.Sigma)
 % The posterior means of the estimated as well as the fixed parameters can be 
 % found in est.p_prc for the perceptual model and in est.p_obs for the observation 
 % model:
-%%
+
 disp(est.p_prc)
 disp(est.p_obs)
 %% 
@@ -150,16 +153,16 @@ disp(est.p_obs)
 %% Inferred belief trajectories
 % As with the simulated trajectories, we can plot the inferred belief trajectories 
 % implied by the estimated parameters.
-%%
+
 tapas_hgf_binary_plotTraj(est)
 %% 
 % These trajectories can be found in est.traj:
-%%
+
 disp(est.traj)
 %% Changing the perceptual model
 % Next, let's try to fit the same data using a different perceptual model while 
 % keeping the same response model. We will take the Rescorla-Wagner model _rw_binary_.
-%%
+
 est1a = tapas_fitModel(sim.y,...
                        sim.u,...
                        'tapas_rw_binary_config',...
@@ -171,7 +174,7 @@ est1a = tapas_fitModel(sim.y,...
 % 
 % Just as for _hgf_binary_, we can plot posterior correlations and inferred 
 % trajectories for _rw_binary_.
-%%
+
 tapas_fit_plotCorr(est1a)
 tapas_rw_binary_plotTraj(est1a)
 %% Input on a continuous scale
@@ -179,12 +182,12 @@ tapas_rw_binary_plotTraj(est1a)
 % interesting time series are on a continuous scale. As an example, we'll use 
 % the exchange rate of the US Dollar to the Swiss Franc during much of 2010 and 
 % 2011.
-%%
+
 usdchf = load('example_usdchf.txt');
 %% 
 % As before, we'll first estimate the Bayes optimal parameter values. This 
 % time, we'll take a 2-level HGF for continuous-scaled inputs.
-%%
+
 bopars2 = tapas_fitModel([],...
                          usdchf,...
                          'tapas_hgf_config',...
@@ -192,17 +195,18 @@ bopars2 = tapas_fitModel([],...
                          'tapas_quasinewton_optim_config');
 %% 
 % And again, let's check the posterior correlation and the trajectories:
-%%
+
 tapas_fit_plotCorr(bopars2)
 tapas_hgf_plotTraj(bopars2)
 %% 
 % Now, let's simulate an agent and plot the resulting trajectories:
-%%
+
 sim2 = tapas_simModel(usdchf,...
                       'tapas_hgf',...
                       [1.04 1 0.0001 0.1 0 0 1 -13  -2 1e4],...
                       'tapas_gaussian_obs',...
-                      0.00002);
+                      0.00002,...
+                      12345);
 tapas_hgf_plotTraj(sim2)
 %% 
 % Looking at the volatility (ie, the second) level, we see that there are 
@@ -217,12 +221,13 @@ tapas_hgf_plotTraj(sim2)
 % shows up as another spike in volatitlity.
 %% Adding levels
 % Let's see what happens if we add another level:
-%%
+
 sim2a = tapas_simModel(usdchf,...
                        'tapas_hgf',...
                        [1.04 1 1 0.0001 0.1 0.1 0 0 0 1 1 -13  -2 -2 1e4],...
                        'tapas_gaussian_obs',...
-                       0.00005);
+                       0.00005,...
+                       12345);
 tapas_hgf_plotTraj(sim2a)
 %% 
 % Owing to the presence of the third level, the second level is a lot smoother 
@@ -234,7 +239,7 @@ tapas_hgf_plotTraj(sim2a)
 % While the third level is very smooth overall, the two salient events discussed 
 % above are still visible. Let's see how these events are reflected in the precision 
 % weighting of the updates at each level:
-%%
+
 figure
 plot(sim2a.traj.wt)
 xlim([1, length(sim2a.traj.wt)])
@@ -252,7 +257,7 @@ title('Precision weights')
 %% Parameter recovery
 % Now, let's try to recover the parameters we put into the simulation by fitting 
 % the HGF to our simulated responses:
-%%
+
 est2 = tapas_fitModel(sim2.y,...
                       usdchf,...
                       'tapas_hgf_config',...
@@ -260,7 +265,7 @@ est2 = tapas_fitModel(sim2.y,...
                       'tapas_quasinewton_optim_config');
 %% 
 % Again, we fit the posterior correlation and the estimated trajectories:
-%%
+
 tapas_fit_plotCorr(est2)
 tapas_hgf_plotTraj(est2)
 %% Plotting residual diagnostics
@@ -268,7 +273,7 @@ tapas_hgf_plotTraj(est2)
 % and actual responses) of a model. If the residual show any obvious patterns, 
 % that's an indication that your model fails to capture aspects of the data that 
 % should in princple be predictable.
-%%
+
 tapas_fit_plotResidualDiagnostics(est2)
 %% 
 % Everything looks fine here - no obvious patterns to be seen.
@@ -283,7 +288,7 @@ tapas_fit_plotResidualDiagnostics(est2)
 % 
 % $$r^{(k)} =\frac{y^{(k)} - \hat{\mu}_1^{(k)}}{\sqrt{\hat{\mu}_1^{(k)} \left(1-\hat{\mu}_1^{(k)}\right) 
 % }}$$
-%%
+
 tapas_fit_plotResidualDiagnostics(est)
 %% 
 % In the case of our binary response example, we see some patterns in the 
@@ -301,12 +306,13 @@ tapas_fit_plotResidualDiagnostics(est)
 % 
 % We begin by simulating responses from another fictive agent and estimating 
 % the parameters behind the simulated responses:
-%%
+
 sim2b = tapas_simModel(usdchf,...
                        'tapas_hgf',...
                        [1.04 1 0.0001 0.1 0 0 1 -14.5 -2.5 1e4],...
                        'tapas_gaussian_obs',...
-                       0.00002);
+                       0.00002,...
+                       12345);
 tapas_hgf_plotTraj(sim2b)
 est2b = tapas_fitModel(sim2b.y,...
                        usdchf,...
@@ -317,7 +323,7 @@ tapas_fit_plotCorr(est2b)
 tapas_hgf_plotTraj(est2b)
 %% 
 % Now we can take the Bayesian parameter average of our two:
-%%
+
 bpa = tapas_bayesian_parameter_average(est2, est2b);
 tapas_fit_plotCorr(bpa)
 tapas_hgf_plotTraj(bpa)

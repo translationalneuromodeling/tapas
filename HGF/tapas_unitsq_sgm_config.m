@@ -37,6 +37,10 @@ function c = tapas_unitsq_sgm_config
 % Config structure
 c = struct;
 
+% Is the decision based on predictions or posteriors? Comment as appropriate.
+c.predorpost = 1; % Predictions
+%c.predorpost = 2; % Posteriors
+
 % Model name
 c.model = 'tapas_unitsq_sgm';
 

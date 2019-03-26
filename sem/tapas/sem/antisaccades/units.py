@@ -40,7 +40,7 @@ class UnitsSeria(containers.TimeSeries):
         return
 
 
-class UnitsSeriaMixedgamma(UnitsDora):
+class UnitsSeriaMixedgamma(UnitsSeria):
     ''' Seria untis with mixed gamma. '''
 
     def __init__(self, time, samples):
@@ -82,7 +82,7 @@ class UnitsSeriaMixedgamma(UnitsDora):
         return results
 
 
-class UnitsSeriaInvgamma(UnitsDora):
+class UnitsSeriaInvgamma(UnitsSeria):
     ''' Seria units with invgamma. '''
 
     def __init__(self, time, samples):
@@ -144,7 +144,7 @@ class UnitsSeriaInvgamma(UnitsDora):
         return results
 
 
-class UnitsSeriaLognorm(UnitsDora):
+class UnitsSeriaLognorm(UnitsSeria):
     ''' Seria units with invgamma. '''
 
     def __init__(self, time, samples):

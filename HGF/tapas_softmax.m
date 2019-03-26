@@ -2,7 +2,7 @@ function [logp, yhat, res] = tapas_softmax(r, infStates, ptrans)
 % Calculates the log-probability of responses under the softmax model
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2013 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2013-2019 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -26,19 +26,24 @@ logp = NaN(n,1);
 yhat = NaN(n,1);
 res  = NaN(n,1);
 
-% Weed irregular trials out from inferred states and responses
-states = squeeze(infStates(:,1,:,pop));
 % Assumed structure of infStates:
 % dim 1: time (ie, input sequence number)
 % dim 2: HGF level
 % dim 3: choice number
 % dim 4: 1: muhat, 2: sahat, 3: mu, 4: sa
-states(r.irr,:) = [];
-y = r.y(:,1);
-y(r.irr) = [];
 
 % Number of choices
 nc = size(infStates,3);
+
+% Belief trajectories at 1st level
+states = squeeze(infStates(:,1,:,pop));
+
+% Responses
+y = r.y(:,1);
+
+% Weed irregular trials out from inferred states and responses
+states(r.irr,:) = [];
+y(r.irr) = [];
 
 % Partition functions
 Z = sum(exp(be*states),2);
@@ -56,4 +61,4 @@ logp(reg) = log(probc);
 yhat(reg) = probc;
 res(reg) = -log(probc);
 
-return;
+end

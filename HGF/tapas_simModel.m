@@ -176,18 +176,23 @@ if nargin > 4
     
     % Read configuration of observation model
     try
-        obs_config_fun = str2func([obs_model, '_config']);
+        obs_config_fun = str2func([r.c_sim.obs_model, '_config']);
         r.c_obs = obs_config_fun();
     catch
         r.c_obs = [];
     end    
+
+    % Set seed for random number generator
+    r.c_sim.seed = NaN;
+    if nargin > 5
+        r.c_sim.seed = varargin{3};
+    end
     
     % Get function handle to observation model
     obs_fun = str2func([r.c_sim.obs_model, '_sim']);
     
     % Simulate decisions
     r.y = obs_fun(r, infStates, r.p_obs.p);
-
 end
 
 return;

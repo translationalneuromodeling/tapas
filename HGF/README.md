@@ -3,7 +3,7 @@ Release ID: $Format:%h %d$
 
 --- 
 
-Copyright (C) 2012-2018 Christoph Mathys <chmathys@ethz.ch>
+Copyright (C) 2012-2019 Christoph Mathys <chmathys@ethz.ch>
 Translational Neuromodeling Unit (TNU)
 University of Zurich and ETH Zurich
 
@@ -45,6 +45,16 @@ opening hgf_demo.mlx in Matlab. A PDF version is available in
 hgf_demo.pdf.
 
 ## Release notes
+
+### v5.3
+- Enabled setting and storing of seed for random number generator in simulations
+- Debugged reading of response model configuration in simModel
+- Reduced default maxStep from 2 to 1 in quasinewton_oqptim_config
+- Improved readability of siem files for unitsq_sgm and softmax_binary
+- Added simulation capability for softmax_wld and softmax_mu3_wld
+- Added softmax_wld response model
+- Improved readability of softmax_mu3_wld code
+- Improved readability of softmax and softmax_mu3 code
 
 ### v5.2
 - Brought hgf_demo.pdf up to date

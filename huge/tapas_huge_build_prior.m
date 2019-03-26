@@ -67,7 +67,7 @@ priors.clustersMean = tmp(DcmInfo.connectionIndicator)';
 priors.clustersTau = 0.1;
 % degrees of freedom of inverse-Wishart prior (nu_0 in Figure 1 of REF [1])
 priors.clustersDeg = max(100,1.5^DcmInfo.nConnections);
-priors.clustersDeg = min(priors.clustersDeg,realmax('single'));
+priors.clustersDeg = min(priors.clustersDeg,double(realmax('single')));
 
 % scale matrix of inverse-Wishart prior (S_0 in Figure 1 of REF [1])
 priors.clustersSigma = 0.01*eye(DcmInfo.nConnections)*...
