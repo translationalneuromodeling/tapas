@@ -61,5 +61,21 @@ reparametrize_seria(
         const mxArray *prhs[],
         FILL_PARAMETERS_SERIA reparametrize);
 
+/* Generate the summary of the parameters */
+void
+wrapper_seria_summaries(
+        int nlhs,
+        mxArray *plhs[], 
+        int nrhs,
+        const mxArray *prhs[],
+        FILL_PARAMETERS_SERIA reparametrize); 
+
+void
+wrapper_prosa_summaries(
+        int nlhs,
+        mxArray *plhs[], 
+        int nrhs,
+        const mxArray *prhs[],
+        FILL_PARAMETERS_PROSA reparametrize); 
 
 #endif // MEXUTILS_H

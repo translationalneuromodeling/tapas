@@ -74,5 +74,3 @@ prosa_llh_abstract(double t, int a, PROSA_PARAMETERS params)
 
     return llh;
 }
-
-
