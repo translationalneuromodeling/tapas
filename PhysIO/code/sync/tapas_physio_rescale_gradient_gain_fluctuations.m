@@ -59,6 +59,7 @@ dmG = diff(mG);
 
 % determine positive and negative steps
 warning off tapas_physio_findpeaks:largeMinPeakHeight
+warning off signal:findpeaks:largeMinPeakHeight
 
 [~, idxGainPlus] = tapas_physio_findpeaks((dmG), 'minpeakDistance', n, ...
     'minpeakheight', minPeakHeight);
@@ -66,6 +67,7 @@ warning off tapas_physio_findpeaks:largeMinPeakHeight
     'minpeakheight', minPeakHeight);
 
 warning on tapas_physio_findpeaks:largeMinPeakHeight
+warning on signal:findpeaks:largeMinPeakHeight
 
 % plus gains refer to max-changes in the future
 idxGainPlus     = idxGainPlus + n;

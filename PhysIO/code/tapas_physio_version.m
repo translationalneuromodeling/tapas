@@ -1,7 +1,7 @@
 function versionPhysio = tapas_physio_version()
 % returns version number of this copy of PhysIO
 %
-%   output = tapas_physio_version(input)
+%   versionPhysio = tapas_physio_version()
 %
 % IN
 %
