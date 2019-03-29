@@ -13,14 +13,17 @@ posterior = struct('data', data, 'model', model, 'inference', inference, ...
 
 np = numel(states);
 
-theta = cell(np, 1); 
+% Parameters of subjects
+theta = cell(np, 1);
+% Parameters of the population
+theta2 = cell(np, 1);
 for i = 1:np
     theta{i} = states{i}.graph{2}(:, end);
+    % Mean and precision of the population
+    theta2{i} = states{i}.graph{3}{1, end};
 end
 
 % Contains all the terms related to the likelihood
-cllh = cell(2, 1);
-
 [ns, nc] = size(states{1}.llh{1});
 
 % Log likelihood under the posteriors
@@ -29,29 +32,60 @@ for i = 1:np
     llh(:, :, i) = states{i}.llh{1};
 end
 
-cllh{1} = llh;
+posterior.llh = llh;
+ellh = mean(squeeze(sum(llh, 1)), 2);
 
-posterior.llh = cllh;
-ellh = mean(squeeze(sum(cllh{1}, 1)), 2);
-
-if size(T, 2) > 1
-    fe = trapz(T(1, :), ellh);
-else
-    fe = nan;
+% Compute the model evidence using TI or WBIC
+switch lower(inference.model_evidence_method)
+case 'ti'
+    if size(T, 2) > 1
+        fe = trapz(T(1, :), ellh);
+    else
+        fe = nan;
+    end
+case 'wbic'
+    % Test if the temperature makes sense
+    assert(1/log(ns) == T(1, 1), ...
+        'Using WBIC but the temperature is not 1/log(n)');
+    fe = ellh(1);
 end
 
+% Store the free energy
 posterior.fe = fe;
+% Accuracy 
 posterior.accuracy = ellh(end);
 
+% Compute the WAIC / sum of the variance of the log likelihood
+% (gradient of the FE)
+posterior.waic = ellh(end) - sum(var(squeeze(llh(:, end, :)), [], 2));
+
 posterior.T = T;
-posterior.samples_theta = horzcat(theta{:});
 
 hgf = model.graph{1}.htheta.hgf;
 
-for i = 1:numel(posterior.samples_theta)
-    posterior.samples_theta{i} = tapas_h2gf_unwrapp_parameters(...
-        posterior.samples_theta{i}, hgf);
+ns = numel(posterior.samples_theta);
+
+posterior.samples = struct(...
+    'subjects', [], ...
+    'population_mean', [], ...
+    'population_variance', []);
+
+posterior.samples.subjects = horzcat(theta{:});
+theta2 = [theta2{:}];
+population_mean = [theta2(:).mu];
+population_variance = 1./[theta2(:).pe];
+for i = 1:numel(posterior.samples.subjects)
+    posterior.samples.subjects{i} = tapas_h2gf_unwrapp_parameters(...
+        posterior.samples.subjects{i}, hgf);
 end
+
+posterior.samples.population_mean = hgf.p0 + hgf.jm * population_mean;
+
+% Keep the nan
+p0 = hgf.p0;
+p0(~isnan(p0)) = 0;
+% Nan are kept as nans
+posterior.samples.population_variance = p0 + hgf.jm * population_variance;
 
 posterior.hgf = hgf;
 posterior.summary = tapas_h2gf_summary(data, posterior, hgf);

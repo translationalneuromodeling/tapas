@@ -30,7 +30,7 @@ if nargin < n
     pars = struct();
 end
 
-[pars] = tapas_hgf_pars(data, model, pars);
+[pars] = tapas_h2gf_pars(data, model, pars);
 [data] = tapas_h2gf_data(data, model, pars);
 [model] = tapas_h2gf_model(data, model, pars);
 [inference] = tapas_h2gf_inference(inference, pars);

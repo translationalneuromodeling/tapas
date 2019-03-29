@@ -30,9 +30,10 @@ function [summary] = tapas_h2gf_summary(data, posterior, hgf)
 % copyright (C) 2018
 %
 
-samples = posterior.samples_theta;
+samples = posterior.samples.subjects;
+
 T = posterior.T;
-llh = posterior.llh{1};
+llh = posterior.llh;
 
 [nsubjects] = size(samples, 1);
 

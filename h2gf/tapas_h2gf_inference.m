@@ -58,5 +58,6 @@ inference.mc3it = pars.mc3it;
 inference.thinning = pars.thinning;
 inference.ndiag = pars.ndiag;
 inference.rng_seed = pars.rng_seed;
+inference.model_evidence_method = pars.model_evidence_method;
 
 end

@@ -38,7 +38,13 @@ state.graph{4} = struct('y', [], 'u', []);
 state.graph{4}.y = cell(1, nc);
 state.graph{4}.y(:) = {model.graph{4}.htheta.y};
 
-state.llh{1} = -inf * ones(ns, nc);
+
+% Compute the likelihood
+state.llh{1} = tapas_h2gf_llh(...
+    data, ...
+    state.graph{2}, ... Parameters of the model. 
+    model.graph{1}.htheta); % Mostly Hgf
+
 state.llh{2} = -inf * ones(ns, nc);
 state.llh{3} = -inf * ones(1, nc);
 

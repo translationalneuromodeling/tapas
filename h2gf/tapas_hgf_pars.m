@@ -1,9 +1,12 @@
 function [pars] = tapas_hgf_pars(data, model, pars)
-%% 
+%% Set up default parameters of the estimator. 
 %
 % Input
-%       
+%       data         --
+%       model       -- 
+%       pars        --
 % Output
+%       pars        -- Updated parameters
 %       
 
 % aponteeduardo@gmail.com
@@ -21,7 +24,6 @@ if ~isfield(pars, 'T')
     nchains = 8;
     % Degree of the power schudule.
     power_rule = 5;
-
 
     if isfield(pars, 'nchains')
         nchains = pars.nchains;

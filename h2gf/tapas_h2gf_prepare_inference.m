@@ -1,4 +1,4 @@
-function [inference] = tapas_hgf_prepare_inference(data, model, inference)
+function [inference] = tapas_h2gf_prepare_inference(data, model, inference)
 %% 
 %
 % Input
