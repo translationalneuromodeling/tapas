@@ -8,14 +8,23 @@ Current Release
 
 March 19, 2019
 
+
 Unreleased
 ----------
 
+### Added
+- `requirements.txt` making dependencies on Matlab and specific toolboxes 
+  explicit
+
 ### Changed
 - Toned down and replaced irrelevant peak height and missing cardiac pulse warnings (github issue #51)
-- Added `requirements.txt`
 - Updated README to include external contributors and recent findings about
   impact of physiological noise for serial correlations (Bollmann2018)
+
+### Fixed
+- Bugfix `tapas_physio_init()` not working, because dependent on functions 
+  in `utils` subfolder not in path; `utils` added to path
+
 
 Minor Release Notes (R2019a, v7.1.0)
 ------------------------------------
