@@ -1,16 +1,40 @@
 # Changelog
 TAPAS toolbox 
 
-## [Unreleased]
+## [3.1.0] 2019-03-26
+
+### Added
+- Get revision info from Matlab.
+- PhysIO R2018.1.2: BioPac txt-file reader (for single file, resp/cardiac/trigger data in different columns)
+- SERIA: Automatic plotting of the seria model.
+- SERIA: Example for single subject.
+
+### Fixed 
+- Huge: minor bugs.
+
+### Changed
+- Huge: Improved documentation.
+- New version of the HGF toolbox (v5.3). Details in tapas/HGF/README.md
+- New version of the rDCM toolbox (v1.1). Details in tapas/rDCM/CHANGELOG.md.
+- New version of the PhysIO Toolbox (R2019a-v7.1.0)
+    - BIDS and BioPac readers; code sorted in modules (`readin`, `preproc` etc.), 
+      also reflected in figure names
+    - Updated and extended all examples, and introduced unit testing
+    - Full details in tapas/PhysIO/CHANGELOG.md
+- Improved the documentation of SERIA.
+
+## [3.0.1] 2018-10-17
 
 ### Fixed
 - PhysIO R2018.1.2: fixed bug for 3D nifti array read-in in tapas_physio_create_noise_rois_regressors (github issue #24, gitlab #52)
-- Huge: minor bugs.
 
 ### Added
-- PhysIO R2018.1.2: BioPac txt-file reader (for single file, resp/cardiac/trigger data in different columns)
+
+## [3.0.0] 2018-09-09
+
+### Added
 - tapas\_get\_tapas\_revision.m outputs the branch and hash of the repository.
-- Revision is printed when initializing tapas.
+- Revision is printed when initiliazing tapas.
 - Contributor License Agreement (CLA) file
 - CONTRIBUTING.md explaining coding and style guidelines, signing procedure for CLA file
 - Include the function tapas\_get\_current\_version.m.
@@ -26,9 +50,6 @@ TAPAS toolbox
     https://doi.org/10.1016/j.neuroimage.2018.05.058
 
 ### Changed
-- New version of the HGF toolbox (v5.3). Details in tapas/HGF/README.md
-- New version of the rDCM toolbox (v1.1). Details in tapas/rDCM/CHANGELOG.md.
-- Huge: Improved documentation.
 - README.md to include reference to CONTRIBUTING.md and explanation of CLA
 - Dropped 4 digits versioning for 3.
 - The version of tapas is now read from misc/log\_tapas.txt. It is the first

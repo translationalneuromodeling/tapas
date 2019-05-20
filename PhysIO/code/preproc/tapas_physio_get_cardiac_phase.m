@@ -85,9 +85,9 @@ if isVerbose
     % and line of phases)
     % 3. plot all detected cardiac r-wave peaks
     % 4. plot volume start event
-    titstr = 'tapas_physio_get_cardiac_phase: scanner and R-wave pulses - output phase';
+    stringTitle = 'Preproc: tapas_physio_get_cardiac_phase: scanner and R-wave pulses - output phase';
     fh = tapas_physio_get_default_fig_params();
-    set(fh, 'Name', titstr);
+    set(fh, 'Name', stringTitle);
     stem(scannert, cardiac_phase, 'k'); hold on;
     plot(scannert, cardiac_phase, 'k');
     stem(pulset,3*ones(size(pulset)),'r', 'LineWidth',2);
@@ -96,7 +96,7 @@ if isVerbose
         '', ...
         'heart beat R-peak', ...
         'scan volume start');
-    title(regexprep(titstr,'_', '\\_'));
+    title(regexprep(stringTitle,'_', '\\_'));
     xlabel('t (seconds)');
     %stem(scannertpriorpulse,ones(size(scannertpriorpulse))*2,'g');
     %stem(scannertafterpulse,ones(size(scannertafterpulse))*2,'b');

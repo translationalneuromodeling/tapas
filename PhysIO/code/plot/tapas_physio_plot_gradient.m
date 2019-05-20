@@ -24,7 +24,7 @@ function fh = plot_gradient(G, t)
 % COPYING or <http://www.gnu.org/licenses/>.
 
 
-stringTitle = 'Gradient subplots';
+stringTitle = 'Sync: Gradient subplots';
 
 
 nSamples = size(G,1);

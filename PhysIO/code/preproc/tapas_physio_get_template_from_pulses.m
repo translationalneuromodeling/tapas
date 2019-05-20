@@ -140,7 +140,7 @@ end
 pulseCleanedTemplate = mean(template(indHighQualityTemplates, :));
 
 if doDebug
-    stringTitle = 'Iterative Template Creation Single Cycle';
+    stringTitle = 'Preproc: Iterative Template Creation Single Cycle';
     hp(2) = plot(tTemplate, pulseCleanedTemplate, '.-g', 'LineWidth', 4, ...
         'Marker', 'x');
     legend(hp, 'mean of templates', 'mean of most similar, chosen templates');

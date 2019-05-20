@@ -148,7 +148,7 @@ cpulse = [];
 
 if DEBUG
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    stringTitle = 'Extracted time courses from Biopac mat file';
+    stringTitle = 'Read-In: Extracted time courses from Biopac mat file';
     set(gcf, 'Name', stringTitle);
     plot(t, data);
     legend(labels);

@@ -186,9 +186,9 @@ for idxContrast = idxContrasts
 end
 cd(pathBeforeReport);
 
-titstr = [titleGraphicsWindow, ' - SPM.xX.X'];
-title(regexprep(titstr,'_','\\_'));
-set(gcf,'Name', titstr);
+stringTitle = ['Assess: ' titleGraphicsWindow, ' - SPM.xX.X'];
+title(regexprep(stringTitle,'_','\\_'));
+set(gcf,'Name', stringTitle);
 
 set(0, 'DefaultFigureWindowStyle', tmpWindowStyle);
 

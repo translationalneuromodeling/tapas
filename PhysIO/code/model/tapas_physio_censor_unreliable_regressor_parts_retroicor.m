@@ -65,7 +65,7 @@ if hasInteractionData
 end
 
 if doPlot
-    stringTitle = ['Censoring of RETROICOR regressors in intervals of ' ...
+    stringTitle = ['Model: Censoring of RETROICOR regressors in intervals of ' ...
         'unreliable physiological recordings'];
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
     set(gcf, 'Name', stringTitle);

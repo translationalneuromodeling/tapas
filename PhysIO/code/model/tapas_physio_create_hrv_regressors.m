@@ -54,7 +54,7 @@ hr = tapas_physio_hr(ons_secs.cpulse, sample_points);
 
 if verbose.level>=2
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf, 'Name', 'Regressors Heart Rate: HRV X CRF');
+    set(gcf, 'Name', 'Model: Regressors Heart Rate: HRV X CRF');
     subplot(2,2,1)
     plot(sample_points,hr,'r');xlabel('time (seconds)');
     title('Heart Rate');

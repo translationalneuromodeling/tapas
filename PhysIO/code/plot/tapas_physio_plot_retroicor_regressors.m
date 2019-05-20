@@ -60,7 +60,7 @@ else
 end
 
 fh = tapas_physio_get_default_fig_params();
-set(gcf,'Name','RETROICOR timecourse physiological regressors');
+set(gcf,'Name','Model: RETROICOR timecourse physiological regressors');
 
 orders = {order.c, order.r, order.cr};
 yData = {cardiac_sess, respire_sess, mult_sess};

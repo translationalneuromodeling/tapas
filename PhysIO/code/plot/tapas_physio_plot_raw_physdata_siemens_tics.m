@@ -26,7 +26,7 @@ function fh = tapas_physio_plot_raw_physdata_siemens_tics(tCardiac, c, tRespirat
 %
 
 fh = tapas_physio_get_default_fig_params();
-stringTitle = 'Siemens Tics - Read-in cardiac and respiratory logfiles';
+stringTitle = 'Read-In: Siemens Tics - Read-in cardiac and respiratory logfiles';
 set(gcf, 'Name', stringTitle);
 stringLegend = {};
 tOffset = min([tRespiration; tCardiac]);

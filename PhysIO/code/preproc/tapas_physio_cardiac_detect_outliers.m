@@ -45,7 +45,7 @@ if isVerbose
     if nargin < 6
         fh = tapas_physio_get_default_fig_params();
         verbose.fig_handles(end+1,1) = fh;
-        set(fh, 'Name','Diagnostics raw phys time series');
+        set(fh, 'Name','Preproc: Diagnostics raw phys time series');
     else
         fh = get(ah, 'Parent');
         figure(fh);

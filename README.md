@@ -1,6 +1,6 @@
 ![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
 
-*Version 3.0.1*
+*Version 3.1.0*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================
@@ -14,16 +14,16 @@ Full details can be found on the TNU website:
 DESCRIPTION
 -----------
 
-TAPAS is a collection of algorithms and software tools developed by the 
-Translational Neuromodeling Unit (TNU, Zurich) and collaborators. The goal of 
-these tools is to support clinical neuromodeling, particularly computational 
+TAPAS is a collection of algorithms and software tools developed by the
+Translational Neuromodeling Unit (TNU, Zurich) and collaborators. The goal of
+these tools is to support clinical neuromodeling, particularly computational
 psychiatry, computational neurology, and computational psychosomatics.
 
 Currently, TAPAS includes the following packages:
 
-- [HGF](HGF/README.md): The Hierarchical Gaussian Filter; Bayesian inference 
+- [HGF](HGF/README.md): The Hierarchical Gaussian Filter; Bayesian inference
   on computational processes from observed behaviour.
-- [HUGE](huge/README.md): Variational Bayesian inversion for hierarchical 
+- [HUGE](huge/README.md): Variational Bayesian inversion for hierarchical
 unsupervised generative embedding (HUGE).
 - [MICP](MICP/Readme%20for%20MATLAB.pdf): Bayesian Mixed-effects Inference for Classification Studies.
 - [MPDCM](mpdcm/README.md): Massively Parallel DCM; Efficient integration of DCMs using massive parallelization.
@@ -32,25 +32,25 @@ unsupervised generative embedding (HUGE).
 - [SEM](sem/README.md): SERIA Model for Eye Movements (saccades and anti-saccades) and Reaction Times.
 - [VBLM](VBLM/README.txt): Variational Bayesian Linear Regression.
 
-TAPAS is written in MATLAB and distributed as open source code under 
+TAPAS is written in MATLAB and distributed as open source code under
 the GNU General Public License (GPL, Version 3).
 
 
 ------------
-INSTALLATION                                                        
+INSTALLATION
 ------------
 
-TAPAS is a collection of toolboxes written in MATLAB (Version R2016b). The key 
-requirement is the installation of MATLAB (produced by The MathWorks, Inc.  
+TAPAS is a collection of toolboxes written in MATLAB (Version R2016b). The key
+requirement is the installation of MATLAB (produced by The MathWorks, Inc.
 Natick, MA, USA. http://www.mathworks.com/).
 
-Please download TAPAS from our 
+Please download TAPAS from our
 [Github Release Page](https://github.com/translationalneuromodeling/tapas/releases).
 
-To add the TAPAS directory to the MATLAB path, run the script `tapas_init.m` in 
-the directory where tapas is installed/extracted. 
+To add the TAPAS directory to the MATLAB path, run the script `tapas_init.m` in
+the directory where tapas is installed/extracted.
 
-For the individual toolboxes included in TAPAS, please refer to their 
+For the individual toolboxes included in TAPAS, please refer to their
 documentation (s.b.) for specific installation instructions.
 
 To download the example data please use `tapas_download_example_data()` from
@@ -60,12 +60,12 @@ the matlab console.
 DOCUMENTATION
 -------------
 
-- The latest documentation of TAPAS can be found in this README and on the 
-  [GitHub Wiki](https://github.com/translationalneuromodeling/tapas/wiki) of the 
+- The latest documentation of TAPAS can be found in this README and on the
+  [GitHub Wiki](https://github.com/translationalneuromodeling/tapas/wiki) of the
   [TAPAS GitHub page](https://github.com/translationalneuromodeling/tapas)
-- In general, each toolbox comes with their own documentation as Wiki, PDF, 
+- In general, each toolbox comes with their own documentation as Wiki, PDF,
   matlab tutorials etc.
-- Documentation for older versions (<= 2.7.0.0) is provided on the 
+- Documentation for older versions (<= 2.7.0.0) is provided on the
   [TNU page](https://www.tnu.ethz.ch/de/software/tapas/documentations.html)
 
 
@@ -73,12 +73,12 @@ DOCUMENTATION
 SUPPORT
 -------
 
-- Please submit bug reports, feature requests, code improvements etc. via the  
-  [Issues](https://github.com/translationalneuromodeling/tapas/issues) Forum pages 
+- Please submit bug reports, feature requests, code improvements etc. via the
+  [Issues](https://github.com/translationalneuromodeling/tapas/issues) Forum pages
   on GitHub (you will need a GitHub account.
-- This issue forum is searchable, so please have a look if your question has 
+- This issue forum is searchable, so please have a look if your question has
   been asked before.
-- For older versions or more general questions, please also have a look at our 
+- For older versions or more general questions, please also have a look at our
   now deprecated E-Mail List, which has a searchable [Archive](https://sympa.ethz.ch/sympa/arc/tapas)
 
 
@@ -101,7 +101,7 @@ All recent stables releases can be downloaded from our
 
 
 -------
-LICENSE                            
+LICENSE
 -------
 
 This software is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this software. If not, see http://www.gnu.org/licenses/.

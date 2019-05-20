@@ -85,7 +85,7 @@ interpDurationBreath = interp1(timeRpulseMax(2:end), durationBreath,t, ...
 
 if verbose.level>=2
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf, 'Name', 'Respiratory Volume per Time');
+    set(gcf, 'Name', 'Model: Respiratory Volume per Time');
     hp(1) = plot(t,fr, 'g'); hold all;
     stem(timeRpulseMax, maxFr*ones(nMax,1),'b');
     stem(timeRpulseMin, -maxFr*ones(nMin,1),'r');
