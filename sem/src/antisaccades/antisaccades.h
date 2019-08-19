@@ -36,7 +36,7 @@
 // Relative error tolerance
 #define SEM_RTOL 0.0001
 // Maximum shape parameter gamma distribution
-#define SEM_GAMMA_MAX_SHAPE 30
+#define SEM_GAMMA_MAX_SHAPE 100
 
 #define NITER_NGAMMA 15
 #define INTSTEP 80

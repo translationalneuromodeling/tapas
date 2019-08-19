@@ -19,7 +19,7 @@ from scipy import stats
 import containers
 
 
-def generalize_fits_factory(trials):
+def generalized_fits_factory(trials):
 
     class GeneralizedFits(containers.TimeSeries):
 
@@ -66,7 +66,7 @@ def generalized_llh(theta, model, time, trials):
 def generalized_fits(theta, model, time, trials):
 
     llh = generalized_llh(theta, model, time, trials)
-    LocalFits = generalize_fits_factory(trials)
+    LocalFits = generalized_fits_factory(trials)
 
     return LocalFits(llh)
 
