@@ -1,7 +1,7 @@
 TAPAS PhysIO Toolbox 
 ====================
 
-*Current version: Release 2019a, v7.1.0*
+*Current version: Release 2019b, v7.2.0*
 
 > Copyright (C) 2012-2019  
 > Lars Kasper  
@@ -252,10 +252,12 @@ Contributors
 - Contributors (Code):
     - Eduardo Aponte, TNU Zurich
     - Tobias U. Hauser, FIL London, UK
+    - Sam Harrison, TNU Zurich
     - Jakob Heinzle, TNU Zurich
     - Chloe Hutton, FIL London, UK (previously)
     - Miriam Sebold, Charite Berlin, Germany
-    - TAPAS contributors listed in its [Contributor License Agreement](https://github.com/translationalneuromodeling/tapas/blob/master/Contributor-License-Agreement.md)
+    - External TAPAS contributors listed in its [Contributor License Agreement]
+    (https://github.com/translationalneuromodeling/tapas/blob/master/Contributor-License-Agreement.md)
 - Contributors (Examples):
     - listed in [EXAMPLES.md](https://gitlab.ethz.ch/physio/physio-doc/wikis/EXAMPLES)
 
@@ -269,6 +271,21 @@ Requirements
     - PhysIO needs Matlab to run, and some of its toolboxes.
     - Some functionality requires SPM (GUI, nuisance regression, contrast reporting, 
       writing residual and SNR images).
+
+
+Acknowledgements
+----------------
+
+The PhysIO Toolbox ships with the following publicly available code from other
+open source projects and gratefully acknowledges their use.
+
+- `utils\tapas_physio_propval.m`
+    - `propval` function from Princeton MVPA toolbox (GPL)
+      a nice wrapper function to create flexible propertyName/value optional
+      parameters
+- `utils\tapas_physio_fieldnamesr.m`
+    - recursive parser for field names of a structure
+    - Matlab file exchange, adam.tudorjones@pharm.ox.ac.uk
 
 
 References

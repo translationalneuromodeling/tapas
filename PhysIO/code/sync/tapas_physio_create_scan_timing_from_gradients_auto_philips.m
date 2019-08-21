@@ -366,6 +366,7 @@ fh = tapas_physio_get_default_fig_params();
 set(gcf, 'Name', stringTitle);
 
 ampl    = max(abs(G));
+% **TODO** tapas_physio_conv
 sG      = conv(G, templateGradientVolume/sum(abs(templateGradientVolume)), ...
     'same');
 
@@ -396,6 +397,7 @@ fh = tapas_physio_get_default_fig_params();
 set(gcf, 'Name', stringTitle);
 
 ampl    = max(abs(G));
+% **TODO** tapas_physio_conv
 sG      = conv(G, templateGradientSlice/sum(abs(templateGradientSlice)), ...
     'same');
 

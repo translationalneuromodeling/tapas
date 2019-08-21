@@ -40,7 +40,7 @@ function test_ge_ppu3t_peaks(testCase)
 doUseSpm = true;
 
 % run GE example and extract physio
-pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..');
+pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
 % TODO: Make generic!
 pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
 
