@@ -1,6 +1,23 @@
 # Changelog
 TAPAS toolbox 
 
+## [3.2.0] 2019-08-21
+
+
+### Added
+- PhysIO (details in tapas/PhysIO/CHANGELOG.md)
+    - more unit testing and integration testing for examples
+    - bandpass-filtering for cardiac data in preprocessing, user-defined max
+    heart rate for peak detection
+
+### Fixed
+- PhysIO: Bugfix RVT/HRV convolution had erroneous half-width shift
+    - For details on the bug, its impact and fix, see our specific [Release
+    Info on RVT/HRV Bugfix](https://github.com/translationalneuromodeling/tapas/issues/65)
+
+### Changed
+
+
 ## [3.1.0] 2019-03-26
 
 ### Added
