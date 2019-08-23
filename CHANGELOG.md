@@ -1,6 +1,15 @@
 # Changelog
 TAPAS toolbox 
 
+## [3.2.0] 2019-09-dd
+### Added
+- HUGE: introduced object-oriented interface in addition to old interface
+- HUGE: build-in unit tests
+- HUGE: user manual
+
+### Changed
+- HUGE: demo script reflect interface changes
+
 ## [3.1.0] 2019-03-26
 
 ### Added
