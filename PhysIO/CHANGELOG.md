@@ -4,27 +4,45 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2019a, v7.1.0*
+*Current version: PhysIO Toolbox Release R2019b, v7.2.0*
 
-March 19, 2019
+August 20, 2019
 
 
-Unreleased
-----------
+Minor Release Notes (R2019b, v7.2.0)
+------------------------------------
 
 ### Added
 - `requirements.txt` making dependencies on Matlab and specific toolboxes 
   explicit
+- `max_heart_rate_bpm` now a user parameter to adjust prior on max allowed 
+  heart rate for cardiac pulse detection (`method = 'auto_matched'`)
+- bandpass-filtering of cardiac data during preprocessing now possible 
+  (`preproc.cardiac.filter`)
+- Added integration tests for all examples in `tests/integration` for both SPM
+Batch Editor and Matlab-only configuration scripts. Reference data provided in
+`examples/TestReferenceResults/examples`
 
 ### Changed
-- Toned down and replaced irrelevant peak height and missing cardiac pulse warnings (github issue #51)
+- Toned down and replaced irrelevant peak height and missing cardiac pulse 
+  warnings (github issue #51)
 - Updated README to include external contributors and recent findings about
   impact of physiological noise for serial correlations (Bollmann2018)
+- Added unit tests for convolution and moved all to `tests/unit`
 
 ### Fixed
+- Corrected half-width shift of response functions for HRV and RVT regressors by
+  erroneous use of Matlab `conv` 
+    - For details on the bug, its impact and fix, see our specific [Release
+    Info on RVT/HRV Bugfix](https://github.com/translationalneuromodeling/tapas/issues/65)
+    - other references: TNU gitlab issue #83, found and fixed by Sam Harrison,
+    TNU, see `tapas_physio_conv`)
 - Bugfix `tapas_physio_init()` not working, because dependent on functions 
   in `utils` subfolder not in path; `utils` added to path
-
+- `tapas_physio_review` for motion parameters (found and fixed by 
+  Sam Harrison, TNU)
+- visualization error for regressor orthogonalization (github issue #57), 
+  when only `'RETROICOR'` set was chosen
 
 Minor Release Notes (R2019a, v7.1.0)
 ------------------------------------

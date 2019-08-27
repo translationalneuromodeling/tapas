@@ -86,7 +86,16 @@ end
 
 %% smooth ECG curve with R-wave kernel and plot autocorrelation
 
-sy = conv(y./sqrt(sum(kRpeak.^2)),kRpeak/sqrt(sum(kRpeak.^2)),'same');
+% https://en.wikipedia.org/wiki/Matched_filter
+filter = kRpeak / sqrt(sum(kRpeak.^2));
+if mod(length(filter), 2) == 0
+    filter = [filter(:); 0.0];  % tapas_physio_conv needs odd length
+end
+sy = tapas_physio_conv(y / sqrt(sum(kRpeak.^2)), flip(filter), 'symmetric');
+% Note we don't necessarily know the phase here! We assume a symmetric
+% filter (i.e. the central point is `t=0`), but that isn't necessarily the
+% case (e.g. for a manual template). However, that gives us the detected
+% peaks at the centre of the template, which is typically what we want.
 
 peaks_found     = false;
 thresh_changed  = false;
