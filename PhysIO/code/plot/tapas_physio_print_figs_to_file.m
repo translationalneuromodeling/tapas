@@ -1,7 +1,7 @@
 function verbose = tapas_physio_print_figs_to_file(verbose, save_dir)
 % prints all figure handles in verbose-struct to specified filename there
 %
-%   physio_print_figs_to_ps(verbose)
+%   verbose = tapas_physio_print_figs_to_file(verbose, save_dir)
 %
 % IN
 %   verbose.fig_handles
@@ -10,7 +10,7 @@ function verbose = tapas_physio_print_figs_to_file(verbose, save_dir)
 % OUT
 %
 % EXAMPLE
-%   physio_print_figs_to_ps
+%   verbose = tapas_physio_print_figs_to_file(verbose, save_dir)
 %
 %   See also
 
@@ -20,10 +20,12 @@ function verbose = tapas_physio_print_figs_to_file(verbose, save_dir)
 % Created: 2013-04-23
 % Copyright (C) 2013 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.
 %
-% This file is part of the TNU CheckPhysRETROICOR toolbox, which is released under the terms of the GNU General Public
-% Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
-% (either version 3 or, at your option, any later version). For further details, see the file
-% COPYING or <http://www.gnu.org/licenses/>.
+%
+% This file is part of the TAPAS PhysIO Toolbox, which is released under
+% the terms of the GNU General Public Licence (GPL), version 3. You can
+% redistribute it and/or modify it under the terms of the GPL (either
+% version 3 or, at your option, any later version). For further details,
+% see the file COPYING or <http://www.gnu.org/licenses/>.
 
 if nargin > 1
     verbose.fig_output_file = fullfile(save_dir, verbose.fig_output_file);

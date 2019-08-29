@@ -166,7 +166,9 @@ else
     
     % Time (in seconds) when the 1st scan (or, if existing, dummy) started,
     % relative to the start of the logfile recording;
-    % e.g.  0 if simultaneous start
+    % e.g.  
+    %       [] (empty) to read from explicit acquisition timing info (s.b.)
+    %       0 if simultaneous start
     %       10, if 1st scan starts 10
     %       seconds AFTER physiological
     %       recording
@@ -175,10 +177,11 @@ else
     % NOTE: 
     %       1. For Philips SCANPHYSLOG, this parameter is ignored, if
     %       scan_timing.sync is set.
-    %       2. If you specify an acquisition_info file, leave this parameter
-    %       at 0 (e.g., for Siemens_Tics) since physiological recordings
-    %       and acquisition timing are already synchronized by this
-    %       information, and you would introduce another shift.
+    %       2. If you specify an acquisition_info file, leave this
+    %       parameter empty or 0 (e.g., for Siemens_Tics, BIDS) since
+    %       physiological recordings and acquisition timing are already
+    %       synchronized by this information, and you would introduce an
+    %       additional shift.
     %
     log_files.relative_start_acquisition = 0;
     
@@ -291,11 +294,45 @@ else
     preproc = [];
     
     preproc.cardiac = [];
-    preproc.cardiac.modality = 'ecg_wifi'; % 'ECG','ECG_raw', or 'OXY'/'PPU' (for pulse oximetry), 'OXY_OLD', [deprecated]
+    
+    % Measurement modality of input cardiac signal 
+    % 'ECG','ECG_raw', or 'OXY'/'PPU' (for pulse oximetry), 'OXY_OLD', [deprecated]
+    preproc.cardiac.modality = 'ecg_wifi'; 
+    
+    % Filter properties for bandpass-filtering of cardiac signal before peak
+    % detection, phase extraction, and other physiological traces
+    preproc.cardiac.filter = [];
+    
+    preproc.cardiac.filter.include = 0; % 1 = filter executed; 0 = not used
+    
+    % filter type   default: 'cheby2'
+    %   'cheby2'    Chebychev Type II filter, use for steep transition from
+    %               start to stop band
+    %   'butter'    butterworth filter, standard filter with maximally flat
+    %               passband (Infinite impulse response), but stronger
+    %               ripples in transition band
+    preproc.cardiac.filter.type = 'butter';
+    
+    %
+    % [f_min, f_max] frequency interval in Hz of all frequency that should
+    %                pass the passband filter
+    %                default: [0.3 9] (to remove slow drifts, breathing
+    %                                   and slice sampling artifacts)
+    %                if empty, no filtering is performed
+    preproc.cardiac.filter.passband = [0.3 9];
+   
+    % [f_min, f_max] frequency interval in Hz of all frequencies, s.th. frequencies
+    %                outside this band should definitely *NOT* pass the filter
+    %                Default: [] 
+    %                NOTE: only relevant for 'cheby2' filter type
+    %                if empty, and passband is empty, no filtering is performed
+    %                if empty, but passband exists, stopband interval is
+    %                10% increased passband interval
+    preproc.cardiac.filter.stopband = [];
     
     % The initial cardiac pulse selection structure: Determines how the
     % majority of cardiac pulses is detected
-    % default: auto
+    % default: 'auto_matched'
     %
     % 'auto_matched'
     %           - auto generation of representative QRS-wave; detection via
@@ -306,6 +343,17 @@ else
     % 'load'    - from previous manual/auto run
     preproc.cardiac.initial_cpulse_select.method = 'auto_matched';
     
+    % maximum allowed physiological heart rate (in beats per minute)
+    % for subject; default: 90 bpm
+    % - If set too low, the auto_mathed pulse detection might miss genuine
+    %   cardiac pulses
+    % - If set too high, it might introduce artifactual pulse events, i.e.
+    %   interpreting local maxima within a pulse as new pulse events
+    % Adjust this value, if you have a subject with very high heart rate 
+    % (increase!), or if you have very pronounced local maxima in your wave form
+    % (decrease!).
+    preproc.cardiac.initial_cpulse_select.max_heart_rate_bpm = 90;
+
     % file containing reference ECG-peak (variable kRpeak)
     % used for method 'manual' or 'load' [default: not set]
     % if method == 'manual', this file is saved after picking the QRS-wave

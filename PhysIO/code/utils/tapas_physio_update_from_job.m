@@ -83,34 +83,43 @@ end
 
 
 for p = 1:nProperties
-    currentProperty = eval(sprintf('job.%s', jobPropertyArray{p}));
-    
-    % overwrite properties of physio with sub-properties of job, also
-    % set value of branchProperty to name of current property
-    if isBranch{p}
-        valueBranchArray = fields(currentProperty);
-        valueBranch = valueBranchArray{1};
-        eval(sprintf('physio.%s.%s = valueBranch;', ...
-            physioPropertyArray{p}, branchProperty{p}));
-        
-        currentProperty = currentProperty.(valueBranch);
+    try
+        currentProperty = eval(sprintf('job.%s', jobPropertyArray{p}));
+    catch err
+        currentProperty = [];
+        tapas_physio_log(sprintf('No property %s defined in job (error: %s)', ...
+            jobPropertyArray{p}, err.message), [], 1);
     end
     
-    
-    % update property itself, if it has no sub-properties
-    if ~isstruct(currentProperty)
-        eval(sprintf('physio.%s = currentProperty;', ...
-            physioPropertyArray{p}));
-    else
+    if ~isempty(currentProperty) % no error in retrieval => continue parsing!
         
-        % update all existing sub-properties in job to physio
+        % overwrite properties of physio with sub-properties of job, also
+        % set value of branchProperty to name of current property
+        if isBranch{p}
+            valueBranchArray = fields(currentProperty);
+            valueBranch = valueBranchArray{1};
+            eval(sprintf('physio.%s.%s = valueBranch;', ...
+                physioPropertyArray{p}, branchProperty{p}));
+            
+            currentProperty = currentProperty.(valueBranch);
+        end
         
-        subPropArray = fields(currentProperty);
-        nFields = numel(subPropArray);
         
-        for f = 1:nFields
-            eval(sprintf('physio.%s.%s = currentProperty.%s;', ...
-                physioPropertyArray{p},subPropArray{f}, subPropArray{f}));
+        % update property itself, if it has no sub-properties
+        if ~isstruct(currentProperty)
+            eval(sprintf('physio.%s = currentProperty;', ...
+                physioPropertyArray{p}));
+        else
+            
+            % update all existing sub-properties in job to physio
+            
+            subPropArray = fields(currentProperty);
+            nFields = numel(subPropArray);
+            
+            for f = 1:nFields
+                eval(sprintf('physio.%s.%s = currentProperty.%s;', ...
+                    physioPropertyArray{p},subPropArray{f}, subPropArray{f}));
+            end
         end
     end
 end

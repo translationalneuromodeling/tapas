@@ -1,0 +1,15 @@
+# MathWorks Matlab
+MATLAB>=9.5
+# Matlab Signal Processing Toolbox: for resp/cardiac trace filter (butter)
+#       Raw trace filtering     (butter)
+#       (Peak Detection)        (xcorr)
+signal>=8.1
+# Matlab Statistics and Machine Learning Toolbox
+#       Noise Rois extraction   (pca)
+#       Siemens Tics Reader     (knnsearch)
+stats>=11.4
+# Statistical Parametric Mapping
+#       GLM, F-contrast computation, SNR, extraction of residuals, 
+#       GUI: Batch Editor
+spm>=12
+

@@ -1,5 +1,9 @@
 function varargout = tapas_physio_run_unit_tests()
-%Executes all existing unit tests of physio tool
+% Executes all existing unit tests of PhysIO Toolbox
+% NOTE: Unit tests are meant to test small, but critical nuclei of the
+%       code, such as numerical routines (convolution, PCA...)
+%       For more complex workflows (e.g. whole example scripts), use
+%       integration tests
 %
 %   testResults = tapas_physio_run_unit_tests()
 %
@@ -10,7 +14,7 @@ function varargout = tapas_physio_run_unit_tests()
 % EXAMPLE
 %   tapas_physio_run_unit_tests
 %
-%   See also
+%   See also tapas_physio_run_integration_tests
  
 % Author:   Lars Kasper
 % Created:  2019-03-14
@@ -25,7 +29,7 @@ function varargout = tapas_physio_run_unit_tests()
  
 import matlab.unittest.TestSuite;
 
-pathTests = fileparts(mfilename('fullpath'));
+pathTests = fullfile(fileparts(mfilename('fullpath')), 'unit');
 suiteFolder = TestSuite.fromFolder(pathTests, 'IncludingSubfolders', true);
 testResults = run(suiteFolder);
 

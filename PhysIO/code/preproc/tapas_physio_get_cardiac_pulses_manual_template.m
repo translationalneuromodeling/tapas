@@ -1,5 +1,5 @@
 function [cpulse, verbose] = tapas_physio_get_cardiac_pulses_manual_template(...
-    c, t, thresh_cardiac_initial_cpulse_select, verbose)
+    c, t, pulse_detect_options, verbose)
 % Detects R-peaks via matched-filter smoothing & peak detection using a
 % manually defined QRS-wave (or R-peak environment)
 %
@@ -9,7 +9,7 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses_manual_template(...
 % IN
 %   c               [nSamples, 1] raw pulse oximeter samples
 %   t               [nSamples, 1] time vector corresponding to samples (un seconds)
-%   thresh_cardiac_initial_cpulse_select   
+%   pulse_detect_options   
 %                   physio.thresh.cardiac.initial_cpulse_select-substructure
 %                   with elements
 %                   .method 'manual' or 'load'/'load_template'
@@ -45,30 +45,30 @@ end
 % manual peak selection, if no file selected and loading is
 % specified
 
-hasKrpeakLogfile = exist(thresh_cardiac_initial_cpulse_select.file,'file') || ...
-    exist([thresh_cardiac_initial_cpulse_select.file '.mat'],'file');
+hasKrpeakLogfile = exist(pulse_detect_options.file,'file') || ...
+    exist([pulse_detect_options.file '.mat'],'file');
 
 % if no file exists, also do manual peak-find
 doSelectTemplateManually = any(strcmpi(...
-    thresh_cardiac_initial_cpulse_select.method, ...
+    pulse_detect_options.method, ...
     {'manual', 'manual_template'})) || ~hasKrpeakLogfile;
 
 if doSelectTemplateManually
-    thresh_cardiac_initial_cpulse_select.kRpeak = [];
-    hasECGMin = isfield(thresh_cardiac_initial_cpulse_select, 'min') && ~isempty(thresh_cardiac_initial_cpulse_select.min);
+    pulse_detect_options.kRpeak = [];
+    hasECGMin = isfield(pulse_detect_options, 'min') && ~isempty(pulse_detect_options.min);
     if ~hasECGMin
-        thresh_cardiac_initial_cpulse_select.min = 0.5;
+        pulse_detect_options.min = 0.5;
     end
 else
-    fprintf('Loading %s\n', thresh_cardiac_initial_cpulse_select.file);
-    ECGfile = load(thresh_cardiac_initial_cpulse_select.file);
-    thresh_cardiac_initial_cpulse_select.min = ECGfile.ECG_min;
-    thresh_cardiac_initial_cpulse_select.kRpeak = ECGfile.kRpeak;
+    fprintf('Loading %s\n', pulse_detect_options.file);
+    ECGfile = load(pulse_detect_options.file);
+    pulse_detect_options.min = ECGfile.ECG_min;
+    pulse_detect_options.kRpeak = ECGfile.kRpeak;
 end
 
 inp_events = [];
-ECG_min = thresh_cardiac_initial_cpulse_select.min;
-kRpeak = thresh_cardiac_initial_cpulse_select.kRpeak;
+ECG_min = pulse_detect_options.min;
+kRpeak = pulse_detect_options.kRpeak;
 if doSelectTemplateManually
     while ECG_min
         [cpulse, ECG_min_new, kRpeak] = tapas_physio_find_ecg_r_peaks(t,c, ECG_min, [], inp_events);
@@ -83,5 +83,5 @@ cpulse = t(cpulse);
 
 % save manually found peak parameters to file
 if doSelectTemplateManually
-    save(thresh_cardiac_initial_cpulse_select.file, 'ECG_min', 'kRpeak');
+    save(pulse_detect_options.file, 'ECG_min', 'kRpeak');
 end

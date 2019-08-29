@@ -50,9 +50,11 @@ end
 
 slicenum = 1:sqpar.Nslices;
 
+
+% Calculate RVT
 sample_points  = tapas_physio_get_sample_points(ons_secs, sqpar, slicenum);
 rvt = tapas_physio_rvt(ons_secs.fr, ons_secs.t, sample_points, verbose);
-rvt = rvt/max(rvt); % normalize for reasonable range of regressor
+rvt = rvt / max(abs(rvt)); % normalize for reasonable range of regressor
 
 if verbose.level >=2
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
@@ -63,26 +65,23 @@ if verbose.level >=2
     ylabel('a.u.');
 end
 
-% create convolution for whole time series first...
-dt = sqpar.TR/sqpar.Nslices;
-t = 0:dt:50; % 50 seconds regressor
+
+% Generate RRF
+dt = sqpar.TR / sqpar.Nslices;
+t = 0:dt:60;  % seconds
 rrf = tapas_physio_rrf(t);
-rrf = rrf/max(abs(rrf));
-% crf = spm_hrf(dt);
+rrf = rrf / max(abs(rrf));
 
 if verbose.level >= 2
     subplot(2,2,2)
-    plot(t, rrf,'g');xlabel('time (seconds)');
+    plot(t, rrf,'g'); xlabel('time (seconds)');
     title('Respiratory response function');
 end
 
-% NOTE: the removal of the mean was implemented to avoid over/undershoots
-% at the 1st and last scans of the session due to convolution
-convRVT = conv(rvt-mean(rvt), rrf, 'same');
 
-% rescaling to -1...1 for display purposes
-convRVT = convRVT./max(abs(convRVT));
-
+% Convolve and rescale for display purposes
+convRVT = tapas_physio_conv(rvt, rrf, 'causal');
+convRVT = convRVT / max(abs(convRVT));
 
 if verbose.level >= 2
     subplot(2,2,3)
@@ -90,20 +89,20 @@ if verbose.level >= 2
     title('Resp vol time X resp response function');
 end
 
-% create shifted regressors convolved time series, which is equivalent to
-% delayed response functions according to Wikipedia (convoution)
+
+% Create shifted regressors convolved time series, which is equivalent to
+% delayed response functions according to Wikipedia (convolution)
 %
 % "Translation invariance[edit]
 % The convolution commutes with translations, meaning that
 %
 % \tau_x ({f}*g) = (\tau_x f)*g = {f}*(\tau_x g)\,
-% where \tau_x fis the translation of the function f by x defined by
-% (\tau_x f)(y) = f(y-x).\.
+% where \tau_x is the translation of the function f by x defined by
+% (\tau_x f)(y) = f(y-x).
 
 % remove mean and linear trend to fulfill periodicity condition for
 % shifting
 convRVT = detrend(convRVT);
-
 
 % TODO: what happens at the end/beginning of shifted convolutions?
 nDelays = numel(delays);
@@ -136,4 +135,6 @@ if verbose.level >= 2
     title('RVT regessor');
     legend([hp{1}(1), hp{2}(1)], 'respiratory volume / time (a. u.)', ...
         'respiratory response regressor');
+end
+
 end

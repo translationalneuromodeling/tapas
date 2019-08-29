@@ -32,7 +32,7 @@ end
 function test_readin_bids_ppu3t(testCase)
 
 % run BIDS PPU example and extract physio
-pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..');
+pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
 % TODO: Make generic!
 pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
 
@@ -78,7 +78,7 @@ end
 function test_readin_bids_cpulse3t(testCase)
 
 % run BIDS cpulse3t example and extract physio
-pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..');
+pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
 % TODO: Make generic!
 pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
 

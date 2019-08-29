@@ -1,5 +1,8 @@
-%% [DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize, seed)
-%
+function [DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize, seed)
+%   WARNING: This function is deprecated and will be removed in a future
+%   version of this toolbox. Please use the new object-oriented interface
+%   provided by the tapas_Huge class.
+%   
 % Invert hierarchical unsupervised generative embedding (HUGE) model.
 %
 % INPUT:
@@ -19,14 +22,12 @@
 %                      of REF [1]) 
 %       hemMean:       prior mean of hemodynamic parameters (mu_h in Fig.1
 %                      of REF [1]) 
-%       hemSigma:      prior covariance of hemodynamic parameters(Sigma_h
+%       hemSigma:      prior covariance of hemodynamic parameters (Sigma_h
 %                      in Fig.1 of REF [1]) 
 %       noiseInvScale: prior inverse scale of observation noise (b_0 in
 %                      Fig.1 of REF [1]) 
 %       noiseShape:    prior shape parameter of observation noise (a_0 in
 %                      Fig.1 of REF [1])
-%               (you may use tapas_huge_build_prior(DCM) to generate this
-%               struct)
 %   verbose   - activates command line output (prints free energy
 %               difference, default: false)
 %   randomize - randomize starting values (default: false). WARNING:
@@ -62,121 +63,101 @@
 %                            noise (lambda_n,r in Eq.(23) of REF [1])
 %       modifiedSumSqrErr:   b'_n,r in Eq.(22) of REF [1]
 %
-% REFERENCE:
-% [1] Yao Y, Raman SS, Schiek M, Leff A, Frässle S, Stephan KE (2018).
-%     Variational Bayesian Inversion for Hierarchical Unsupervised
-%     Generative Embedding (HUGE). NeuroImage, 179: 604-619
+% See also tapas_Huge, tapas_Huge.estimate, tapas_huge_demo
 % 
-% https://doi.org/10.1016/j.neuroimage.2018.06.073
-%
 
 % Author: Yu Yao (yao@biomed.ee.ethz.ch)
-% Copyright (C) 2018 Translational Neuromodeling Unit
+% Copyright (C) 2019 Translational Neuromodeling Unit
 %                    Institute for Biomedical Engineering,
 %                    University of Zurich and ETH Zurich.
 % 
 % This file is part of TAPAS, which is released under the terms of the GNU
 % General Public Licence (GPL), version 3. For further details, see
-% <http://www.gnu.org/licenses/>.
+% <https://www.gnu.org/licenses/>.
+% 
+% This software is provided "as is", without warranty of any kind, express
+% or implied, including, but not limited to the warranties of
+% merchantability, fitness for a particular purpose and non-infringement.
 % 
 % This software is intended for research only. Do not use for clinical
-% purpose. Please note that this toolbox is in an early stage of
-% development. Considerable changes are planned for future releases. For
-% support please refer to:
+% purpose. Please note that this toolbox is under active development.
+% Considerable changes may occur in future releases. For support please
+% refer to:
 % https://github.com/translationalneuromodeling/tapas/issues
-%
-function [DcmResults] = tapas_huge_invert(DCM, K, priors, verbose, randomize, seed)
-%% check input
-if nargin >= 6
-    rng(seed);
-else
-    seed = rng();
-end
+% 
 
-if ~isfield(DCM,'listBoldResponse')
+
+wnMsg = ['This function is deprecated and will be removed in a future ' ...
+	     'version of this toolbox. Please use the new object-oriented ' ...
+         'interface provided by the tapas_Huge class.'];
+warning('tapas:huge:deprecated',wnMsg)
+
+%% check input
+if isvector(DCM)&&isstruct(DCM)
     try
-        DcmInfo = tapas_huge_import_spm(DCM);
-    catch err
-        disp('tapas_huge_invert: Unsupported format.');
-        disp('Use cell array of DCM in SPM format as first input.');
-        rethrow(err);
+        DCM = {DCM(:).DCM}';
+    catch
+        DCM = num2cell(DCM);
     end
 else
-    DcmInfo = DCM;
+    assert(iscell(DCM),'TAPAS:HUGE:inputFormat',...
+        'DCM must be cell array of DCMs in SPM format');
 end
 
-if nargin < 5
-    randomize = false;
+%% settings
+opts = {'K', K};
+opts = [opts, {'Dcm', DCM}];
+
+if nargin >= 6
+    opts = [opts, {'Seed', seed}];
 end
 
-if nargin < 4
-    verbose = false;
+if nargin >= 5
+    opts = [opts, {'Randomize', randomize}];
 end
 
-if nargin < 3
-    priors = tapas_huge_build_prior(DcmInfo);
+if nargin >= 4
+    opts = [opts, {'Verbose', verbose}];
+end
+
+if nargin >= 3
+    dcm = DCM{1};
+    nConnections = nnz([dcm.a(:);dcm.b(:);dcm.c(:);dcm.d(:)]);
+    priors.clustersSigma = priors.clustersSigma/...
+                       (priors.clustersDeg - nConnections - 1);
+                   
+    opts = [opts, {'PriorVarianceRatio', priors.clustersTau, ...
+        'PriorDegree', priors.clustersDeg, ...
+        'PriorClusterVariance', priors.clustersSigma, ...
+        'PriorClusterMean', priors.clustersMean}];
 end
 
 assert(K>0,'TAPAS:HUGE:clusterSize',...
     'Cluster size K must to be positive integer');
 
-% compile integrator
-tapas_huge_compile();
+%% invert model
+obj = tapas_Huge(opts{:});
+obj = obj.estimate();
 
-
-%% settings
-DcmResults = struct();
+DcmResults.freeEnergy = obj.posterior.nfe;
 DcmResults.maxClusters = K;
-DcmResults.priors = priors;
-
-% variational parameters
-% stopping criterion: minimum increase in free energy
-DcmResults.epsEnergy = 1e-5;
-% stopping cirterion: maximum number of iterations
-DcmResults.nIterations = 1e3;
-
-% computational and technical parameters
-% method for calculating jacobian matrix
-DcmResults.fnJacobian = @tapas_huge_jacobian;
-% small constant to be added to the diagonal of inv(postDcmSigma) for
-% numerical stability
-DcmResults.diagConst = 1e-10;
-% keep history of parameters and important auxiliary variables
-DcmResults.bKeepTrace = false;
-% keep history of response related auxiliary variables
-% has no effect if bKeepTrace is false
-DcmResults.bKeepResp = false;
-DcmResults.bVerbose = verbose;
-
-% set update schedule
-DcmResults.schedule.dfDcm = 50;
-DcmResults.schedule.dfClusters = 10;
-DcmResults.schedule.itAssignment = 1;
-DcmResults.schedule.itCluster = 1;
-DcmResults.schedule.itReturn = 5;
-DcmResults.schedule.itKmeans = 1;
-
-
-%% randomize starting values
-if randomize
-    init = struct();
-    init.dcmMean = repmat([DcmResults.priors.clustersMean,...
-        DcmResults.priors.hemMean], DcmInfo.nSubjects, 1);
-    init.dcmMean = init.dcmMean + randn(size(init.dcmMean))*.05;
-
-    init.clustersMean = repmat(...
-        DcmResults.priors.clustersMean, DcmResults.maxClusters,1);
-    init.clustersMean = init.clustersMean + ...
-        randn(size(init.clustersMean))*.05;
-    DcmResults.init = init;
-end
-
-
-%% call VB inversion
-DcmResults = tapas_huge_inv_vb(DcmInfo, DcmResults);
-
-DcmResults.seed = seed;
-DcmResults.ver = '201903';
+DcmResults.rngSeed = obj.posterior.seed;
+DcmResults.posterior = struct( ...
+    'alpha', obj.posterior.alpha, ...
+    'softAssign', obj.posterior.q_nk, ...
+    'clustersMean' , obj.posterior.m        , ... 
+    'clustersTau', obj.posterior.tau  , ...
+    'clustersDeg'  , obj.posterior.nu     , ... 
+    'clustersSigma'   , obj.posterior.S    , ... 
+    'logDetClustersSigma', [] , ...
+    'dcmMean', obj.posterior.mu_n  , ...
+    'dcmSigma', obj.posterior.Sigma_n  , ...
+    'logDetPostDcmSigma', []  , ...
+    'noiseShape', obj.posterior.a, ...
+    'noiseInvScale', obj.posterior.b  , ...
+    'meanNoisePrecision', obj.posterior.a./obj.posterior.b  , ...
+    'modifiedSumSqrErr', []);
+DcmResults.residuals = obj.trace.epsilon;
 
 end
 
