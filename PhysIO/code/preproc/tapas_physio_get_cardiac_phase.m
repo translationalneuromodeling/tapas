@@ -57,14 +57,14 @@ end
 % add pulses in the end, if last onset time of scan after last recorded
 % pulses - use guess based on average heart rate
 if scannert(end) > pulset(end)
-    verbose = tapas_physio_log(...
-        'Guessed additional cardiac pulse at time series end for phase estimation', ...
-        verbose, 1);
     % add more pulses before first one, using same average heartbeat
     % duration as in first nAverage cycles
     meanCycleDur = mean(diff(pulset((end-nAverage+1):end)));
     nAddPulses = ceil((scannert(end) - pulset(end))/meanCycleDur);
     pulset = [pulset; pulset(end) + meanCycleDur*(1:nAddPulses)'];
+    verbose = tapas_physio_log(...
+        sprintf('Note: Guessed %d additional cardiac pulse(s) at time series end for phase estimation', nAddPulses), ...
+        verbose, 0);
 end
 
 scannertpriorpulse = zeros(1,length(scannert));

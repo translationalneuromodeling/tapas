@@ -40,8 +40,8 @@ dt = t(2) - t(1);
 c = c-mean(c); c = c./max(c); % normalize time series
 
 % smooth noisy pulse oximetry data to detect peaks
-w = tapas_physio_gausswin(dt120,1);
-sc = conv(c, w, 'same');
+w = tapas_physio_gausswin(2*floor(dt120/2)+1, 1);  % Odd number of samples
+sc = tapas_physio_conv(c, w, 'symmetric');
 sc = sc-mean(sc); sc = sc./max(sc); % normalize time series
 
 % Highpass filter to remove drifts

@@ -39,12 +39,14 @@ function [physio, R, ons_secs] = tapas_physio_main_create_regressors(varargin)
 
 % Author: Lars Kasper
 % Created: 2011-08-01
-% Copyright (C) 2011-2018 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.
+% Copyright (C) 2011-2019 TNU, Institute for Biomedical Engineering, 
+%               University of Zurich and ETH Zurich.
 %
-% This file is part of the TAPAS PhysIO Toolbox, which is released under the terms of the GNU General Public
-% Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
-% (either version 3 or, at your option, any later version). For further details, see the file
-% COPYING or <http://www.gnu.org/licenses/>.
+% This file is part of the TAPAS PhysIO Toolbox, which is released under
+% the terms of the GNU General Public Licence (GPL), version 3. You can
+% redistribute it and/or modify it under the terms of the GPL (either
+% version 3 or, at your option, any later version). For further details,
+% see the file COPYING or <http://www.gnu.org/licenses/>.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +59,6 @@ addpath(genpath(pathThis));
 
 % These parameters could become toolbox inputs...
 minConstantIntervalAlertSeconds     = 0.2;
-maxHeartRateBpm                     = 90;
 
 if ~nargin
     error('Please specify a PhysIO-object as input to this function. See tapas_physio_new');
@@ -158,17 +159,19 @@ if ~hasPhaseLogfile
                 % preproc.cardiac.modality = 'OXY'; % 'ECG' or 'OXY' (for pulse oximetry)
                 %% initial pulse select via load from logfile or autocorrelation with 1
                 %% cardiac pulse
+                
+                [ons_secs.c, verbose] = tapas_physio_filter_cardiac(...
+                    ons_secs.t, ons_secs.c, preproc.cardiac.filter, verbose);
+                
                 switch preproc.cardiac.initial_cpulse_select.method
                     case {'load_from_logfile', ''}
                         % do nothing
                     otherwise
-                        minCardiacCycleSamples = floor((1/(maxHeartRateBpm/60)/ons_secs.dt));
-                        
                         % run one of the various cardiac pulse detection algorithms
                         [ons_secs.cpulse, verbose] = ...
                             tapas_physio_get_cardiac_pulses(ons_secs.t, ons_secs.c, ...
                             preproc.cardiac.initial_cpulse_select, ...
-                            preproc.cardiac.modality, minCardiacCycleSamples, verbose);
+                            preproc.cardiac.modality, verbose);
                 end
                 
                 
