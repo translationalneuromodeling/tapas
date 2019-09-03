@@ -1,13 +1,14 @@
 function [cpulse, verbose] = tapas_physio_get_cardiac_pulses(t, c, ...
-    thresh_cardiac, cardiac_modality, dt120, verbose)
+    cpulse_detect_options, cardiac_modality, verbose)
 % extract heartbeat events from ECG or pulse oximetry time course
 %
-%   cpulse = tapas_physio_get_cardiac_pulses(t, c, thresh_cardiac, cardiac_modality, verbose);
+%   cpulse = tapas_physio_get_cardiac_pulses(t, c, cpulse_detect_options, cardiac_modality, verbose);
 %
 % IN
 %   t                  vector of time series of log file (in seconds, corresponds to c)
 %   c                  raw time series of ECG or pulse oximeter
-%   thresh_cardiac      is a structure with the following elements
+%   cpulse_detect_options      
+%                      is a structure with the following elements
 %           .method -  'auto_matched', 'manual_template', 'load_from_logfile',
 %                       'load_template'
 %                      Specifies how to determine QRS-wave from noisy input
@@ -28,14 +29,15 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses(t, c, ...
 %                      This file is saved after picking the QRS-wave
 %                      manually (i.e. if .ECG_min is set), so that
 %                      results are reproducible
+%           .max_heart_rate_bpm
+%                   maximum allowed physiological heart rate (in beats
+%                   per minute) for subject; default: 90 bpm
 %           .krPeak [false] or true; if true, a user input is
-%           required to specify a characteristic R-peak interval in the ECG
-%           or pulse oximetry time series
+%                   required to specify a characteristic R-peak interval in the ECG
+%                   or pulse oximetry time series
 %   cardiac_modality    'ECG', 'ECG_WiFi' electrocardiogram (with/without
 %                   wireless transmisssion for Philips data)
 %                       'OXY'/'PPU' pulse oximetry unit
-%   dt120           - minimum distance between heart beats; default 120
-%                   bpm, i.e. 0.5 s
 %
 %   verbose         Substructure of Physio, holding verbose.level and
 %                   verbose.fig_handles with plotted figure handles
@@ -64,16 +66,20 @@ function [cpulse, verbose] = tapas_physio_get_cardiac_pulses(t, c, ...
 
 %% detection of cardiac R-peaks
 
-dt = t(2)-t(1);
-if nargin < 5 || isempty(dt120)
-    dt120 = round(0.5/dt); % heart rate < 120 bpm
+dt = t(2) - t(1);
+minPulseDistanceSamples = ...
+    floor((1 / (cpulse_detect_options.max_heart_rate_bpm / 60)) / dt);
+
+if isempty(minPulseDistanceSamples)
+    minPulseDistanceSamples = round(0.5 / dt); % heart rate < 120 bpm
 end
+
 switch lower(cardiac_modality)
     case 'oxy_old'
         [cpulse, verbose] = tapas_physio_get_oxy_pulses_filtered(c, t, ...
-            dt120, verbose);
+            minPulseDistanceSamples, verbose);
     otherwise % {'oxy','ppu', 'oxy_wifi', 'ppu_wifi','ecg', 'ecg_wifi'} etc., including ecg_raw o
-        switch thresh_cardiac.method
+        switch cpulse_detect_options.method
             case 'load_from_logfile'
                 verbose = tapas_physio_log('How did you end up here? I better do nothing.', ...
                     verbose, 1);
@@ -81,10 +87,10 @@ switch lower(cardiac_modality)
             case {'manual', 'manual_template', 'load', 'load_template'} % load/determine manual template
                 [cpulse, verbose] = ...
                     tapas_physio_get_cardiac_pulses_manual_template(...
-                    c, t, thresh_cardiac, verbose);
+                    c, t, cpulse_detect_options, verbose);
             case {'auto', 'auto_template', 'auto_matched'}
                 [cpulse, verbose] = ...
                     tapas_physio_get_cardiac_pulses_auto_matched( ...
-                    c, t, thresh_cardiac.min, dt120, verbose);
-        end %  switch thresh_cardiac.method
+                    c, t, cpulse_detect_options.min, minPulseDistanceSamples, verbose);
+        end %  switch cpulse_detect_options.method
 end

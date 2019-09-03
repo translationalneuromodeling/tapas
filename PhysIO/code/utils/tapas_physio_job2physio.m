@@ -6,11 +6,13 @@ function physio = tapas_physio_job2physio(job)
 % IN
 %
 % OUT
+%   physio  physio input structure, as use by
+%           tapas_physio_main_create_regressors
 %
 % EXAMPLE
 %   physio = tapas_physio_job2physio(job)
 %
-%   See also spm_physio_cfg_matlabbatch
+%   See also tapas_physio_cfg_matlabbatch tapas_physio_main_create_regressors
 
 % Author: Lars Kasper
 % Created: 2015-01-05
@@ -26,7 +28,7 @@ function physio = tapas_physio_job2physio(job)
 
 physio                      = tapas_physio_new();
 
-%% Use existing properties that are cfg_choices in job to overwrite 
+%% Use existing properties that are cfg_choices in job to overwrite
 % properties of physio and set corresponding method
 
 physio = tapas_physio_update_from_job(physio, job, ...
@@ -43,14 +45,34 @@ modelArray =  ...
     'noise_rois', 'other'};
 
 physio = tapas_physio_update_from_job(physio, job, ...
-   strcat('model.', modelArray), strcat('model.', modelArray), ...
-   true, 'include');
+    strcat('model.', modelArray), strcat('model.', modelArray), ...
+    true, 'include');
 
 %% Convert yes => true (=1) and no => false (=0)
 nModels = numel(modelArray);
 for iModel = 1:nModels
     physio.model.(modelArray{iModel}).include = strcmpi(...
         physio.model.(modelArray{iModel}).include, 'yes');
+end
+
+%% Take over yes/no substructs as is, yes/no will become 'include' property
+yesNoArray =  ...
+    {'preproc.cardiac.filter'};
+
+physio = tapas_physio_update_from_job(physio, job, ...
+    yesNoArray, yesNoArray,  true, 'include');
+
+%% Convert yes => true (=1) and no => false (=0)
+nChoices = numel(yesNoArray);
+for iChoice = 1:nChoices
+    try
+        eval(sprintf(['physio.%s.include = strcmpi(' ...
+            'physio.%s.include, ''yes'');'], yesNoArray{iChoice}, ...
+            yesNoArray{iChoice}));
+    catch err
+        tapas_physio_log(sprintf('No property %s defined in job (error: %s)', ...
+            yesNoArray{iChoice}, err.message), [], 1);
+    end
 end
 
 %% Use existing properties in job to overwrite properties of physio

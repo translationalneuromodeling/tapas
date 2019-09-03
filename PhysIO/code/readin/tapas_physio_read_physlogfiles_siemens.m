@@ -76,6 +76,12 @@ cpulse              = [];
 
 dt                  = log_files.sampling_interval;
 
+explicit_relative_start_acquisition = log_files.relative_start_acquisition;
+
+if isempty(explicit_relative_start_acquisition)
+    explicit_relative_start_acquisition = 0;
+end
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Determine relative start of acquisition from dicom headers and
@@ -133,7 +139,7 @@ if hasCardiacData
     
     % add arbitrary offset specified by user
     relative_start_acquisition = relative_start_acquisition + ...
-        log_files.relative_start_acquisition;
+        explicit_relative_start_acquisition;
     
     data_table = tapas_physio_siemens_line2table(lineData, cardiac_modality);
     
@@ -204,7 +210,7 @@ if hasRespData
     
     % add arbitrary offset specified by user
     relative_start_acquisition = relative_start_acquisition + ...
-        log_files.relative_start_acquisition;
+        explicit_relative_start_acquisition;
     
     data_table = tapas_physio_siemens_line2table(lineData, 'RESP');
     

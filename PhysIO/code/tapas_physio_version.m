@@ -1,7 +1,7 @@
 function versionPhysio = tapas_physio_version()
 % returns version number of this copy of PhysIO
 %
-%   output = tapas_physio_version(input)
+%   versionPhysio = tapas_physio_version()
 %
 % IN
 %
@@ -23,4 +23,4 @@ function versionPhysio = tapas_physio_version()
 % version 3 or, at your option, any later version). For further details,
 % see the file COPYING or <http://www.gnu.org/licenses/>.
 %
-versionPhysio = 'R2019a-v7.1.0';
+versionPhysio = 'R2019b-v7.2.0';
