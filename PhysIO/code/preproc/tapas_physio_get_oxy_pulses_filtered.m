@@ -40,8 +40,8 @@ dt = t(2) - t(1);
 c = c-mean(c); c = c./max(c); % normalize time series
 
 % smooth noisy pulse oximetry data to detect peaks
-w = tapas_physio_gausswin(dt120,1);
-sc = conv(c, w, 'same');
+w = tapas_physio_gausswin(2*floor(dt120/2)+1, 1);  % Odd number of samples
+sc = tapas_physio_conv(c, w, 'symmetric');
 sc = sc-mean(sc); sc = sc./max(sc); % normalize time series
 
 % Highpass filter to remove drifts
@@ -56,7 +56,7 @@ sc = sc./max(sc);
 
 if verbose.level >=2 % visualise influence of smoothing on peak detection
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf, 'Name', 'PPU-OXY: Tresholding Maxima for Heart Beat Detection');
+    set(gcf, 'Name', 'Preproc: PPU-OXY: Tresholding Maxima for Heart Beat Detection');
     [tmp, cpulse2] = tapas_physio_findpeaks(c,'minpeakheight',thresh_cardiac.min,'minpeakdistance', dt120);
     plot(t, c, 'k');
     hold all;

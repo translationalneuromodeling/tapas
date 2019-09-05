@@ -48,6 +48,7 @@ doSaveBatchM = true;
 if ~ischar(fileBatchM)
     matlabbatch = fileBatchM;
     fileBatchM = fullfile(pwd, 'physio_job.m');
+    fileBatchMat = fullfile(pwd, 'physio_job.mat');
 else
     [fp,fn,ext] = fileparts(fileBatchM);
     switch ext

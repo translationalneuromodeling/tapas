@@ -25,8 +25,9 @@ function [R, verbose] = tapas_physio_orthogonalise_physiological_regressors(card
 %             'c' or 'cardiac'  - only cardiac regressors are orthogonalised
 %             'r' or 'resp'     - only respiration regressors are orthogonalised
 %             'mult'            - only multiplicative regressors are orthogonalised
-%             'all'             - all physiological regressors are
-%                                 orthogonalised to each other
+%             'RETROICOR'       - cardiac, resp and interaction (mult)
+%                                 regressors are orthogonalised
+%             'all'             - all regressors are orthogonalised to each other
 %   verbose.level         0 = no output; 
 %                   1 or other = plot design matrix before and after 
 %                   orthogonalisation of physiological regressors and difference
@@ -60,27 +61,33 @@ switch lower(orthogonalise)
         R = [cardiac_sess, tapas_physio_scaleorthmean_regressors(respire_sess) mult_sess input_R];
     case {'mult'}
         R = [cardiac_sess, respire_sess, tapas_physio_scaleorthmean_regressors(mult_sess) input_R];
-    case 'all'
+    case 'retroicor'
         R = [tapas_physio_scaleorthmean_regressors([cardiac_sess, respire_sess, mult_sess]), input_R];
+    case 'all'
+        R = tapas_physio_scaleorthmean_regressors([cardiac_sess, respire_sess, mult_sess, input_R]);
     case {'n', 'none'}
         R = [cardiac_sess, respire_sess, mult_sess input_R];
+    otherwise
+        verbose = tapas_physio_log(...
+            sprintf('Orthogonalisation of regressor set %s is not supported yet', ...
+            orthogonalise), verbose, 2)
 end
 
 
 %% Plot orthogonalisation
 if verbose.level
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf, 'Name', 'RETROICOR GLM regressors');
+    set(gcf, 'Name', 'Model: RETROICOR GLM regressors');
     
     switch lower(orthogonalise)
         case {'n', 'none'}
             imagesc(R); 
-            title({'Physiological regressor matrix for GLM', ...
+            title({'Model: Physiological regressor matrix for GLM', ...
                 '- including input confound regressors -'});
             colormap gray; xlabel('regressor');ylabel('scan volume');
             
         otherwise
-            subplot(1,3,1); imagesc(R); title({'Physiological regressor matrix for GLM'...
+            subplot(1,3,1); imagesc(R); title({'Model: Physiological regressor matrix for GLM'...
                 ' - specified regressors orthogonalized - '}); 
             colormap gray; xlabel('regressor');ylabel('scan volume');
             subplot(1,3,2);

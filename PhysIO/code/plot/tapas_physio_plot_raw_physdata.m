@@ -30,7 +30,7 @@ function verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose)
 if verbose.level >= 2
     
     fh = tapas_physio_get_default_fig_params();
-    set(fh, 'Name', 'Raw Physiological Logfile Data');
+    set(fh, 'Name', 'Read-In: Raw Physiological Logfile Data');
     has_cardiac_triggers = isfield(ons_secs, 'cpulse') && ~isempty(ons_secs.cpulse);
     has_scan_triggers = isfield(ons_secs, 'acq_codes') && ~isempty(ons_secs.acq_codes);
     has_cardiac = isfield(ons_secs, 'c') && ~isempty(ons_secs.c);

@@ -3,7 +3,7 @@
 % spm SPM - SPM12 (6225)
 % cfg_basicio BasicIO - Unknown
 %-----------------------------------------------------------------------
-matlabbatch{1}.spm.tools.physio.save_dir = {''};
+matlabbatch{1}.spm.tools.physio.save_dir = {'physio_out'};
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'GE';
 matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'ECGData_epiRT_phys_0921201215_38_08'};
 matlabbatch{1}.spm.tools.physio.log_files.respiration = {'RespData_epiRT_phys_0921201215_38_08'};
