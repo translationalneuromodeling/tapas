@@ -67,12 +67,6 @@ switch lower(method)
         COEFF = v;                     % [nVolumes, nPCs]
         SCORE = u .* singular_values'; % [nVoxel  , nPCs]
         
-        % Remove the last component
-        LATENT   (end)   = [];
-        EXPLAINED(end)   = [];
-        COEFF    (:,end) = [];
-        SCORE    (:,end) = [];
-        
     case 'stats-pca'
         
         [COEFF, SCORE, LATENT, TSQUARED, EXPLAINED, MU] = pca(timeseries);

@@ -28,7 +28,7 @@ rng('default')
 % Generate timeseries
 nVoxels  = 10000;
 NVolumes = 300;
-timeseries = randi(nVoxels,NVolumes);
+timeseries = randn(nVoxels,NVolumes);
 
 % Perform PCA with both methods
 svd   = struct;
