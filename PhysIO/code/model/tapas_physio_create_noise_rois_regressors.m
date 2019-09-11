@@ -220,7 +220,7 @@ for r = 1:nRois
     
     % *********************************************************************
     % In the previous version of this function, we used `pca` from "stats" MATLAB toolbox
-    % Now we use `svd`, a buil-in MATLAB function
+    % Now we use `svd`, a built-in MATLAB function
     %
     % COEFF = [nVolumes, nPCs]  principal components (PCs) ordered by variance
     %                           explained
@@ -239,37 +239,7 @@ for r = 1:nRois
     % [COEFF, SCORE, LATENT, TSQUARED, EXPLAINED, MU] = pca(Yroi);
     % *********************************************************************
     
-    [nVoxels,nVolumes] = size(Yroi);
-    
-    % Center data : remove mean, mandatory step to perform SVD
-    Yroi = Yroi - mean(Yroi);
-    
-    % First regressor : mean timeserie of the ROI
-    MU = mean(Yroi); % [1, nVolumes]
-    
-    % Perform Singular Value Ddecomposition
-    [u,s,v] = svd(Yroi,0);
-    
-    % Singular values -> Eigen values
-    singular_values = diag(s);
-    eigen_values    = singular_values.^2/(nVoxels-1);
-    LATENT          = eigen_values; % [nPCs, 1]
-    
-    % Eigen_values -> Variance explained
-    vairance_explained = 100*eigen_values/sum(eigen_values); % in percent (%)
-    EXPLAINED          = vairance_explained;                 % [nPCs, 1]
-    
-    % Sign convention : the max(abs(PCs)) is positive
-    [~,maxabs_idx] = max(abs(v));
-    [m,n]          = size(v);
-    idx            = 0:m:(n-1)*m;
-    val            = v(maxabs_idx + idx);
-    sgn            = sign(val);
-    v              = v .* sgn;
-    u              = u .* sgn;
-    
-    COEFF = v;                     % [nVolumes, nPCs]
-    SCORE = u .* singular_values'; % [nVoxel  , nPCs]
+    [COEFF, SCORE, LATENT, EXPLAINED, MU] = tapas_physio_pca(Yroi);
     
     
     %% Select components, write results
