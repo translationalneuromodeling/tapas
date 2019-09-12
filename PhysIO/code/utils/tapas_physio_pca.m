@@ -27,6 +27,12 @@ function [COEFF, SCORE, LATENT, EXPLAINED, MU] = tapas_physio_pca( timeseries, m
 %
 % See also tapas_physio_create_noise_rois_regressors
 
+[nVoxels,nVolumes] = size(timeseries);
+
+if nVoxels <= nVolumes
+    error([mfilename ':NotEnoughVoxels'], 'nVoxels <= nVolumes')
+end
+
 if nargin < 2
     method = 'svd';
 end
@@ -34,8 +40,6 @@ end
 switch lower(method)
     
     case 'svd'
-        
-        [nVoxels,nVolumes] = size(timeseries);
         
         % First regressor : mean timeserie of the ROI
         MU = mean(timeseries); % [1, nVolumes]
