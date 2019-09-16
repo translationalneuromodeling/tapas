@@ -22,7 +22,7 @@ hgf.c_prc.transp_prc_fun = @tapas_hgf_binary_transp;
 % Then we do the same for the observation model.
 
 hgf.c_obs.obs_fun = @tapas_unitsq_sgm; 
-hgf.c_obs.transp_obs_fun = @tapas_unitsq_sgm_transp; 
+hgf.c_obs.transp_obs_fun = @tapas_unitsq_sgm_transp;
 %% 
 % Now we run the config function of the perceptual model and copy the priors 
 % and number of levels of the perceptual model into the hgf structure.
@@ -68,7 +68,7 @@ om2 = om2(:)';
 om3 = om3(:)';
 gridsize = length(om2);
 %% 
-% We choose a range of response noise levels (i.e., values of the parameter 
+% We choose a range of response noise levels (i.e., values of the parameter  
 % $\zeta$). Higher values of $\zeta$ mean _less_ noise.
 
 ze = [1, 4, 8];
@@ -77,10 +77,12 @@ numnoiselevels = length(ze);
 % Finally, we choose a number of simulations per grid point.
 
 numsim = 8;
-%% 
+%%
+% 
 %  Then we initialize structure arrays for the simulations and for the 'data' 
-% argument of tapas_h2gf_estimate().
-
+%  argument of tapas_h2gf_estimate().
+%
+%%
 sim = struct('u', cell(gridsize, numnoiselevels, numsim),...
              'ign', [],...
              'c_sim', [],...
@@ -90,7 +92,6 @@ sim = struct('u', cell(gridsize, numnoiselevels, numsim),...
              'p_obs', [],...
              'c_obs', [],...
              'y', []);
-
 %%
 data = struct('y', cell(gridsize, numnoiselevels, numsim),...
               'u', [],...
@@ -147,7 +148,6 @@ pars.niter = 2000;
 % Number of samples in the burn-in phase.
 
 pars.nburnin = 2000;
-
 %% 
 % Parameters not explicitly defined here take the default values set in 
 % tapas_h2gf_inference.m.
@@ -245,7 +245,7 @@ ylim([-5.5 -1.4])
 title('\zeta = 8')
 xlabel('Grid point');
 %% 
-% On the other hannd, plotting the distribution of median samples of $\omega_3$ 
+% On the other hand, plotting the distribution of median samples of $\omega_3$ 
 % for all grid points shows that this parameter is not recoverable regardless 
 % of noise level.
 
@@ -274,8 +274,7 @@ meanllh = zeros(1,numnoiselevels);
 
 for i = 1:numnoiselevels
     for j = 1:numsim
-        % TODO not sure about this line.
-        % meanllh(i) = meanllh(i) + mean(est(i,j).llh, 'all')/numsim;
+        meanllh(i) = meanllh(i) + mean(est(i,j).llh, 'all')/numsim;
     end
 end
 clear i j
