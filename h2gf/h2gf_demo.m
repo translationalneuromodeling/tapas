@@ -142,15 +142,12 @@ pars = struct();
 % 
 % Number of samples stored.
 
-pars.niter = 500;
+pars.niter = 2000;
 %% 
 % Number of samples in the burn-in phase.
 
-pars.nburnin = 500;
-%% 
-% Number of chains.
+pars.nburnin = 2000;
 
-pars.nchains = 8;
 %% 
 % Parameters not explicitly defined here take the default values set in 
 % tapas_h2gf_inference.m.
@@ -189,25 +186,27 @@ tapas_fit_plotResidualDiagnostics(h2gf_est.summary(1))
 % your own estimation, uncomment the estimation and comment the loading of the 
 % estimates instead.
 
-% est = struct('data', cell(numnoiselevels, numsim),...
-%              'model', [],...
-%              'inference', [],...
-%              'samples_theta', [],...
-%              'fe', [],...
-%              'llh', [],...
-%              'accuracy', [],...
-%              'T', [],...
-%              'hgf', [],...
-%              'summary', []);
+est = struct('data', cell(numnoiselevels, numsim),...
+             'model', [],...
+             'inference', [],...
+             'samples_theta', [],...
+             'fe', [],...
+             'llh', [],...
+             'accuracy', [],...
+             'samples', [], ...
+             'waic', [], ...
+             'T', [],...
+             'hgf', [],...
+             'summary', []);
 %%
-% for i = 1:numnoiselevels
-%     for j = 1:numsim
-%         est(i,j) = tapas_h2gf_estimate(data(:,i,j), hgf, inference, pars);
-%     end
-% end
-% clear i j
+for i = 1:numnoiselevels
+    for j = 1:numsim
+        est(i,j) = tapas_h2gf_estimate(data(:,i,j), hgf, inference, pars);
+    end
+end
+clear i j
 %%
-load('h2gf_demo_est.mat')
+%load('h2gf_demo_est.mat')
 %% 
 % We gather the estimates of $\omega_2$ and $\omega_3$ for all grid points, 
 % noise levels, and simulated datasets.
@@ -275,7 +274,8 @@ meanllh = zeros(1,numnoiselevels);
 
 for i = 1:numnoiselevels
     for j = 1:numsim
-        meanllh(i) = meanllh(i) + mean(est(i,j).llh{1},'all')/numsim;
+        % TODO not sure about this line.
+        % meanllh(i) = meanllh(i) + mean(est(i,j).llh, 'all')/numsim;
     end
 end
 clear i j
