@@ -70,7 +70,8 @@ end
 
 % Show the noise ROIs before reslice, threshold and erosion
 if verbose.level >= 2
-    spm_check_registration( roi_files{:} )
+    spm_check_registration( roi_files{:} );
+    spm_orthviews('context_menu','interpolation',3); % disable interpolation // 3->NN , 2->Trilin , 1->Sinc
 end
 
 Vimg = []; for iFile = 1:numel(fmri_files), Vimg = [Vimg; spm_vol(fmri_files{iFile})];end
@@ -82,11 +83,18 @@ Yimg = reshape(Yimg, [], nVolumes);
 R_noise_rois = [];
 for r = 1:nRois
     
-    nComponents =  n_components(r);
-    threshold = thresholds(r);
-    fileRoi = roi_files{r};
+    nComponents = n_components(r);
+    threshold   = thresholds  (r);
+    fileRoi     = roi_files   {r};
     
     Vroi = spm_vol(fileRoi);
+    
+    
+    %% Prepare ROI : Coregister, threshold, erode, demean, detrend
+    
+    % ---------------------------------------------------------------------
+    % Coregister
+    % ---------------------------------------------------------------------
     
     hasRoiDifferentGeometry = any(any(abs(Vroi.mat - Vimg(1).mat) > 1e-5)) | ...
         any(Vroi.dim-Vimg(1).dim(1:3));
@@ -117,7 +125,13 @@ for r = 1:nRois
         
         % update header link to new reslice mask-file
         Vroi = spm_vol(spm_file(fileRoi, 'prefix', 'r'));
+        
     end
+    
+    
+    % ---------------------------------------------------------------------
+    % Threshold
+    % ---------------------------------------------------------------------
     
     roi = spm_read_vols(Vroi); % 3D matrix of the ROI
     roi(roi <  threshold) = 0;
@@ -125,6 +139,7 @@ for r = 1:nRois
     
     nVoxelsInRoi = sum(roi(:)>0);
     
+    % Check number of voxels
     if nVoxelsInRoi == 0
         verbose = tapas_physio_log(sprintf(['No voxels in Noise ROI mask no. %d.\n' ...
             'Please reduce threshold %f!'], ...
@@ -135,6 +150,11 @@ for r = 1:nRois
             'Please reduce threshold %f!'],  r, nVoxelsInRoi, ...
             nComponents, threshold), verbose, 2);
     end
+    
+    
+    % ---------------------------------------------------------------------
+    % Crop
+    % ---------------------------------------------------------------------
     
     % crop pixel, if desired
     for iter = 1 : n_voxel_crop(r)
@@ -161,7 +181,6 @@ for r = 1:nRois
     
     % Overlay the final noise ROI (code from spm_orthviews:add_c_image)
     if verbose.level >= 2
-        spm_check_registration( roi_files{:} );
         spm_orthviews('addcolouredimage',r,Vroi.fname ,[1 0 0]);
         hlabel = sprintf('%s (%s)',Vroi.fname ,'Red');
         c_handle    = findobj(findobj(st.vols{r}.ax{1}.cm,'label','Overlay'),'Label','Remove coloured blobs');
@@ -174,7 +193,10 @@ for r = 1:nRois
     
     Yroi = Yimg(roi(:)==1, :); % Time series of the fMRI volume in the noise ROIs
     
-    %% mean and linear trend removal according to CompCor pub
+    % ---------------------------------------------------------------------
+    % mean and linear trend removal according to CompCor pub
+    % ---------------------------------------------------------------------
+    
     % design matrix
     X = ones(nVolumes,1);
     X(:,2) = 1:nVolumes;
@@ -194,12 +216,12 @@ for r = 1:nRois
     end
     
     
+    %% Perform PCA (using SVD) to extract components inside the ROI
     
-    
-    
-    %%
-    
-    
+    % *********************************************************************
+    % In the previous version of this function, we used `pca` from "stats" MATLAB toolbox
+    % Now we use `svd`, a built-in MATLAB function
+    %
     % COEFF = [nVolumes, nPCs]  principal components (PCs) ordered by variance
     %                           explained
     % SCORE = [nVoxel, nPCs]    loads of each component in each voxel, i.e.
@@ -213,7 +235,14 @@ for r = 1:nRois
     % EXPLAINED = [nPCs, 1]     relative amount of variance explained (in
     %                           percent) by each component
     % MU = [1, nVolumes]        mean of all time series
-    [COEFF, SCORE, LATENT, TSQUARED, EXPLAINED, MU] = pca(Yroi);
+    %
+    % [COEFF, SCORE, LATENT, TSQUARED, EXPLAINED, MU] = pca(Yroi);
+    % *********************************************************************
+    
+    [COEFF, SCORE, LATENT, EXPLAINED, MU] = tapas_physio_pca(Yroi);
+    
+    
+    %% Select components, write results
     
     % components defined via threshold of variance explained
     if nComponents < 1
@@ -243,6 +272,7 @@ for r = 1:nRois
         end
     end
     
+    % plot
     if verbose.level >=2
         stringFig = sprintf('Model: Noise\\_rois: Extracted principal components for ROI %d', r);
         verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
@@ -255,7 +285,7 @@ for r = 1:nRois
     end
     
     % write away extracted PC-loads & roi of extraction
-    [fpRoi,fnRoi] = fileparts(Vroi(1).fname);
+    [~,fnRoi] = fileparts(Vroi(1).fname);
     fpFmri = fileparts(Vimg(1).fname);
     for c = 1:nComponents
         Vpc = Vroi;
@@ -267,4 +297,8 @@ for r = 1:nRois
         spm_write_vol(Vpc, pcScores);
     end
     R_noise_rois = [R_noise_rois, R];
-end
+    
+    
+end % nROI
+
+end % function
