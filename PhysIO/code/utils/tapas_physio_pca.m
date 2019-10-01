@@ -1,7 +1,7 @@
 function [COEFF, SCORE, LATENT, EXPLAINED, MU] = tapas_physio_pca( timeseries, method )
 % Performes the Principal Component Analysis (PCA)
 %
-%   [COEFF, SCORE, LATENT, EXPLAINED, MU] = tapas_physio_pca( timeserie )
+%   [COEFF, SCORE, LATENT, EXPLAINED, MU] = tapas_physio_pca( timeseries )
 %
 % IN
 %   timeserie                 (nVoxels x nVolumes)
