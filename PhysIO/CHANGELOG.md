@@ -4,10 +4,18 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2019b, v7.2.0*
+*Current version: PhysIO Toolbox Release R2019b, v7.2.1*
 
-August 20, 2019
+October 1st, 2019
 
+
+Bugfix Release Notes (v7.2.1)
+-----------------------------
+
+### Changed
+- PhysIO: removed Matlab statistics toolbox dependency for PCA by SVD implementation (thanks to Benoît Beranger, [pull request 64](https://github.com/translationalneuromodeling/tapas/pull/64))
+    - new function `tapas_physio_pca` allows for switch between stats and native SVD implementation of PCA
+    - comes with unit tests checking equivalency
 
 Minor Release Notes (R2019b, v7.2.0)
 ------------------------------------
