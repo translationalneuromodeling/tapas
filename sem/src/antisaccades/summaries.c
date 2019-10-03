@@ -84,10 +84,11 @@ seria_inhib_rt(double t, SERIA_PARAMETERS *params)
 
     // Below the delays
     if ( t < delay )
-        return 0;
+        return GSL_NEGINF;
 
     t -= delay;
     
+    /* Taking the expected value exp(log(t + delay) + log(probability)) */
     double eval = log(t + delay) +
         params->early.lpdf(t, params->kp, params->tp) +
         params->stop.lsf(t, params->ks, params->ts);
