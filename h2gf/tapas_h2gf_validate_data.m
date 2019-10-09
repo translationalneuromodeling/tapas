@@ -26,20 +26,20 @@ end
 % Check also if the irr and ign trials are not there
 
 if ~isfield(data, 'irr')
-    error('tapas:h2gf:validate:data', ...
+    error('tapas:h2gf:validate:data:irr', ...
         'irr field must be specified')
 end
-if ~isfield(data, 'irr')
+if ~isfield(data, 'ign')
     error('tapas:h2gf:validate:data:ign', ...
         'ign field must be specified')
 end
 
 
-nt = size(model.graph{1}.htheta.T, 1); 
+ns = size(model.graph{1}.htheta.T, 1);
 
-if nt ~= sdata(1)
+if ns ~= sdata(1)
     error('tapas:h2gf:data', ...
-        'First dimension of T is %d, number of subjects is %d', nt, sdata(1));
+        'First dimension of T is %d, number of subjects is %d', ns, sdata(1));
 end
 
 end

@@ -32,14 +32,17 @@ if ~isfield(pars, 'T')
         linspace(0.01, 1, nchains)) .^ power_rule;
 end
 
+% Number of iterations for diagnostics
 if ~isfield(pars, 'ndiag')
     pars.ndiag = 400;
 end
 
+% Default rng seed
 if ~isfield(pars, 'seed')
     pars.seed = 0;
 end
 
+% Use 'shuffle' by default
 if pars.seed > 0
     rng(pars.seed);
 else
@@ -48,18 +51,23 @@ end
 
 pars.rng_seed = rng();
 
+% Default iterations
 if ~isfield(pars, 'niter')
     pars.niter = 4000;
 end
 
+% Default burnin
 if ~isfield(pars, 'nburnin')
     pars.nburnin = 1000;
 end
 
+% Default schedule for swapping between chains at different temperatures
+% (parallel tempering)
 if ~isfield(pars, 'mc3')
     pars.mc3it = 0;
 end
 
+% Default thinning (use every n-th sample)
 if ~isfield(pars, 'thinning')
     pars.thinning = 1; 
 end

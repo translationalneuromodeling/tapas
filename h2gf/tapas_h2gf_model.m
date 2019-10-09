@@ -24,21 +24,26 @@ for i = 1:4
     model.graph{i} = struct('llh', [], 'htheta', []);
 end
 
+% Likelihood (individual level)
 model.graph{1}.llh = @tapas_h2gf_llh;
+% Parameters (individual level)
 model.graph{2}.llh = @tapas_dlinear_hier_llh;
+% Parameters (population level)
 model.graph{3}.llh = @tapas_dlinear_llh;
+% Placeholder for hyperparameters (fixed)
 model.graph{4}.llh = [];
 
 % Needed for efficient parallel tempering
 model.graph{2}.llh_sn = @tapas_dlinear_hier_llh_sn;
 
+% COMMENT
 model.graph{1}.htheta = struct('pe', 0.5, 'T', pars.T, 'hgf', hgf);
-
 model.graph{2}.htheta = struct('T', ones(size(pars.T, 2)));
 model.graph{3}.htheta = struct('T', ones(size(pars.T, 2)));
 
 % The last level is a dummy used to store the hyperpriors.
-
+% y: variable the likelihood is defined on, llh = p(y|y_above, u)
+% u: parameters of likelihood for y (fixed)
 model.graph{4}.htheta = struct('y', [], 'u', []);
 
 end

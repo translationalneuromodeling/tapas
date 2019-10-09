@@ -34,39 +34,53 @@ if nc > 1
     ptheta.c_obs.priorsas = ptheta.c_obs.priorsas';
 end
 
+% Number of perceptual parameters
 i = 1;
 n = numel(ptheta.c_prc.priormus);
 
+% Indices of perceptual parameters
 ptheta.theta_prc = i : n + i -1;
+% Number of perceptual parameters
 ptheta.theta_prc_nd = n;
 
+% Number of observation parameters
 i = i + n;
 n = numel(ptheta.c_obs.priormus);
 
+% Indices of observation parameters
 ptheta.theta_obs = i : i + n - 1;
+% Number of observation parameters
 ptheta.theta_obs_nd = n;
 
+% Prior means
 ptheta.mu = [ptheta.c_prc.priormus; ptheta.c_obs.priormus];
+% Prior precisions
 ptheta.pe = 1./[ptheta.c_prc.priorsas; ptheta.c_obs.priorsas];
 
+% Initial sampling point
 ptheta.p0 = ptheta.mu;
 
+% Indices of sampled (ie, non-fixed) perceptual parameters
 prc_idx = ptheta.c_prc.priorsas;
 prc_idx(isnan(prc_idx)) = 0;
 prc_idx = find(prc_idx);
 
+% Indices of sampled (ie, non-fixed) observation parameters
 obs_idx = ptheta.c_obs.priorsas;
 obs_idx(isnan(obs_idx)) = 0;
 obs_idx = find(obs_idx);
 
+% Indices of all sampled (ie, non-fixed) parameters
 valid = [prc_idx; numel(ptheta.c_prc.priorsas) + obs_idx];
 
+% Projection matrix from all-parameter to sampled-parameter space
 ptheta.jm = zeros(size(ptheta.mu, 1), size(valid, 1));
 
 for i = 1:numel(valid)
     ptheta.jm(valid(i), i) = 1;
 end
 
+% COMMENT
 ptheta.jm = sparse(ptheta.jm);
 ptheta.p0 = ptheta.p0 - (ptheta.jm * ptheta.jm') * ptheta.p0;
 ptheta.mu = ptheta.jm' * ptheta.mu;
