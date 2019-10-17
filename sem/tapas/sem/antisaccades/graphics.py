@@ -27,9 +27,26 @@ def generalized_fits_factory(trials):
 
         def __init__(self, *args, **kargs):
 
+            try:
+                offset = kargs.pop('offset')
+            except KeyError:
+                offset = 0
+
             super(GeneralizedFits, self).__init__(*args, **kargs)
 
+            self.offset = offset
+
             return
+
+        def set_offset(self, offset):
+
+            self.offset = offset
+
+            return
+
+        def get_time(self):
+
+            return self.time + self.offset
 
         def scale(self, fields):
 
@@ -73,4 +90,3 @@ def generalized_fits(theta, model, time, trials):
 
 if __name__ == '__main__':
     pass
-

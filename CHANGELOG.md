@@ -1,6 +1,10 @@
 # Changelog
 TAPAS toolbox 
 
+## Under development
+
+- SERIA: Added computational of early and late response likelihood.
+
 ## [3.2.0] 2019-09-dd
 ### Added
 - HUGE: introduced object-oriented interface in addition to old interface

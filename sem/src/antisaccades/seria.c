@@ -132,9 +132,6 @@ seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params)
     fllh = params.early.lpdf(t, kp, tp);
     fllh += params.stop.lsf(t, ks, ts);
     
-    /* Only compute the probability of early prosaccades. */
-    fllh += LN_P_SERIA_EARLY_PRO;
-
     if ( t > da )
     {
         fllh += params.late.lsf(t - da, kl, tl);
@@ -143,14 +140,81 @@ seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 
     p0 = -0.5 * p0 - M_LN2 - lcosh(0.5 * p0);
 
-    // Perform this operation very carefully by taking out the largest 
-    // component out of the log. Then perform a log( exp () + 1)
+    /* Account for the lost mass of the early outliers. */
     fllh = p0 + fllh; 
     
     // Guard against odd values
     if ( fllh == GSL_POSINF )
         fllh = GSL_NAN;
 
+    /* For consistency. There is a tiny probability that early reactions
+     * are antisaccades. */
+
+    fllh += (a == PROSACCADE ? LN_P_SERIA_EARLY_PRO : LN_P_SERIA_EARLY_ANTI);
+
 	return fllh;
 
 }
+
+double
+seria_late_llh_abstract(double t, int a, SERIA_PARAMETERS params)
+{
+
+    double t0 = params.t0;
+    double p0 = params.p0;
+
+    double kp = params.kp;
+    double tp = params.tp;
+    double ka = params.ka;
+    double ta = params.ta;
+    double kl = params.kl;
+    double tl = params.tl;
+    double ks = params.ks;
+    double ts = params.ts;
+
+    double da = params.da;
+
+    double fllh = GSL_NEGINF;
+
+    double cumint = params.cumint;
+
+    t -= t0;
+
+    // Not a late reaction 
+    if ( t < da )
+    {
+        return GSL_NEGINF;
+    }
+
+    if ( t > da )
+    {
+        // For optimization
+        if ( cumint == CUMINT_NO_INIT )
+            cumint = params.inhibition_race(ZERO_DISTS, t, kp, ks, tp, ts);
+
+        fllh = log(cumint + params.early.sf(t, kp, tp));
+   
+        switch ( a )
+        {
+        case PROSACCADE:
+                fllh += params.late.lpdf(t - da, kl, tl) +
+                    params.anti.lsf(t - da, ka, ta);
+            break;
+        case ANTISACCADE:
+                fllh += params.anti.lpdf(t - da, ka, ta) +
+                    params.late.lsf(t - da, kl, tl);
+            break;
+        }
+    
+    }
+
+    p0 = -0.5 * p0 - M_LN2 - lcosh(0.5 * p0);
+    fllh += p0; 
+    
+    // Guard against odd values
+    if ( fllh == GSL_POSINF )
+        fllh = GSL_NAN;
+
+	return fllh;
+}
+

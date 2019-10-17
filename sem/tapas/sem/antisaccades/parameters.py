@@ -59,9 +59,14 @@ class ParametersSeriaGamma(ParametersSeria):
         return likelihoods.seria_n_states_gamma(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, a, tt, theta):
+    def l_early(t, a, tt, theta):
 
         return likelihoods.seria_early_llh_n_states_gamma(t, a, tt, theta)
+
+    @staticmethod
+    def l_late(t, a, tt, theta):
+
+        return likelihoods.seria_late_llh_n_states_gamma(t, a, tt, theta)
 
 
 class ParametersSeriaInvgamma(ParametersSeria):
@@ -77,9 +82,14 @@ class ParametersSeriaInvgamma(ParametersSeria):
         return likelihoods.seria_n_states_invgamma(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, a, tt, theta):
+    def l_early(t, a, tt, theta):
 
         return likelihoods.seria_early_llh_n_states_invgamma(t, a, tt, theta)
+
+    @staticmethod
+    def l_late(t, a, tt, theta):
+
+        return likelihoods.seria_late_llh_n_states_invgamma(t, a, tt, theta)
 
 
 class ParametersSeriaMixedgamma(ParametersSeria):
@@ -95,9 +105,15 @@ class ParametersSeriaMixedgamma(ParametersSeria):
         return likelihoods.seria_n_states_mixedgamma(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, a, tt, theta):
+    def l_early(t, a, tt, theta):
 
         return likelihoods.seria_early_llh_n_states_mixedgamma(t, a, tt, theta)
+
+    @staticmethod
+    def l_late(t, a, tt, theta):
+
+        return likelihoods.seria_late_llh_n_states_mixedgamma(t, a, tt, theta)
+
 
 class ParametersSeriaLognorm(ParametersSeria):
 
@@ -112,9 +128,14 @@ class ParametersSeriaLognorm(ParametersSeria):
         return likelihoods.seria_n_states_lognorm(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, aa, tt, theta):
+    def l_early(t, a, tt, theta):
 
-        return likelihoods.seria_early_llh_n_states_lognorm(t, aa, tt, theta)
+        return likelihoods.seria_early_llh_n_states_lognorm(t, a, tt, theta)
+
+    @staticmethod
+    def l_late(t, a, tt, theta):
+
+        return likelihoods.seria_late_llh_n_states_lognorm(t, a, tt, theta)
 
 
 class ParametersSeriaLater(ParametersSeria):
@@ -130,9 +151,14 @@ class ParametersSeriaLater(ParametersSeria):
         return likelihoods.seria_n_states_later(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, aa, tt, theta):
+    def l_early(t, a, tt, theta):
 
-        return likelihoods.seria_early_llh_n_states_later(t, aa, tt, theta)
+        return likelihoods.seria_early_llh_n_states_later(t, a, tt, theta)
+
+    @staticmethod
+    def l_late(t, a, tt, theta):
+
+        return likelihoods.seria_late_llh_n_states_later(t, a, tt, theta)
 
 
 class ParametersSeriaWald(ParametersSeria):
@@ -148,9 +174,14 @@ class ParametersSeriaWald(ParametersSeria):
         return likelihoods.seria_n_states_wald(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, aa, tt, theta):
+    def l_early(t, a, tt, theta):
 
-        return likelihoods.seria_early_llh_n_states_wald(t, aa, tt, theta)
+        return likelihoods.seria_early_llh_n_states_wald(t, a, tt, theta)
+
+    @staticmethod
+    def l_late(t, a, tt, theta):
+
+        return likelihoods.seria_late_llh_n_states_wald(t, a, tt, theta)
 
 
 class ParametersProsaGamma(ParametersProsa):

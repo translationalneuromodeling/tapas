@@ -10,6 +10,7 @@
 
 '''
 
+
 def parametrization(family, parametric, model):
 
     class_name = 'Parameters{0:s}{1:s}'.format(family.title(),
@@ -52,7 +53,7 @@ def reparametrize_{0:s}_{1:s}(theta):
     
 if __name__ == '__main__':
     model = ['two_states']
-    family = ['seri', 'dora', 'prosa']
+    family = ['seria']
     parametric = ['gamma', 'invgamma', 'mixedgamma', 'lognorm', 'later', 
         'wald']
 

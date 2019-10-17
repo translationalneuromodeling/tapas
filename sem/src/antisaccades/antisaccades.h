@@ -332,13 +332,15 @@ populate_parameters_seria(const double *theta, SERIA_PARAMETERS *stheta);
 double
 prosa_llh_abstract(double t, int a, PROSA_PARAMETERS params);
 
-// Dora model
+// Seria model
 double
 seria_llh_abstract(double t, int a, SERIA_PARAMETERS params);
 
 double
 seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params);
 
+double
+seria_late_llh_abstract(double t, int a, SERIA_PARAMETERS params);
 
 // Summary
 
