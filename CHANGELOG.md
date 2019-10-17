@@ -1,11 +1,22 @@
 # Changelog
 TAPAS toolbox 
 
-## Under development
+## Unreleased
+
+### Added
 
 - SERIA: Added computational of early and late response likelihood.
 
-## [3.2.0] 2019-09-dd
+## [3.2.1] 2019-10-15
+
+### Changed
+- PhysIO: removed Matlab statistics toolbox dependency for PCA by SVD implementation (thanks to Benoît Beranger, [pull request 64](https://github.com/translationalneuromodeling/tapas/pull/64))
+
+### Fixed
+- HUGE: bugfix x-tick labels
+
+## [3.2.0] 2019-09-29
+
 ### Added
 - HUGE: introduced object-oriented interface in addition to old interface
 - HUGE: build-in unit tests
