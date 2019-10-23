@@ -33,8 +33,6 @@ alpha = (eta + 1)./2;
 % Gaussian-gamma rate hyperparameter
 beta = eta./(2.*pe);
 
-% COMMENT: tapas_gamma_moments_to_ab() may now be unused
-
 % Fill the y structure at the fourth level
 if ~isstruct(model.graph{4}.htheta.y)
     model.graph{4}.htheta.y = struct();

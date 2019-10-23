@@ -25,6 +25,7 @@ y = state.graph{node + 1}.y;
 % np + 1 Number of subjects plus prior
 values = zeros(size(y{1}.mu, 1), np);
 
+% COMMENT: go through this.
 for i = 1:nc
     alpha = y{i}.alpha;
     beta = y{i}.beta;
@@ -46,6 +47,9 @@ for i = 1:nc
         (1./sqrt((np + 1) * pe) .* randn(nm, 1));
 end
 
+% COMMENT: Conditional probability of subject-specific parameters given
+% the newly sampled population mean and variance. Needed for Metropolis-
+% Hastings step at level below.
 nstate.llh{node - 1} = model.graph{node - 1}.llh(...
     nstate.graph{node - 1}, ...
     nstate.graph{node}, ...

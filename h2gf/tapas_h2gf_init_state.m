@@ -56,6 +56,7 @@ state.T{1} = model.graph{1}.htheta.T;
 
 %state.kernel{3} = cell(1, nc);
 %state.kernel{3}(:) = inference.kernel(3);
+% COMMENT: what is this for?
 state.v = zeros(ns, nc);
 
 state.nsample = 0;
