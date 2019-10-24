@@ -13,9 +13,11 @@ posterior = struct('data', data, 'model', model, 'inference', inference, ...
 
 np = numel(states);
 
-theta = cell(np, 1);
-for i = 1:np
-    theta{i} = states{i}.graph{2}(:, end);
+theta = cell(floor(np/inference.thinning), 1);
+nc = 1;
+for i = 1:inference.thinning:np
+    theta{nc} = states{i}.graph{2}(:, end);
+    nc = nc + 1;
 end
 
 % Contains all the terms related to the likelihood
@@ -24,9 +26,11 @@ cllh = cell(2, 1);
 [ns, nc] = size(states{1}.llh{1});
 
 % Log likelihood under the posteriors
-llh = zeros(ns, nc, np);
-for i = 1:np
-    llh(:, :, i) = states{i}.llh{1};
+llh = zeros(ns, nc, floor(np/inference.thinning));
+nc = 1;
+for i = 1:inference.thinning:np
+    llh(:, :, nc) = states{i}.llh{1};
+    nc = nc + 1;
 end
 
 cllh{1} = llh;
@@ -40,6 +44,7 @@ end
 posterior.fe = fe;
 
 posterior.T = T;
+
 theta = horzcat(theta{:});
 jm = model.graph{1}.htheta.model.jm;
 p0 = model.graph{1}.htheta.model.p0;
@@ -51,3 +56,4 @@ end
 posterior.ps_theta = theta;
 
 end
+
