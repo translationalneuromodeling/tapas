@@ -1,4 +1,4 @@
-function [inference] = tapas_h2gf_inference(inference, pars)
+function [inference] = tapas_h2gf_inference(inference)
 %% 
 %
 % aponteeduardo@gmail.com
@@ -63,16 +63,5 @@ if ~isfield(inference.mh_sampler{2}, 'propose_sample')
     inference.mh_sampler{2}.ar_rule = ...
         @tapas_mh_mc3g_arc;
 end
-
-% COMMENT question: can we get rid of the pars argument and use inference
-% for everything?
-% Take the parameters from pars, and overwrite what ever might be inference.
-inference.niter = pars.niter;
-inference.nburnin = pars.nburnin;
-inference.mc3it = pars.mc3it;
-inference.thinning = pars.thinning;
-inference.ndiag = pars.ndiag;
-inference.rng_seed = pars.rng_seed;
-inference.model_evidence_method = pars.model_evidence_method;
 
 end

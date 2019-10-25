@@ -13,6 +13,7 @@ function [pars] = tapas_h2gf_pars(data, model, pars)
 % copyright (C) 2019
 %
 
+% Method to compute the model evidence.
 if ~isfield('pars', 'model_evidence_method')
     pars.model_evidence_method = 'wbic';
 end

@@ -18,16 +18,19 @@ if isfield(pars, 'T') && isfield(pars, 'nchains')
         'T and nchains are defined. nchains will be ignored.')
 end
 
+% Number of chains for TI
+if ~isfield(pars, 'nchains')
+    pars.nchains = 8;
+end 
+
+
 if ~isfield(pars, 'T')
     % Default of the number of chains. If the number of chains is provided
     % overwrite the default.
-    nchains = 8;
+    nchains = pars.nchains;
     % Degree of the power schudule.
     power_rule = 5;
 
-    if isfield(pars, 'nchains')
-        nchains = pars.nchains;
-    end 
     pars.T = (ones(size(data, 1), 1) * ...
         linspace(0.01, 1, nchains)) .^ power_rule;
 end
@@ -51,12 +54,12 @@ end
 
 pars.rng_seed = rng();
 
-% Default iterations
+% Default number of iterations kept 
 if ~isfield(pars, 'niter')
     pars.niter = 4000;
 end
 
-% Default burnin
+% Default number of burn-in iterations
 if ~isfield(pars, 'nburnin')
     pars.nburnin = 1000;
 end

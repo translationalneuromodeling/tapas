@@ -19,37 +19,23 @@ model.graph{1}.htheta.hgf = ...
 
 % Prior means from HGF Toolbox config file (preferred name: mu_0)
 mu = model.graph{1}.htheta.hgf.mu;
-% Prior precisions from HGF Toolbox config file (preferred name: tau_0)
-pe = model.graph{1}.htheta.hgf.pe;
 % Weight of prior
 eta = model.graph{1}.htheta.hgf.empirical_priors.eta;
+% Alpha parameter of gamma distribution
+alpha = model.graph{1}.htheta.hgf.empirical_priors.alpha;
+% Beta parameters of the gamma distribution
+beta = model.graph{1}.htheta.hgf.empirical_priors.beta;
 
-% Gaussian-gamma shape hyperparameter
-% COMMENT: With this value, it implies that the Gaussian and
-% gamma parts of the Gaussian-gamma hyperprior are informed by the same
-% number of virtual observations. In principle, it may take any positive
-% value. IT SHOULD BE CONFIGURABLE WITH THIS VALUE AS THE DEFAULT.
-alpha = (eta + 1)./2;
-% Gaussian-gamma rate hyperparameter
-beta = eta./(2.*pe);
 
 % Fill the y structure at the fourth level
 if ~isstruct(model.graph{4}.htheta.y)
     model.graph{4}.htheta.y = struct();
 end
 
-if ~isfield(model.graph{4}.htheta.y, 'mu')
-    model.graph{4}.htheta.y.mu = mu;
-end
-
-if ~isfield(model.graph{4}.htheta.y, 'alpha')
-    model.graph{4}.htheta.y.alpha = alpha;
-end
-
-if ~isfield(model.graph{4}.htheta.y, 'beta')
-    model.graph{4}.htheta.y.beta = beta;
-end
-
+% Mean, alpha and beta, and weight of the prior (eta)
+model.graph{4}.htheta.y.mu = mu;
+model.graph{4}.htheta.y.alpha = alpha;
+model.graph{4}.htheta.y.beta = beta;
 model.graph{4}.htheta.y.eta = eta;
 
 end

@@ -80,9 +80,14 @@ for i = 1:numel(valid)
     ptheta.jm(valid(i), i) = 1;
 end
 
-% COMMENT
 ptheta.jm = sparse(ptheta.jm);
+
+% Remove from p0 the prior in all active rows. For the non active rows, 
+% This line does not have an effect.
 ptheta.p0 = ptheta.p0 - (ptheta.jm * ptheta.jm') * ptheta.p0;
+
+% Stored a lower dimensional representation with only the valid or active
+% parameters
 ptheta.mu = ptheta.jm' * ptheta.mu;
 ptheta.pe = ptheta.jm' * ptheta.pe; 
 
@@ -93,13 +98,45 @@ end
 
 % Check for weighting of the prior
 if ~isfield(ptheta.empirical_priors, 'eta')
+    % Defaults to 1
     ptheta.empirical_priors.eta = ptheta.jm' * ones(size(ptheta.jm, 1), 1);
 elseif isscalar(ptheta.empirical_priors.eta)
+    % If eta is a scalar, use the same eta for all parameters.
     ptheta.empirical_priors.eta = ptheta.jm' * ...
         ptheta.empirical_priors.eta * ...
         ones(size(ptheta.jm, 1), 1);
 else
+    % Otherwise it should be a vector of dimensions perceptual + observational
     ptheta.empirical_priors.eta = ptheta.jm' * ptheta.empirical_priors.eta;
 end
+
+% Hyperprior of the population mean
+if ~isfield(ptheta.empirical_priors, 'alpha')
+    ptheta.empirical_priors.alpha = (ptheta.empirical_priors.eta + 1)./2;
+elseif isscalar(ptheta.empirical_priors.alpha)
+    % If eta is a scalar, use the same eta for all parameters.
+    ptheta.empirical_priors.eta = ptheta.jm' * ...
+        ptheta.empirical_priors.alpha * ...
+        ones(size(ptheta.jm, 1), 1);
+else
+    % Otherwise it should be a vector of dimensions perceptual + observational
+    ptheta.empirical_priors.alpha = ptheta.jm' * ptheta.empirical_priors.alpha;
+end
+
+if ~isfield(ptheta.empirical_priors, 'beta')
+    % Get the mean of the prior provided by the user.
+    pe = ptheta.pe;
+    % Defaults to 1
+    ptheta.empirical_priors.beta = ptheta.empirical_priors.eta ./ (2.0 * pe);
+elseif isscalar(ptheta.empirical_priors.beta)
+    % If beta is a scalar, use the same beta for all parameters.
+    ptheta.empirical_priors.beta = ptheta.jm' * ...
+        ptheta.empirical_priors.beta * ...
+        ones(size(ptheta.jm, 1), 1);
+else
+    % Otherwise it should be a vector of dimensions perceptual + observational
+    ptheta.empirical_priors.beta = ptheta.jm' * ptheta.empirical_priors.beta;
+end
+
 
 end
