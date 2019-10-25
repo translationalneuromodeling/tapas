@@ -13,6 +13,28 @@ function [posterior] = tapas_h2gf_estimate(data, model, pars)
 %
 % 	 posterior    -- Structure containing the posterior.
 %
+% ---------------------------------------------------------------------------
+%
+% In addition to the standard fields in the model structure, it is possible
+% to specify the priors of the empirical prior in the field 
+% model.empirical_prior.The mean of the population is assumed to be the prior
+% mean provided in the hgf structure.
+%
+%   model.empirical_prior.alpha
+%
+%       Alpha parameter of the gamma distribution. Defaults to (eta + 1)/2
+%
+%   model.empirical_prior.beta
+%
+%       Beta parameter of the gamma distribution.
+%
+%   model.empirical_prior.eta
+%
+%       eta parameter of the Gamma distribution. This is the weighting factor
+%       given to the prior. Default to 1.
+%
+%  -------------------------------------------------------------------------
+%
 % pars is a structure with the settings for the inference algorithm. If 
 % empty, default values are used.
 %
@@ -94,6 +116,52 @@ function [posterior] = tapas_h2gf_estimate(data, model, pars)
 %
 %		Cell array of function handles used to perform MH steps.
 %
+%
+% --------------------------------------------------------------------------
+%
+% posterior.data
+%
+%       Input data structure.
+%
+% posterior.pars
+%
+%       stucture containing all the parameters used by the algorithm. Fields
+%       not provided by the user are filled with the default values.
+%
+% posterior.fe
+%
+%       Estimated log model evidence, i.e., free energy
+%
+% posterior.llh
+%
+%       Array of the sampled log likelihood with dimensions (number of 
+%       subjects) X (number of chains) X (niter/thinning)
+%
+% posterior.hgf
+%
+%       hgf structure used by the algorithm.
+%
+% posterior.summary
+%
+%       summary structure computed with tapas_h2gf_summary
+%
+% posterior.T
+%
+%       Temperature schedule used for TI or WBIC
+%
+% posterior.waic
+%
+%       Watanabe-Akaike information criterion
+%
+% posterior.accuracy
+%
+%       Estimated accuracy defined as E[log p(y|theta)]
+%
+% posterior.samples
+%       
+%       Samples of the subject specific parameters, population mean and 
+%       variance
+%
 
 % aponteeduardo@gmail.com
 % copyright (C) 2019
@@ -111,7 +179,6 @@ end
 [data] = tapas_h2gf_data(data, model, pars);
 [model] = tapas_h2gf_model(data, model, pars);
 
-% The first argument is a place holder.
 [inference] = tapas_h2gf_inference(pars);
 
 [posterior] = tapas_h2gf_estimate_interface(data, model, inference);

@@ -157,14 +157,11 @@ pars.nburnin = 2000;
 % estimating the first of our simulated datasets at the lowest noise level (i.e., 
 % highest $\zeta$). This corresponds to the workflow when working with actual 
 % data.
-% 
-% First, we initialize a structure holding the results of the inference.
 
-inference = struct();
 %% 
 % Then we run the estimation.
 
-h2gf_est = tapas_h2gf_estimate(data(:,numnoiselevels,1), hgf, inference, pars);
+h2gf_est = tapas_h2gf_estimate(data(:,numnoiselevels,1), hgf, pars);
 %% 
 % We can now look at the belief trajectories of individual subjects. These 
 % are the trajectories implied by the median posterior parameter values.
@@ -201,7 +198,7 @@ est = struct('data', cell(numnoiselevels, numsim),...
 %%
 for i = 1:numnoiselevels
     for j = 1:numsim
-        est(i,j) = tapas_h2gf_estimate(data(:,i,j), hgf, inference, pars);
+        est(i,j) = tapas_h2gf_estimate(data(:,i,j), hgf, pars);
     end
 end
 clear i j

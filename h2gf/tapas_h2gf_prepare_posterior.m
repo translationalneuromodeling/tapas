@@ -8,8 +8,18 @@ function [posterior] = tapas_h2gf_prepare_posterior(data, model, ...
 
 T = model.graph{1}.htheta.T;
 
-posterior = struct('data', data, 'model', model, 'inference', inference, ...
-    'samples_theta', [], 'fe', [], 'llh', []);
+posterior = struct( ...
+    'data', data, ...
+    ... 'model', model, ... 
+    'pars', inference, ... Rename to pars to better reflect the input.
+    'samples', [], ... Samples of the algorithm
+    'fe', [], ...
+    'llh', [], ...
+    'hgf', [], ... Original hgf structure
+    'summary', [], ... Summary computed for the users.
+    'T', [], ... Temperature schedule
+    'waic',[] ... Watanabe AIC
+    );
 
 np = numel(states);
 
@@ -62,8 +72,6 @@ posterior.waic = ellh(end) - sum(var(squeeze(llh(:, end, :)), [], 2));
 posterior.T = T;
 
 hgf = model.graph{1}.htheta.hgf;
-
-ns = numel(posterior.samples_theta);
 
 posterior.samples = struct(...
     'subjects', [], ...
