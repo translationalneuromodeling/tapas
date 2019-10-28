@@ -6,6 +6,7 @@ TAPAS toolbox
 ### Added
 
 - SERIA: Added computational of early and late response likelihood.
+- SERIA: Added analysis of the delta plots.
 
 ## [3.2.1] 2019-10-15
 
