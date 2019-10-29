@@ -28,14 +28,17 @@ nq = numel(quants);
 qcong = [0 quantile(congruent, quants)];
 qincong = [0 quantile(incongruent, quants)];
 
-x = zeros(nq, 1);
+ycong = zeros(nq, 1);
+yincong = zeros(nq, 1);
 
 for i = 1:nq
-    x(i) = mean([
-    congruent((qcong(i) < congruent) & (congruent <= qcong(i+1))); ...
-    incongruent((qincong(i) < incongruent) & (incongruent <= qincong(i+1)))]);
+    ycong(i) = ...
+        mean(congruent((qcong(i) < congruent) & (congruent <= qcong(i+1))));
+    yincong(i) = ...
+        mean(incongruent((qincong(i) < incongruent) & ...
+            (incongruent <= qincong(i+1))));
 end
 
-plot(x, qincong(2:end) - qcong(2:end))
+plot((ycong + yincong)/2, yincong - ycong, 'k-');
 
 end
