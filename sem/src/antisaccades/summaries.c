@@ -4,7 +4,7 @@
 #include "antisaccades.h"
 #include <signal.h>
 
-#define INTSTEPS 200;
+#define INTSTEPS 8000
 
 double
 seria_summary_parameter(
@@ -16,7 +16,7 @@ seria_summary_parameter(
     double ierror;
 
     gsl_integration_workspace *wspace = 
-        gsl_integration_workspace_alloc( 4000 );
+        gsl_integration_workspace_alloc( INTSTEPS );
 
     SERIA_GSL_INT_INPUT input;
     
@@ -32,7 +32,7 @@ seria_summary_parameter(
             0.0000000001, // Lower boundary
             SEM_TOL, 
             SEM_RTOL, 
-            4000, // Limit the number of iterations
+            INTSTEPS, // Limit the number of iterations
             wspace, 
             &result, &ierror);
 
@@ -80,22 +80,18 @@ seria_anti_rt(double t, SERIA_PARAMETERS *params)
 double
 seria_inhib_rt(double t, SERIA_PARAMETERS *params)
 {
-    double delay = params->t0;
-
-    // Below the delays
-    if ( t < delay )
-        return GSL_NEGINF;
-
-    t -= delay;
+    t -= params->t0;
     
+    if (t <= 0)
+        return 0;
+
     /* Taking the expected value exp(log(t + delay) + log(probability)) */
-    double eval = log(t + delay) +
-        params->early.lpdf(t, params->kp, params->tp) +
+    double eval = params->early.lpdf(t, params->kp, params->tp) +
         params->stop.lsf(t, params->ks, params->ts);
 
     t -= params->da;
     // Account for the delay
-    if ( 0 < t )
+    if ( t > 0 )
         eval += params->anti.lsf(t, params->ka, params->ta) +
             params->late.lsf(t, params->kl, params->tl);
 

@@ -131,13 +131,13 @@ seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 
     fllh = params.early.lpdf(t, kp, tp);
     fllh += params.stop.lsf(t, ks, ts);
-    
+   
     if ( t > da )
     {
         fllh += params.late.lsf(t - da, kl, tl);
         fllh += params.anti.lsf(t - da, ka, ta);    
     }
-
+    
     p0 = -0.5 * p0 - M_LN2 - lcosh(0.5 * p0);
 
     /* Account for the lost mass of the early outliers. */
@@ -188,29 +188,31 @@ seria_late_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 
     if ( t > da )
     {
+        /*
         // For optimization
         if ( cumint == CUMINT_NO_INIT )
             cumint = params.inhibition_race(ZERO_DISTS, t, kp, ks, tp, ts);
 
         fllh = log(cumint + params.early.sf(t, kp, tp));
-   
+        */
         switch ( a )
         {
         case PROSACCADE:
-                fllh += params.late.lpdf(t - da, kl, tl) +
+                fllh = params.late.lpdf(t - da, kl, tl) +
                     params.anti.lsf(t - da, ka, ta);
             break;
         case ANTISACCADE:
-                fllh += params.anti.lpdf(t - da, ka, ta) +
+                fllh = params.anti.lpdf(t - da, ka, ta) +
                     params.late.lsf(t - da, kl, tl);
             break;
         }
     
     }
 
+    /*
     p0 = -0.5 * p0 - M_LN2 - lcosh(0.5 * p0);
     fllh += p0; 
-    
+    */  
     // Guard against odd values
     if ( fllh == GSL_POSINF )
         fllh = GSL_NAN;
