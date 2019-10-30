@@ -38,10 +38,11 @@ fits = cell(ns, 1);
 
 for i = 1:ns
     % Edges of the plot
+    fprintf(1, '%d\n', i)
     samples = posterior.ps_theta(i, :);
-    cond_fit = tapas_sem_generate_fits(data(i), samples, model, time);
+    %cond_fit = tapas_sem_generate_fits(data(i), samples, model, time);
     summaries{i} = tapas_sem_generate_summary(data(i), samples, model, i);
-    fits{i} = cond_fit;
+    %fits{i} = cond_fit;
 end
 
 summary.fits = fits;

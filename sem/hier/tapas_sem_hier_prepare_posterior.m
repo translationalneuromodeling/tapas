@@ -28,6 +28,7 @@ cllh = cell(2, 1);
 % Log likelihood under the posteriors
 llh = zeros(ns, nc, floor(np/inference.thinning));
 nc = 1;
+
 for i = 1:inference.thinning:np
     llh(:, :, nc) = states{i}.llh{1};
     nc = nc + 1;
@@ -41,7 +42,15 @@ if size(T, 2) > 1
 else
     fe = nan;
 end
+
 posterior.fe = fe;
+
+% Compute the WAIC / sum of the variance of the log likelihood
+% (gradient of the FE) Take only the last chain (second dimension)
+[waic, accuracy] = tapas_waic(squeeze(llh(:, end, :)));
+
+posterior.waic = waic;
+posterior.accuracy = accuracy;
 
 posterior.T = T;
 
