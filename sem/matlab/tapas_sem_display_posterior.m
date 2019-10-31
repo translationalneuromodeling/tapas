@@ -57,12 +57,7 @@ for i = 1:numel(data)
     break
 end
 
-figure('name', 'Summary statistics');
-uitable('Data', summaries{:, :}, ...
-    'ColumnName', summaries.Properties.VariableNames,...
-    'RowName', summaries.Properties.RowNames, ...
-    'Units', 'Normalized', ...
-    'Position',[0, 0, 1, 1]);
+tapas_sem_display_summary(summaries, 'Posterior summary')
 
 end
 

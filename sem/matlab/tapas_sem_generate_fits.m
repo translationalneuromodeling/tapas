@@ -10,6 +10,9 @@ function [fits] = tapas_sem_generate_fits(data, samples, model, time)
 % copyright (C) 2019
 %
 
+CONG = 0;
+INCONG = 1;
+
 n = 3;
 
 n = n + 1;
@@ -26,10 +29,8 @@ end
 
 nv = numel(time);
 
-
 conds = unique(data.u.tt);
 nconds = numel(conds);
-
 
 fits = struct('pro', cell(nconds, 1), 'anti', [], 't', []);
 
@@ -40,7 +41,7 @@ for i = 1:nconds
     samples = reshape(samples, 1, numel(samples));
 
     % Iterate over arrays because the interface is cluncky for single times
-    for a = [0, 1]        
+    for a = [CONG, INCONG]
         llh = zeros(nv, 1);
         for j = 1:nv
             tdata = struct(...
@@ -52,10 +53,10 @@ for i = 1:nconds
             llh(j) = tllh;
         end
         switch a
-        case 0
-            fits(i).pro = llh;
-        case 1
-            fits(i).anti = llh;
+            case CONG
+                fits(i).pro = llh;
+            case INCONG
+                fits(i).anti = llh;
         end
     end
 end

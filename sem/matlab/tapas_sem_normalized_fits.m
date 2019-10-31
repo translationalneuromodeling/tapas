@@ -1,4 +1,4 @@
-function fits = tapas_sem_normalized_fits(data, fits)
+function [fits] = tapas_sem_normalized_fits(data, fits)
 %% Normalize the fits according to the data.
 %
 % Input

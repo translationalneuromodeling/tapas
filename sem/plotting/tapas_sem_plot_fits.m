@@ -1,4 +1,4 @@
-function tapas_sem_plot_fits(data, fits, dt)
+function tapas_sem_plot_fits(fits, dt)
 %% Plot the fits of the model.
 %
 % Input
@@ -12,25 +12,25 @@ function tapas_sem_plot_fits(data, fits, dt)
 % copyright (C) 2019
 %
 
-if nargin < 3
+n = 1;
+
+n = n + 1;
+if nargin < n
     dt = 1;
 end
 
-conds = unique(data.u.tt);
-nconds = numel(conds);
+nconds = numel(fits);
 
 for i = 1:nconds
-    tt = conds(i) == data.u.tt;
-    mass = dt * sum(tt);
 
     ax = subplot(nconds, 2, (i - 1) * 2 + 1);
     hold on;
     
-    plot(fits(i).t, fits(i).pro * mass, 'k')
+    plot(fits(i).t, fits(i).pro * dt, 'k')
 
     ax = subplot(nconds, 2, (i - 1) * 2 + 2);
     hold on;
-    plot(fits(i).t, fits(i).anti * mass, 'k')   
+    plot(fits(i).t, fits(i).anti * dt, 'k')   
 end
 
 
