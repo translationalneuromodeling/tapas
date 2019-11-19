@@ -16,15 +16,23 @@ from setuptools import setup, Extension, find_packages
 from Cython.Distutils import build_ext
 import numpy as np
 
+
+# Define the compilation flags
+extra_args = {
+    'extra_compile_args': ['-std=c11'],
+    'extra_link_args' : []}
+
+extra_libs = []
+
 if platform.system().lower() == 'darwin':
     #os.environ['CC'] = 'clang'
     openmp = {}
-    extra_libs = []
+    
 else:
-    openmp = {
-        'extra_compile_args': ['-fopenmp'],
-        'extra_link_args' : ['-fopenmp']}
-    extra_libs = ['gomp']
+    extra_args['extra_compile_args'] += ['-fopenmp']
+    extra_args['extra_link_args'] += ['-fopenmp']
+
+    extra_libs.append('gomp')
 
 
 llh = Extension(
@@ -36,7 +44,7 @@ llh = Extension(
         include_dirs=[np.get_include(), '/opt/local/include', '.', './src/',
             '/usr/local/opt/llvm/include/clang/'],
         define_macros=[('TAPAS_PYTHON', None)],
-        **openmp)
+        **extra_args)
 
 
 if __name__ == '__main__':
