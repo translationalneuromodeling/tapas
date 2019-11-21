@@ -422,22 +422,15 @@ reparametrize_prosa_wald(const double *theta, PROSA_PARAMETERS *stheta)
 int
 reparametrize_prosa_mixedgamma(const double *theta, PROSA_PARAMETERS *stheta)
 {
-    double mu, sigma2;
 
-    mu = exp(theta[0]);
-    sigma2 = exp(theta[1]);
-
-    stheta->kp = transform_mv_to_gamma_k(mu, sigma2) + 2;
-    stheta->tp = transform_mv_to_gamma_t(mu, sigma2);
+    stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]);
+    stheta->tp = transform_log_mv_to_gamma_t(theta[0], theta[1]);
 
     stheta->ka = transform_log_mv_to_invgamma_k(theta[2], theta[3]);
     stheta->ta = transform_log_mv_to_invgamma_t(theta[2], theta[3]);
 
-    mu = exp(theta[4]);
-    sigma2 = exp(theta[5]);
-
-    stheta->ks = transform_mv_to_gamma_k(mu, sigma2) + 2;
-    stheta->ts = transform_mv_to_gamma_t(mu, sigma2);
+    stheta->ks = transform_log_mv_to_gamma_k(theta[4], theta[5]);
+    stheta->ts = transform_log_mv_to_gamma_t(theta[4], theta[5]);
 
     stheta->t0 = exp(theta[6]);
     stheta->da = exp(theta[7]);
