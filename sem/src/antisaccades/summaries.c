@@ -218,7 +218,7 @@ int
 seria_summary_abstract(SERIA_PARAMETERS *params, SERIA_SUMMARY *summary)
 {
 
-    summary->inhibition_race = ninvgamma_high_precision_gslint;
+    params->inhibition_race = ninvgamma_high_precision_gslint;
 
     // Inhibition probability
     summary->inhib_fail_prob = seria_summary_parameter(
