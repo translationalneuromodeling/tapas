@@ -20,7 +20,7 @@ import numpy as np
 # Define the compilation flags
 extra_args = {
     'extra_compile_args': ['-std=c11'],
-    'extra_link_args' : []}
+    'extra_link_args': []}
 
 extra_libs = []
 
