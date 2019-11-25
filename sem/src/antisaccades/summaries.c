@@ -218,6 +218,8 @@ int
 seria_summary_abstract(SERIA_PARAMETERS *params, SERIA_SUMMARY *summary)
 {
 
+    summary->inhibition_race = ninvgamma_high_precision_gslint;
+
     // Inhibition probability
     summary->inhib_fail_prob = seria_summary_parameter(
             seria_inhib_fail_prob, params);
@@ -237,16 +239,19 @@ seria_summary_abstract(SERIA_PARAMETERS *params, SERIA_SUMMARY *summary)
     // Normalize the integral
     summary->inhib_fail_rt /= summary->inhib_fail_prob;
 
+    // Predicted values
     summary->predicted_pro_prob = 
         seria_summary_parameter(seria_predicted_pro_prob, params);
     summary->predicted_pro_rt = 
         seria_summary_parameter(seria_predicted_pro_rt, params);
+    // Normalize the integral
     summary->predicted_pro_rt /= summary->predicted_pro_prob;
 
     summary->predicted_anti_prob = 1.0 - summary->predicted_pro_prob;
     
     summary->predicted_anti_rt = 
         seria_summary_parameter(seria_predicted_anti_rt, params);
+    // Normalize the integral
     summary->predicted_anti_rt /= summary->predicted_anti_prob;
 
 
