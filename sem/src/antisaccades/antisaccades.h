@@ -643,6 +643,19 @@ double ninvgamma_gslint(double x0, double x1, double a, double b, double c0,
 //
 // Uses gls integrator.
 
+double ninvgamma_high_precision_gslint(double x0, double x1, double a, 
+        double b, double c0, double c1);
+// Uses a very expensive, yet more accurate method to compute the 
+// difficult integral.
+// x0       -- Left integration boundary
+// x1       -- right integration boundary
+// a        -- Parameters of the outer gamma function.
+// b        -- Parameters of the inter gamma function.
+// c0       -- Coefficient associated with a.
+// c1       -- Coefficient associated with b.
+//
+// Uses gls integrator.
+
 
 double ninvgamma_lexp(double x, double a, double b, double c0, double c1);
 // Unnormalized nested incomplete gamma function.
