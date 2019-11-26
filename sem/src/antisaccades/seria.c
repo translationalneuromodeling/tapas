@@ -64,8 +64,16 @@ seria_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 
         // For optimization
         if ( cumint == CUMINT_NO_INIT )
-            cumint = params.inhibition_race(ZERO_DISTS, t, kp, ks, tp, ts);
-
+        {
+            /* Numerical weird case. */
+            if ( t <= ZERO_DISTS )
+            {
+                cumint = 0;
+            } else
+            {
+                cumint = params.inhibition_race(ZERO_DISTS, t, kp, ks, tp, ts);
+            }
+        }
         sllh = log(cumint + params.early.sf(t, kp, tp));
    
         switch ( a )

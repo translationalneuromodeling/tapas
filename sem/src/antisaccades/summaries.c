@@ -27,15 +27,27 @@ seria_summary_parameter(
     f.function = seria_summary_wrapper;
     f.params = (void *) &input;
 
+    /*
     gsl_integration_qagiu(
             &f, // Gsl function
             0.0000000001, // Lower boundary
-            SEM_TOL, 
-            SEM_RTOL, 
+            SEM_TOL/100.0, 
+            SEM_RTOL/5.0, 
             INTSTEPS, // Limit the number of iterations
             wspace, 
             &result, &ierror);
-
+    */
+    gsl_integration_qag(
+            &f, // Gsl function
+            0.0000000001, // Lower boundary
+            20.0,
+            SEM_TOL, 
+            SEM_RTOL, 
+            INTSTEPS,
+            GSL_INTEG_GAUSS61,
+            wspace,
+            &result, 
+            &ierror);
     gsl_integration_workspace_free(wspace);
 
     return result;
@@ -218,8 +230,6 @@ int
 seria_summary_abstract(SERIA_PARAMETERS *params, SERIA_SUMMARY *summary)
 {
 
-    params->inhibition_race = ninvgamma_high_precision_gslint;
-
     // Inhibition probability
     summary->inhib_fail_prob = seria_summary_parameter(
             seria_inhib_fail_prob, params);
@@ -248,7 +258,9 @@ seria_summary_abstract(SERIA_PARAMETERS *params, SERIA_SUMMARY *summary)
     summary->predicted_pro_rt /= summary->predicted_pro_prob;
 
     summary->predicted_anti_prob = 1.0 - summary->predicted_pro_prob;
-    
+    //summary->predicted_anti_prob =
+    //    seria_summary_parameter(seria_predicted_anti_prob, params);
+   
     summary->predicted_anti_rt = 
         seria_summary_parameter(seria_predicted_anti_rt, params);
     // Normalize the integral
