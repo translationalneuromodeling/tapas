@@ -27,16 +27,15 @@ seria_summary_parameter(
     f.function = seria_summary_wrapper;
     f.params = (void *) &input;
 
-    /*
     gsl_integration_qagiu(
             &f, // Gsl function
             0.0000000001, // Lower boundary
-            SEM_TOL/100.0, 
-            SEM_RTOL/5.0, 
+            SEM_TOL, 
+            SEM_RTOL,
             INTSTEPS, // Limit the number of iterations
             wspace, 
             &result, &ierror);
-    */
+    /*
     gsl_integration_qag(
             &f, // Gsl function
             0.0000000001, // Lower boundary
@@ -48,6 +47,7 @@ seria_summary_parameter(
             wspace,
             &result, 
             &ierror);
+            */
     gsl_integration_workspace_free(wspace);
 
     return result;
@@ -224,6 +224,46 @@ seria_summary_wrapper(double t, void *gsl_int_pars)
     return val;
 
 };
+
+double
+quadrature_rule(SERIA_PARAMETERS *params)
+{
+    
+    double t = 0.00001;
+    double dt = 0.01;
+    double v0 = 0;
+    double v1 = 0;
+    double cumint = 0;
+    double prob = 0;
+
+    while ( t < 20.0 )
+    {
+        double t0 = t - params->t0;
+        
+        if ( t0 < 0 )
+        {
+            t += dt;
+            continue;
+        }
+        cumint += params->inhibition_race(t0, t0+dt, params->kp, params->ks,
+                params->tp, params->ts);
+
+        params->cumint = cumint;
+
+        v1 = seria_llh_abstract(t, ANTISACCADE, *params);
+
+        prob += dt * (exp(v0) + exp(v1))/2;
+
+        t += dt;
+        v0 = v1;
+
+    }
+    
+    params->cumint = CUMINT_NO_INIT;
+
+    return prob;
+
+}
 
 
 int

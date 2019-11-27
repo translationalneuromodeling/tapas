@@ -150,7 +150,8 @@ seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 
     /* Account for the lost mass of the early outliers. */
     fllh = p0 + fllh; 
-    
+   
+
     // Guard against odd values
     if ( fllh == GSL_POSINF )
         fllh = GSL_NAN;
