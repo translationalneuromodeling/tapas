@@ -31,11 +31,23 @@ seria_summary_parameter(
             &f, // Gsl function
             0.0000000001, // Lower boundary
             SEM_TOL, 
-            SEM_RTOL, 
+            SEM_RTOL,
             INTSTEPS, // Limit the number of iterations
             wspace, 
             &result, &ierror);
-
+    /*
+    gsl_integration_qag(
+            &f, // Gsl function
+            0.0000000001, // Lower boundary
+            20.0,
+            SEM_TOL, 
+            SEM_RTOL, 
+            INTSTEPS,
+            GSL_INTEG_GAUSS61,
+            wspace,
+            &result, 
+            &ierror);
+            */
     gsl_integration_workspace_free(wspace);
 
     return result;
@@ -80,6 +92,7 @@ seria_anti_rt(double t, SERIA_PARAMETERS *params)
 double
 seria_inhib_rt(double t, SERIA_PARAMETERS *params)
 {
+    double t0 = log(t);
     t -= params->t0;
     
     if (t <= 0)
@@ -95,7 +108,7 @@ seria_inhib_rt(double t, SERIA_PARAMETERS *params)
         eval += params->anti.lsf(t, params->ka, params->ta) +
             params->late.lsf(t, params->kl, params->tl);
 
-    return exp(eval);
+    return exp(eval + t0);
 
 }
 
@@ -213,12 +226,50 @@ seria_summary_wrapper(double t, void *gsl_int_pars)
 
 };
 
+double
+quadrature_rule(SERIA_PARAMETERS *params)
+{
+    
+    double t = 0.00001;
+    double dt = 0.01;
+    double v0 = 0;
+    double v1 = 0;
+    double cumint = 0;
+    double prob = 0;
+
+    while ( t < 20.0 )
+    {
+        double t0 = t - params->t0;
+        
+        if ( t0 < 0 )
+        {
+            t += dt;
+            continue;
+        }
+        cumint += params->inhibition_race(t0, t0+dt, params->kp, params->ks,
+                params->tp, params->ts);
+
+        params->cumint = cumint;
+
+        v1 = seria_llh_abstract(t, ANTISACCADE, *params);
+
+        prob += dt * (exp(v0) + exp(v1))/2;
+
+        t += dt;
+        v0 = v1;
+
+    }
+    
+    params->cumint = CUMINT_NO_INIT;
+
+    return prob;
+
+}
+
 
 int
 seria_summary_abstract(SERIA_PARAMETERS *params, SERIA_SUMMARY *summary)
 {
-
-    params->inhibition_race = ninvgamma_high_precision_gslint;
 
     // Inhibition probability
     summary->inhib_fail_prob = seria_summary_parameter(
@@ -248,7 +299,9 @@ seria_summary_abstract(SERIA_PARAMETERS *params, SERIA_SUMMARY *summary)
     summary->predicted_pro_rt /= summary->predicted_pro_prob;
 
     summary->predicted_anti_prob = 1.0 - summary->predicted_pro_prob;
-    
+    //summary->predicted_anti_prob =
+    //    seria_summary_parameter(seria_predicted_anti_prob, params);
+   
     summary->predicted_anti_rt = 
         seria_summary_parameter(seria_predicted_anti_rt, params);
     // Normalize the integral
