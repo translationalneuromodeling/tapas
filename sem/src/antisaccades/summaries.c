@@ -92,6 +92,7 @@ seria_anti_rt(double t, SERIA_PARAMETERS *params)
 double
 seria_inhib_rt(double t, SERIA_PARAMETERS *params)
 {
+    double t0 = log(t);
     t -= params->t0;
     
     if (t <= 0)
@@ -107,7 +108,7 @@ seria_inhib_rt(double t, SERIA_PARAMETERS *params)
         eval += params->anti.lsf(t, params->ka, params->ta) +
             params->late.lsf(t, params->kl, params->tl);
 
-    return exp(eval);
+    return exp(eval + t0);
 
 }
 
