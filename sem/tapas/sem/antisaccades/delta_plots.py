@@ -141,7 +141,7 @@ def compute_empirical_delta_rt(rt, acts, tt, quants=None):
     x = []
     y = []
 
-    for i in xrange(1, len(pers)):
+    for i in range(1, len(pers)):
         comp_t = comp_rt[np.logical_and(comp_pers[i-1] < comp_rt,
                 comp_rt < comp_pers[i])]
         incomp_t = incomp_rt[np.logical_and(incomp_pers[i-1] < incomp_rt,
