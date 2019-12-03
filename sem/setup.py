@@ -51,7 +51,7 @@ if __name__ == '__main__':
     setup(
         name='tapas.sem',
         zip_safe=False,
-        version='1.1',
+        version='2.0',
         requires=['cython', 'numpy'],
         #install_requirement=['gsl>=1.6.0'],
         description='Python packages for Saccadic Eye movement Models',
