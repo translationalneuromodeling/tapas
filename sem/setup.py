@@ -53,7 +53,7 @@ if __name__ == '__main__':
         zip_safe=False,
         version='1.1',
         requires=['cython', 'numpy'],
-        install_requirement=['gsl>=1.6.0'],
+        #install_requirement=['gsl>=1.6.0'],
         description='Python packages for Saccadic Eye movement Models',
         author='Eduardo Aponte',
         author_email='aponteeduardo@gmail.com',

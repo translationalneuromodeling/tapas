@@ -11,9 +11,9 @@ Contains functions related to the parameters.
 '''
 
 
-import containers
-import reparametrize as reparam
-import likelihoods
+from . import containers
+from . import reparametrize as reparam
+from . import likelihoods
 
 
 class Parameters(containers.AlgebraicObject):
@@ -23,7 +23,7 @@ class Parameters(containers.AlgebraicObject):
     def make_dict(clc, samples):
         '''Return a dictionary from a vector of samples.'''
 
-        sdict = dict(zip(clc.fields, samples))
+        sdict = dict(list(zip(clc.fields, samples)))
 
         return sdict
 

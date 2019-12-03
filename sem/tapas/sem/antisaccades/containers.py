@@ -234,7 +234,7 @@ class FitsContainer(Sequence):
     def sum(self):
 
         if len(self) == 0:
-            raise(IndexError('Empty container'))
+            raise IndexError
 
         nobj = deepcopy(self[0])
 
@@ -246,7 +246,7 @@ class FitsContainer(Sequence):
     def mean(self):
 
         if len(self) == 0:
-            raise(IndexError('Empty container'))
+            raise IndexError
 
         nobj = deepcopy(self[0])
 
@@ -259,7 +259,7 @@ class FitsContainer(Sequence):
         '''Variance of the fits. '''
 
         if len(self) < 2:
-            raise(IndexError('Container requires more than one sample'))
+            raise IndexError
 
         ev = self.mean()
 

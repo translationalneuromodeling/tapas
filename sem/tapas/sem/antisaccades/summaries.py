@@ -15,7 +15,7 @@ import numpy as np
 from scipy.integrate import cumtrapz
 from scipy import stats
 
-import containers
+from . import containers
 import wrappers
 
 
