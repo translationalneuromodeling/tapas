@@ -1,4 +1,5 @@
-function [summary] = tapas_sem_generate_summary(data, samples, model, subject)
+function [summary] = tapas_sem_generate_summary(data, samples, model, ...
+    subject, robust)
 %% Generate a summary table from the model.
 %
 % Input
@@ -6,6 +7,7 @@ function [summary] = tapas_sem_generate_summary(data, samples, model, subject)
 %       samples     -- Posterior samples.
 %       model       -- Model stucture.
 %       subject     -- Subject identifier. Defaults to 1.
+%       robust      -- If true ignore nan and inf values. Default to true
 % Output
 %       summary     -- Table with the summary
 
@@ -13,20 +15,27 @@ function [summary] = tapas_sem_generate_summary(data, samples, model, subject)
 % copyright (C) 2019
 %
 
-if nargin < 4
+n = 3;
+
+n = n + 1;
+if nargin < n
     subject = 1;
+end
+
+n = n + 1;
+if nargin < n
+    robust = true;
+end
+
+% Define the function to compute the mean
+if robust
+    fmean = @robust_mean;
+else
+    fmean = @mean;
 end
 
 [mtype, param] = tapas_sem_identify_model(model.llh);
 [funcs] = tapas_sem_get_model_functions(mtype, param);
-
-% If necessary downsample
-nsamples = size(samples, 2);
-
-if nsamples > 30
-    spacing = ceil(nsamples/30);
-    samples = samples(1:spacing:end);
-end
 
 results = funcs.summaries(samples);
 results = horzcat(results{:});
@@ -39,7 +48,7 @@ array = cell(nconds, numel(fields));
 
 for i = 1:nconds
     for j = 1:numel(fields)
-        array{i, j} = mean([results(i, :).(fields{j})]);
+        array{i, j} = fmean([results(i, :).(fields{j})]);
     end
 end
 
@@ -52,5 +61,19 @@ for i = 1:numel(fields)
 end
 
 summary = struct2table(results);
+
+end
+
+function [m] = robust_mean(values)
+% Ignore infs and nans
+
+index = (isinf(values) | isnan(values));
+
+% Three is no valid value
+if all(index)
+    m = nan;
+else
+    m = mean(values(~index));
+end
 
 end

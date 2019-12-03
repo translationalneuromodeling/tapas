@@ -80,8 +80,8 @@ end
 pars = struct();
 
 pars.T = linspace(0.1, 1, 1).^5;
-pars.nburnin = 4000;
-pars.niter = 4000;
+pars.nburnin = 10000;
+pars.niter = 10000;
 pars.ndiag = 500;
 pars.mc3it = 4;
 pars.verbose = 1;
@@ -91,7 +91,7 @@ inference = struct();
 inference.kernel_scale = 0.1 * 0.1;
 
 posterior = cell(numel(data), 1);
-for i = 1:numel(data)
+for i = 1:1 %numel(data)
     posterior = tapas_sem_single_subject_estimate(...
         data(i), ptheta, inference, pars);
     display(posterior);

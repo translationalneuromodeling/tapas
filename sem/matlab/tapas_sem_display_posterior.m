@@ -1,4 +1,4 @@
-function [summaries] = tapas_sem_display_posterior(posterior)
+function [summaries, fits] = tapas_sem_display_posterior(posterior, time)
 %% Displays a summary of the posterior estimates.
 %
 % Input
@@ -9,6 +9,13 @@ function [summaries] = tapas_sem_display_posterior(posterior)
 % aponteeduardo@gmail.com
 % copyright (C) 2019
 %
+
+n = 1;
+
+n = n + 1;
+if nargin < n
+    time = [];
+end 
 
 % Plot the data.
 data = posterior.data;
@@ -23,27 +30,34 @@ catch err
 end
 
 summaries = [];
+fits = cell(numel(data), 1);
+
 for i = 1:numel(data)
     fig = figure('name', sprintf('Subject #%d', i));
 
-    [edges] = tapas_sem_plot_antisaccades(data(i).y, data(i).u);
-    % Edges of the plot
+    [edges] = tapas_sem_plot_responses(data(i).y, data(i).u);
+    % For normalizing the are
     dt = edges(2) - edges(1);
+    % Edges of the plot
     samples = posterior.ps_theta(i, :);
-    fits = tapas_sem_generate_fits(data(i), samples, model);
-    tapas_sem_plot_fits(data(i), fits, dt)
-    format_figure(fig, data(i), fits, model);
-    summary = tapas_sem_generate_summary(data(i), samples, model, i);
-    summaries = [summaries; summary];
+    
+    % If time is empty, use the default time array
+    if numel(time)
+        cond_fit = tapas_sem_generate_fits(data(i), samples, model, time);
+    else
+         cond_fit = tapas_sem_generate_fits(data(i), samples, model);  
+    end
 
+    tapas_sem_plot_fits(data(i), cond_fit, dt)
+    format_figure(fig, data(i), cond_fit, model);
+    summary = tapas_sem_generate_summary(data(i), samples, model, i);
+
+    summaries = [summaries; summary];
+    fits{i} = cond_fit;
+    break
 end
 
-figure('name', 'Summary statistics');
-uitable('Data', summaries{:, :}, ...
-    'ColumnName', summaries.Properties.VariableNames,...
-    'RowName', summaries.Properties.RowNames, ...
-    'Units', 'Normalized', ...
-    'Position',[0, 0, 1, 1]);
+tapas_sem_display_summary(summaries, 'Posterior summary')
 
 end
 

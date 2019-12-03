@@ -105,7 +105,7 @@ class SummarySeriaInvgamma(SummarySeria):
 
     def summary_statistics(self, samples):
 
-        results = wrappers.p_summary_seria_gamma(samples)
+        results = wrappers.p_summary_seria_invgamma(samples)
 
         return results
 
@@ -115,7 +115,7 @@ class SummarySeriaMixedgamma(SummarySeria):
 
     def summary_statistics(self, samples):
 
-        results = wrappers.p_summary_seria_gamma(samples)
+        results = wrappers.p_summary_seria_mixedgamma(samples)
 
         return results
 
@@ -125,7 +125,7 @@ class SummarySeriaLognorm(SummarySeria):
 
     def summary_statistics(self, samples):
 
-        results = wrappers.p_summary_seria_gamma(samples)
+        results = wrappers.p_summary_seria_lognorm(samples)
 
         return results
 
@@ -145,7 +145,7 @@ class SummarySeriaLater(SummarySeria):
 
     def summary_statistics(self, samples):
 
-        results = wrappers.p_summary_seria_gamma(samples)
+        results = wrappers.p_summary_seria_wald(samples)
 
         return results
 

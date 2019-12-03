@@ -3,6 +3,8 @@
 
 #include "antisaccades.h"
 
+#define INTSTEPS 8000
+
 // Log of cosh
 
 double
@@ -601,6 +603,8 @@ dninvgamma(double x, void *vpars)
     return r;
 }
 
+#define INTSTEPS 3000
+
 double
 ninvgamma_gslint(double xs, double xe, double a, double b, double c0, 
         double c1)
@@ -624,11 +628,83 @@ ninvgamma_gslint(double xs, double xe, double a, double b, double c0,
     pars[3] = c1;
     pars[4] = - gr.val + log(c0) * a;
 
+
     af.function = &dninvgamma;
     af.params = pars;
 
+    /*
+    gsl_integration_workspace *wspace = 
+        gsl_integration_workspace_alloc( INTSTEPS );
+
+    gsl_integration_qag(
+        &af,
+        xs,
+        xe,
+        SEM_TOL,
+        SEM_RTOL,
+        INTSTEPS,
+        GSL_INTEG_GAUSS61,
+        wspace,
+        &v,
+        &aberr);
+
+    gsl_integration_workspace_free(wspace);
+    */
+
      SOONER_GSLERROR(gsl_integration_qng(&af, xs, xe, SEM_TOL, SEM_RTOL, &v,
                 &aberr, &neval));
+
+    if (aberr > 0.001)
+    {
+        return GSL_NAN;
+    }
+
+    return v;
+}
+
+
+double
+ninvgamma_high_precision_gslint(double xs, double xe, double a, double b, double c0, 
+        double c1)
+{
+    // Zero mass if the start is bellow zero.
+    if ( xe < 0.00001)
+        return 0;
+    gsl_function af;
+    gsl_sf_result gr;
+
+    double pars[5];
+    double v;
+    double aberr;
+    size_t neval; 
+
+    SOONER_GSLERROR( gsl_sf_lngamma_e(a, &gr) );
+
+    pars[0] = a;
+    pars[1] = b;
+    pars[2] = c0;
+    pars[3] = c1;
+    pars[4] = - gr.val + log(c0) * a;
+
+    af.function = &dninvgamma;
+    af.params = pars;
+    
+    gsl_integration_workspace *wspace =
+        gsl_integration_workspace_alloc( INTSTEP );
+
+    gsl_integration_qag(
+            &af,
+            xs,
+            xe,
+            SEM_TOL,
+            SEM_RTOL,
+            INTSTEPS,
+            GSL_INTEG_GAUSS61,
+            wspace,
+            &v,
+            &aberr);
+
+    gsl_integration_workspace_free(wspace);
 
     if (aberr > 0.001)
     {
