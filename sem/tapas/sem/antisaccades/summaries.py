@@ -16,7 +16,7 @@ from scipy.integrate import cumtrapz
 from scipy import stats
 
 from . import containers
-import wrappers
+from . import wrappers
 
 
 def lcosh(x):

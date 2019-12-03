@@ -12,7 +12,6 @@ Basic container classes.
 
 
 from collections import Sequence
-from pdb import set_trace as _
 import numpy as np
 from copy import deepcopy
 from scipy.integrate import cumtrapz
@@ -90,7 +89,7 @@ class AlgebraicObject(object):
 
     def __truediv__(self, arg):
 
-        return self.__mul__(self, 1./arg)
+        return self.__mul__(1./arg)
 
     def exp(self):
 
