@@ -25,12 +25,12 @@ for i = 1:nconds
 
     ax = subplot(nconds, 2, (i - 1) * 2 + 1);
     hold on;
-    
-    plot(fits(i).t, fits(i).pro * dt, 'k')
+
+    plot(fits(i).t, fits(i).pro * dt, 'k', 'linewidth', 2)
 
     ax = subplot(nconds, 2, (i - 1) * 2 + 2);
     hold on;
-    plot(fits(i).t, fits(i).anti * dt, 'k')   
+    plot(fits(i).t, fits(i).anti * dt, 'k', 'linewidth', 2)
 end
 
 

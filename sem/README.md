@@ -322,6 +322,17 @@ prosaccade trials are coded with 0, and antisaccade trials with 1.
   
 ![fits](misc/example_fit.png)
 
+In addition, delta plots of all conditions are generated.
+[Delta plots](https://www.ncbi.nlm.nih.gov/pubmed/15869351) display the 
+difference in mean RT between antisaccades (incongruent trials) and 
+prosaccades (congruent trials) for different quantiles. Conceptually, these
+plots represent the time course of the antisaccade cost. They are mostly
+used in the context of the Simon task, which can also be analysed using the
+SERIA model. Not only the empirical delta plots are displayed, but also the
+predicted delta plots according to the respective model.
+
+![fits](misc/delta_plot.png)
+
 The variable `ptheta` represents the parameters of the model. It is a 
 structure with several fields explained in the table below.
 
@@ -329,13 +340,13 @@ structure with several fields explained in the table below.
 |:-----:|:-------------:|-------------|
 |mu|[11x1 double]| Prior mean of the parameters. |
 |pm|[11x1 double]| Prior precision (inverse variance) of the parameters |
-|p0|[11x1 double]| Expansion point (initilisation) of the algorithm |
+|p0|[11x1 double]| Expansion point (initialisation) of the algorithm |
 |bdist|11| Not used |
 |jm|[22x19 double]| Constraint matrix. |
 |name|'seria'| Name of the model |
 |llh|@c_seria_multi_mixedgamma| Likelihood function |
 |lpp|@tapas_sem_prosa_lpp| Prior density function. Shared between the PROSA and SERIA models |
-|prepare|@tapas_sem_prepare_gaussian_ptheta| Initilisation function of the parameters.|
+|prepare|@tapas_sem_prepare_gaussian_ptheta| Initialisation function of the parameters.|
 |sample_priors|@tapas_sem_sample_gaussian_uniform_priors| Methods to sample the parameters  |
 |ndims|11| Number of parameters (11 for SERIA, 9 for PROSA) |
 

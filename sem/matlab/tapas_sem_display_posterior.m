@@ -29,8 +29,29 @@ catch err
     end
 end
 
-summaries = [];
-fits = cell(numel(data), 1);
+% Display the constraints matrix.
+jm = model.jm;
+model_type = model.name; 
+
+if numel(regexp(model_type, 'seria'))
+    model_type = 'seria';
+elseif numel(regexp(model_type, 'prosa'))
+    model_type = 'prosa';
+else
+    error('tapas:sem:display_posterior', 'Unknown model.');
+end
+
+tapas_sem_plot_constraints(jm, model_type);
+
+% Check if the summaries are present
+if ~isfield(posterior, 'summary')
+    summary = tapas_sem_posterior_summary(posterior);
+else
+    summary = posterior.summary;
+end
+
+% Display the summary
+tapas_sem_display_posterior_summary(posterior, summary);
 
 for i = 1:numel(data)
     fig = figure('name', sprintf('Subject #%d', i));
@@ -39,25 +60,12 @@ for i = 1:numel(data)
     % For normalizing the are
     dt = edges(2) - edges(1);
     % Edges of the plot
-    samples = posterior.ps_theta(i, :);
-    
-    % If time is empty, use the default time array
-    if numel(time)
-        cond_fit = tapas_sem_generate_fits(data(i), samples, model, time);
-    else
-         cond_fit = tapas_sem_generate_fits(data(i), samples, model);  
-    end
+    fit = summary.fits{i}; 
+    fit = tapas_sem_normalized_fits(data(i), fit);
+    tapas_sem_plot_fits(fit, dt);
+    format_figure(fig, data(i), fit, model);
 
-    tapas_sem_plot_fits(data(i), cond_fit, dt)
-    format_figure(fig, data(i), cond_fit, model);
-    summary = tapas_sem_generate_summary(data(i), samples, model, i);
-
-    summaries = [summaries; summary];
-    fits{i} = cond_fit;
-    break
 end
-
-tapas_sem_display_summary(summaries, 'Posterior summary')
 
 end
 

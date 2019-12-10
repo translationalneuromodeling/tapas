@@ -4,6 +4,7 @@ function [summary] = tapas_sem_posterior_summary(posterior, time)
 % Input
 %       posterior       -- Estimate from the model.
 % Output
+%       summary         -- Summary structue computed from the posterior.
 %       
 
 % aponteeduardo@gmail.com
@@ -37,8 +38,6 @@ summaries = cell(ns, 1);
 fits = cell(ns, 1);
 
 for i = 1:ns
-    % Edges of the plot
-    fprintf(1, '%d\n', i)
     samples = posterior.ps_theta(i, :);
     fits{i} = tapas_sem_generate_fits(data(i), samples, model, time);
     summaries{i} = tapas_sem_generate_summary(data(i), samples, model, i);

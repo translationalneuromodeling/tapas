@@ -39,6 +39,6 @@ for i = 1:nq
             (incongruent <= qincong(i+1))));
 end
 
-plot((ycong + yincong)/2, yincong - ycong, 'k-');
+plot((ycong + yincong)/2, yincong - ycong, 'k-o');
 
 end

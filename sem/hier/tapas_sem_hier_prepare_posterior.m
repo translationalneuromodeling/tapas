@@ -64,5 +64,8 @@ end
 
 posterior.ps_theta = theta;
 
+% Add the summaries automatically
+posterior.summary = tapas_sem_posterior_summary(posterior);
+
 end
 

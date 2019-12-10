@@ -64,7 +64,9 @@ end
 tapas_display_table(summary.summaries, 'Posterior summary')
 
 %% Plot all the responses combined
-figure();
+fig = figure('name', 'Group responses and fits');
+fig.Color = 'w';
+
 all_y = struct('t', t, 'a', a);
 all_u = struct('tt', tt);
 edges = tapas_sem_plot_responses(all_y, all_u);
@@ -73,13 +75,17 @@ dt = edges(2) - edges(1);
 plot_predicted_normalized_fits(nfits, dt, offset, scale);
 
 %% Delta plots
-figure();
+fig = figure('name', 'Group delta plots');
+fig.Color = 'w';
+
 hold on
 % Plot all together
 tapas_sem_empirical_delta_plot(...
     t(correct & (ttype == CONG)), ...
     t(correct & (ttype == INCONG)));
 
+xlabel('time')
+ylabel('Delta incong. RT - cong. RT')
 % Make delta plots
 time = scale * fits{1}(1).t + offset;
 
@@ -98,7 +104,7 @@ end
 time = reshape(time, numel(time), 1);
 
 tapas_sem_predicted_delta_plot(time, cong, incong);
-
+legend({'Empirical delta', 'Predicted delta'})
 end
 
 function plot_predicted_normalized_fits(nfits, dt, offset, scale)

@@ -51,6 +51,6 @@ end
 x = (ycong + yincong)/2;
 y = (yincong - ycong);
 
-plot(x, y, 'o--k')
+plot(x, y, 'o--b')
 
 end

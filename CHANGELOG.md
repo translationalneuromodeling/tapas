@@ -1,12 +1,23 @@
 # Changelog
 TAPAS toolbox 
 
-## Unreleased
+## [3.3.0] 2019-12-10
 
 ### Added
 
-- SERIA: Added computational of early and late response likelihood.
-- SERIA: Added analysis of the delta plots.
+- SERIA: Added the Watanabe Akaike information criterion (WAIC) as output.
+- SERIA: Added computation of early and late response likelihood.
+- SERIA: Added delta plots to output summary.
+
+### Changed
+
+- SERIA: The constraints matrix is now automatically plot by 
+        tapas\_sem_\display_posterior.m
+- SERIA: Python code is now updated to python 3.7 and the requirement file
+            now uses the latest libraries (numpy, scipy, cython).
+- SERIA: Posterior plots includes fits of the complete group.
+- SERIA: Summaries are automatically generated when preparing the posterior.
+
 
 ## [3.2.1] 2019-10-15
 
