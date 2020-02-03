@@ -47,7 +47,7 @@ switch positionString
             % if earliest pulse at multiple of pulse rate, 
             % then next pulse would be just before start of orig time
             % series
-            idxLastSimulatedPulse = nSimulatedPulses;
+            idxLastSimulatedPulse = nSimulatedSamples;
         else 
             idxLastSimulatedPulse = nSimulatedSamples - meanPulseRateInSamples ...
                 + mod(idxPulses(1), meanPulseRateInSamples);

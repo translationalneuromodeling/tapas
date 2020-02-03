@@ -34,6 +34,11 @@ function tests = tapas_physio_examples_test()
 tests = functiontests(localfunctions);
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Auxiliary functions for automation of code folder structure
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % path to examples, needed for all test cases
 function setupOnce(testCase)
 % run GE example and extract physio
@@ -48,6 +53,10 @@ function teardown(testCase)
 close(testCase.TestData.createdFigHandles);
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Matlab-only tests (w/o SPM) start here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function test_bids_cpulse3t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -138,6 +147,26 @@ run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
 
+function test_siemens_vb_ppu3t_sync_first_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/PPU3T example using matlab only
+% synced to first DICOM volume of run
+dirExample = 'Siemens_VB/PPU3T_Sync_First';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+
+function test_siemens_vb_ppu3t_sync_last_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/PPU3T example using matlab only
+% synced to last DICOM volume of run
+dirExample = 'Siemens_VB/PPU3T_Sync_Last';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+
 function test_siemens_vd_ppu3t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Siemens_VD/PPU3T example using matlab only
@@ -146,6 +175,10 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SPM-requiring tests start here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function test_bids_cpulse3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -235,6 +268,24 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_siemens_vb_ppu3t_sync_first_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/PPU3T example 
+% (sync to first DICOM volume time stamp) using SPM Batch Editor
+dirExample = 'Siemens_VB/PPU3T_Sync_First';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_siemens_vb_ppu3t_sync_last_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/PPU3T example 
+% (sync to last DICOM volume time stamp) using SPM Batch Editor
+dirExample = 'Siemens_VB/PPU3T_Sync_Last';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
 
 function test_siemens_vd_ppu3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -245,6 +296,9 @@ run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Auxiliary Functions for automation and code re-use
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 %% Compares previously saved physio-structure and multiple regressors file

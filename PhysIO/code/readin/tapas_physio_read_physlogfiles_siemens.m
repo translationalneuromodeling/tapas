@@ -1,9 +1,11 @@
-function [c, r, t, cpulse, verbose] = tapas_physio_read_physlogfiles_siemens(log_files, cardiac_modality, verbose, varargin)
+function [c, r, t, cpulse, verbose] = ...
+    tapas_physio_read_physlogfiles_siemens(log_files, cardiac_modality, verbose, varargin)
 % reads out physiological time series and timing vector for Siemens
 % logfiles of peripheral cardiac monitoring (ECG/Breathing Belt or
 % pulse oximetry)
 %
-%   [cpulse, rpulse, t, c] = tapas_physio_read_physlogfiles_siemens(logfile, vendor, cardiac_modality)
+%   [cpulse, rpulse, t, c] = tapas_physio_read_physlogfiles_siemens(...
+%           logfile, vendor, cardiac_modality)
 %
 % IN    log_files
 %       .log_cardiac        contains ECG or pulse oximeter time course
@@ -22,6 +24,8 @@ function [c, r, t, cpulse, verbose] = tapas_physio_read_physlogfiles_siemens(log
 %           'ecgChannel'    'v1', 'v2', 'mean' (default)
 %                           determines which ECG channel to use as
 %                           output cardiac curve
+%           'sqpar'         sqpar, needed for scan_align to 'last' volume
+%                           of a run
 %
 % OUT
 %   cpulse              time events of R-wave peak in cardiac time series (seconds)
@@ -59,6 +63,7 @@ end
 DEBUG = verbose.level >=2;
 
 % process optional input parameters and overwrite defaults
+defaults.sqpar = [];
 defaults.endCropSeconds     = 1;
 % used channel depends on cardiac modality
 switch cardiac_modality
@@ -116,8 +121,8 @@ if hasCardiacData
     
     
     if hasScanTimingDicomImage
-        tStartScan = tStartScanDicom;
-        tStopScan = tStopScanDicom;
+        tStartScan = tStartScanDicom; % this is just the start of the selected DICOM volume
+        tStopScan = tStopScanDicom + sqpar.TR; % is incorrect, i.e., equals start of volume, therefore use tStartScan + TR!
     else
         % Just different time scale, gives bad scaling in plots, and not
         % needed...
@@ -129,11 +134,14 @@ if hasCardiacData
     
     switch log_files.align_scan
         case 'first'
-            relative_start_acquisition = tStartScan - ...
-                logFooter.LogStartTimeSeconds;
+            relative_start_acquisition = tStartScan ...
+                - logFooter.LogStartTimeSeconds;
         case 'last'
-            relative_start_acquisition = tStopScan - ...
-                logFooter.LogStopTimeSeconds;
+            % shift onset of first scan by knowledge of run duration and
+            % onset of last scan in run
+            relative_start_acquisition = ...
+                (tStopScan - sqpar.Nscans*sqpar.TR) ... 
+                - logFooter.LogStartTimeSeconds;
     end
     
     
@@ -188,14 +196,14 @@ if hasRespData
     
     if hasScanTimingDicomImage
         tStartScan = tStartScanDicom;
-        tStopScan = tStopScanDicom;
+        tStopScan = tStopScanDicom; % is incorrect, use tStartScan + TR!
     else
         % Just different time scale, gives bad scaling in plots, and not
         % needed...
         %     tStartScan = logFooter.ScanStartTimeSeconds;
         %     tStopScan = logFooter.ScanStopTimeSeconds;
         tStartScan = logFooter.LogStartTimeSeconds;
-        tStopScan = logFooter.LogStopTimeSeconds;
+        tStopScan = logFooter.LogStopTimeSeconds; 
     end
     
     switch log_files.align_scan
@@ -203,8 +211,11 @@ if hasRespData
             relative_start_acquisition = tStartScan - ...
                 logFooter.LogStartTimeSeconds;
         case 'last'
-            relative_start_acquisition = tStopScan - ...
-                logFooter.LogStopTimeSeconds;
+            % shift onset of first scan by knowledge of run duration and
+            % onset of last scan in run
+            relative_start_acquisition = ...
+                (tStartScan - (sqpar.Nscans-1)*sqpar.TR) ... 
+                - logFooter.LogStartTimeSeconds;
     end
     
     
