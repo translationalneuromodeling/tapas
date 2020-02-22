@@ -22,7 +22,7 @@ function verbose = tapas_physio_review(physio, newVerboseLevel)
 %   several output plots and command line information on the toolbox
 %   performance
 %
-%   verbose.fig_handles     [nFigures,1] vector of figure handles created
+%   verbose.fig_handles     [1, nFigures] vector of figure handles created
 %
 % EXAMPLE
 %   tapas_physio_review

@@ -4,9 +4,10 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2019b, v7.2.2*
+*Current version: PhysIO Toolbox Release R2019b, v7.2.3*
 
-Feburary 3rd, 2020
+Feburary 21st, 2020
+
 
 SCHEDULED Minor Release Notes (R2020a, v7.3.0) 
 ----------------------------------------------
@@ -17,6 +18,14 @@ SCHEDULED Minor Release Notes (R2020a, v7.3.0)
 ### Changed
 
 ### Fixed
+
+
+Bugfix Release Notes (v7.2.3)
+-----------------------------
+
+### Fixed
+- Bugfix manual peak selection (Github issue #85, Gitlab #90)
+    - did not work because of figure handling
 
 Bugfix Release Notes (v7.2.2)
 -----------------------------
@@ -35,6 +44,7 @@ Bugfix Release Notes (v7.2.1)
 - PhysIO: removed Matlab statistics toolbox dependency for PCA by SVD implementation (thanks to Benoît Beranger, [pull request 64](https://github.com/translationalneuromodeling/tapas/pull/64))
     - new function `tapas_physio_pca` allows for switch between stats and native SVD implementation of PCA
     - comes with unit tests checking equivalency
+
 
 Minor Release Notes (R2019b, v7.2.0)
 ------------------------------------
@@ -70,6 +80,7 @@ Batch Editor and Matlab-only configuration scripts. Reference data provided in
   Sam Harrison, TNU)
 - visualization error for regressor orthogonalization (github issue #57), 
   when only `'RETROICOR'` set was chosen
+
 
 Minor Release Notes (R2019a, v7.1.0)
 ------------------------------------

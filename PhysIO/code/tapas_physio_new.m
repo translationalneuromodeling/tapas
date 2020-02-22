@@ -643,8 +643,8 @@ else
     % slice triggers, peak height etc.
     verbose.process_log = cell(0,1); 
     
-    % [nFigs,1] vector; collecting of all generated figure handles during a run of tapas_physio_main_create_regressors
-    verbose.fig_handles = zeros(0,1);   
+    % [1, nFigs] vector; collecting of all generated figure handles during a run of tapas_physio_main_create_regressors
+    verbose.fig_handles = zeros(1,0);   
     
     % file name (including extension) where to print all physIO output 
     % figures to.
