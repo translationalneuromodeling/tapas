@@ -662,7 +662,18 @@ else
     %  TODO: implement via [handles] = spm_uitab(hparent,labels,callbacks,...
     %                                           tag,active,height,tab_height)
     %
-    verbose.use_tabs = false;  
+    verbose.use_tabs = false;
+
+    % JSH: show / save / close figures
+    % Booleans to control figure visibility and saving/closing options.
+    % show_figs: If true, all created figures will be visible. If false, sets figure visibility to 'off', which
+    % leaves the possibility of saving the figure to file without displaying it.
+    verbose.show_figs = true;
+    % save_figs: If true, all created figures will be saved using specified fig_output_file as filename
+    verbose.save_figs = false;
+    % close_figs: If true, will close all open figs after saving them. Only used if save_figs is true.
+    verbose.close_figs = false;
+
   
     
     

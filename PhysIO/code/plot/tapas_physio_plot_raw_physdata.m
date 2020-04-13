@@ -28,8 +28,19 @@ function verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose)
 % COPYING or <http://www.gnu.org/licenses/>.
 
 if verbose.level >= 2
-    
-    fh = tapas_physio_get_default_fig_params();
+
+    % Set default for verbose.show_figs if it is empty or if the field does not exist.
+    % Default = true (i.e. show figures)
+    if ~isfield(verbose, 'show_figs') || isempty(verbose.show_figs)
+        verbose.show_figs = true;
+    end
+    % Create figure with correct visibility according to show_figs
+    if verbose.show_figs
+        fh = tapas_physio_get_default_fig_params('on');
+    else
+        fh = tapas_physio_get_default_fig_params('off');
+    end
+
     set(fh, 'Name', 'Read-In: Raw Physiological Logfile Data');
     has_cardiac_triggers = isfield(ons_secs, 'cpulse') && ~isempty(ons_secs.cpulse);
     has_scan_triggers = isfield(ons_secs, 'acq_codes') && ~isempty(ons_secs.acq_codes);

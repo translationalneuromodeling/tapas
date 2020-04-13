@@ -86,6 +86,21 @@ verbose.level       = newVerboseLevel;
 verbose.fig_handles = [];
 verbose.process_log = {};
 
+% Set default for verbose.show_figs, verbose.save_figs and verbose.close_figs
+% if they are empty or if the fields do not exist
+% show_figs default = true (i.e. do show)
+if ~isfield(verbose, 'show_figs') || isempty(verbose.show_figs)
+    verbose.show_figs = true;
+end
+% save_figs default = false (i.e. do not save)
+if ~isfield(verbose, 'save_figs') || isempty(verbose.save_figs)
+    verbose.save_figs = false;
+end
+% close_figs default = false (i.e. do not close)
+if ~isfield(verbose, 'close_figs') || isempty(verbose.close_figs)
+    verbose.close_figs = false;
+end
+
 verbose = tapas_physio_plot_raw_physdata(ons_secs.raw, verbose);
 
 % tapas_physio_get_onsets_from_locs -> create plot function out of
@@ -95,7 +110,7 @@ verbose = tapas_physio_plot_raw_physdata(ons_secs.raw, verbose);
 
 if verbose.level >= 2
     verbose.fig_handles(end+1) = ...
-        tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar);
+        tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar, verbose);
 end
 
 [verbose, ons_secs.c_outliers_low, ons_secs.c_outliers_high, ...
@@ -128,7 +143,7 @@ if model.retroicor.include
     hasRespData = ~isempty(ons_secs.r);
     verbose.fig_handles(end+1) = ...
         tapas_physio_plot_retroicor_regressors(R, model.retroicor.order, hasCardiacData, ...
-        hasRespData);
+        hasRespData, verbose);
 end
 
 if model.movement.include
@@ -139,10 +154,10 @@ if model.movement.include
     switch lower(model.movement.censoring_method)
         case 'fd'
             verbose.fig_handles(end+1) = tapas_physio_plot_movement_outliers_fd( ...
-                rp, quality_measures, censoring, censoring_threshold);
+                rp, quality_measures, censoring, censoring_threshold, verbose);
         case 'maxval'
             verbose.fig_handles(end+1) = tapas_physio_plot_movement_outliers_maxval( ...
-                rp, quality_measures, censoring, censoring_threshold);
+                rp, quality_measures, censoring, censoring_threshold, verbose);
     end
 end
 
@@ -159,3 +174,17 @@ mult_sess = model.R(:,colMult);
 [R, verbose] = tapas_physio_orthogonalise_physiological_regressors(...
     cardiac_sess, respire_sess, ...
     mult_sess, model.R, model.orthogonalise, verbose);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Save output figures to files - if specified
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if verbose.save_figs
+    [verbose] = tapas_physio_print_figs_to_file(verbose);
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Close figures - if specified
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if verbose.save_figs && verbose.close_figs
+    [verbose] = tapas_physio_close_figs(verbose);
+end

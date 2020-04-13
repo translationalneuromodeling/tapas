@@ -1,8 +1,9 @@
 function [fh, prop, MyColors] = tapas_physio_get_default_fig_params(...
-    convfac, xscale, yscale)
+    visibility, convfac, xscale, yscale)
 % set and return General settings for plots
 %
 %  IN
+%       visibility  'on'/'off'; sets figure visibility when created
 %       convfac     conversion factor (1...Inf) to scale size of text and
 %                   lines in plot
 % -------------------------------------------------------------------------
@@ -16,23 +17,29 @@ function [fh, prop, MyColors] = tapas_physio_get_default_fig_params(...
 % COPYING or <http://www.gnu.org/licenses/>.
 
 %
+disp('stephan version')
+
 if nargin < 1
+    visibility = 'on';
+end
+
+if nargin < 2
     convfac = 2; % conversion factor for figure scaling; for laptop display
     % convfac = 4; % for prints in paper
 end
 
-if nargin < 2
+if nargin < 3
         xscale = 0.5;
 end
 
-if nargin < 3
+if nargin < 4
         yscale = 0.5;
 end
 
 scrsz = get(0,'ScreenSize');
 
 scrsz = min([1 1 1440 900], scrsz);
-fh = figure('Position',[scrsz(1:2) xscale*scrsz(3) yscale*scrsz(4)]);
+fh = figure('Position',[scrsz(1:2) xscale*scrsz(3) yscale*scrsz(4)], 'visible', visibility);
 set(fh, 'WindowStyle', 'docked');
 %fh = figure('Position',[scrsz(1:2) xscale*scrsz(3) yscale*scrsz(4)], 'Hidden', 'on');
 
