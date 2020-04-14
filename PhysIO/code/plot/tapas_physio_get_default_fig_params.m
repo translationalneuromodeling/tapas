@@ -17,7 +17,6 @@ function [fh, prop, MyColors] = tapas_physio_get_default_fig_params(...
 % COPYING or <http://www.gnu.org/licenses/>.
 
 %
-disp('stephan version')
 
 if nargin < 1
     visibility = 'on';

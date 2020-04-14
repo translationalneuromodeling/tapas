@@ -5,17 +5,13 @@ function verbose = tapas_physio_close_figs(verbose)
 %
 % IN
 %   verbose.fig_handles
-%   verbose.fig_output_file
 %
 % OUT
 %
 % EXAMPLE
 %   verbose = tapas_physio_close_figs(verbose)
 %
-%   See also
-
-% Author: Lars Kasper
-%           based on code by Jakob Heinzle, TNU
+% Author: Lars Kasper, Stephan Heunis
 %
 % Created: 2013-04-23
 % Copyright (C) 2013 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.

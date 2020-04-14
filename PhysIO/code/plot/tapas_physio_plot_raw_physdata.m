@@ -35,6 +35,7 @@ if verbose.level >= 2
         verbose.show_figs = true;
     end
     % Create figure with correct visibility according to show_figs
+    verbose.show_figs
     if verbose.show_figs
         fh = tapas_physio_get_default_fig_params('on');
     else

@@ -7,6 +7,18 @@ function verbose = tapas_physio_review(physio, newVerboseLevel)
 % NOTE: Change physio.verbose.level before running this function to get
 %       additonal output plots not seen during executing of the main-function
 %
+% NOTE1: Change the following flags prior to running this function in order
+% to control the output figure behavior.
+%   physio.verbose.show_figs = false; (default true)
+%   physio.verbose.save_figs = true; (default false)
+%   physio.verbose.close_figs = true; (default false)
+% An example use case is to disable figure outputs when running
+% tapas_physio_main_create_regressors (by setting physio.verbose.level = 0)
+% and then running tapas_physio_review in order to generate the figures.
+% Figures can, for example, be generated and saved in the background
+% (show_figs = false, save_figs = true) or displayed and not saved
+% (show_figs = true, save_figs = false).
+%
 % NOTE2: This is not an exact copy of the plotting behavior within
 % tapas_physio_main_create_regressors (yet). The most important plots for
 % diagnostics should show up, though.
@@ -185,6 +197,9 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Close figures - if specified
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This logic assumes that only saved figures will have to be closed (if
+% specified), since displaying and again closing unsaved figures will not
+% serve any purpose.
 if verbose.save_figs && verbose.close_figs
     [verbose] = tapas_physio_close_figs(verbose);
 end
