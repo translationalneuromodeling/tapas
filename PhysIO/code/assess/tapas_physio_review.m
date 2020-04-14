@@ -191,7 +191,7 @@ mult_sess = model.R(:,colMult);
 %% Save output figures to files - if specified
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if verbose.save_figs
-    [verbose] = tapas_physio_print_figs_to_file(verbose);
+    [verbose] = tapas_physio_print_figs_to_file(verbose, save_dir);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
