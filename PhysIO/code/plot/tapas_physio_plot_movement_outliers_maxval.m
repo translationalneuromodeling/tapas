@@ -66,21 +66,11 @@ nOutlierRot = numel(iOutlierRot);
 
 stringTitle = 'Model: Motion Quality Control - MAXVAL thresholds per direction';
 
-% If verbose is passed as argument, i.e. from updated tapas_physio_review:
 if nargin == 5
-    % Set default for verbose.show_figs if it is empty or if the field does not exist.
-    % Default = true (i.e. show figures)
-    if ~isfield(verbose, 'show_figs') || isempty(verbose.show_figs)
-        verbose.show_figs = true;
-    end
-    % Create figure with correct visibility according to show_figs
-    if verbose.show_figs
-        fh = tapas_physio_get_default_fig_params('on');
-    else
-        fh = tapas_physio_get_default_fig_params('off');
-    end
+    % If verbose is passed as argument (from updated tapas_physio_review):
+    fh = tapas_physio_get_default_fig_params(verbose);
 else
-    % Backwards compatibility
+    % Backwards compatibility:
     fh = tapas_physio_get_default_fig_params();
 end
 

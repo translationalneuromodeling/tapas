@@ -48,13 +48,7 @@ if isVerbose
         verbose.show_figs = true;
     end
     if nargin < 6
-        % Create figure with correct visibility according to show_figs
-        if verbose.show_figs
-            fh = tapas_physio_get_default_fig_params('on');
-        else
-            fh = tapas_physio_get_default_fig_params('off');
-        end
-        verbose.fig_handles(end+1,1) = fh;
+        verbose.fig_handles(end+1,1) = tapas_physio_get_default_fig_params(verbose);
         set(fh, 'Name','Preproc: Diagnostics raw phys time series');
     else
         fh = get(ah, 'Parent');

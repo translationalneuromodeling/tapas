@@ -22,17 +22,8 @@ hasRespData = ~isempty(yResp);
 isVerbose = verbose.level > 0;
 
 if isVerbose
-    % Set default for verbose.show_figs if it is empty or if the field does not exist.
-    % Default = true (i.e. show figures)
-    if ~isfield(verbose, 'show_figs') || isempty(verbose.show_figs)
-        verbose.show_figs = true;
-    end
-    % Create figure with correct visibility according to show_figs
-    if verbose.show_figs
-        fh = tapas_physio_get_default_fig_params('on');
-    else
-        fh = tapas_physio_get_default_fig_params('off');
-    end
+
+    fh = tapas_physio_get_default_fig_params(verbose);
 
     verbose.fig_handles(end+1) = fh;
     set(fh, 'Name','Preproc: Diagnostics for raw physiological time series');

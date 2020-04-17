@@ -15,3 +15,5 @@ lib
 *.mexw64
 *.asv
 *.DS_Store
+.idea
+.idea/*

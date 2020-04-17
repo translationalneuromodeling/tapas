@@ -1,5 +1,5 @@
 function [fh, prop, MyColors] = tapas_physio_get_default_fig_params(...
-    visibility, convfac, xscale, yscale)
+    verbose, convfac, xscale, yscale)
 % set and return General settings for plots
 %
 %  IN
@@ -19,7 +19,20 @@ function [fh, prop, MyColors] = tapas_physio_get_default_fig_params(...
 %
 
 if nargin < 1
+    % If verbose structure is not passed as argument, assume default: figure visibility = 'on'
     visibility = 'on';
+else
+    % Set default for verbose.show_figs if it is empty or if the field does not exist.
+    % Default = true (i.e. show figures)
+    if ~isfield(verbose, 'show_figs') || isempty(verbose.show_figs)
+        verbose.show_figs = true;
+    end
+    % Create figure with correct visibility according to show_figs
+    if verbose.show_figs
+        visibility = 'on';
+    else
+        visibility = 'off';
+    end
 end
 
 if nargin < 2

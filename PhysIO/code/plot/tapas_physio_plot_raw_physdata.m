@@ -29,18 +29,7 @@ function verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose)
 
 if verbose.level >= 2
 
-    % Set default for verbose.show_figs if it is empty or if the field does not exist.
-    % Default = true (i.e. show figures)
-    if ~isfield(verbose, 'show_figs') || isempty(verbose.show_figs)
-        verbose.show_figs = true;
-    end
-    % Create figure with correct visibility according to show_figs
-    verbose.show_figs
-    if verbose.show_figs
-        fh = tapas_physio_get_default_fig_params('on');
-    else
-        fh = tapas_physio_get_default_fig_params('off');
-    end
+    fh = tapas_physio_get_default_fig_params(verbose);
 
     set(fh, 'Name', 'Read-In: Raw Physiological Logfile Data');
     has_cardiac_triggers = isfield(ons_secs, 'cpulse') && ~isempty(ons_secs.cpulse);
@@ -60,12 +49,12 @@ if verbose.level >= 2
     end
     
     
-if has_scan_triggers
+    if has_scan_triggers
         plot(ons_secs.t, amp*ons_secs.acq_codes/max(ons_secs.acq_codes), 'c'); hold all;
         lg{end+1} = 'Scan trigger events';
     else
         verbose = tapas_physio_log('No scan trigger events provided', verbose, 0);
-end
+    end
     
 
     if has_cardiac_triggers

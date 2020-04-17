@@ -664,8 +664,9 @@ else
     %
     verbose.use_tabs = false;
 
-    % JSH: show / save / close figures
+    % show / save / close figures
     % Booleans to control figure visibility and saving/closing options.
+
     % show_figs: If true, all created figures will be visible. If false, sets figure visibility to 'off', which
     % leaves the possibility of saving the figure to file without displaying it.
     verbose.show_figs = true;
