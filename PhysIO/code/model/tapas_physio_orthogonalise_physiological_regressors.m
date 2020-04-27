@@ -76,7 +76,8 @@ end
 
 %% Plot orthogonalisation
 if verbose.level
-    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
+
+    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params(verbose);
     set(gcf, 'Name', 'Model: RETROICOR GLM regressors');
     
     switch lower(orthogonalise)
