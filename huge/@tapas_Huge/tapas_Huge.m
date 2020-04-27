@@ -112,7 +112,7 @@ classdef tapas_Huge
             'mhReg',  9, ... % regularizer for adapting step sizes
             'nPsrf', 1e5) % rate for convergence monitoring via PSRF
 
-        version = '2019-dev'; % Toolbox version
+        version = '2019-10'; % Toolbox version
 
     end
 

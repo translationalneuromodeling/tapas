@@ -119,7 +119,7 @@ if ~hasPhaseLogfile
             
             [ons_secs.c, ons_secs.r, ons_secs.t, ons_secs.cpulse, ons_secs.acq_codes, ...
                 verbose] = tapas_physio_read_physlogfiles(...
-                log_files, preproc.cardiac.modality, verbose);
+                log_files, preproc.cardiac.modality, verbose, scan_timing.sqpar);
             
             % also: normalize cardiac/respiratory data, if wanted
             doNormalize = true;

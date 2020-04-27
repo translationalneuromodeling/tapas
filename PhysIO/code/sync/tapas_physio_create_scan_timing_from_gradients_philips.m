@@ -221,7 +221,7 @@ end
 if verbose.level>=1
     
     % Depict all gradients, raw
-    verbose.fig_handles(end+1,1) = tapas_physio_get_default_fig_params();
+    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
     set(gcf,'Name', 'Sync: Thresholding Gradient for slice acq start detection');
     fs(1) = subplot(3,1,1); 
     

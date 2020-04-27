@@ -1,9 +1,9 @@
 TAPAS PhysIO Toolbox 
 ====================
 
-*Current version: Release 2019b, v7.2.0*
+*Current version: Release 2019b, v7.2.3*
 
-> Copyright (C) 2012-2019  
+> Copyright (C) 2012-2020  
 > Lars Kasper  
 > <kasper@biomed.ee.ethz.ch>  
 >  
@@ -18,7 +18,9 @@ Download
 - Please download the latest stable versions of the PhysIO Toolbox on GitHub as part of the 
   [TAPAS software releases of the TNU](https://github.com/translationalneuromodeling/tapas/releases).
 - Older versions are available on the [TNU website](http://www.translationalneuromodeling.org/tapas).
-- The latest bugfixes can be found in the [GitHub Issue Forum](https://github.com/translationalneuromodeling/tapas/issues) or by request to the authors. 
+- The latest bugfixes can be found in the 
+  [development branch of TAPAS](https://github.com/translationalneuromodeling/tapas/tree/development) 
+  and are announced in the [GitHub Issue Forum](https://github.com/translationalneuromodeling/tapas/issues). 
 - Changes between all versions are documented in the 
   [CHANGELOG](https://gitlab.ethz.ch/physio/physio-doc/blob/master/CHANGELOG.md).
 
@@ -204,7 +206,7 @@ data from imperfect peripheral measures. Read-in of the following formats is
 currently supported (alphabetic order):
 
 - Biopac `.mat` and `.txt` -export
-- Brain Imaging Data Structure (BIDS)
+- Brain Imaging Data Structure ([BIDS](http://bids.neuroimaging.io/bids_spec.pdf) for `*_physio.tsv[.gz]/.json` files)
 - Custom logfiles: should contain one amplitude value per line, one logfile per 
   device. Sampling interval(s) are provided as a separate parameter to the toolbox.
 - General Electric
@@ -268,7 +270,7 @@ Requirements
 - All specific software requirements and their versions are in a separate file
   in this folder, `requirements.txt`.
 - In brief:
-    - PhysIO needs Matlab to run, and some of its toolboxes.
+    - PhysIO needs Matlab to run, and a few of its toolboxes.
     - Some functionality requires SPM (GUI, nuisance regression, contrast reporting, 
       writing residual and SNR images).
 
@@ -304,6 +306,7 @@ Journal of Neuroscience Methods 276, 56–72. https://doi.org/10.1016/j.jneumeth
 The [FAQ](https://gitlab.ethz.ch/physio/physio-doc/wikis/FAQ#3-how-do-i-cite-physio) 
 contains a complete suggestion for a snippet in your methods section.
 
+
 ### Related Papers (Implemented noise correction algorithms and optimal parameter choices)
 
 The following sections list papers that 
@@ -330,7 +333,6 @@ Imaging 28, 1337‐1344 (2008).
 5. Bollmann, S., Puckett, A.M., Cunnington, R., Barth, M., 2018. 
 Serial correlations in single-subject fMRI with sub-second TR. 
 NeuroImage 166, 152–166. https://doi.org/10.1016/j.neuroimage.2017.10.043
-
 
 #### aCompCor / Noise ROIs 
 6. Behzadi, Y., Restom, K., Liau, J., Liu, T.T., 2007. A component based noise

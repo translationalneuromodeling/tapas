@@ -86,7 +86,7 @@ nWindow = 10;
 %show windows with suspicious outliers only
 for indStart = round(nWindow/2):nWindow-2:nPulses
     indEnd = indStart+nWindow-1;
-    if any(ismember(outliersLow, indStart:indEnd)) && ~doQuitSelection
+    if ~doQuitSelection && any(ismember(outliersLow, indStart:indEnd)) 
         fh3=figure('Position', [500 500 1000 500]);
         ind=find(ons_secs.t>=ons_secs.cpulse(indStart), 1, 'first')-100:find(ons_secs.t<=ons_secs.cpulse(indEnd), 1, 'last')+100;
         figure(fh3); clf;
@@ -99,12 +99,12 @@ for indStart = round(nWindow/2):nWindow-2:nPulses
             text(ons_secs.cpulse(kk),max(ons_secs.c(ind))*1.05,int2str(kk));
         end
         
-        delInd= [];
-        
         fprintf('Enter the indices of pulses you want to delete.\n');
         delInd=input('(0 if none, -1 to quit, multiple indices in [], e.g. [19,20]): ');
         
-        if ~isempty(delInd) && any(find(delInd~=0))
+        doQuitSelection = delInd==-1;
+        
+        if ~doQuitSelection && (~isempty(delInd) && any(find(delInd~=0)))
             plot(ons_secs.cpulse(delInd),max(ons_secs.c(ind))*ones(size(delInd)), 'rx', 'MarkerSize',20);
             finalIndex=setdiff(finalIndex,delInd');
         end

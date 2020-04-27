@@ -113,7 +113,7 @@ if hasFirstGuessPeaks
 else
     if doDebug
         fh = tapas_physio_get_default_fig_params();
-        verbose.fig_handles(end+1,1) = fh;
+        verbose.fig_handles(end+1) = fh;
         subplot(3,1,1);
         plot(t, c, 'k'); title('Preproc: Finding first peak of cycle, backwards')
     end

@@ -4,9 +4,46 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2019b, v7.2.0*
+*Current version: PhysIO Toolbox Release R2019b, v7.2.3*
 
-August 20, 2019
+Feburary 21st, 2020
+
+
+SCHEDULED Minor Release Notes (R2020a, v7.3.0) 
+----------------------------------------------
+
+### Added
+- New example datasets Siemens VB PPU3T with DICOM Sync (courtesy of Alexander Ritter, Jena, Germany)
+
+### Changed
+
+### Fixed
+
+
+Bugfix Release Notes (v7.2.3)
+-----------------------------
+
+### Fixed
+- Bugfix manual peak selection (Github issue #85, Gitlab #90)
+    - did not work because of figure handling
+
+Bugfix Release Notes (v7.2.2)
+-----------------------------
+
+### Fixed
+- Bugfix Siemens VB (`*.resp, *.puls, *.ecg`)
+    - Synchronization to DICOM time stamp did not work for extended physiological recordings (not starting/ending with functional run) due to ignored absolute start time stamp
+    - reported by Alexander Ritter, Jena, Germany (Github issue #55, Gitlab #87)
+    - probably fixes Github issue #63 (Gitlab #86) as well
+
+
+Bugfix Release Notes (v7.2.1)
+-----------------------------
+
+### Changed
+- PhysIO: removed Matlab statistics toolbox dependency for PCA by SVD implementation (thanks to Benoît Beranger, [pull request 64](https://github.com/translationalneuromodeling/tapas/pull/64))
+    - new function `tapas_physio_pca` allows for switch between stats and native SVD implementation of PCA
+    - comes with unit tests checking equivalency
 
 
 Minor Release Notes (R2019b, v7.2.0)
@@ -43,6 +80,7 @@ Batch Editor and Matlab-only configuration scripts. Reference data provided in
   Sam Harrison, TNU)
 - visualization error for regressor orthogonalization (github issue #57), 
   when only `'RETROICOR'` set was chosen
+
 
 Minor Release Notes (R2019a, v7.1.0)
 ------------------------------------

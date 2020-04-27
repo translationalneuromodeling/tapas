@@ -158,7 +158,8 @@ end
 
 %% Determine whether any meaningful trigger column 'Digital Input'
 
-indTriggers = tapas_physio_find_string(labels, 'Digital input');
+% indTriggers = tapas_physio_find_string(labels, 'Digital input');
+indTriggers = tapas_physio_find_string(labels, 'MRTtrigger');
 
 acq_codes = [];
 iTrigger = 0;
