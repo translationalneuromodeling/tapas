@@ -33,7 +33,13 @@ scrsz = get(0,'ScreenSize');
 
 scrsz = min([1 1 1440 900], scrsz);
 fh = figure('Position',[scrsz(1:2) xscale*scrsz(3) yscale*scrsz(4)]);
-set(fh, 'WindowStyle', 'docked');
+try
+    set(fh, 'WindowStyle', 'docked');
+catch err
+    if ~strcmp(err.identifier, 'MATLAB:Figure:IncorrectWindowStyle')
+        throw(err)
+    end
+end
 %fh = figure('Position',[scrsz(1:2) xscale*scrsz(3) yscale*scrsz(4)], 'Hidden', 'on');
 
 MyColors = [ ...

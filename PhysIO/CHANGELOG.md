@@ -4,9 +4,9 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2019b, v7.2.3*
+*Current version: PhysIO Toolbox Release R2019b, v7.2.4*
 
-Feburary 21st, 2020
+April 7st, 2020
 
 
 SCHEDULED Minor Release Notes (R2020a, v7.3.0) 
@@ -19,6 +19,13 @@ SCHEDULED Minor Release Notes (R2020a, v7.3.0)
 
 ### Fixed
 
+Bugfix Release Notes (v7.2.4)
+-----------------------------
+
+### Fixed
+- Stop docked figure default throwing error with `-nodisplay`
+    - allows generating saved figure without a display, e.g., on remote server
+    - bugfix provided by Sam Harrison, TNU
 
 Bugfix Release Notes (v7.2.3)
 -----------------------------
