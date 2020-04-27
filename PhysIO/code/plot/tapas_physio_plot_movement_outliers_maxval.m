@@ -1,5 +1,5 @@
 function fh = tapas_physio_plot_movement_outliers_maxval(...
-    rp, quality_measures, censoring, censoring_threshold)
+    rp, quality_measures, censoring, censoring_threshold, verbose)
 % Plots output figure of motion censoring based on maximum value for
 % outliers of each
 %
@@ -66,7 +66,14 @@ nOutlierRot = numel(iOutlierRot);
 
 stringTitle = 'Model: Motion Quality Control - MAXVAL thresholds per direction';
 
-fh = tapas_physio_get_default_fig_params();
+if nargin == 5
+    % If verbose is passed as argument (from updated tapas_physio_review):
+    fh = tapas_physio_get_default_fig_params(verbose);
+else
+    % Backwards compatibility:
+    fh = tapas_physio_get_default_fig_params();
+end
+
 set(fh, 'Name', stringTitle);
 
 subplot(2,1,1);
