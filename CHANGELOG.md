@@ -1,7 +1,7 @@
 # Changelog
 TAPAS toolbox 
 
-## [3.3.0] 2019-12-10
+## [3.3.0] 2020-05-23
 
 ### Added
 
