@@ -36,7 +36,7 @@
 // Relative error tolerance
 #define SEM_RTOL 0.0001
 // Maximum shape parameter gamma distribution
-#define SEM_GAMMA_MAX_SHAPE 30
+#define SEM_GAMMA_MAX_SHAPE 100
 
 #define NITER_NGAMMA 15
 #define INTSTEP 80
@@ -332,13 +332,15 @@ populate_parameters_seria(const double *theta, SERIA_PARAMETERS *stheta);
 double
 prosa_llh_abstract(double t, int a, PROSA_PARAMETERS params);
 
-// Dora model
+// Seria model
 double
 seria_llh_abstract(double t, int a, SERIA_PARAMETERS params);
 
 double
 seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params);
 
+double
+seria_late_llh_abstract(double t, int a, SERIA_PARAMETERS params);
 
 // Summary
 
@@ -632,6 +634,19 @@ double ngamma_gslint(double t0, double x, double a, double b, double c0,
 double ninvgamma_gslint(double x0, double x1, double a, double b, double c0,
     double c1);
 // Unnormalized nested incomplete gamma function.
+// x0       -- Left integration boundary
+// x1       -- right integration boundary
+// a        -- Parameters of the outer gamma function.
+// b        -- Parameters of the inter gamma function.
+// c0       -- Coefficient associated with a.
+// c1       -- Coefficient associated with b.
+//
+// Uses gls integrator.
+
+double ninvgamma_high_precision_gslint(double x0, double x1, double a, 
+        double b, double c0, double c1);
+// Uses a very expensive, yet more accurate method to compute the 
+// difficult integral.
 // x0       -- Left integration boundary
 // x1       -- right integration boundary
 // a        -- Parameters of the outer gamma function.

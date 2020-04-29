@@ -44,8 +44,8 @@ def gen_n_states():
             with open(fname, 'w') as fp:
                 fp.write(code)
                 pass
-            print fname
-            print code
+            print(fname)
+            print(code)
 
     return
 
@@ -83,8 +83,8 @@ def gen_multi():
             with open(fname, 'w') as fp:
                 fp.write(code)
                 pass
-            print fname
-            print code
+            print(fname)
+            print(code)
 
     return
 
@@ -102,8 +102,8 @@ def gen_reparametrize():
             with open(fname, 'w') as fp:
                 fp.write(code)
                 pass
-            print fname
-            print code
+            print(fname)
+            print(code)
 
     return
 

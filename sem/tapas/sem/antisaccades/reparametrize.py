@@ -11,7 +11,7 @@ Likelihoods of the SOONER and SERI models.
 '''
 
 import numpy as np
-import wrappers as c_wrappers
+from . import wrappers as c_wrappers
 
 
 def wrapper(theta, reparam):
