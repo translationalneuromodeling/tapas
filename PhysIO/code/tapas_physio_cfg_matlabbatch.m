@@ -39,7 +39,7 @@ vendor        = cfg_menu;
 vendor.tag    = 'vendor';
 vendor.name   = 'vendor';
 vendor.help   = {' Vendor Name depending on your MR Scanner/Physiological recording system'
-    '                       ''BIDS'' - Brain Imaging Data Structure (https://bids-specification.readthedocs.io/en/latest/04-modality-specific-files/04-physiological-and-other-continous-recordings.html)'
+    '                       ''BIDS'' - Brain Imaging Data Structure (https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continous-recordings.html)'
     '                       ''Biopac_Txt'' - exported txt files from Biopac system (4 columns, [Resp PPU GSR Trigger]'
     '                       ''Biopac_Mat'' - exported mat files from Biopac system'
     '                       ''BrainProducts'' - .eeg files from BrainProducts EEG system'
@@ -167,7 +167,8 @@ relative_start_acquisition.name    = 'relative_start_acquisition';
 relative_start_acquisition.help    = {
     ' Time (in seconds) when the 1st scan (or, if existing, dummy) started,'
     ' relative to the start of the logfile recording;'
-    ' e.g.  0 if simultaneous start'
+    '      [] (empty) to read from explicit acquisition timing info (s.b.)'
+    '       0 if simultaneous start'
     '       10, if 1st scan starts 10'
     '       seconds AFTER physiological'
     '       recording'
@@ -176,12 +177,12 @@ relative_start_acquisition.help    = {
     ' NOTE: '
     '       1. For Philips SCANPHYSLOG, this parameter is ignored, if'
     '       scan_timing.sync is set.'
-    '       2. If you specify an acquisition_info file, leave this parameter'
-    '       at 0 (e.g., for Siemens_Tics) since physiological recordings'
-    '       and acquisition timing are already synchronized by this'
-    '       information, and you would introduce another shift.'
-    '       3. For BIDS, relative_start_acquisition is read as -StartTime from'
-    '       accompanying json-file, if existing'
+    '       2. If you specify an acquisition_info file, leave this'
+    '       parameter empty or 0 (e.g., for Siemens_Tics, BIDS) since'
+    '       physiological recordings and acquisition timing are already'
+    '       synchronized by this information, and you would introduce an'
+    '       additional shift.'
+    
   };
 relative_start_acquisition.strtype = 'e';
 relative_start_acquisition.num     = [Inf Inf];
@@ -555,6 +556,27 @@ initial_cpulse_select_file.strtype = 's';
 initial_cpulse_select_file.num     = [0 Inf];
 initial_cpulse_select_file.val     = {'initial_cpulse_kRpeakfile.mat'};
 
+%--------------------------------------------------------------------------
+% max_heart_rate_bpm
+%--------------------------------------------------------------------------
+max_heart_rate_bpm         = cfg_entry;
+max_heart_rate_bpm.tag     = 'max_heart_rate_bpm';
+max_heart_rate_bpm.name    = 'Maximum heart rate (BPM)';
+max_heart_rate_bpm.help    = {
+    'Maximum expected heart rate in beats per minute. (default: 90)'
+    'This only needs to be a rough guess and should be changed for specific'
+    'subject populations.'
+    ' - If set too low, the auto_matched pulse detection might miss genuine'
+    '   cardiac pulses'
+    ' - If set too high, it might introduce artifactual pulse events, i.e.'
+    '   interpreting local maxima within a pulse as new pulse events'
+    ' You may need to increase this value if you have a subject with a very'
+    ' high heart rate, or decrease it if you have very pronounced local maxima'
+    ' in your wave form.'
+    };
+max_heart_rate_bpm.strtype = 'e';
+max_heart_rate_bpm.num     = [0 Inf];
+max_heart_rate_bpm.val     = {90};
 
 
 %--------------------------------------------------------------------------
@@ -578,7 +600,8 @@ initial_cpulse_select_method_auto_template.tag = 'auto_template';
 initial_cpulse_select_method_auto_template.name = 'auto_template';
 initial_cpulse_select_method_auto_template.val  = {
     min 
-    initial_cpulse_select_file    
+    initial_cpulse_select_file   
+    max_heart_rate_bpm
 };
 initial_cpulse_select_method_auto_template.help = { ...
     ' Auto generation of representative QRS-wave; detection via'
@@ -595,6 +618,7 @@ initial_cpulse_select_method_auto_matched.name = 'auto_matched';
 initial_cpulse_select_method_auto_matched.val  = {
     min 
     initial_cpulse_select_file    
+    max_heart_rate_bpm
 };
 initial_cpulse_select_method_auto_matched.help = { ...
     'Auto generation of template QRS wave, '
@@ -794,6 +818,10 @@ posthoc_cpulse_select.help = {
     };
 
 
+%--------------------------------------------------------------------------
+% filter for cardiac time series
+%--------------------------------------------------------------------------
+filter = tapas_physio_gui_filter();
 
 %--------------------------------------------------------------------------
 % cardiac
@@ -801,7 +829,7 @@ posthoc_cpulse_select.help = {
 cardiac      = cfg_branch;
 cardiac.tag  = 'cardiac';
 cardiac.name = 'cardiac';
-cardiac.val  = {modality initial_cpulse_select posthoc_cpulse_select};
+cardiac.val  = {modality filter initial_cpulse_select posthoc_cpulse_select};
 cardiac.help = {'...'};
 
 

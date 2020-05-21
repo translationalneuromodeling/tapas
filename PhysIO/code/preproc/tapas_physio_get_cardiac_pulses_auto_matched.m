@@ -90,14 +90,14 @@ else
     
     if verbose.level >=2
         verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-        titstr = 'Peak Detection from Automatically Generated Template';
-        set(gcf, 'Name', titstr);
+        stringTitle = 'Preproc: Peak Detection from Automatically Generated Template';
+        set(gcf, 'Name', stringTitle);
         plot(t, c, 'k');
         hold all;
         stem(cpulse,4*ones(size(cpulse)), 'r');
         legend('Raw time course',...
             'Detected maxima (cardiac pulses / max inhalations)');
-        title(titstr);
+        title(stringTitle);
     end
     
 end

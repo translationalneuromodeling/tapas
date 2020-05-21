@@ -54,7 +54,7 @@ hasFirstGuessPeaks = ~isempty(cpulse1stGuess);
 
 %% Second step, refined heart rate estimate
 
-stringTitle = 'Iterative Template Creation Single Cycle';
+stringTitle = 'Preproc: Iterative Template Creation Single Cycle';
      
 if hasFirstGuessPeaks
     
@@ -115,10 +115,10 @@ else
         fh = tapas_physio_get_default_fig_params();
         verbose.fig_handles(end+1,1) = fh;
         subplot(3,1,1);
-        plot(t, c, 'k'); title('Finding first peak of cycle, backwards')
+        plot(t, c, 'k'); title('Preproc: Finding first peak of cycle, backwards')
     end
     verbose = tapas_physio_log(['No peaks found in raw cardiac time series. Check raw ' ...
-        'physiological recordings figure whether there is any non-constant' ...
+        'physiological recordings figure whether there is any non-constant ' ...
         'cardiac data'], verbose, 2); % error!
 end
 

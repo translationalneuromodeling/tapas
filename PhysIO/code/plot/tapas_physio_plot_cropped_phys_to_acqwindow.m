@@ -21,7 +21,7 @@ function fh = tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar)
 % COPYING or <http://www.gnu.org/licenses/>.
 
 fh = tapas_physio_get_default_fig_params();
-set(fh,'Name','Cutout actual scans - all events and gradients');
+set(fh,'Name','Preproc: Cutout actual scans - all events and gradients');
 
 Ndummies    = sqpar.Ndummies;
 Nslices     = sqpar.Nslices;

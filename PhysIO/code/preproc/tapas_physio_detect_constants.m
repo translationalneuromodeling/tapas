@@ -108,7 +108,7 @@ isConstant(idxIsConstantFinal) = 1;
 if DEBUG
     fh = tapas_physio_get_default_fig_params();
     verbose.fig_handles(end+1) = fh;
-    stringTitle = 'Detection of suspicious constant values in physiological time series';
+    stringTitle = 'Preproc: Detection of suspicious constant values in physiological time series';
     set(fh, 'Name', stringTitle);
     plot(dy/max(dy));
     hold all;

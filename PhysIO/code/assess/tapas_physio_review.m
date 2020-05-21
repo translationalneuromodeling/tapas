@@ -131,17 +131,18 @@ if model.retroicor.include
         hasRespData);
 end
 
-
 if model.movement.include
-    censoring = model.movement.censoring;
+    rp = model.movement.rp;
     quality_measures = model.movement.quality_measures;
+    censoring = model.movement.censoring;
+    censoring_threshold = model.movement.censoring_threshold;
     switch lower(model.movement.censoring_method)
         case 'fd'
-            verbose.fig_handles(end+1) = tapas_physio_plot_movement_outliers_fd(rp, ...
-                quality_measures, censoring, movement.censoring_threshold);
+            verbose.fig_handles(end+1) = tapas_physio_plot_movement_outliers_fd( ...
+                rp, quality_measures, censoring, censoring_threshold);
         case 'maxval'
-            verbose.fig_handles(end+1) = tapas_physio_plot_movement_outliers_maxval(rp, ...
-                quality_measures, censoring, movement.censoring_threshold);
+            verbose.fig_handles(end+1) = tapas_physio_plot_movement_outliers_maxval( ...
+                rp, quality_measures, censoring, censoring_threshold);
     end
 end
 

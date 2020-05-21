@@ -1,0 +1,1038 @@
+
+% This LaTeX was auto-generated from MATLAB code.
+% To make changes, update the MATLAB code and republish this document.
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{natbib}
+\usepackage{lmodern}
+\usepackage{enumitem}
+
+\sloppy
+\definecolor{lgray}{gray}{0.65}   
+\definecolor{llgray}{gray}{0.85}
+\setlength{\parindent}{0pt}
+\setlength\arrayrulewidth{0.8pt}
+
+
+\title{User Manual Hierarchical Unsupervised Generative Embedding}
+\author{\\Yu Yao\\%
+\\Translational Neuromodeling Unit\\%
+Institute for Biomedical Engineering\\%
+University of Zurich \& ETH Zurich}
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+
+
+\section{Introduction}
+
+\begin{par}
+This document contains the user guide for the HUGE toolbox, which is part of TAPAS (Translational Algorithms for Psychiatry-Advancing Science), a collection of tools developed at the Translational Neuromodeling Unit, Zurich. This guide provides a detailed documentation of the user interface of the HUGE toolbox. To get started quickly, you may run the examples in the demo script \texttt{tapas\_huge\_demo.mlx}.
+\end{par} \vspace{1em}
+\begin{par}
+HUGE stands for Hierarchical Unsupervised Generative Embedding. It is a generative model for (task-based) fMRI data. It can be used to stratify heterogeneous cohorts into subgroups or learn the prior distribution of DCM parameters from data via empirical Bayes. For more details on the theory behind the HUGE model, please refer to \cite{yao2018}.
+\end{par} \vspace{1em}
+\begin{par}
+To use this toolbox, change your current working directory to the directory that contains the \texttt{@tapas\_Huge} folder or add this directory to your Matlab path.
+\end{par} \vspace{1em}
+
+
+\section{The \texttt{tapas\_Huge} Class}
+
+\begin{par}
+This toolbox implements the HUGE model as a Matlab class called \texttt{tapas\_Huge}. Data, options and results are stored in class properties, while the main functionalities of the toolbox are provided by class methods. Additional functionalities are provided by regular Matlab functions.
+\end{par} \vspace{1em}
+\begin{par}
+Instances of the \texttt{tapas\_Huge} class are created by calling the class constructor \texttt{tapas\_Huge()}. The constructor is a function that can be called without arguments, which creates an empty \texttt{tapas\_Huge} object:
+\end{par} 
+\begin{verbatim}obj = tapas_Huge()\end{verbatim}
+\begin{par}
+However, the constructor also accepts optional arguments in the form of name-value pairs. For example, one can add a short description using the \texttt{Tag} property
+\end{par} 
+\begin{verbatim}obj = tapas_Huge('Tag','my model')\end{verbatim}
+\begin{par}
+or import data using the \texttt{Dcm} property
+\end{par} 
+\begin{verbatim}obj = tapas_Huge('Dcm',dcms)\end{verbatim}
+\begin{par}
+For more examples, see the demo script \texttt{tapas\_huge\_demo.mlx}.
+\end{par} \vspace{1em}
+
+
+\section{Class Properties}
+
+\begin{par}
+Each instance of the \texttt{tapas\_Huge} class stores data, options and results in class properties, which are documented below. Properties can be accessed using dot notation:
+\end{par} 
+\begin{verbatim}value = obj.property\end{verbatim}
+\begin{par}
+where \texttt{obj} is a class instance and \texttt{property} is the name of the property.
+\end{par} \vspace{1em}
+\begin{par}
+Note that all properties, except for \texttt{K} (the number of clusters) and \texttt{tag} are read only, i.e. they cannot be changed by the user directly. Instead, their value is set automatically when importing data using the \texttt{import} method or inverting the model using the \texttt{estimate} method.
+\end{par} \vspace{1em}
+\begin{par}
+Below is a list of all properties of the \texttt{tapas\_Huge} class.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{K}}
+
+\begin{par}
+A scalar integer containing the number of clusters of the HUGE model.
+\end{par} \vspace{1em}
+
+
+\subsection*{ tag}
+
+\begin{par}
+A character array that can be used for storing a short description of the model.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{L}}
+
+\begin{par}
+A scalar integer containing the number of experimental inputs (i.e., the dimensionality of \texttt{obj.inputs.u}).
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{M}}
+
+\begin{par}
+A scalar integer containing the number of group-level confound variables (like age, sex, handedness, etc).
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{N}}
+
+\begin{par}
+A scalar integer containing the number of subjects. Permissions: read only.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{R}}
+
+\begin{par}
+A scalar integer containing the number of brain regions in the model.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{idx}}
+
+\begin{par}
+A Matlab struct storing parameter indices with the following fields:
+\end{par} \vspace{1em}
+\begin{itemize}[align=parleft, labelsep=10ex, leftmargin=15ex]
+\setlength{\itemsep}{-1ex}
+   \item [ \texttt{clustering} ] Vector of indices of DCM parameters used for clustering.
+   \item [ \texttt{homogenous} ] Vector of indices of homogenous parameters. I.e. DCM parameters which are estimated but not used for clustering.
+   \item [ \texttt{P\_c} ] Number of clustering parameters.
+   \item [ \texttt{P\_c} ] Number of homogeneous parameters.
+   \item [ \texttt{P\_f} ] Number of parameters in a fully connected DCM with the same number of regions as the current one.
+\end{itemize}
+
+
+\subsection*{ \texttt{dcm}}
+
+\begin{par}
+A Matlab struct in SPM's DCM format containing the DCM network structure.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{inputs}}
+
+\begin{par}
+A struct array containing the experimental stimuli for all subject, with two fields:
+\end{par} \vspace{1em}
+\begin{itemize}[align=parleft, labelsep=10ex, leftmargin=15ex]
+\setlength{\itemsep}{-1ex}
+   \item [ \texttt{u} ] Array containing experimental stimuli.
+   \item [ \texttt{dt} ] Sampling time interval.
+\end{itemize}
+
+
+\subsection*{ \texttt{data}}
+
+\begin{par}
+A struct array containing the fMRI data for all subjects, with fields:
+\end{par} \vspace{1em}
+\begin{itemize}[align=parleft, labelsep=10ex, leftmargin=15ex]
+\setlength{\itemsep}{-1ex}
+   \item [ \texttt{bold} ] Array containing the BOLD time series.
+   \item [ \texttt{te} ] The echo time (TE).
+   \item [ \texttt{tr} ] The repetition time TR.
+   \item [ \texttt{X0} ] Vector containing subject-level confounds.
+   \item [ \texttt{res} ] The residual forming matrix of X0.
+   \item [ \texttt{confounds} ] Vector containing the group-level confounds (e.g., sex, age, etc).
+   \item [ \texttt{spm} ] A struct containing the posterior from SPM (The Ep field in SPM's DCM format).
+\end{itemize}
+
+
+\subsection*{ \texttt{labels}}
+
+\begin{par}
+A struct containing names for regions and inputs.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{options}}
+
+\begin{par}
+A struct storing options for the HUGE model. Note: Set options using name-value pair arguments with the \texttt{taps\_huge} and \texttt{estimate} methods.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{prior}}
+
+\begin{par}
+A struct storing priors of the HUGE model. Note: Set priors using name-value pair arguments with the \texttt{taps\_huge} and \texttt{estimate} methods.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{posterior}}
+
+\begin{par}
+A struct storing the estimation results. The fields correspond to the parameters of the posterior distribution (see\cite{yao2018}).
+\end{par} \vspace{1em}
+\begin{itemize}[align=parleft, labelsep=10ex, leftmargin=15ex]
+\setlength{\itemsep}{-1ex}
+   \item [ \texttt{alpha} ] Vector of posterior cluster weights ($\alpha$).
+   \item [ \texttt{m} ] Array of posterior cluster means ($m$).
+   \item [ \texttt{tau} ] Vector containing the $\tau$ parameter of the inverse-Wishart posterior distribution.
+   \item [ \texttt{nu} ] Vector of posterior degree of freedom parameters ($\nu$).
+   \item [ \texttt{S} ] Array containing the scale matrices of the inverse-Wishart posterior distribution ($S$).
+   \item [ \texttt{q\_nk} ] Array of posterior assignment probabilities ($q_{nk}$).
+   \item [ \texttt{mu\_n} ] Array of posterior mean subject-level DCM parameters ($\mu_n$).
+   \item [ \texttt{Sigma\_n} ] Array of posterior covariances of subject-level DCM parameters ($\Sigma_n$).
+   \item [ \texttt{b} ] Vector containing the $b$ parameter of the posterior Gamma distribution over noise precision.
+   \item [ \texttt{a} ] Vector containing the $a$ parameter of the posterior Gamma distribution over noise precision.
+   \item [ \texttt{m\_beta} ] When using group-level confounds, array containing posterior mean of coefficients, ($m_{\beta}$). Otherwise, empty array.
+   \item [ \texttt{S\_beta} ] When using group-level confounds, array containing posterior covariance of coefficients ($S_{\beta}$). Otherwise, empty array.
+   \item [ \texttt{nfe} ] The negative free energy ($F$).
+   \item [ \texttt{mu\_r} ] When using group-level confounds, array containing posterior mean of residual DCM parameters, ($m_r$). Otherwise, empty array.
+   \item [ \texttt{Sigma\_r} ] When using group-level confounds, array containing posterior covariance of residual DCM parameters, ($S_r$). Otherwise, empty array.
+   \item [ \texttt{nrv} ] Normalized residual variance. An array containing the amount of non-explained variance (1 minus variance explained) per subject and per region.
+   \item [ \texttt{bPurity} ] When using synthetic data, balanced purity of estimation result.
+   \item [ \texttt{method} ] Character array indicating inversion method.
+   \item [ \texttt{version} ] Character array indicating toolbox version.
+   \item [ \texttt{seed} ] Random number generator seed.
+\end{itemize}
+
+
+\subsection*{ \texttt{trace}}
+
+\begin{par}
+A struct containing convergence diagnostics, with fields:
+\end{par} \vspace{1em}
+\begin{itemize}[align=parleft, labelsep=10ex, leftmargin=15ex]
+\setlength{\itemsep}{-1ex}
+   \item [ \texttt{nfe} ] Vector containing the history of the negative free energy during iterative VB inversion.
+   \item [ \texttt{nDcmUpdate} ] Vector containing the number of times the subject-level DCM parameter update was accepted.
+   \item [ \texttt{convergence} ] The number of iterations it took VB to converge.
+   \item [ \texttt{kmeans} ] Struct containing information about the K-means initialization step.
+   \item [ \texttt{epsilon} ] Cell array containing the residual (observed minus predicted BOLD time series) for each subject at convergence.
+\end{itemize}
+
+
+\subsection*{ \texttt{aux}}
+
+\begin{par}
+A struct used for storing auxiliary variables during model estimation.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{model}}
+
+\begin{par}
+When using the model to simulate data, this struct contains the model parameters used for generating the synthetic dataset. Fields correspond to HUGE model parameters:
+\end{par} \vspace{1em}
+\begin{itemize}[align=parleft, labelsep=10ex, leftmargin=15ex]
+\setlength{\itemsep}{-1ex}
+   \item [ \texttt{pi} ] Vector of cluster weights ($\pi$).
+   \item [ \texttt{d} ] Array of cluster labels in one-hot encoding ($d$).
+   \item [ \texttt{mu\_k} ] Array of cluster means ($\mu_k$).
+   \item [ \texttt{Sigma\_k} ] Array of cluster covariances ($\Sigma_k$).
+   \item [ \texttt{mu\_h} ] Vector containing mean of homogenous DCM parameters ($\mu_h$).
+   \item [ \texttt{Sigma\_h} ] Array containing covariance of homogenous DCM parameters ($\Sigma_h$).
+   \item [ \texttt{theta\_c} ] Array of clustering DCM parameters ($\theta_c$).
+   \item [ \texttt{theta\_h} ] Array of homogenous DCM parameters ($\theta_h$).
+   \item [ \texttt{lambda} ] Array of measurement noise precisions ($\lambda$).
+   \item [ \texttt{x\_n} ] Array of group-level confounds (e.g. age, sex, etc. $x_n$).
+   \item [ \texttt{beta} ] Array of confound coefficients ($\beta$).
+   \item [ \texttt{options} ] Struct containing options for simulation.
+   \item [ \texttt{seed} ] Random number generator seed.
+\end{itemize}
+
+
+\subsection*{ \texttt{constants}}
+
+\begin{par}
+Struct storing constants used by the model.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{version}}
+
+\begin{par}
+Character array indicating toolbox version.
+\end{par} \vspace{1em}
+
+
+\section{Class Methods}
+
+\begin{par}
+The main functionalities of the HUGE toolbox are implemented as methods of the \texttt{tapas\_Huge} class. These methods are documented below. There are two equivalent ways to call class methods:
+\end{par} 
+\begin{verbatim}obj = obj.method( ... )\end{verbatim}
+\begin{par}
+or
+\end{par} 
+\begin{verbatim}obj = method( obj, ... )\end{verbatim}
+\begin{par}
+where \texttt{obj} is an instance of the \texttt{tapas\_Huge} class and \texttt{method} is the class method you want to call.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{tapas\_Huge.estimate}}
+
+ \begin{verbatim}  Estimate parameters of the HUGE model.
+  
+  INPUTS:
+    obj - A tapas_Huge object containing fMRI time series.
+  
+  OPTIONAL INPUTS:
+    This function accepts optional name-value pair arguments. For a list of
+    valid name-value pairs, see the user manual or type 'help
+    tapas_huge_property_names'.
+  
+  OUTPUTS:
+    obj - A tapas_Huge object containing the estimation result in the
+          'posterior' property. 
+ 
+  EXAMPLES:
+    [obj] = ESTIMATE(obj)    Invert the HUGE model stored in obj. 
+  
+    [obj] = ESTIMATE(obj, 'K', 2)    Set the number of clusters to 2 and
+        invert the HUGE model stored in obj.
+  
+    [obj] = ESTIMATE(obj, 'Verbose', true)    Print progress of estimation
+        to command line. 
+  
+    [obj] = ESTIMATE(obj, 'Dcm', dcms, 'OmitFromClustering', 1)    Import
+        data stored in 'dcms' and omit self-connections from clustering.
+  
+  See also TAPAS_HUGE_DEMO
+  
+
+\end{verbatim} \color{black}
+    \begin{par}
+Note that the HUGE toolbox uses a parameterization such that the DCM networks are self-inhibiting by default. This is achieved by subtracting 0.5 from the self-connections. Hence, specifying a prior mean of zero for all DCM connections implies that the effective self-connectivity is -0.5. This parametrization has been chosen for the convenience of the user, since it eliminates the need to identify the position of the self-connections in the parameter vector.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{tapas\_Huge.simulate}}
+
+ \begin{verbatim}  Generate synthetic task-based fMRI time series data, using HUGE as a
+  generative model. 
+  
+  INPUTS:
+    obj      - A tapas_Huge object.
+    clusters - A cell array containing DCM structs in SPM's DCM format,
+               indicating the DCM network structure and cluster mean
+               parameters.
+    sizes    - A vector containing the number of subjects for each cluster.
+  
+  OPTIONAL INPUTS:
+    This function accepts optional name-value pair arguments. For a list of
+    valid name-value pairs, see examples below.
+  
+  OUTPUTS:
+    obj - A tapas_Huge object containing the simulated fMRI time series in
+          its 'data' property and the ground truth parameters in its
+          'model' property.
+ 
+  EXAMPLES:
+    [obj] = SIMULATE(obj,clusters,sizes)    Simulate fMRI time series with
+        cluster mean parameters given in 'clusters' and number of subjects
+        given in 'sizes'.
+  
+    [obj] = SIMULATE(obj,clusters,sizes,'Snr',1)    Set signal-to-noise
+        ratio of fMRI data to 1.
+  
+    [obj] = SIMULATE(obj,clusters,sizes,'NoiseFloor',0.1)    Set minimum
+        noise variance to 0.1.
+  
+    [obj] = SIMULATE(obj,clusters,sizes,'confounds',confounds)    Introduce
+        group-level confounds (like sex or age).
+  
+    [obj] = SIMULATE(obj,clusters,sizes,'beta',beta)    Set coefficients
+        for group-level confounds.
+  
+    [obj] = SIMULATE(obj,clusters,sizes,'variant',2)    Set confound
+        variant to 2 (i.e., clusters do not share confound coefficients).
+  
+    [obj] = SIMULATE(obj,clusters,sizes,'Inputs',U)    Introduce subject-
+        specific experimental stimuli. 'U' must be an array or cell array
+        of structs with fields 'dt and 'u'.
+  
+    [obj] = SIMULATE(obj,clusters,sizes,'OmitFromClustering',omit)
+        Designate DCM parameters to be excluded from clustering model.
+        Excluded parameters still exist in the DCM network structure, but
+        are drawn from the same distribution for all subjects. 'omit'
+        should be a struct with fields a, b, c, and/or d which are bool
+        arrays with sizes matching the corresponding fields of the DCMs. If
+        omit is an array, it is interpreted as the field a. If omit is 1,
+        it is expanded to an identity matrix of suitable size.
+  
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{ \texttt{tapas\_Huge.plot}}
+
+ \begin{verbatim}  Plot cluster and subject-level estimation result from HUGE model.
+  
+  INPUTS:
+    obj - A tapas_Huge object containing estimation results.
+  
+  OPTIONAL INPUTS:
+    subjects - A vector containing indices of subjects for which to plot
+               detailed results.
+  
+  OUTPUTS:
+    fHdl - Handle of first figure.
+  
+  See also tapas_Huge.ESTIMATE
+  
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{ \texttt{tapas\_Huge.save}}
+
+ \begin{verbatim}  Save properties of HUGE object to mat file.
+  
+  INPUTS:
+    filename - File name.
+    obj      - A tapas_Huge object.
+  OPTIONAL INPUTS:
+    Names of property to be saved. See examples below.
+ 
+  EXAMPLES:
+    SAVE(filename,obj)    Save properties of 'obj' as individual variables
+        file specified in 'filename'.
+  
+    SAVE(filename,obj,'options','posterior','prior')    Only save the
+        'options', 'posterior' and 'prior' properties of 'obj'.
+  
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{ \texttt{tapas\_Huge.import}}
+
+ \begin{verbatim}  Import fMRI time series data into HUGE object.
+ 
+    WARNING: Importing data into a HUGE object will delete any data and
+    results which are already stored in that object.
+    
+  INPUTS:
+    obj  - A tapas_Huge object.
+    dcms - A cell array containing DCM structs in SPM's DCM format.
+  
+  OPTIONAL INPUTS:
+    confounds - Group-level confounds (e.g., age, sex, etc). 'confounds'
+                must be empty or an array with as many rows as there are
+                elements in 'dcm'.
+    omit      - specifies DCM parameters which should be omitted from
+                clustering. Parameters omitted from clustering will still
+                be estimated, but under a static Gaussian prior. 'omit'
+                should be a struct with fields a, b, c, and/or d which are
+                bool arrays with sizes matching the corresponding fields of
+                the DCMs. If omit is an array, it is interpreted as the
+                field a. If omit is 1, it is expanded to an identity matrix
+                of suitable size.
+    append    - bool, if true keep current fMRI time series and append new
+                data in 'dcms'. Note: estimation results will still be
+                deleted.
+  
+  OUTPUTS:
+    obj - A tapas_Huge object containing the imported data.
+  
+  EXAMPLES:
+    [obj] = IMPORT(obj,dcms)    Import the fMRI time series and DCM
+        network structure stored in dcms into obj.
+  
+    [obj] = IMPORT(obj,dcms,confounds)    Import group-level confounds
+        (like age or sex) in addition to fMRI data.
+  
+    [obj] = IMPORT(obj,dcms,[],1)    Import fMRI data and network
+        structure. Exclude self-connections from clustering. 
+ 
+  See also tapas_Huge.REMOVE, tapas_Huge.EXPORT
+  
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{ \texttt{tapas\_Huge.export}}
+
+ \begin{verbatim}  Export results and data from HUGE object to SPM's DCM format.
+  
+  INPUTS:
+    obj - A tapas_Huge object containing data.
+ 
+  OUTPUTS:
+    dcms      - A cell array containing DCM structs in SPM's DCM format.
+    confounds - An array containing group-level confounds (like age or
+                sex) if available. 'confounds' is an array with one row
+                per subject.
+  
+  EXAMPLES:
+    [dcms] = EXPORT(obj)    Export fMRI time series and estimation results
+        stored in obj. 
+ 
+    [dcms,confounds] = EXPORT(obj)    Also export group-level confounds
+        (like age or sex).
+  
+  See also tapas_Huge.IMPORT
+  
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{ \texttt{tapas\_Huge.remove}}
+
+ \begin{verbatim}  Remove data (fMRI time series, confounds, DCM network structure, ... )
+  and estimation results from HUGE object.
+ 
+  INPUTS:
+    obj - A tapas_Huge object.
+  
+  OPTIONAL INPUTS:
+    idx - Only remove data of the subjects indicated in 'idx'. 'idx' must
+          be a vector containing numeric or logical array indices.
+  
+  OUTPUTS:
+    obj - A tapas_Huge object with data and results removed.
+ 
+  EXAMPLES:
+    [obj] = REMOVE(obj)    Remove results and data of all subjects.
+  
+    [obj] = REMOVE(obj,1:5)    Remove results and data for first 5
+                               subjects. 
+  
+    [obj] = REMOVE(obj,'all') is the same as [obj] = REMOVE(obj)
+  
+    [obj] = REMOVE(obj,0) is the same as [obj] = REMOVE(obj)
+  
+  See also tapas_Huge.IMPORT
+  
+
+\end{verbatim} \color{black}
+    
+
+\section{Name-Value Pair Arguments}
+
+\begin{par}
+Both the class constructor \texttt{tapas\_Huge} and the method \texttt{estimate} accept optional arguments in the form of name-value pairs. Options set using name-value pair arguments are persistent across the lifetime of the object. Below is a list of valid name-value pairs that can be used with these two functions.
+\end{par} \vspace{1em}
+\begin{par}
+
+{\renewcommand{\arraystretch}{1.5}
+\renewcommand{\tabcolsep}{0.2cm}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+Confounds+ \\
+\hline
+\rowcolor{llgray} Value: & double array\\
+\hline
+ \rowcolor{llgray} Description: & Specify confounds for group-level
+ analysis (e.g. age or sex) as double array with one row per subject and
+ one column per confound. Note: This property can only be used in
+ combination with the \verb+Dcm+ property.\\
+\rowcolor{llgray} & WARNING: This feature is experimental and has not
+been extensively tested.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+ConfoundsVariant+ \\
+\hline
+\rowcolor{llgray} Value: & \verb+'none'+ \ensuremath{|} \verb+'global'+ \ensuremath{|} \verb+'cluster'+ (default: \verb+'global'+ if              confounds specified, \verb+'none'+ otherwise)\\
+\hline
+ \rowcolor{llgray} Description: & Determines how confounds enter model. \verb+'none'+: Confounds are not used. \verb+'global'+: Confounds enter global regression              (variant 1). \verb+'cluster'+: Confounds enter cluster-specific              regression (variant 2).
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+Dcm+ \\
+\hline
+\rowcolor{llgray} Value: & cell array of DCM structs in SPM format\\
+\hline
+ \rowcolor{llgray} Description: & Specify DCM structure and BOLD time series for all subjects              as cell array with one DCM struct in SPM format per subject.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+K+ \\
+\hline
+\rowcolor{llgray} Value: & positive integer (default: 1)\\
+\hline
+ \rowcolor{llgray} Description: & Number of clusters.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+Method+ \\
+\hline
+\rowcolor{llgray} Value: & \verb+'VB'+\\
+\hline
+ \rowcolor{llgray} Description: & Name of inversion method specified as character array. VB:              variational Bayes
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+NumberOfIterations+ \\
+\hline
+\rowcolor{llgray} Value: & positive integer (default: 999)\\
+\hline
+ \rowcolor{llgray} Description: & Maximum number of iterations of VB scheme.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+OmitFromClustering+ \\
+\hline
+\rowcolor{llgray} Value: & array of logical \ensuremath{|} struct with fields \verb+a+, \verb+b+, \verb+c+ and \verb+d+ (default: empty struct)\\
+\hline
+ \rowcolor{llgray} Description: & Select DCM parameters to exclude from clustering. Parameters excluded from clustering will still be estimated, but under a static Gaussian prior. If input is array, it will be treated as the \verb+a+ field of a struct. Missing fields will be treated the same as arrays of \verb+false+. Note: This property can only be used in combination with the \verb+Dcm+ property.
+\\
+\hline
+ \rowcolor{llgray} Example: & Exclude the self-connections from clustering: \\
+ \rowcolor{llgray} & \verb+obj = obj.estimate('OmitFromClustering', 1);+ \\
+ \rowcolor{llgray} & Exclude input strength from clustering: \\
+ \rowcolor{llgray} & \verb+omit = struct('c',obj.dcm.c));+ \\
+ \rowcolor{llgray} & \verb+obj = obj.estimate('OmitFromClustering', omit);+ \\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+PriorClusterMean+ \\
+\hline
+\rowcolor{llgray} Value: & \verb+'default'+ \ensuremath{|} row vector of double\\
+\hline
+ \rowcolor{llgray} Description: & Prior cluster mean. Scalar input will be expanded into              vector. Default: \verb+[0, ... ,0]\verb+.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+PriorClusterVariance+ \\
+\hline
+\rowcolor{llgray} Value: & \verb+'default'+ \ensuremath{|} symmetric, positive definite matrix of double\\
+\hline
+ \rowcolor{llgray} Description: & Prior mean of cluster covariances. Must be a symmetric,              positive definite matrix. Scalar input will be expanded into              diagonal matrix. Default: \verb+diag([0.01, ..., 0.01])+.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+PriorDegree+ \\
+\hline
+\rowcolor{llgray} Value: & \verb+'default'+ \ensuremath{|} positive double\\
+\hline
+ \rowcolor{llgray} Description: & $\nu_0$ determines the prior precision of the cluster covariance. For VB, this is the degrees of freedom of the inverse-Wishart. Default: \verb+100+.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+PriorVarianceRatio+ \\
+\hline
+\rowcolor{llgray} Value: & \verb+'default'+ \ensuremath{|} positive double\\
+\hline
+ \rowcolor{llgray} Description: & Ratio $\tau_0$ between prior mean cluster covariance and prior covariance over cluster mean. Prior covariance over cluster              mean equals prior cluster covariance divided $\tau_0$. Default: \verb+0.1+.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+Randomize+ \\
+\hline
+\rowcolor{llgray} Value: & bool (default: \verb+false+)\\
+\hline
+ \rowcolor{llgray} Description: & If \verb+true+, starting values for subject level DCM parameter estimates are randomized.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+SaveTo+ \\
+\hline
+\rowcolor{llgray} Value: & character array\\
+\hline
+ \rowcolor{llgray} Description: & Location for saving results consisting of path name and optional file name. Path name must end on file separator and point to an existing directory. If file name is not specified, it is set to 'huge' followed by date and time.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+Seed+ \\
+\hline
+\rowcolor{llgray} Value: & double \ensuremath{|} cell array of double and rng name \ensuremath{|} random number generator seed obtained with \verb+rng+ command\\
+\hline
+ \rowcolor{llgray} Description: & Seed for random number generator.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+StartingValueDcm+ \\
+\hline
+\rowcolor{llgray} Value: & \verb+'default'+ \ensuremath{|} \verb+'spm'+ \ensuremath{|} double array (default: \verb+'default'+)\\
+\hline
+ \rowcolor{llgray} Description: & Starting values for subject-level DCM parameter estimates.              \verb+'default'+ uses prior cluster mean for all subjects. 'spm' uses              values supplied in the 'Ep' field of the SPM DCM structs.              Use a double array with number of rows equal to number of              subjects to specify custom starting values.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+StartingValueGmm+ \\
+\hline
+\rowcolor{llgray} Value: & \verb+'default'+ \ensuremath{|} double array (default: \verb+'default'+)\\
+\hline
+ \rowcolor{llgray} Description: & Starting values for cluster-level DCM parameter estimates. \verb+'default'+ uses prior cluster mean for all clusters. Use a double array with number of rows equal to number of clusters to specify custom starting values.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+Tag+ \\
+\hline
+\rowcolor{llgray} Value: & character array\\
+\hline
+ \rowcolor{llgray} Description: & Model description
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+Verbose+ \\
+\hline
+\rowcolor{llgray} Value: & bool (default: \verb+false+)\\
+\hline
+ \rowcolor{llgray} Description: & Activate/deactivate command line output.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+}
+
+\end{par} \vspace{1em}
+
+
+\section{Other Functions}
+
+\begin{par}
+The HUGE toolbox provides additional functionalities in the form of regular Matlab functions, which are documented below. These function are used internally by the \texttt{tapas\_Huge} class. However, some of them may be useful for the user.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{tapas\_huge\_boxcar}}
+
+ \begin{verbatim}  Generate a boxcar function for use as experimental stimulus. All
+  timing-related arguments must be specified in seconds. 
+  
+  INPUTS:
+    dt      - Numeric scalar indicating sampling time interval.
+    nBoxes  - Vector indicating number of blocks.
+    period  - Vector containing time interval between block onsets.
+    onRatio - Vector containing ratio between block length and 'period'.
+              Must be between 0 and 1.
+  
+  OPTIONAL INPUTS:
+    padding - Length of padding at the beginning and end.
+  
+  OUTPUTS:
+    u - A cell array containing the boxcar functions.
+  
+  EXAMPLES:
+    u = TAPAS_HUGE_BOXCAR(.01, 10, 3, 2/3, [4 0])    Generate boxcar
+        function with 10 blocks, each 2 seconds long with 1 second inter
+        block interval and onset of first block at 4 seconds.
+  
+  See also tapas_Huge.SIMULATE
+  
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{ \texttt{tapas\_huge\_bpurity}}
+
+ \begin{verbatim}  Calculate balanced purity (see Brodersen2014 Eq. 13 and 14) for a set of
+  ground truth labels and a set of estimated labels
+  
+  INPUTS:
+    labels    - Vector of ground truth class labels.
+    estimates - Clustering result as array of assignment probabilities or
+                vector of cluster indices.
+  
+  OUTPUTS:
+    balancedPurity - Balanced purity score according to Brodersen (2014)
+  
+  EXAMPLES:
+    bp = TAPAS_HUGE_BPURITY(labels,estimates)
+  
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{ \texttt{tapas\_huge\_bold}}
+
+ \begin{verbatim}  Integrates the DCM forward equations to generate the predicted fMRI bold
+  time series.
+  
+  INPUTS:
+    A, B, C, D - DCM connectivity matrices.
+    tau        - Venous transit time.
+    kappa      - Decay of vasodilatory signal.
+    epsilon    - Ratio of intra- and extravascular signal.
+    R          - Number of regions.
+    u          - Experimental stimuli.
+    L          - Number of experimental stimuli.
+    E_0        - Resting oxygen extraction fraction.
+    r_0        - Slope of intravascular relaxation rate.
+    V_0        - Resting venous volume.
+    vartheta_0 - Frequency offset at the outer surface of magnetized
+                 vessels (Hz). 
+    alpha      - Grubb's exponent.
+    gamma      - rate constant of feedback regulation.
+    TR         - Repetition time.
+    TE         - Echo time.
+    dt         - Sampling interval of inputs.
+  
+  OUTPUTS:
+    response - matrix of predicted response for each region
+                   (column-wise) 
+    x        - time series of neuronal states
+    s        - time series of vasodilatory signal 
+    f1       - time series of flow
+    v1       - time series of blood volume
+    q1       - time series of deoxyhemoglobin content.
+  
+
+\end{verbatim} \color{black}
+    \begin{par}
+For more information on the fMRI BOLD model, please refer to \cite{stephan2007}.
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{tapas\_huge\_compile}}
+
+\begin{par}
+This function is used internally to compile the mex function the HUGE toolbox needs. This happens automatically the first time you use the HUGE toolbox. In general, there is no need to call this function manually. However, you need to make sure that a C compiler is installed on your system. More details on this topic, including links to freely available compilers, can be found at: \begin{verbatim}https://www.mathworks.com/support/requirements/supported-compilers.html\end{verbatim}
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{tapas\_huge\_logdet}}
+
+\begin{par}
+This function is intended for internal use only. Do not call directly
+\end{par} 
+ \begin{verbatim}  Numerical stable calculation of log-determinant for positive-definite
+  matrix.
+ 
+  INPUT:
+    A - Positive definite matrix.
+ 
+  OUTPUT:
+    ld - log(det(A))
+ 
+  EXAMPLE: 
+    ld = TAPAS_HUGE_LOGDET(eye(3))    Calculate log-determinant of 3x3
+        identity matrix.
+  
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{ \texttt{tapas\_huge\_parse\_inputs}}
+
+\begin{par}
+This function is intended for internal use only. Do not call directly
+\end{par} 
+ \begin{verbatim}  Parse name-value pair type arguments into a struct.
+  
+  INPUTS:
+    opts - Struct containing all valid names as field names and 
+           corresponding default values as field values.
+  
+  OPTIONAL INPUTS:
+    Name-value pair arguments.
+  
+  OUTPUTS:
+    opts - Struct containing name-value pair input arguments as fields.
+  
+  EXAMPLE:
+    opts = TAPAS_HUGE_PARSE_INPUTS(struct('a',0,'b',1),'a',10)    Specify
+        'a' and 'b' as valid property names and receive non-default value
+        for 'a'. 
+  
+
+\end{verbatim} \color{black}
+    \begin{par}
+The following two functions provide backward compatibility to the interface of the previous version of the HUGE toolbox (version 201903).
+\end{par} \vspace{1em}
+
+
+\subsection*{ \texttt{tapas\_huge\_invert}}
+
+ \begin{verbatim}    WARNING: This function is deprecated and will be removed in a future
+    version of this toolbox. Please use the new object-oriented interface
+    provided by the tapas_Huge class.
+    
+  Invert hierarchical unsupervised generative embedding (HUGE) model.
+ 
+  INPUT:
+    DCM       - cell array of DCM in SPM format
+    K         - number of clusters (set K to one for empirical Bayes)
+ 
+  OPTIONAL INPUT:
+    priors    - model priors stored in a struct containing the
+                following fields:
+        alpha:         parameter of Dirichlet prior (alpha_0 in Fig.1 of
+                       REF [1])
+        clustersMean:  prior mean of clusters (m_0 in Fig.1 of REF [1])
+        clustersTau:   tau_0 in Fig.1 of REF [1]
+        clustersDeg:   degrees of freedom of inverse-Wishart prior (nu_0 in
+                       Fig.1 of REF [1]) 
+        clustersSigma: scale matrix of inverse-Wishart prior (S_0 in Fig.1
+                       of REF [1]) 
+        hemMean:       prior mean of hemodynamic parameters (mu_h in Fig.1
+                       of REF [1]) 
+        hemSigma:      prior covariance of hemodynamic parameters (Sigma_h
+                       in Fig.1 of REF [1]) 
+        noiseInvScale: prior inverse scale of observation noise (b_0 in
+                       Fig.1 of REF [1]) 
+        noiseShape:    prior shape parameter of observation noise (a_0 in
+                       Fig.1 of REF [1])
+    verbose   - activates command line output (prints free energy
+                difference, default: false)
+    randomize - randomize starting values (default: false). WARNING:
+                randomizing starting values can cause divergence of DCM.
+    seed      - seed for random number generator
+  
+  OUTPUT:
+    DcmResults - struct used for storing the results from VB. Posterior
+                 parameters are stored in DcmResults.posterior, which is a
+                 struct containing the following fields:
+        alpha:               parameter of posterior over cluster weights
+                             (alpha_k in Eq.(15) of REF [1]) 
+        softAssign:          posterior assignment probability of subjects 
+                             to clusters (q_nk in Eq.(18) in REF [1])
+        clustersMean:        posterior mean of clusters (m_k in Eq.(16) of
+                             REF [1]) 
+        clustersTau:         tau_k in Eq.(16) of REF [1]
+        clustersDeg:         posterior degrees of freedom (nu_k in Eq.(16) 
+                             of REF [1])
+        clustersSigma:       posterior scale matrix (S_k in Eq.(16) of
+                             REF [1]) 
+        logDetClustersSigma: log-determinant of S_k
+        dcmMean:             posterior mean of DCM parameters (mu_n in
+                             Eq.(19) of REF [1])  
+        dcmSigma:            posterior covariance of hemodynamic
+                             parameters (Sigma_n in Eq.(19) of REF [1]) 
+        logDetPostDcmSigma:  log-determinant of Sigma_n
+        noiseInvScale:       posterior inverse scale of observation noise
+                             (b_n,r in Eq.(21) of REF [1]) 
+        noiseShape:          posterior shape parameter of observation noise
+                             (a_n,r in Eq.(21) of REF [1])
+        meanNoisePrecision:  posterior mean of precision of observation
+                             noise (lambda_n,r in Eq.(23) of REF [1])
+        modifiedSumSqrErr:   b'_n,r in Eq.(22) of REF [1]
+ 
+  See also tapas_Huge, tapas_Huge.estimate, tapas_huge_demo
+  
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{ \texttt{tapas\_huge\_build\_prior}}
+
+ \begin{verbatim}    WARNING: This function is deprecated and will be removed in a future
+    version of this toolbox. Please use the new object-oriented interface
+    provided by the tapas_Huge class.
+  
+  Generate values for prior parameters for HUGE. Prior mean of cluster
+  centers and prior mean and covariance of hemodynamic parameters follow
+  SPM convention (SPM8 r6313).
+ 
+  INPUT:
+        DcmInfo - cell array of DCM in SPM format
+ 
+  OUTPUT:
+        priors  - struct containing priors
+        DcmInfo - struct containing DCM model specification and BOLD time
+                  series in DcmInfo format
+ 
+  See also tapas_Huge, tapas_Huge.estimate, tapas_huge_demo
+  
+
+\end{verbatim} \color{black}
+    
+
+\section{Licence and Support}
+
+\begin{par}
+This toolbox is part of TAPAS, which is released under the terms of the GNU General Public Licence (GPL), version 3. For further details, see: \begin{verbatim}https://www.gnu.org/licenses/\end{verbatim}
+\end{par} \vspace{1em}
+\begin{par}
+The software contained in this toolbox is provided "as is", without warranty of any kind, express or implied, including, but not limited to the warranties of merchantability, fitness for a particular purpose and non-infringement.
+\end{par} \vspace{1em}
+\begin{par}
+This software is intended for research only. Do not use for clinical purpose. Please note that this toolbox is under active development. Considerable changes may occur in future releases.
+\end{par} \vspace{1em}
+\begin{par}
+Support for this toolbox is provided via the GitHub page of TAPAS. For questions and bug reports, please visit: \begin{verbatim}https://github.com/translationalneuromodeling/tapas/issues\end{verbatim}
+\end{par} \vspace{1em}
+\begin{par}
+
+\bibliographystyle{plainnat}
+\bibliography{tapas_huge_manual}
+
+\end{par} \vspace{1em}
+
+
+
+\end{document}
+    

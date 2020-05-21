@@ -165,9 +165,9 @@ for s = subjectIndices
                 cd(pathTmp);
             end
             
-            titstr = [dirSubject, ' - SPM.xX.X'];
-            title(regexprep(titstr,'_','\\_'));
-            set(gcf,'Name', titstr);
+            stringTitle = ['Assess: ' dirSubject, ' - SPM.xX.X'];
+            title(regexprep(stringTitle,'_','\\_'));
+            set(gcf,'Name', stringTitle);
             fprintf('good SPM: %s\n', dirSubject);
         else % no file, report that
             fprintf('no SPM.mat: %s\n', dirSubject);

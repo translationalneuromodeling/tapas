@@ -23,6 +23,12 @@ function isPhysioCorrectlyInitialized = tapas_physio_init()
 % COPYING or <http://www.gnu.org/licenses/>.
 %
 
+% add path for utils, if physio not in path
+if ~exist('tapas_physio_logo')
+    pathPhysio = fileparts(mfilename('fullpath'));
+    addpath(fullfile(pathPhysio, 'utils')); % needed for further path checks
+end
+
 tapas_physio_logo(); % print logo
 
 disp('Checking Matlab PhysIO paths, SPM paths and Batch Editor integration now...');
@@ -32,8 +38,8 @@ fprintf('Checking Matlab PhysIO paths now...');
 [isPhysioOnPath, pathPhysIO] = tapas_physio_check_path();
 
 if ~isPhysioOnPath
-    addpath(pathPhysIO);
-    fprintf('added PhysIO path: %s\n', pathPhysIO);
+    addpath(genpath(pathPhysIO));
+    fprintf('added PhysIO path recursively: %s\n', pathPhysIO);
 else
     fprintf('OK.\n');
 end

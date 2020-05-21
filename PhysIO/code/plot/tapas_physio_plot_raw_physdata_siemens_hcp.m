@@ -25,7 +25,7 @@ function fh = tapas_physio_plot_raw_physdata_siemens_hcp(t, c, r, acq_codes, ...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 if nargin < 5
-    stringTitle = 'Raw Human Connectome Project physlog data (preprocessed Siemens Data)';
+    stringTitle = 'Read-In: Raw Human Connectome Project physlog data (preprocessed Siemens Data)';
 end
 
 volpulse_on = find(acq_codes == 8);

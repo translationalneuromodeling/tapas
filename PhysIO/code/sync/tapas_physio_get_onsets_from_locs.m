@@ -88,11 +88,11 @@ if length(SLICELOCS{Nallvols})~=Nslices && ~hasWarned
 end
 
 if verbose.level >= 3
-    titstr =  'Slice bundles belonging to 1 volume';
+    stringTitle =  'Sync: Slice bundles belonging to 1 volume';
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf, 'Name', titstr);
+    set(gcf, 'Name', stringTitle);
     for v=1:Nallvols-1, stem(t(SLICELOCS{v}),ones(size(SLICELOCS{v})));hold all;end
-    title(titstr);
+    title(stringTitle);
     xlabel('t (seconds since SCANPHYSLOG-start)');
 end
 

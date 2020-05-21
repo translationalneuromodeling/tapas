@@ -75,9 +75,12 @@ npulse = (pulset-minr)/(maxr-minr);
 % Calculate derivative of normalised pulse wrt time
 % over 1 sec of data as described in Glover et al.
 ksize = round(0.5 * (1/rsampint));
-kernel = [ones(1, ksize)*-1 0 ones(1, ksize)];
-dpulse = -conv(pulset, kernel);
-dpulse = dpulse(ksize+1:end-ksize);
+kernel = ksize:-1:-ksize; kernel = kernel ./ sum(kernel.^2);
+dpulse = tapas_physio_conv(pulset, kernel, 'symmetric');
+% This uses a quadratic Savitzky-Golay filter, for which the coefficients
+% have a simple linear form. See e.g.
+% https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter
+% `scipy.signal.savgol_coeffs(5, polyorder=2, deriv=1, use='conv')`
 
 % Tolerance to the derivative
 dpulse(abs(dpulse) < 1e-4) = 0;
@@ -116,7 +119,7 @@ feqht = cumsumh/sumh*pi;
 
 fh = tapas_physio_get_default_fig_params();
 set(fh, 'Name', ...
-   'get_respiratory_phase: histogram for respiratory phase estimation');
+   'Preproc: get_respiratory_phase: histogram for respiratory phase estimation');
 
 hs(1) = subplot(2,2,1);
 plot(t,pulset); 

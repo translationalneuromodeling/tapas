@@ -38,5 +38,10 @@ function [pks,locs] = tapas_physio_findpeaks(X,varargin)
 if exist('findpeaks', 'file')
     [pks,locs] = findpeaks(X,varargin{:}); 
 else
-    [pks,locs] = tapas_physio_findpeaks_compatible(X,varargin{:});
+    % previously:
+    % [pks,locs] = tapas_physio_findpeaks_compatible(X,varargin{:});
+    tapas_physio_log(sprintf(...
+        ['tapas_physio_findpeaks_compatible is no longer\n' ...
+        'distributed with this toolbox. Instead, we rely on the "findpeaks"\n' ... 
+        'function included in Matlab''s Signal Processing Toolbox.']), [], 2)
 end

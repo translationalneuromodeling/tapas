@@ -2,11 +2,17 @@ function [c, r, t, cpulse, acq_codes, verbose] = ...
     tapas_physio_read_physlogfiles_bids(log_files, cardiac_modality, ...
     verbose, varargin)
 % Reads in 3-column tsv-file from BIDS Data (cardiac, respiratory, trigger),
-% assuming log_files-meta information to be in .json-file
+% assuming log_files-meta information to be in an accompanying .json-file
 % Note: if a JSON file of the same file name exists (but .json instead of .tsv)
 % column order of physiological recordings will be read from there as well
 % as values for sampling_interval and relative_start_acquisition, if they were
 % empty before
+% 
+% Details of the Brain Imaging Data Structure (BIDS) standard for peripheral
+% physiological recordings can be found here: 
+%
+% https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/
+% 06-physiological-and-other-continous-recordings.html
 %
 % [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles_biopac_txt(...
 %    log_files, cardiac_modality, verbose, varargin)
@@ -73,6 +79,7 @@ DEBUG = verbose.level >= 2;
 
 hasRespirationFile = ~isempty(log_files.respiration);
 hasCardiacFile = ~isempty(log_files.cardiac);
+hasExplicitJsonFile = ~isempty(log_files.scan_timing);
 
 if hasCardiacFile
     fileName = log_files.cardiac;
@@ -94,7 +101,9 @@ else
     fileJson = regexprep(fileName, '\.tsv', '\.json');
 end
 
-
+if hasExplicitJsonFile
+    fileJson = log_files.scan_timing;
+end
 
 hasJsonFile = isfile(fileJson);
 
@@ -117,14 +126,23 @@ if isempty(dt)
     end
 end
 
-tRelStartScan = log_files.relative_start_acquisition;
-if isempty(tRelStartScan)
+% sum implicit (.json) and explicit relative shifts of log/scan acquisition
+if isempty(log_files.relative_start_acquisition)
     if hasJsonFile
         % in BIDS, start of the phys logging is stated relative to the first volume scan start.
         % PhysIO defines the scan acquisiton relative to the phys log start
         tRelStartScan = -val.StartTime;
     else
-        tRelStartScan = 0;
+        verbose = tapas_physio_log(...
+            ['No .json file found and empty log_files.relative_start_acquisition. ' ...
+            'Please specify explicitly.'], verbose, 2);
+    end
+else
+    if hasJsonFile
+        % add both delays
+        tRelStartScan = log_files.relative_start_acquisition - val.StartTime;
+    else
+        tRelStartScan = log_files.relative_start_acquisition;
     end
 end
 
@@ -192,7 +210,7 @@ end
 %% Plot, if wanted
 
 if DEBUG
-    stringTitle = 'Raw BIDS physlog data (TSV file)';
+    stringTitle = 'Read-In: Raw BIDS physlog data (TSV file)';
     verbose.fig_handles(end+1) = ...
         tapas_physio_plot_raw_physdata_siemens_hcp(t, c, r, acq_codes, ...
         stringTitle);
