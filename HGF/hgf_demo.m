@@ -65,7 +65,7 @@ bopars = tapas_fitModel([],...
 % 
 % * $\mu_0$ and $\sigma_0$ are the initial values of the perceptual state
 % * $\rho$ is a drift parameter, fixed to zero (ie, no drift) in this example
-% * $\kappa$ is a parameter that describes the couple between the different 
+% * $\kappa$ is a parameter that describes the coupling between the different 
 % levels of the HGF, fixed to 1 in this example
 % 
 % For model comparison purposes, several measures of model quality are given 
@@ -83,7 +83,7 @@ sim = tapas_simModel(u,...
                      [NaN 0 1 NaN 1 1 NaN 0 0 1 1 NaN -2.5 -6],...
                      'tapas_unitsq_sgm',...
                      5,...
-                     12345);
+                     123456789);
 %% 
 % The general meaning of the arguments supplied to simModel is explained 
 % in the manual and in the file _tapas_simModel.m_. The specific meaning of each 

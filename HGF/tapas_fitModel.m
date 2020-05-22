@@ -364,43 +364,23 @@ r.optim.final = final;
 disp(' ')
 disp('Calculating the log-model evidence (LME)...')
 d     = length(opt_idx);
-Sigma = NaN(d);
-Corr  = NaN(d);
-LME   = NaN;
 
 options.init_h    = 1;
 options.min_steps = 10;
 
 % Numerical computation of the Hessian of the negative log-joint at the MAP estimate
 H = tapas_riddershessian(obj_fun, r.optim.argMin, options);
+% Ensure H is positive semi-definite
+H = tapas_nearest_psd(H);
 
-% Use the Hessian from the optimization, if available,
-% if the numerical Hessian is not positive definite
-if any(isinf(H(:))) || any(isnan(H(:))) || any(eig(H)<=0)
-    if isfield(r.optim, 'T')
-        % Hessian of the negative log-joint at the MAP estimate
-        % (avoid asymmetry caused by rounding errors)
-        H = inv(r.optim.T);
-        H = (H' + H)./2;
-        % Parameter covariance 
-        Sigma = r.optim.T;
-        % Parameter correlation
-        Corr = tapas_Cov2Corr(Sigma);
-        % Log-model evidence ~ negative variational free energy
-        LME   = -r.optim.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
-    else
-        disp('Warning: Cannot calculate Sigma and LME because the Hessian is not positive definite.')
-    end
-else
-    % Calculate parameter covariance (and avoid asymmetry caused by
-    % rounding errors)
-    Sigma = inv(H);
-    Sigma = (Sigma' + Sigma)./2;
-    % Parameter correlation
-    Corr = tapas_Cov2Corr(Sigma);
-    % Log-model evidence ~ negative variational free energy
-    LME = -r.optim.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
-end
+% Calculate parameter covariance
+Sigma = inv(H);
+% Ensure Sigma is positive semi-definite
+Sigma = tapas_nearest_psd(Sigma);
+% Parameter correlation
+Corr = tapas_Cov2Corr(Sigma);
+% Log-model evidence ~ negative variational free energy
+LME = -r.optim.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
 
 % Calculate accuracy and complexity (LME = accu - comp)
 accu = -negLl;

@@ -47,7 +47,7 @@ function bpa = tapas_bayesian_parameter_average(varargin)
 %     to bpa(...).
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2013 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2013-2020 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -117,7 +117,7 @@ for i=1:n
 end
 
 Sigma = inv(H);
-Sigma = (Sigma' + Sigma)./2;
+Sigma = tapas_nearest_psd(Sigma);
 Corr = tapas_Cov2Corr(Sigma);
 
 % Record results
