@@ -124,7 +124,7 @@ for k = 2:1:n
         %%%%%%%%%%%%%%%%%%%%%%
         
         % 2nd level prediction
-        muhat(k,2,:) = mu(k-1,2,:) +t(k) *phi(2) *(m(2) -mu(k-1,2));
+        muhat(k,2,:) = mu(k-1,2,:) +t(k) *phi(2) *(m(2) -mu(k-1,2,:));
         
         % 1st level
         % ~~~~~~~~~

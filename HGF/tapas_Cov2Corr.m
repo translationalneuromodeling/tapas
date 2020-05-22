@@ -14,9 +14,9 @@ if any(any(Cov'~=Cov))
     error('tapas:hgf:Cov2Corr:MatNotSymm', 'Input matrix is not symmetric.');
 end
 
-% Check if Cov is positive-definite
-if any(isinf(Cov(:))) || any(isnan(Cov(:))) || any(eig(Cov)<=0)
-    error('tapas:hgf:Cov2Corr:MatNotPosDef', 'Input matrix is not positive-definite.');
+% Check if Cov is positive semi-definite
+if any(isinf(Cov(:))) || any(isnan(Cov(:))) || any(eig(Cov)<0)
+    error('tapas:hgf:Cov2Corr:MatNotPosDef', 'Input matrix is not positive semi-definite.');
 end
 
 sdev = sqrt(diag(Cov));
