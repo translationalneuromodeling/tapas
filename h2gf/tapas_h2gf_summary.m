@@ -79,6 +79,7 @@ for i = 1:nsubjects
     valid = logical(sum(hgf.jm, 2));
     covariance = cov(values');
     Sigma = covariance(valid, valid);
+    Sigma = tapas_nearest_psd(Sigma);
     subjects(i).optim.Sigma = Sigma;
     subjects(i).optim.Corr = tapas_Cov2Corr(Sigma);
 
