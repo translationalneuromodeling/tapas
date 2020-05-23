@@ -51,7 +51,7 @@ prosa_auxiliary(double t, double a, PROSA_MODEL model,
 
     double t0 = t - ptheta->t0;
 
-    // In case that it has not been initilize, do it now
+    // In case that it has not been initialize, do it now
     
     if ( ptheta->cumint == CUMINT_NO_INIT )
     {
@@ -226,7 +226,7 @@ seria_auxiliary(double t, double a, NESTED_INTEGRAL inhibition_race,
 
     double t0 = t - ptheta->t0;
 
-    // In case that it has not been initilize, do it now
+    // In case that it has not been initialize, do it now
     
     if ( ptheta->cumint == CUMINT_NO_INIT )
     {

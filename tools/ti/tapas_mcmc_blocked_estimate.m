@@ -8,8 +8,8 @@ function [posterior] = tapas_mcmc_blocked_estimate(data, model, inference)
 nfuncs = numel(inference.sampling_methods);
 nmeta = numel(inference.metasampling_methods);
 
-[states] = inference.initilize_states(data, model, inference);
-[state] = inference.initilize_state(data, model, inference);
+[states] = inference.initialize_states(data, model, inference);
+[state] = inference.initialize_state(data, model, inference);
 
 tapas_validate_state(state);
 

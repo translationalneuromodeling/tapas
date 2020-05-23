@@ -31,7 +31,7 @@ function [q] = tapas_mpdcm_fmri_himodel(dcm, optheta, pars)
     pars = config_pars(pars);
 
     [y, u, theta, ptheta] = tapas_mpdcm_fmri_tinput(dcm);
-    [q, theta, ptheta] = initilize_parameters(u, theta, ptheta, optheta);
+    [q, theta, ptheta] = initialize_parameters(u, theta, ptheta, optheta);
 
     for i = 1:pars.niter
         fprintf(1, 'VB iteration %d\n', i);
@@ -166,7 +166,7 @@ function [q] = update_second_level(q, y, u, theta, ptheta)
 
 end
 
-function [q, theta, ptheta] = initilize_parameters(u, theta, ptheta, optheta)
+function [q, theta, ptheta] = initialize_parameters(u, theta, ptheta, optheta)
 %% Initilizes the parameters with the required fields
 
     nu = size(u{1}, 2);
