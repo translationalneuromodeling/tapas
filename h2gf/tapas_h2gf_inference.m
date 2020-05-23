@@ -11,13 +11,13 @@ if ~isfield(inference, 'estimate_method')
 end
 
 % Struct in which samples are collected
-if ~isfield(inference, 'initilize_states')
-    inference.initilize_states = @tapas_h2gf_init_states;
+if ~isfield(inference, 'initialize_states')
+    inference.initialize_states = @tapas_h2gf_init_states;
 end
 
 % Struct for the current sample
-if ~isfield(inference, 'initilize_state')
-    inference.initilize_state = @tapas_h2gf_init_state;
+if ~isfield(inference, 'initialize_state')
+    inference.initialize_state = @tapas_h2gf_init_state;
 end
 
 % Inner sampling loop across levels

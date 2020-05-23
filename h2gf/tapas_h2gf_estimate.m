@@ -89,9 +89,9 @@ function [posterior] = tapas_h2gf_estimate(data, model, pars)
 %		Main loop used in the algorithm. Defaults to 
 %		@tapas_mcmc_blocked_estimate
 %
-% pars.initilize_states
+% pars.initialize_states
 %
-%		Function used to initilize the cell array that contains the states
+%		Function used to initialize the cell array that contains the states
 %		stored in memory. Defaults to @tapas_h2gf_init_states
 %
 % pars.sampling_methods

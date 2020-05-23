@@ -199,8 +199,8 @@ not specified by the user are set in `tapas_h2gf_inference`.
 | Field name | Type    | Default | Meaning |
 |------------|---------|---------|---------|
 | `estimate_method` |  Function handle | `@tapas_mcmc_blocked_estimate` | Main method used for inference. |
-| `initilize_state`  | Function handle | `@tapas_h2gf_init_state`  | Initializes the state of the sampler. |
-| `initilize_states` | Function handle | `@tapas_h2gf_init_states` | Initialize the structure that contains the states of the sampler that are stored. |
+| `initialize_state`  | Function handle | `@tapas_h2gf_init_state`  | Initializes the state of the sampler. |
+| `initialize_states` | Function handle | `@tapas_h2gf_init_states` | Initialize the structure that contains the states of the sampler that are stored. |
 | `sampling_methods` |  Cell array |  See `tapas_h2gf_inference` | An array of methods used to draw samples from the posterior distribution. Samples from each participants are drawn using Metropolis-Hastings with a Gaussian kernel as a proposal distribution and a Gibbs step is used for the second level parameters. |
 | `metasampling_methods` | Cell array | See `tapas_h2gf_inference` | An array of methods for diagnosis and adaptive MCMC. By default the kernel of the Metropolis-Hastings is updated every certain number of iterations. |
 | `get_stored_state` | Function Handle  |`@tapas_h2gf_get_stored_state` | Called to store (part) of the state of the sampler. |
