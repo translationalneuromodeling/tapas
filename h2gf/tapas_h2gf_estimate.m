@@ -163,24 +163,21 @@ function [posterior] = tapas_h2gf_estimate(data, model, pars)
 %       variance
 %
 
-% aponteeduardo@gmail.com
-% copyright (C) 2019
+% aponteeduardo@gmail.com, chmathys@ethz.ch
+% copyright (C) 2019-2020
 %
 
-
-n = 2;
-
-n = n + 1;
-if nargin < n
+if nargin < 3
     pars = struct();
 end
 
+% Supplement supplied parameter values with defaults
 [pars] = tapas_h2gf_pars(data, model, pars);
-[data] = tapas_h2gf_data(data, model, pars);
+% Set up the h2gf hierarchy
 [model] = tapas_h2gf_model(data, model, pars);
-
+% Set the function handles needed for inference
 [inference] = tapas_h2gf_inference(pars);
-
+% Run
 [posterior] = tapas_h2gf_estimate_interface(data, model, inference);
 
 
