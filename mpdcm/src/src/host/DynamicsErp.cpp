@@ -38,7 +38,7 @@ DynamicsErp::update_y(
 
 
 int
-DynamicsErp::initilize_x(
+DynamicsErp::initialize_x(
     const arma::Mat< double > u, 
     const mxArray *theta, 
     const mxArray *ptheta,
