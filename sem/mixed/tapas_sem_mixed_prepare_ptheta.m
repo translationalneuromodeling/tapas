@@ -18,7 +18,7 @@ assert(floor(npars) == npars, ...
     size(ptheta.jm, 1), size(ptheta.jm, 2), ptheta.name, ndims);
 
 % Rename
-ptheta.name = sprintf('multiv_%s', ptheta.name);
+ptheta.name = sprintf('mixed_%s', ptheta.name);
 
 % Simplify the preparations
 ptheta.njm = tapas_zeromat(ptheta.jm);

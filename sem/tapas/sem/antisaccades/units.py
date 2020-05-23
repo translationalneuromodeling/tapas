@@ -15,7 +15,7 @@ from pdb import set_trace as _
 import numpy as np
 from scipy import stats
 
-import containers
+from . import containers
 
 
 class Units(containers.TimeSeries):

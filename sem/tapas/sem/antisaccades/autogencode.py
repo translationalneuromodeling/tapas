@@ -10,6 +10,7 @@
 
 '''
 
+
 def parametrization(family, parametric, model):
 
     class_name = 'Parameters{0:s}{1:s}'.format(family.title(),
@@ -50,9 +51,10 @@ def reparametrize_{0:s}_{1:s}(theta):
 '''
     return code.format(family, parametric)
     
+
 if __name__ == '__main__':
     model = ['two_states']
-    family = ['seri', 'dora', 'prosa']
+    family = ['seria']
     parametric = ['gamma', 'invgamma', 'mixedgamma', 'lognorm', 'later', 
         'wald']
 
@@ -65,16 +67,8 @@ if __name__ == '__main__':
     with open('./reparametrize.tem', 'r') as fp:
         sreparam = fp.read()
 
-
     for f in family:
         for p in parametric:
-            for m in model:
-                pass
-                #print fstring.format(f, p, m, f.upper())
-                #print sllh.format(f, p, m)
-                #print parametrization(f, p, m)
-            print wrap_python_reparametrize(f, p)
-
-
-    pass    
+            
+            print((wrap_python_reparametrize(f, p)))
 

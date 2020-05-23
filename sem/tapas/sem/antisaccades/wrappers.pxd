@@ -136,6 +136,8 @@ cdef extern from "src/antisaccades/antisaccades.h":
 
         double seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 
+        double seria_late_llh_abstract(double t, int a, SERIA_PARAMETERS params)
+
         int prosa_model_n_states_optimized(ANTIS_INPUT svals, 
                 PROSA_MODEL fllh, double *llh)
         int prosa_model_n_states(ANTIS_INPUT svals, 

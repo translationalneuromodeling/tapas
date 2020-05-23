@@ -1,5 +1,5 @@
 function [VOLLOCS, LOCS] = tapas_physio_create_scan_timing_nominal(t, ...
-    sqpar, align_scan)
+    sqpar, align_scan, durationPhyslogAfterEndOfLastScan)
 % Creates locations of scan volume and slice events in time vector of SCANPHYSLOG-files
 %
 %   [VOLLOCS, LOCS] = tapas_physio_create_scan_timing_nominal(t, sqpar);
@@ -10,6 +10,9 @@ function [VOLLOCS, LOCS] = tapas_physio_create_scan_timing_nominal(t, ...
 % events are generated for the resampling of regressors in the GLM under
 % the assumption that the SCANPHYSLOG-file ended exactly when the scan ended
 % ...which is usually the case if a scan is not stopped manually
+% 
+% Additionally, one can set a buffer end time, i.e., the duration of the
+% phys logging lasting longer after the end of the last scan
 %
 % IN
 %   t       - timing vector of SCANPHYSLOG-file, usually sampled with 500
@@ -35,6 +38,10 @@ function [VOLLOCS, LOCS] = tapas_physio_create_scan_timing_nominal(t, ...
 %                                   volume, first slice
 %                           'last'  t(end) will be aligned to last scan
 %                                   volume, last slice
+%   durationPhyslogAfterEndOfLastScan
+%                            duration (in seconds) of physiological logfile
+%                            after end of last scan volume in the run
+%                           default: 0
 % OUT
 %           VOLLOCS         - locations in time vector, when volume scan
 %                             events started
@@ -59,6 +66,10 @@ if nargin < 3
     align_scan = 'last';
 end
 
+if nargin < 4
+    durationPhyslogAfterEndOfLastScan = 0;
+end
+
 Nscans          = sqpar.Nscans;
 Ndummies        = sqpar.Ndummies;
 
@@ -74,12 +85,12 @@ if do_count_from_start % t = 0 is assumed to be the start of the scan
         [tmp, VOLLOCS(n)] = min(abs(t - TR*(n-1)));
     end
 else
-    tEndPhys = t(end);
+    tEndLastScan = t(end)-durationPhyslogAfterEndOfLastScan;
     
     tStartPhys = t(1);
     for n = 1:NallVols
         
-        tStartVol = (tEndPhys-TR*(NallVols-n+1));
+        tStartVol = (tEndLastScan-TR*(NallVols-n+1));
         
         if tStartPhys > tStartVol
             VOLLOCS(n) = NaN;

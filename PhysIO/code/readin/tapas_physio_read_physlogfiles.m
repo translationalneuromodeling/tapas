@@ -1,5 +1,5 @@
 function [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles(log_files, cardiac_modality, ...
-    verbose)
+    verbose, sqpar)
 % reads out physiological time series and timing vector depending on the
 % MR scanner vendor and the modality of peripheral cardiac monitoring (ECG
 % or pulse oximetry)
@@ -21,7 +21,9 @@ function [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles(
 %       .log_respiration    contains breathing belt amplitude time course
 %                           for Philips: same as .log_cardiac
 %   cardiac_modality    'ECG' for ECG, 'OXY'/'PPU' for pulse oximetry, default: 'ECG'
-%
+%   sqpar                   sequence parameters (TR, nScans etc.)
+%                           only needed for time adjustments of logfile
+%                           relative to duration of a selected run
 % OUT
 %   c                   cardiac time series (ECG or pulse oximetry)
 %   r                   respiratory time series
@@ -82,7 +84,8 @@ switch lower(log_files.vendor)
             tapas_physio_read_physlogfiles_philips(log_files, cardiac_modality);
     case 'siemens'
         [c, r, t, cpulse, verbose] = ...
-            tapas_physio_read_physlogfiles_siemens(log_files, cardiac_modality, verbose);
+            tapas_physio_read_physlogfiles_siemens(log_files, cardiac_modality, verbose, ...
+            'sqpar', sqpar);
         acq_codes = [];
     case 'siemens_tics'
         [c, r, t, cpulse, acq_codes, verbose] = ...

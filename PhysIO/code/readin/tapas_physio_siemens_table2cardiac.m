@@ -3,7 +3,7 @@ function dataCardiac = tapas_physio_siemens_table2cardiac(data_table, ...
 % extract structured data from table of channel signal and trigger events
 %
 %      dataCardiac = tapas_physio_table2cardiac(...
-%           data_table, ecgChannel, relative_start_acquisition);
+%           data_table, ecgChannel, relative_start_acquisition, endCropSeconds);
 %
 % IN
 %   data_table      [nSamples,3] table of channel_1, channels_AVF and trigger 
@@ -14,6 +14,8 @@ function dataCardiac = tapas_physio_siemens_table2cardiac(data_table, ...
 %                   6003 = phys recording off
 %   ecgChannel      'v1', 'v2', or 'mean'
 %   relative_start_acquisition 
+%                   start of logfile relative to
+%                   onset of first scan (t=0)
 %
 % OUT
 % dataCardiac = struct(...
@@ -68,11 +70,12 @@ switch ecgChannel
         
     case 'v2'
         c = channel_AVF - mean(channel_AVF);
-end;
+end
 
 % compute timing vector and time of detected trigger/cpulse events
 nSamples = size(c,1);
 t = -relative_start_acquisition + ((0:(nSamples-1))*dt)';
+
 cpulse_on = t(cpulse_on);
 cpulse_off = t(cpulse_off);
 recording_on = t(recording_on);

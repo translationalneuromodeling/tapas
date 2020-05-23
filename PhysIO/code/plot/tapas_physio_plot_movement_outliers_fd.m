@@ -1,5 +1,5 @@
 function  fh = tapas_physio_plot_movement_outliers_fd(rp, quality_measures, ...
-    censoring, censoring_threshold)
+    censoring, censoring_threshold, verbose)
 % Plots movement outliers (for censoring), based on framewise displacement
 % (FD), as computed by Power et al., 2012. Also the plotting style is based
 % on Power et al., 2017
@@ -27,7 +27,14 @@ function  fh = tapas_physio_plot_movement_outliers_fd(rp, quality_measures, ...
 % COPYING or <http://www.gnu.org/licenses/>.
 %
 
-fh = tapas_physio_get_default_fig_params();
+if nargin == 5
+    % If verbose is passed as argument (from updated tapas_physio_review):
+    fh = tapas_physio_get_default_fig_params(verbose);
+else
+    % Backwards compatibility:
+    fh = tapas_physio_get_default_fig_params();
+end
+
 stringTitle = 'Model: Motion Quality Control - Framewise Displacement';
 set(fh, 'Name', stringTitle);
 
