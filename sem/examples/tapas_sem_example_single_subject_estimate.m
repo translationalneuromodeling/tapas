@@ -80,11 +80,12 @@ end
 pars = struct();
 
 pars.T = linspace(0.1, 1, 1).^5;
-pars.nburnin = 4000;
-pars.niter = 4000;
+pars.nburnin = 10000;
+pars.niter = 10000;
 pars.ndiag = 500;
 pars.mc3it = 4;
 pars.verbose = 1;
+pars.thinning = 100;
 
 display(ptheta);
 inference = struct();
@@ -95,7 +96,7 @@ for i = 1:numel(data)
     posterior = tapas_sem_single_subject_estimate(...
         data(i), ptheta, inference, pars);
     display(posterior);
-    summary = tapas_sem_display_posterior(posterior);
+    tapas_sem_display_posterior(posterior);
 end
 
 end

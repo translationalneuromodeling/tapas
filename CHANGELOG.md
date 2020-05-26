@@ -1,7 +1,34 @@
 # Changelog
 TAPAS toolbox 
 
-## [3.2.0] 2019-09-dd
+## [3.3.0] 2020-05-23
+
+### Added
+
+- SERIA: Added the Watanabe Akaike information criterion (WAIC) as output.
+- SERIA: Added computation of early and late response likelihood.
+- SERIA: Added delta plots to output summary.
+
+### Changed
+
+- SERIA: The constraints matrix is now automatically plot by 
+        tapas\_sem_\display_posterior.m
+- SERIA: Python code is now updated to python 3.7 and the requirement file
+            now uses the latest libraries (numpy, scipy, cython).
+- SERIA: Posterior plots includes fits of the complete group.
+- SERIA: Summaries are automatically generated when preparing the posterior.
+
+
+## [3.2.1] 2019-10-15
+
+### Changed
+- PhysIO: removed Matlab statistics toolbox dependency for PCA by SVD implementation (thanks to Benoît Beranger, [pull request 64](https://github.com/translationalneuromodeling/tapas/pull/64))
+
+### Fixed
+- HUGE: bugfix x-tick labels
+
+## [3.2.0] 2019-09-29
+
 ### Added
 - HUGE: introduced object-oriented interface in addition to old interface
 - HUGE: build-in unit tests

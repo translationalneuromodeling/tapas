@@ -131,16 +131,16 @@ int
 reparametrize_seria_invgamma(const double *theta, SERIA_PARAMETERS *stheta)
 {
 
-    stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]) + 2;
+    stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]);
     stheta->tp = transform_log_mv_to_gamma_t(theta[0], theta[1]);
 
-    stheta->ka = transform_log_mv_to_gamma_k(theta[2], theta[3]) + 2;
+    stheta->ka = transform_log_mv_to_gamma_k(theta[2], theta[3]);
     stheta->ta = transform_log_mv_to_gamma_t(theta[2], theta[3]);
 
-    stheta->ks = transform_log_mv_to_gamma_k(theta[4], theta[5]) + 2;
+    stheta->ks = transform_log_mv_to_gamma_k(theta[4], theta[5]);
     stheta->ts = transform_log_mv_to_gamma_t(theta[4], theta[5]);
 
-    stheta->kl = transform_log_mv_to_gamma_k(theta[6], theta[7]) + 2;
+    stheta->kl = transform_log_mv_to_gamma_k(theta[6], theta[7]);
     stheta->tl = transform_log_mv_to_gamma_t(theta[6], theta[7]);
 
     stheta->t0 = exp(theta[8]);
@@ -345,25 +345,15 @@ reparametrize_seria_lognorm(const double *theta, SERIA_PARAMETERS *stheta)
 int
 reparametrize_prosa_invgamma(const double *theta, PROSA_PARAMETERS *stheta)
 {
-    double mu, sigma2;
 
-    mu = exp(theta[0]);
-    sigma2 = exp(theta[1]);
+    stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]);
+    stheta->tp = transform_log_mv_to_gamma_t(theta[0], theta[1]);
 
-    stheta->kp = transform_mv_to_gamma_k(mu, sigma2) + 2;
-    stheta->tp = transform_mv_to_gamma_t(mu, sigma2);
+    stheta->ka = transform_log_mv_to_gamma_k(theta[2], theta[3]);
+    stheta->ta = transform_log_mv_to_gamma_t(theta[2], theta[3]);
 
-    mu = exp(theta[2]);
-    sigma2 = exp(theta[3]);
-
-    stheta->ka = transform_mv_to_gamma_k(mu, sigma2) + 2;
-    stheta->ta = transform_mv_to_gamma_t(mu, sigma2);
-
-    mu = exp(theta[4]);
-    sigma2 = exp(theta[5]);
-
-    stheta->ks = transform_mv_to_gamma_k(mu, sigma2) + 2;
-    stheta->ts = transform_mv_to_gamma_t(mu, sigma2);
+    stheta->ks = transform_log_mv_to_gamma_k(theta[4], theta[5]);
+    stheta->ts = transform_log_mv_to_gamma_t(theta[4], theta[5]);
 
     stheta->t0 = exp(theta[6]);
     stheta->da = exp(theta[7]);
@@ -422,22 +412,15 @@ reparametrize_prosa_wald(const double *theta, PROSA_PARAMETERS *stheta)
 int
 reparametrize_prosa_mixedgamma(const double *theta, PROSA_PARAMETERS *stheta)
 {
-    double mu, sigma2;
 
-    mu = exp(theta[0]);
-    sigma2 = exp(theta[1]);
-
-    stheta->kp = transform_mv_to_gamma_k(mu, sigma2) + 2;
-    stheta->tp = transform_mv_to_gamma_t(mu, sigma2);
+    stheta->kp = transform_log_mv_to_gamma_k(theta[0], theta[1]);
+    stheta->tp = transform_log_mv_to_gamma_t(theta[0], theta[1]);
 
     stheta->ka = transform_log_mv_to_invgamma_k(theta[2], theta[3]);
     stheta->ta = transform_log_mv_to_invgamma_t(theta[2], theta[3]);
 
-    mu = exp(theta[4]);
-    sigma2 = exp(theta[5]);
-
-    stheta->ks = transform_mv_to_gamma_k(mu, sigma2) + 2;
-    stheta->ts = transform_mv_to_gamma_t(mu, sigma2);
+    stheta->ks = transform_log_mv_to_gamma_k(theta[4], theta[5]);
+    stheta->ts = transform_log_mv_to_gamma_t(theta[4], theta[5]);
 
     stheta->t0 = exp(theta[6]);
     stheta->da = exp(theta[7]);

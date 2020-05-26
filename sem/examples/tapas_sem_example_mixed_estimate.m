@@ -1,4 +1,4 @@
-function [posterior] = tapas_sem_example_mixed_estimate(model, param)
+function [posterior, summary] = tapas_sem_example_mixed_estimate(model, param)
 %% Example for inversion with a mixed effects model as prior.
 %
 % Input
@@ -79,13 +79,14 @@ pars.T = ones(4, 1) * linspace(0.1, 1, 1).^5;
 pars.nburnin = 4000;
 pars.niter = 4000;
 pars.ndiag = 500;
-pars.mc3it = 4;
+pars.thinning = 100;
 pars.verbose = 1;
 
 display(ptheta);
 inference = struct();
 tic
 posterior = tapas_sem_mixed_estimate(data, ptheta, inference, pars);
+summary = posterior.summary;
 tapas_sem_display_posterior(posterior)
 toc
 

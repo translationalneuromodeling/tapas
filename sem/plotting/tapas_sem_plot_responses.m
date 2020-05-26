@@ -1,4 +1,4 @@
-function [edges] = tapas_sem_plot_antisaccades(y, u)
+function [time] = tapas_sem_plot_responses(y, u, time)
 %% Plot the data from a subject
 %
 % Input
@@ -7,7 +7,7 @@ function [edges] = tapas_sem_plot_antisaccades(y, u)
 %               or 1. 
 %       u   -- Structure with fields tt. tt is a vector of integers
 %               indicating the conditions.
-%       fig -- figure handle, optional. 
+%       time -- Array of the times used for the histogram
 % Output
 %       ax  -- Handle of the figure.
 
@@ -15,17 +15,19 @@ function [edges] = tapas_sem_plot_antisaccades(y, u)
 % copyright (C) 2019
 %
 
-nbins = 30;
+n = 2;
 
-% Get number of trials
-ntrials = numel(u.tt);
+n = n + 1;
+if nargin < n
+    nbins = 30;
 
-% Gain
-maxt = max(y.t);
-mint = min(y.t);
+    maxt = max(y.t);
+    mint = min(y.t);
 
-% Bins
-edges = linspace(mint, maxt + 0.1 * (maxt - mint), nbins);
+    % Bins
+    time = linspace(mint, maxt + 0.1 * (maxt - mint), nbins);
+end
+
 
 % Get unique conditions
 conds = unique(u.tt);
@@ -38,15 +40,25 @@ for i = 1:nconds
     ax = subplot(nconds, 2, (i - 1) * 2 + 1);
     hold on;
     tt = y.t((conds(i) == u.tt) & (y.a == 0));
-    h = histogram(tt, 'binedges', edges, 'facecolor', 'r', ...
-        'edgecolor', 'none');
+    h = histogram(tt, ...
+        'binedges', time, ...
+        'facecolor', 'r', ...
+        'edgecolor', 'none', ...
+        ... Make the area equal to the total number of trials
+        'normalization', 'count' ...
+        );
     mcounts = max(max(h.Values), mcounts);
     axes{end + 1} = ax;
     ax = subplot(nconds, 2, (i - 1) * 2 + 2);
     hold on;
     tt = y.t((conds(i) == u.tt) & (y.a == 1));
-    h = histogram(tt, 'binedges', edges, 'facecolor', 'b', ...
-        'edgecolor', 'none');
+    h = histogram(tt, ...
+        'binedges', time, ...
+        'facecolor', 'b', ...
+        'edgecolor', 'none', ...
+        ... Make the area equal to the total number of trials
+        'normalization', 'count' ...
+        );
     axes{end + 1} = ax;
     mcounts = max(max(h.Values), mcounts);
 end

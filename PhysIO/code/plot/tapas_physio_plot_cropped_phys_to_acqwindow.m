@@ -1,4 +1,4 @@
-function fh = tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar)
+function fh = tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar, verbose)
 % plot parts of the time series to be processed into regressors
 %
 % USAGE
@@ -20,7 +20,15 @@ function fh = tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
-fh = tapas_physio_get_default_fig_params();
+
+if nargin == 3
+    % If verbose is passed as argument (from updated tapas_physio_review):
+    fh = tapas_physio_get_default_fig_params(verbose);
+else
+    % Backwards compatibility:
+    fh = tapas_physio_get_default_fig_params();
+end
+
 set(fh,'Name','Preproc: Cutout actual scans - all events and gradients');
 
 Ndummies    = sqpar.Ndummies;

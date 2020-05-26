@@ -223,6 +223,17 @@ def p_seria_early_llh_n_states_gamma(
     return wrapper_seria_model_n_states(reparametrize_seria_gamma,
         seria_early_llh_abstract, t, a, u, theta)
 
+def p_seria_late_llh_n_states_gamma(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] t,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] a,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] u,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_seria_model_n_states(reparametrize_seria_gamma,
+        seria_late_llh_abstract, t, a, u, theta)
+
+# ===========================================================================
+
 def p_seria_model_n_states_invgamma(
         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
@@ -248,7 +259,17 @@ def p_seria_early_llh_n_states_invgamma(
  
     return wrapper_seria_model_n_states(reparametrize_seria_invgamma,
         seria_early_llh_abstract, t, a, u, theta)
-##
+
+def p_seria_late_llh_n_states_invgamma(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] t,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] a,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] u,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_seria_model_n_states(reparametrize_seria_invgamma,
+        seria_late_llh_abstract, t, a, u, theta)
+    
+# ===========================================================================
 
 def p_seria_model_n_states_mixedgamma(
         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
@@ -275,7 +296,17 @@ def p_seria_early_llh_n_states_mixedgamma(
  
     return wrapper_seria_model_n_states(reparametrize_seria_gamma,
         seria_early_llh_abstract, t, a, u, theta)
-##
+
+def p_seria_late_llh_n_states_mixedgamma(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] t,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] a,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] u,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_seria_model_n_states(reparametrize_seria_mixedgamma,
+        seria_late_llh_abstract, t, a, u, theta)
+
+# ===========================================================================
 
 def p_seria_model_n_states_lognorm(
         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
@@ -294,7 +325,7 @@ def p_reparametrize_seria_lognorm(
 
     return ntheta
 
-def p_seria_ealry_llh_n_states_lognorm(
+def p_seria_early_llh_n_states_lognorm(
         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
         np.ndarray[np.float64_t, ndim=1, mode="c"] u,
@@ -303,7 +334,17 @@ def p_seria_ealry_llh_n_states_lognorm(
     return wrapper_seria_model_n_states(reparametrize_seria_lognorm,
         seria_early_llh_abstract, t, a, u, theta)
 
-##
+def p_seria_late_llh_n_states_lognorm(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] t,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] a,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] u,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_seria_model_n_states(reparametrize_seria_lognorm,
+        seria_late_llh_abstract, t, a, u, theta)
+
+# ===========================================================================
+
 def p_seria_model_n_states_later(
         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
         np.ndarray[np.float64_t, ndim=1, mode="c"] a,
@@ -330,7 +371,25 @@ def p_seria_early_llh_n_states_later(
     return wrapper_seria_model_n_states(reparametrize_seria_later,
         seria_early_llh_abstract, t, a, u, theta)
 
-##
+def p_seria_early_llh_n_states_later(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] t,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] a,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] u,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_seria_model_n_states(reparametrize_seria_later,
+        seria_early_llh_abstract, t, a, u, theta)
+
+def p_seria_late_llh_n_states_later(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] t,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] a,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] u,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_seria_model_n_states(reparametrize_seria_later,
+        seria_late_llh_abstract, t, a, u, theta)
+
+# ===========================================================================
 
 def p_seria_model_n_states_wald(
         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
@@ -358,7 +417,16 @@ def p_seria_early_llh_n_states_wald(
     return wrapper_seria_model_n_states(reparametrize_seria_wald,
         seria_early_llh_abstract, t, a, u, theta)
 
-##
+def p_seria_late_llh_n_states_wald(
+        np.ndarray[np.float64_t, ndim=1, mode="c"] t,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] a,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] u,
+        np.ndarray[np.float64_t, ndim=1, mode="c"] theta):
+ 
+    return wrapper_seria_model_n_states(reparametrize_seria_wald,
+        seria_late_llh_abstract, t, a, u, theta)
+
+# ===========================================================================
 
 def p_prosa_model_n_states_gamma(
         np.ndarray[np.float64_t, ndim=1, mode="c"] t,
