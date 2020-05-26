@@ -370,17 +370,39 @@ options.min_steps = 10;
 
 % Numerical computation of the Hessian of the negative log-joint at the MAP estimate
 H = tapas_riddershessian(obj_fun, r.optim.argMin, options);
-% Ensure H is positive semi-definite
-H = tapas_nearest_psd(H);
 
-% Calculate parameter covariance
-Sigma = inv(H);
-% Ensure Sigma is positive semi-definite
-Sigma = tapas_nearest_psd(Sigma);
-% Parameter correlation
-Corr = tapas_Cov2Corr(Sigma);
-% Log-model evidence ~ negative variational free energy
-LME = -r.optim.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
+% Use the Hessian from the optimization, if available,
+% if the numerical Hessian is not positive definite
+if any(isinf(H(:))) || any(isnan(H(:))) || any(eig(H)<=0)
+    if isfield(r.optim, 'T')
+        % Hessian of the negative log-joint at the MAP estimate
+        % (avoid asymmetry caused by rounding errors)
+        H = inv(r.optim.T);
+        % Parameter covariance
+        Sigma = r.optim.T;
+        % Ensure H and Sigma are positive semi-definite
+        H = tapas_nearest_psd(H);
+        Sigma = tapas_nearest_psd(Sigma);
+        % Parameter correlation
+        Corr = tapas_Cov2Corr(Sigma);
+        % Log-model evidence ~ negative variational free energy
+        LME = -r.optim.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
+    else
+        disp('Warning: Cannot calculate Sigma and LME because the Hessian is not positive definite.')
+    end
+else
+    % Calculate parameter covariance
+    Sigma = inv(H);
+    % Ensure H and Sigma are positive semi-definite
+    H = tapas_nearest_psd(H);
+    Sigma = tapas_nearest_psd(Sigma);
+    % Parameter correlation
+    Corr = tapas_Cov2Corr(Sigma);
+    % Log-model evidence ~ negative variational free energy
+    LME = -r.optim.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
+end
+
+
 
 % Calculate accuracy and complexity (LME = accu - comp)
 accu = -negLl;
