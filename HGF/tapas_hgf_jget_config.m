@@ -92,12 +92,6 @@ c.model = 'hgf_jget';
 % Number of levels (minimum: 2)
 c.n_levels = 2;
 
-% Input intervals
-% If input intervals are irregular, the last column of the input
-% matrix u has to contain the interval between inputs k-1 and k
-% in the k-th row, and this flag has to be set to true
-c.irregular_intervals = false;
-
 % Sufficient statistics of Gaussian parameter priors
 
 % PLACEHOLDER VALUES
