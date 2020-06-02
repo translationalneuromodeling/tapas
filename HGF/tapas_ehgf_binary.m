@@ -159,7 +159,7 @@ for k = 2:1:n
                 dd = (1/pi(k,j-1) +(mu(k,j-1) -muhat(k,j-1))^2) *pimhat -1;
                 
                 % Precision update
-                pi(k,j) = pihat(k,j) +max(0, 1/2 *ka(j-1)^2 *ww(ww +rr*dd));
+                pi(k,j) = pihat(k,j) +max(0, 1/2 *ka(j-1)^2 *ww*(ww +rr*dd));
 
                 % Volatility prediction error
                 da(k,j) = (1/pi(k,j) +(mu(k,j) -muhat(k,j))^2) *pihat(k,j) -1;
