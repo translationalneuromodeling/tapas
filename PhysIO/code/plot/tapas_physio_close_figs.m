@@ -25,7 +25,7 @@ function verbose = tapas_physio_close_figs(verbose)
 
 
 if ~isfield(verbose, 'fig_handles') || numel(verbose.fig_handles) == 0 || isempty(verbose.fig_handles)
-    if verbose.level > 0 
+    if verbose.level > 0
         tapas_physio_log('No figures found to close', verbose, 1);
     end
 else
