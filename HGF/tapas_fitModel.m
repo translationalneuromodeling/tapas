@@ -150,15 +150,31 @@ r.c_opt = tapas_quasinewton_optim_config;
 
 % Override default settings with arguments from the command line
 if nargin > 2 && ~isempty(varargin{1})
-    r.c_prc = eval(varargin{1});
+    if isstr(varargin{1})
+        r.c_prc = eval(varargin{1});
+    else
+        r.c_prc = varargin{1};
+        % Ensure consistency of configuration of priors
+        r.c_prc = tapas_align_priors(r.c_prc);
+    end
 end
 
 if nargin > 3 && ~isempty(varargin{2})
-    r.c_obs = eval(varargin{2});
+    if isstr(varargin{2})
+        r.c_obs = eval(varargin{2});
+    else
+        r.c_obs = varargin{2};
+        % Ensure consistency of configuration of priors
+        r.c_obs = tapas_align_priors(r.c_obs);
+    end
 end
 
 if nargin > 4 && ~isempty(varargin{3})
-    r.c_opt = eval(varargin{3});
+    if isstr(varargin{3})
+        r.c_opt = eval(varargin{3});
+    else
+        r.c_opt = varargin{3};
+    end
 end
 
 % Replace placeholders in parameter vectors with their calculated values
