@@ -830,9 +830,9 @@ Help Window of the SPM Batch Editor</p>
 </ol>
 <p class="page" id="README"></p><h1>Readme</h1>
 <h1 id="tapas-physio-toolbox-">TAPAS PhysIO Toolbox </h1>
-<p><em>Current version: Release 2019b, v7.2.0</em></p>
+<p><em>Current version: Release 2020a, v7.3.0</em></p>
 <blockquote>
-<p>Copyright (C) 2012-2019<br>Lars Kasper<br><a href="#mailtox6bx61x73x70101x726498105x6f109101100x2ex65x65x2ex65116x68x7ax2e99x68">&#x6b;&#x61;&#x73;&#x70;&#101;&#x72;&#64;&#98;&#105;&#x6f;&#109;&#101;&#100;&#x2e;&#x65;&#x65;&#x2e;&#x65;&#116;&#x68;&#x7a;&#x2e;&#99;&#x68;</a>  </p>
+<p>Copyright (C) 2012-2020<br>Lars Kasper<br><a href="#mailto107x61115x70101x72x40x62x69x6fx6dx6510046x65x6546101x7410412246x63x68">&#107;&#x61;&#115;&#x70;&#101;&#x72;&#x40;&#x62;&#x69;&#x6f;&#x6d;&#x65;&#100;&#46;&#x65;&#x65;&#46;&#101;&#x74;&#104;&#122;&#46;&#x63;&#x68;</a>  </p>
 <p>Translational Neuromodeling Unit (TNU)<br>Institute for Biomedical Engineering<br>University of Zurich and ETH Zurich  </p>
 </blockquote>
 <h2 id="download">Download</h2>
@@ -840,7 +840,9 @@ Help Window of the SPM Batch Editor</p>
 <li>Please download the latest stable versions of the PhysIO Toolbox on GitHub as part of the 
 <a href="https://github.com/translationalneuromodeling/tapas/releases">TAPAS software releases of the TNU</a>.</li>
 <li>Older versions are available on the <a href="http://www.translationalneuromodeling.org/tapas">TNU website</a>.</li>
-<li>The latest bugfixes can be found in the <a href="https://github.com/translationalneuromodeling/tapas/issues">GitHub Issue Forum</a> or by request to the authors. </li>
+<li>The latest bugfixes can be found in the 
+<a href="https://github.com/translationalneuromodeling/tapas/tree/development">development branch of TAPAS</a> 
+and are announced in the <a href="https://github.com/translationalneuromodeling/tapas/issues">GitHub Issue Forum</a>. </li>
 <li>Changes between all versions are documented in the 
 <a href="https://gitlab.ethz.ch/physio/physio-doc/blob/master/CHANGELOG.md">CHANGELOG</a>.</li>
 </ul>
@@ -1017,7 +1019,7 @@ data from imperfect peripheral measures. Read-in of the following formats is
 currently supported (alphabetic order):</p>
 <ul>
 <li>Biopac <code>.mat</code> and <code>.txt</code> -export</li>
-<li>Brain Imaging Data Structure (BIDS)</li>
+<li>Brain Imaging Data Structure (<a href="http://bids.neuroimaging.io/bids_spec.pdf">BIDS</a> for <code>*_physio.tsv[.gz]/.json</code> files)</li>
 <li>Custom logfiles: should contain one amplitude value per line, one logfile per 
 device. Sampling interval(s) are provided as a separate parameter to the toolbox.</li>
 <li>General Electric</li>
@@ -1065,17 +1067,16 @@ TNU &amp; MR-Technology Group, IBT, University of Zurich &amp; ETH Zurich</li>
 <li>Project Team: <ul>
 <li>Steffen Bollmann, Centre for Advanced Imaging, University of Queensland, Australia</li>
 <li>Saskia Bollmann, Centre for Advanced Imaging, University of Queensland, Australia</li>
+<li>Sam Harrison, TNU Zurich</li>
 </ul>
 </li>
 <li>Contributors (Code):<ul>
 <li>Eduardo Aponte, TNU Zurich</li>
 <li>Tobias U. Hauser, FIL London, UK</li>
-<li>Sam Harrison, TNU Zurich</li>
 <li>Jakob Heinzle, TNU Zurich</li>
 <li>Chloe Hutton, FIL London, UK (previously)</li>
 <li>Miriam Sebold, Charite Berlin, Germany</li>
-<li>External TAPAS contributors listed in its [Contributor License Agreement]
-(<a href="https://github.com/translationalneuromodeling/tapas/blob/master/Contributor-License-Agreement.md">https://github.com/translationalneuromodeling/tapas/blob/master/Contributor-License-Agreement.md</a>)</li>
+<li>External TAPAS contributors are listed in the <a href="https://github.com/translationalneuromodeling/tapas/blob/master/Contributor-License-Agreement.md">Contributor License Agreement</a></li>
 </ul>
 </li>
 <li>Contributors (Examples):<ul>
@@ -1088,7 +1089,7 @@ TNU &amp; MR-Technology Group, IBT, University of Zurich &amp; ETH Zurich</li>
 <li>All specific software requirements and their versions are in a separate file
 in this folder, <code>requirements.txt</code>.</li>
 <li>In brief:<ul>
-<li>PhysIO needs Matlab to run, and some of its toolboxes.</li>
+<li>PhysIO needs Matlab to run, and a few of its toolboxes.</li>
 <li>Some functionality requires SPM (GUI, nuisance regression, contrast reporting, 
 writing residual and SNR images).</li>
 </ul>
@@ -1135,15 +1136,15 @@ paper. The list is by no means complete, and we are happy to add any relevant pa
 suggested to us. </p>
 <h4 id="retroicor">RETROICOR</h4>
 <ol start="2">
-<li><p>Glover, G.H., Li, T.Q. &amp; Ress, D. Image‐based method for retrospective correction
+<li><p>Glover, G.H., Li, T.Q. &amp; Ress, D. Image�?based method for retrospective correction
 of PhysIOlogical motion effects in fMRI: RETROICOR. Magn Reson Med 44, 162-7 (2000).</p>
 </li>
 <li><p>Hutton, C. et al. The impact of Physiological noise correction on fMRI at 7 T.
-NeuroImage 57, 101‐112 (2011).</p>
+NeuroImage 57, 101�?112 (2011).</p>
 </li>
 <li><p>Harvey, A.K. et al. Brainstem functional magnetic resonance imaging:
 Disentangling signal from PhysIOlogical noise. Journal of Magnetic Resonance
-Imaging 28, 1337‐1344 (2008).</p>
+Imaging 28, 1337�?1344 (2008).</p>
 </li>
 <li><p>Bollmann, S., Puckett, A.M., Cunnington, R., Barth, M., 2018. 
 Serial correlations in single-subject fMRI with sub-second TR. 
@@ -1747,8 +1748,121 @@ ACQ_TIME_TICS  CHANNEL  VALUE  SIGNAL
 <span class="hljs-symbol">1 </span>   <span class="hljs-number">1904</span>    <span class="hljs-number">1780</span></pre><p class="page" id="CHANGELOG"></p><h1>Version History (Changelog)</h1>
 <h1 id="release-information">RELEASE INFORMATION</h1>
 <h2 id="current-release">Current Release</h2>
-<p><em>Current version: PhysIO Toolbox Release R2019b, v7.2.0</em></p>
-<p>August 20, 2019</p>
+<p><em>Current version: PhysIO Toolbox Release R2020a, v7.3.0</em></p>
+<p>July 10th, 2020</p>
+<h2 id="scheduled-minor-release-notes-v7-4-0-">SCHEDULED Minor Release Notes (v7.4.0)</h2>
+<h3 id="added">Added</h3>
+<ul>
+<li>Brain Imaging Data Structure (BIDS) export format (<code>.tsv.gz</code>, <code>.json</code>) to save raw physiological recordings after synchronization with scanner timing (internal gitlab issue #91)<ul>
+<li>following current BIDS specification on <a href="https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continuous-recordings.html">continuous physiological recordings</a> and its <a href="https://bids-specification.readthedocs.io/en/stable/02-common-principles.html#tabular-files">metadata</a></li>
+<li>single tab-separated values file with columns for cardiac and respiratory recordings<ul>
+<li>if sampling frequencies of the two differ, upsampling to higher frequency is performed</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="changed">Changed</h3>
+<h3 id="fixed">Fixed</h3>
+<h2 id="minor-release-notes-r2020a-v7-3-0-">Minor Release Notes (R2020a, v7.3.0)</h2>
+<h3 id="added">Added</h3>
+<ul>
+<li>Added descriptive names for the multiple regressors matrix.<ul>
+<li>Closes GitLab issue #82.</li>
+<li>Now possible to straightforwardly inspect <code>physio.model.R</code> and the
+contents of <code>physio.model.output_multiple_regressors</code> using
+<code>physio.model.R_column_names</code>.</li>
+<li>Added <code>tapas_physio_guess_regressor_names()</code> to maintain backwards
+compatibility.</li>
+</ul>
+</li>
+<li>New example datasets Siemens VB PPU3T with DICOM Sync (courtesy of Alexander Ritter, Jena, Germany)</li>
+<li>More versatile control on figure visibility, saving and closing during <code>main</code> and <code>review</code> runs of PhysIO<ul>
+<li>feature provided by Stephan Heunis, TU Eindhoven, The Netherlands (github issue #89)</li>
+<li>figures can now be plotted in the background without disturbing interactive Matlab sessions, and can be (more) selectively saved and closed during execution of <code>tapas_physio_review</code></li>
+<li>more comprehensive support within <code>tapas_physio_main_create_regressors</code> to follow</li>
+</ul>
+</li>
+</ul>
+<h2 id="bugfix-release-notes-v7-2-8-">Bugfix Release Notes (v7.2.8)</h2>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Bug(s) when checking SPM and PhysIO paths in <code>tapas_physio_init</code> under
+certain particular Matlab path environment settings (Gitlab merge request !37)<ul>
+<li>e.g., when add <code>physio-public/code</code> manually without subfolder</li>
+<li>or if spm existed as a folder name without being added to path</li>
+</ul>
+</li>
+</ul>
+<h2 id="bugfix-release-notes-v7-2-7-">Bugfix Release Notes (v7.2.7)</h2>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>Reimplemented <code>tapas_physio_filter_respiratory.m</code>.<ul>
+<li>Closes GitLab issue #98.</li>
+<li>Reduces the cut-off frequency of the high-pass filter, so as to behave
+more like a detrending step. Previous value of 0.1 Hz could distort e.g.
+sigh breaths, which can easily last upwards of 10 s.</li>
+<li>Reimplements the filters themselves, with a higher filter order, extra
+padding, and a two step high-pass and low-pass procedure (i.e. rather
+than band pass) to improve the overall stability.</li>
+</ul>
+</li>
+</ul>
+<h2 id="bugfix-release-notes-v7-2-6-">Bugfix Release Notes (v7.2.6)</h2>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Meaningful error message for <code>auto_matched</code> peak detection, if time series is too short<ul>
+<li>at least 20 peaks (and pulse templates) are required to create a pulse template</li>
+<li>this is now stated explicitly, if time series is too short</li>
+<li>reported by Joy Schuurmans Stekhoven, TNU, as gitlab issue #92</li>
+</ul>
+</li>
+</ul>
+<h2 id="bugfix-release-notes-v7-2-5-">Bugfix Release Notes (v7.2.5)</h2>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Corrected documentation for <code>preproc.cardiac.initial_cpulse_select.min</code> parameter<ul>
+<li>threshold for peak relative to z-scored time series, <em>not</em> correlation</li>
+<li>reported by Sam Harrison, TNU, as gitlab issue #95</li>
+</ul>
+</li>
+</ul>
+<h2 id="bugfix-release-notes-v7-2-4-">Bugfix Release Notes (v7.2.4)</h2>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Stop docked figure default throwing error with <code>-nodisplay</code><ul>
+<li>allows generating saved figure without a display, e.g., on remote server</li>
+<li>bugfix provided by Sam Harrison, TNU</li>
+</ul>
+</li>
+</ul>
+<h2 id="bugfix-release-notes-v7-2-3-">Bugfix Release Notes (v7.2.3)</h2>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Bugfix manual peak selection (Github issue #85, Gitlab #90)<ul>
+<li>did not work because of figure handling</li>
+</ul>
+</li>
+</ul>
+<h2 id="bugfix-release-notes-v7-2-2-">Bugfix Release Notes (v7.2.2)</h2>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Bugfix Siemens VB (<code>*.resp, *.puls, *.ecg</code>)<ul>
+<li>Synchronization to DICOM time stamp did not work for extended physiological recordings (not starting/ending with functional run) due to ignored absolute start time stamp</li>
+<li>reported by Alexander Ritter, Jena, Germany (Github issue #55, Gitlab #87)</li>
+<li>probably fixes Github issue #63 (Gitlab #86) as well</li>
+</ul>
+</li>
+</ul>
+<h2 id="bugfix-release-notes-v7-2-1-">Bugfix Release Notes (v7.2.1)</h2>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>PhysIO: removed Matlab statistics toolbox dependency for PCA by SVD implementation (thanks to Benoît Beranger, <a href="https://github.com/translationalneuromodeling/tapas/pull/64">pull request 64</a>)<ul>
+<li>new function <code>tapas_physio_pca</code> allows for switch between stats and native SVD implementation of PCA</li>
+<li>comes with unit tests checking equivalency</li>
+</ul>
+</li>
+</ul>
 <h2 id="minor-release-notes-r2019b-v7-2-0-">Minor Release Notes (R2019b, v7.2.0)</h2>
 <h3 id="added">Added</h3>
 <ul>

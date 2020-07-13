@@ -174,7 +174,7 @@ for r = 1:nRois
         end
     end
     
-    % Write the final noise ROIs in a volume, after relice, threshold and erosion
+    % Write the final noise ROIs in a volume, after reslice, threshold and erosion
     [fpRoi,fnRoi] = fileparts(Vroi.fname);
     Vroi.fname = fullfile(fpRoi, sprintf('noiseROI_%s.nii', fnRoi));
     spm_write_vol(Vroi,roi);

@@ -3,7 +3,7 @@ Release ID: $Format:%h %d$
 
 --- 
 
-Copyright (C) 2012-2019 Christoph Mathys <chmathys@ethz.ch>
+Copyright (C) 2012-2020 Christoph Mathys <chmathys@ethz.ch>
 Translational Neuromodeling Unit (TNU)
 University of Zurich and ETH Zurich
 
@@ -45,6 +45,13 @@ opening hgf_demo.mlx in Matlab. A PDF version is available in
 hgf_demo.pdf.
 
 ## Release notes
+
+### v6.0
+- Introduced first eHGF models (ehgf, ehgf_binary, ehgf_jget)
+- Enabled calling fitModel with config structures as arguments
+- Enabled changing config structures on the fly
+- Introduced sampleModel for sampling from the prior
+- Various other additions, improvements, and bugfixes
 
 ### v5.3
 - Enabled setting and storing of seed for random number generator in simulations

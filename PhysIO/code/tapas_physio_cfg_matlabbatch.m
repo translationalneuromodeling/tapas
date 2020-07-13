@@ -585,7 +585,9 @@ max_heart_rate_bpm.val     = {90};
 min       = cfg_entry;
 min.tag     = 'min';
 min.name    = 'min';
-min.help    = {'Minimum correlation value considered a peak (for auto, manual, load-methods).'};
+min.help    = { ...
+    'Minimum threshold for peak height in z-scored cardiac waveform to find pulse events'
+    'NOTE: For ECG, might need increase (e.g., 2.0), because of local maximum of T wave after QRS complex'};
 min.strtype = 'e';
 min.num     = [Inf Inf];
 min.val     = {0.4};
@@ -604,8 +606,8 @@ initial_cpulse_select_method_auto_template.val  = {
     max_heart_rate_bpm
 };
 initial_cpulse_select_method_auto_template.help = { ...
-    ' Auto generation of representative QRS-wave; detection via'
-    '             maximising auto-correlation with it (default)'};
+    ' Automatic generation of representative pulse shape template; detection via'
+    '             maximising cross-correlation with this template (default)'};
 
 
 %--------------------------------------------------------------------------
@@ -621,8 +623,8 @@ initial_cpulse_select_method_auto_matched.val  = {
     max_heart_rate_bpm
 };
 initial_cpulse_select_method_auto_matched.help = { ...
-    'Auto generation of template QRS wave, '
-    '             matched-filter/autocorrelation detection of heartbeats'
+    'Automatic generation of template QRS wave, '
+    '            cross-correlation/matched filter detection of heartbeats'
     };
 
 
@@ -638,7 +640,7 @@ initial_cpulse_select_method_manual_template.val  = {
     initial_cpulse_select_file    
 };
 initial_cpulse_select_method_manual_template.help = { ...
-    'Manually select QRS-wave for autocorrelation detection'
+    'Manually select QRS-wave for cross-correlation detection'
     };
 
 
@@ -654,7 +656,7 @@ initial_cpulse_select_method_load_template.val  = {
     initial_cpulse_select_file    
 };
 initial_cpulse_select_method_load_template.help = { ...
-    'Load template from previous manual/auto run to perform autocorrelation detection of heartbeats'
+    'Load template pulse shape from previous manual/auto run to perform detection of heartbeats via maximum cross-correlation'
     };
 
 

@@ -24,7 +24,7 @@ function [isSpmOnPath, pathSpm] = tapas_physio_check_spm();
 % COPYING or <http://www.gnu.org/licenses/>.
 %
 
-isSpmOnPath = exist('spm');
+isSpmOnPath = (exist('spm') == 2);
 if isSpmOnPath
     pathSpm = spm('Dir'); 
     spm_check_installation();
