@@ -1,6 +1,6 @@
 ![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
 
-*Version 3.3.0*
+*Version 3.2.1*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================
@@ -66,7 +66,7 @@ DOCUMENTATION
 - In general, each toolbox comes with their own documentation as Wiki, PDF,
   matlab tutorials etc.
 - Documentation for older versions (<= 2.7.0.0) is provided on the
-  [TNU page](https://www.tnu.ethz.ch/de/software/tapas/documentations.html)
+  [TNU page](https://www.tnu.ethz.ch/de/software/tapas/documentations)
 
 
 -------
