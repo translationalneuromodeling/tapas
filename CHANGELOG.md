@@ -1,7 +1,7 @@
 # Changelog
 TAPAS toolbox 
 
-## [3.2.1] 2020-07-16
+## [3.3.0] 2020-07-17
 
 ### Added
 - h2gf: Hierarchical inference for the HGF, beta version released
@@ -21,7 +21,10 @@ TAPAS toolbox
 - PhysIO: removed Matlab statistics toolbox dependency for PCA by SVD implementation (thanks to Benoît Beranger, [pull request 64](https://github.com/translationalneuromodeling/tapas/pull/64))
 
 ### Fixed
-- HUGE: bugfix x-tick labels
+- HUGE: fixed tick labels
+
+### Known issues
+- TAPAS uses the mcmcdiag toolbox for Monte Carlo convergence diagnostics, which shadows a number of matlab built-in functions. Affected functions include: Contents.m, cusum.m, join.m and score.m. Workaround: If you use one of these functions in your own code, remove the tapas folder from your matlab path when you are not using the TAPAS toolbox.
 
 ## [3.2.0] 2019-09-29
 
