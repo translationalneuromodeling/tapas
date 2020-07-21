@@ -1,7 +1,7 @@
 TAPAS PhysIO Toolbox 
 ====================
 
-*Current version: Release 2019b, v7.2.4*
+*Current version: Release 2020a, v7.3.0*
 
 > Copyright (C) 2012-2020  
 > Lars Kasper  
@@ -251,15 +251,14 @@ Contributors
 - Project Team: 
     - Steffen Bollmann, Centre for Advanced Imaging, University of Queensland, Australia
     - Saskia Bollmann, Centre for Advanced Imaging, University of Queensland, Australia
+    - Sam Harrison, TNU Zurich
 - Contributors (Code):
     - Eduardo Aponte, TNU Zurich
     - Tobias U. Hauser, FIL London, UK
-    - Sam Harrison, TNU Zurich
     - Jakob Heinzle, TNU Zurich
     - Chloe Hutton, FIL London, UK (previously)
     - Miriam Sebold, Charite Berlin, Germany
-    - External TAPAS contributors listed in its [Contributor License Agreement]
-    (https://github.com/translationalneuromodeling/tapas/blob/master/Contributor-License-Agreement.md)
+    - External TAPAS contributors are listed in the [Contributor License Agreement](https://github.com/translationalneuromodeling/tapas/blob/master/Contributor-License-Agreement.md)
 - Contributors (Examples):
     - listed in [EXAMPLES.md](https://gitlab.ethz.ch/physio/physio-doc/wikis/EXAMPLES)
 
@@ -320,15 +319,15 @@ paper. The list is by no means complete, and we are happy to add any relevant pa
 suggested to us. 
 
 #### RETROICOR 
-2. Glover, G.H., Li, T.Q. & Ress, D. Image‚Äêbased method for retrospective correction
+2. Glover, G.H., Li, T.Q. & Ress, D. Image‚Ä?based method for retrospective correction
 of PhysIOlogical motion effects in fMRI: RETROICOR. Magn Reson Med 44, 162-7 (2000).
 
 3. Hutton, C. et al. The impact of Physiological noise correction on fMRI at 7 T.
-NeuroImage 57, 101‚Äê112 (2011).
+NeuroImage 57, 101‚Ä?112 (2011).
 
 4. Harvey, A.K. et al. Brainstem functional magnetic resonance imaging:
 Disentangling signal from PhysIOlogical noise. Journal of Magnetic Resonance
-Imaging 28, 1337‚Äê1344 (2008).
+Imaging 28, 1337‚Ä?1344 (2008).
 
 5. Bollmann, S., Puckett, A.M., Cunnington, R., Barth, M., 2018. 
 Serial correlations in single-subject fMRI with sub-second TR. 

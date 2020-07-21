@@ -163,7 +163,7 @@ Erp::linearize_theta_vector(const mxArray *matcell, ErpColumnArray *erpArray,
 }
 
 int
-Erp::initilize_y(DataArray *u, ErpColumnArray *theta, ErpPTheta *ptheta, DataArray *y)
+Erp::initialize_y(DataArray *u, ErpColumnArray *theta, ErpPTheta *ptheta, DataArray *y)
 {
 
     y->nc = theta->nc;

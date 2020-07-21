@@ -12,7 +12,6 @@ Basic container classes.
 
 
 from collections import Sequence
-from pdb import set_trace as _
 import numpy as np
 from copy import deepcopy
 from scipy.integrate import cumtrapz
@@ -90,7 +89,7 @@ class AlgebraicObject(object):
 
     def __truediv__(self, arg):
 
-        return self.__mul__(self, 1./arg)
+        return self.__mul__(1./arg)
 
     def exp(self):
 
@@ -234,7 +233,7 @@ class FitsContainer(Sequence):
     def sum(self):
 
         if len(self) == 0:
-            raise(IndexError('Empty container'))
+            raise IndexError
 
         nobj = deepcopy(self[0])
 
@@ -246,7 +245,7 @@ class FitsContainer(Sequence):
     def mean(self):
 
         if len(self) == 0:
-            raise(IndexError('Empty container'))
+            raise IndexError
 
         nobj = deepcopy(self[0])
 
@@ -259,7 +258,7 @@ class FitsContainer(Sequence):
         '''Variance of the fits. '''
 
         if len(self) < 2:
-            raise(IndexError('Container requires more than one sample'))
+            raise IndexError
 
         ev = self.mean()
 

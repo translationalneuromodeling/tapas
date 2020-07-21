@@ -59,15 +59,7 @@ u = [0; r.u(:,1)];
 n = length(u);
 
 % Construct time axis
-if r.c_prc.irregular_intervals
-    if size(u,2) > 1
-        t = [0; r.u(:,end)];
-    else
-        error('tapas:hgf:InputSingleColumn', 'Input matrix must contain more than one column if irregular_intervals is set to true.');
-    end
-else
-    t = ones(n,1);
-end
+t = ones(n,1);
 
 % Initialize updated quantities
 

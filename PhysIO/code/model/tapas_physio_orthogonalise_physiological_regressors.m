@@ -1,4 +1,4 @@
-function [R, verbose] = tapas_physio_orthogonalise_physiological_regressors(cardiac_sess, respire_sess, mult_sess, input_R, orthogonalise, verbose)
+function [R, verbose] = tapas_physio_orthogonalise_physiological_regressors(R, column_names, orthogonalise, verbose)
 % orthogonalises (parts of) created physiological regressors
 %
 %   output = tapas_physio_orthogonalise_physiological_regressors(input)
@@ -8,13 +8,8 @@ function [R, verbose] = tapas_physio_orthogonalise_physiological_regressors(card
 % coefficients are nearly constant throughout the volumes.
 %
 % IN
-%   cardiac_sess    [Nscans, order.c x 2] regressors of cardiac phase
-%                   expansion
-%   respire_sess    [Nscans, order.r x 2] regressors of respiratory phase
-%                   expansion
-%   mult_sess       [Nscans, order.cr x 2] regressors of cardiac X respiratory phase
-%                   interaction expansion
-%   input_R         other confound regressors (e.g. realignment parameters)
+%   R               [Nscans, Nregressors]: Matrix of regressors
+%   column_names    {Nregressors}: Cell array of regressor names
 %   orthogonalise
 %           - string indicating which regressors shall be
 %             orthogonalised; mainly needed, if
@@ -47,26 +42,30 @@ function [R, verbose] = tapas_physio_orthogonalise_physiological_regressors(card
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
-R_non_orth = [cardiac_sess, respire_sess, mult_sess input_R];
-
-if isempty(R_non_orth)
-    R = [];
+if isempty(R)
     return;
 end
 
+R_non_orth = R;
+card_inds = strcmpi(column_names, 'RETROICOR (cardiac)');
+resp_inds = strcmpi(column_names, 'RETROICOR (respiratory)');
+mult_inds = strcmpi(column_names, 'RETROICOR (multiplicative)');
+retr_inds = (card_inds | resp_inds | mult_inds);
+
 switch lower(orthogonalise)
     case {'c', 'cardiac'}
-        R = [tapas_physio_scaleorthmean_regressors(cardiac_sess), respire_sess, tapas_physio_scaleorthmean_regressors(mult_sess) input_R];
+        R(:, card_inds) = tapas_physio_scaleorthmean_regressors(R(:, card_inds));
+        R(:, mult_inds) = tapas_physio_scaleorthmean_regressors(R(:, mult_inds));  % Lars: Why?
     case {'r', 'resp'}
-        R = [cardiac_sess, tapas_physio_scaleorthmean_regressors(respire_sess) mult_sess input_R];
+        R(:, resp_inds) = tapas_physio_scaleorthmean_regressors(R(:, resp_inds));
     case {'mult'}
-        R = [cardiac_sess, respire_sess, tapas_physio_scaleorthmean_regressors(mult_sess) input_R];
+        R(:, mult_inds) = tapas_physio_scaleorthmean_regressors(R(:, mult_inds));
     case 'retroicor'
-        R = [tapas_physio_scaleorthmean_regressors([cardiac_sess, respire_sess, mult_sess]), input_R];
+        R(:, retr_inds) = tapas_physio_scaleorthmean_regressors(R(:, retr_inds));
     case 'all'
-        R = tapas_physio_scaleorthmean_regressors([cardiac_sess, respire_sess, mult_sess, input_R]);
+        R = tapas_physio_scaleorthmean_regressors(R);
     case {'n', 'none'}
-        R = [cardiac_sess, respire_sess, mult_sess input_R];
+        % Easy!
     otherwise
         verbose = tapas_physio_log(...
             sprintf('Orthogonalisation of regressor set %s is not supported yet', ...
@@ -85,7 +84,9 @@ if verbose.level
             imagesc(R); 
             title({'Model: Physiological regressor matrix for GLM', ...
                 '- including input confound regressors -'});
-            colormap gray; xlabel('regressor');ylabel('scan volume');
+            colormap gray;
+            xlabel('Regressor'); ylabel('Scan volume');
+            xticks(1:size(R, 2)); xticklabels(column_names); xtickangle(60);
             
         otherwise
             subplot(1,3,1); imagesc(R); title({'Model: Physiological regressor matrix for GLM'...

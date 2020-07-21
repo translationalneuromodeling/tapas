@@ -83,14 +83,15 @@ pars.T = ones(4, 1) * linspace(0.1, 1, 1).^5;
 pars.nburnin = 4000;
 pars.niter = 4000;
 pars.ndiag = 500;
-pars.mc3it = 4;
+pars.thinning = 100;
 pars.verbose = 1;
 
 display(ptheta);
 inference = struct();
 tic
 posterior = tapas_sem_multiv_estimate(data, ptheta, inference, pars);
-summary = tapas_sem_display_posterior(posterior);
+summary = posterior.summary;
+tapas_sem_display_posterior(posterior);
 toc
 
 display(posterior)

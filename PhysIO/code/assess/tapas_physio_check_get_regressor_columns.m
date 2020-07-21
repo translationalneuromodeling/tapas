@@ -10,7 +10,7 @@ function [colPhys, colCard, colResp, colMult, colHRV, colRVT, colRois, colMove, 
 %
 %
 % OUTPUT:
-%   colPhys      - index vector of all physiological regressor columns in design matrix (from SPM.xX.names)
+%   colPhys     - index vector of all physiological regressor columns in design matrix (from SPM.xX.names)
 %   colCard     - index vector of cardiac regressor columns in design matrix (from SPM.xX.names)
 %   colResp     - index vector of respiratory regressor columns in design matrix (from SPM.xX.names)
 %   colMult     - index vector of interaction cardiac X respiration regressor columns in design matrix (from SPM.xX.names)
@@ -75,6 +75,8 @@ else
     nHRV  = model.hrv.include.*numel(model.hrv.delays);
     nRVT  = model.rvt.include.*numel(model.rvt.delays);
     
+    assert(~model.other.include, 'SPM review not compatible with ''model.other''');
+    
 end
 
 cnames = SPM.xX.name';
@@ -90,6 +92,10 @@ for s = 1:nSess
     
     cname = ['Sn(' int2str(s) ') R' int2str(iCard)];
     indC = find(strcmp(cnames, cname));
+    if isempty(indC)
+        % Check if SPM has loaded names directly
+        indC = find(contains(cnames, model.R_column_names{1}, 'IgnoreCase', true), 1);
+    end
     
     colCard = [colCard, indC:(indC+nCard - 1)];
     colResp = [colResp, (indC+nCard):(indC+nCard+nResp - 1)];

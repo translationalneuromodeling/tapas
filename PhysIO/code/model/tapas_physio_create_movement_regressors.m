@@ -114,6 +114,9 @@ else
         R = [R, R.^2];
     end
     
+    % Sanity check if order misspecified
+    movement.order = size(R, 2);
+    
     %% Motion Censoring
     % Include outlier movements exceeding thresholds as stick regressors
     % Euclidean distance used!

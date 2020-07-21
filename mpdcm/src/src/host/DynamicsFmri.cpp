@@ -29,7 +29,7 @@ DynamicsFmri::update_y(
 
 
 int
-DynamicsFmri::initilize_x(
+DynamicsFmri::initialize_x(
     const arma::Mat< double > u, 
     const mxArray *theta, 
     const mxArray *ptheta, arma::Mat< double >& nx)

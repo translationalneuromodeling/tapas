@@ -30,11 +30,11 @@ prosa_llh_abstract(double t, int a, PROSA_PARAMETERS params)
         switch ( a ){
             case PROSACCADE:
                 return LN_P_OUTLIER_PRO +
-                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
+                    (0.5 * p0 - M_LN2 - lcosh(0.5 * p0) - log(t0));
                 break;
             case ANTISACCADE:
                 return LN_P_OUTLIER_ANTI +
-                    (p0/2 - M_LN2 - log(cosh(p0/2)) - log(t0));
+                    (0.5 * p0 - M_LN2 - lcosh(0.5 * p0) - log(t0));
                 break;
         }
     }  
@@ -67,7 +67,7 @@ prosa_llh_abstract(double t, int a, PROSA_PARAMETERS params)
             }
             break;
     }
-    llh += -p0/2 - M_LN2 - log(cosh(p0/2));
+    llh += -0.5 * p0 - M_LN2 - lcosh(-0.5 * p0);
     // Guard against odd values
     if ( llh == INFINITY )
         llh = NAN;

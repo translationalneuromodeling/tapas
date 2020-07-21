@@ -133,7 +133,7 @@ r = dataPrep(responses, inputs);
 %
 % Default perceptual model
 % ~~~~~~~~~~~~~~~~~~~~~~~~
-r.c_prc = tapas_hgf_binary_config;
+r.c_prc = tapas_ehgf_binary_config;
 
 % Default observation model
 % ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,15 +150,31 @@ r.c_opt = tapas_quasinewton_optim_config;
 
 % Override default settings with arguments from the command line
 if nargin > 2 && ~isempty(varargin{1})
-    r.c_prc = eval(varargin{1});
+    if isstr(varargin{1})
+        r.c_prc = eval(varargin{1});
+    else
+        r.c_prc = varargin{1};
+        % Ensure consistency of configuration of priors
+        r.c_prc = tapas_align_priors(r.c_prc);
+    end
 end
 
 if nargin > 3 && ~isempty(varargin{2})
-    r.c_obs = eval(varargin{2});
+    if isstr(varargin{2})
+        r.c_obs = eval(varargin{2});
+    else
+        r.c_obs = varargin{2};
+        % Ensure consistency of configuration of priors
+        r.c_obs = tapas_align_priors(r.c_obs);
+    end
 end
 
 if nargin > 4 && ~isempty(varargin{3})
-    r.c_opt = eval(varargin{3});
+    if isstr(varargin{3})
+        r.c_opt = eval(varargin{3});
+    else
+        r.c_opt = varargin{3};
+    end
 end
 
 % Replace placeholders in parameter vectors with their calculated values
@@ -229,7 +245,7 @@ disp(' ')
 disp(['    AIC and BIC are approximations to -2*LME = ' num2str(-2*r.optim.LME) '.'])
 disp(' ')
 
-return;
+end % function tapas_fitModel
 
 % --------------------------------------------------------------------------------------------------
 function r = dataPrep(responses, inputs)
@@ -314,14 +330,10 @@ else
     r.plh.p99994 = log(var(r.u(:,1),1))-2;
 end
 
-return;
+end % function dataPrep
 
 % --------------------------------------------------------------------------------------------------
 function r = optim(r, prc_fun, obs_fun, opt_algo)
-
-% Use means of priors as starting values for optimization for optimized parameters (and as values
-% for fixed parameters)
-init = [r.c_prc.priormus, r.c_obs.priormus];
 
 % Determine indices of parameters to optimize (i.e., those that are not fixed or NaN)
 opt_idx = [r.c_prc.priorsas, r.c_obs.priorsas];
@@ -336,97 +348,82 @@ n_obspars = length(r.c_obs.priormus);
 % The negative log-joint as a function of a single parameter vector
 nlj = @(p) [negLogJoint(r, prc_fun, obs_fun, p(1:n_prcpars), p(n_prcpars+1:n_prcpars+n_obspars))];
 
+% Use means of priors as starting values for optimization for optimized parameters (and as values
+% for fixed parameters)
+init = [r.c_prc.priormus, r.c_obs.priormus];
+
 % Check whether priors are in a region where the objective function can be evaluated
 [dummy1, dummy2, rval, err] = nlj(init);
 if rval ~= 0
     rethrow(err);
 end
 
-% The objective function is now the negative log joint restricted
-% with respect to the parameters that are not optimized
-obj_fun = @(p_opt) restrictfun(nlj, init, opt_idx, p_opt);
+% Do an optimization run
+optres = optimrun(nlj, init, opt_idx, opt_algo, r.c_opt);
 
-% Optimize
-disp(' ')
-disp('Optimizing...')
-r.optim = opt_algo(obj_fun, init(opt_idx)', r.c_opt);
+% Record optimization results
+r.optim.init  = optres.init;
+r.optim.final = optres.final;
+r.optim.H     = optres.H;
+r.optim.Sigma = optres.Sigma;
+r.optim.Corr  = optres.Corr;
+r.optim.negLl = optres.negLl;
+r.optim.negLj = optres.negLj;
+r.optim.LME   = optres.LME;
+r.optim.accu  = optres.accu;
+r.optim.comp  = optres.comp;
 
-% Replace optimized values in init with arg min values
-final = init;
-final(opt_idx) = r.optim.argMin';
-r.optim.final = final;
+% Do further optimization runs with random initialization
+if isfield(r.c_opt, 'nRandInit') && r.c_opt.nRandInit > 0
+    for i = 1:r.c_opt.nRandInit
+        % Use prior mean as starting value for random draw
+        init = [r.c_prc.priormus, r.c_obs.priormus];
 
-% Get the negative log-joint and negative log-likelihood
-[negLj, negLl] = nlj(final);
+        % Get standard deviations of parameter priors
+        priorsds = sqrt([r.c_prc.priorsas, r.c_obs.priorsas]);
+        optsds = priorsds(opt_idx);
 
-% Calculate the covariance matrix Sigma and the log-model evidence (as approximated
-% by the negative variational free energy under the Laplace assumption).
-disp(' ')
-disp('Calculating the log-model evidence (LME)...')
-d     = length(opt_idx);
-Sigma = NaN(d);
-Corr  = NaN(d);
-LME   = NaN;
+        % Add random values to prior means, drawn from Gaussian with prior sd
+        rng('shuffle');
+        init(opt_idx) = init(opt_idx) + randn(1,length(optsds)).*optsds;
 
-options.init_h    = 1;
-options.min_steps = 10;
+        % Check whether initialization point is in a region where the objective
+        % function can be evaluated
+        [dummy1, dummy2, rval, err] = nlj(init);
+        if rval ~= 0
+            rethrow(err);
+        end
 
-% Numerical computation of the Hessian of the negative log-joint at the MAP estimate
-H = tapas_riddershessian(obj_fun, r.optim.argMin, options);
+        % Do an optimization run
+        optres = optimrun(nlj, init, opt_idx, opt_algo, r.c_opt);
 
-% Use the Hessian from the optimization, if available,
-% if the numerical Hessian is not positive definite
-if any(isinf(H(:))) || any(isnan(H(:))) || any(eig(H)<=0)
-    if isfield(r.optim, 'T')
-        % Hessian of the negative log-joint at the MAP estimate
-        % (avoid asymmetry caused by rounding errors)
-        H = inv(r.optim.T);
-        H = (H' + H)./2;
-        % Parameter covariance 
-        Sigma = r.optim.T;
-        % Parameter correlation
-        Corr = tapas_Cov2Corr(Sigma);
-        % Log-model evidence ~ negative variational free energy
-        LME   = -r.optim.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
-    else
-        disp('Warning: Cannot calculate Sigma and LME because the Hessian is not positive definite.')
+        % Record optimization if the LME is better than the previous record
+        if optres.LME > r.optim.LME
+            r.optim.init  = optres.init;
+            r.optim.final = optres.final;
+            r.optim.H     = optres.H;
+            r.optim.Sigma = optres.Sigma;
+            r.optim.Corr  = optres.Corr;
+            r.optim.negLl = optres.negLl;
+            r.optim.negLj = optres.negLj;
+            r.optim.LME   = optres.LME;
+            r.optim.accu  = optres.accu;
+            r.optim.comp  = optres.comp;
+        end
     end
-else
-    % Calculate parameter covariance (and avoid asymmetry caused by
-    % rounding errors)
-    Sigma = inv(H);
-    Sigma = (Sigma' + Sigma)./2;
-    % Parameter correlation
-    Corr = tapas_Cov2Corr(Sigma);
-    % Log-model evidence ~ negative variational free energy
-    LME = -r.optim.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
 end
 
-% Calculate accuracy and complexity (LME = accu - comp)
-accu = -negLl;
-comp = accu -LME;
-
 % Calculate AIC and BIC
+d = length(opt_idx);
 if ~isempty(r.y)
     ndp = sum(~isnan(r.y(:,1)));
 else
     ndp = sum(~isnan(r.u(:,1)));
 end
-AIC  = 2*negLl +2*d;
-BIC  = 2*negLl +d*log(ndp);
+r.optim.AIC  = 2*r.optim.negLl +2*d;
+r.optim.BIC  = 2*r.optim.negLl +d*log(ndp);
 
-r.optim.H     = H;
-r.optim.Sigma = Sigma;
-r.optim.Corr  = Corr;
-r.optim.negLl = negLl;
-r.optim.negLj = negLj;
-r.optim.LME   = LME;
-r.optim.accu  = accu;
-r.optim.comp  = comp;
-r.optim.AIC   = AIC;
-r.optim.BIC   = BIC;
-
-return;
+end % function optim
 
 % --------------------------------------------------------------------------------------------------
 function [negLogJoint, negLogLl, rval, err] = negLogJoint(r, prc_fun, obs_fun, ptrans_prc, ptrans_obs)
@@ -475,7 +472,87 @@ negLogJoint = -(logLl + logPrcPrior + logObsPrior);
 err = [];
 rval = 0;
 
-return;
+end % function negLogJoint
+
+% --------------------------------------------------------------------------------------------------
+function optres = optimrun(nlj, init, opt_idx, opt_algo, c_opt)
+% Does one run of the optimization algorithm and returns results
+
+% The objective function is now the negative log joint restricted
+% with respect to the parameters that are not optimized
+obj_fun = @(p_opt) restrictfun(nlj, init, opt_idx, p_opt);
+
+% Optimize
+disp(' ')
+disp('Optimizing...')
+optres = opt_algo(obj_fun, init(opt_idx)', c_opt);
+
+% Record initialization point
+optres.init = init;
+
+% Replace optimized values in init with arg min values
+final = init;
+final(opt_idx) = optres.argMin';
+optres.final = final;
+
+% Get the negative log-joint and negative log-likelihood
+[negLj, negLl] = nlj(final);
+
+% Calculate the covariance matrix Sigma and the log-model evidence (as approximated
+% by the negative variational free energy under the Laplace assumption).
+disp(' ')
+disp('Calculating the log-model evidence (LME)...')
+d     = length(opt_idx);
+
+% Numerical computation of the Hessian of the negative log-joint at the MAP estimate
+options.init_h    = 1;
+options.min_steps = 10;
+H = tapas_riddershessian(obj_fun, optres.argMin, options);
+
+% Use the Hessian from the optimization, if available,
+% if the numerical Hessian is not positive definite
+if any(isinf(H(:))) || any(isnan(H(:))) || any(eig(H)<=0)
+    if isfield(optres, 'T')
+        % Hessian of the negative log-joint at the MAP estimate
+        % (avoid asymmetry caused by rounding errors)
+        H = inv(optres.T);
+        % Parameter covariance
+        Sigma = optres.T;
+        % Ensure H and Sigma are positive semi-definite
+        H = tapas_nearest_psd(H);
+        Sigma = tapas_nearest_psd(Sigma);
+        % Parameter correlation
+        Corr = tapas_Cov2Corr(Sigma);
+        % Log-model evidence ~ negative variational free energy
+        LME = -optres.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
+    else
+        disp('Warning: Cannot calculate Sigma and LME because the Hessian is not positive definite.')
+    end
+else
+    % Calculate parameter covariance
+    Sigma = inv(H);
+    % Ensure H and Sigma are positive semi-definite
+    H = tapas_nearest_psd(H);
+    Sigma = tapas_nearest_psd(Sigma);
+    % Parameter correlation
+    Corr = tapas_Cov2Corr(Sigma);
+    % Log-model evidence ~ negative variational free energy
+    LME = -optres.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
+end
+
+% Record results
+optres.H = H;
+optres.Sigma = Sigma;
+optres.Corr = Corr;
+optres.negLl = negLl;
+optres.negLj = negLj;
+optres.LME = LME;
+
+% Calculate accuracy and complexity (LME = accu - comp)
+optres.accu = -negLl;
+optres.comp = optres.accu -LME;
+
+end % function optimrun
 
 % --------------------------------------------------------------------------------------------------
 function val = restrictfun(f, arg, free_idx, free_arg)
@@ -500,4 +577,4 @@ arg(free_idx) = free_arg;
 % Evaluate
 val = f(arg);
 
-return;
+end % function val

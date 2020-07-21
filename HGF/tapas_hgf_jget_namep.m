@@ -10,9 +10,9 @@ function pstruct = tapas_hgf_jget_namep(pvec)
 
 pstruct = struct;
 
-try
-    l = r.c_prc.n_levels;
-catch
+l = length(pvec)/8;
+
+if l ~= floor(l)
     error('tapas:hgf:UndetNumLevels', 'Cannot determine number of levels');
 end
 

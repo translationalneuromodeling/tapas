@@ -13,8 +13,8 @@ end
 isfunc = @(x) isa(x, 'function_handle');
 
 validate_field(inference, 'estimate_method', isfunc);
-validate_field(inference, 'initilize_states', isfunc);
-validate_field(inference, 'initilize_state', isfunc);
+validate_field(inference, 'initialize_states', isfunc);
+validate_field(inference, 'initialize_state', isfunc);
 validate_field(inference, 'sampling_methods', @iscell);
 
 for i = 1:numel(inference.sampling_methods)

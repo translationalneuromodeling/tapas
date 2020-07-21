@@ -16,11 +16,9 @@ function [fh, prop, MyColors] = tapas_physio_get_default_fig_params(...
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
-%
-
 if nargin < 1
     % If verbose structure is not passed as argument, assume default: figure visibility = 'on'
-    visibility = 'on';
+     visibility = 'on';
 else
     % Set default for verbose.show_figs if it is empty or if the field does not exist.
     % Default = true (i.e. show figures)
@@ -35,17 +33,17 @@ else
     end
 end
 
-if nargin < 2
+if nargin < 2    
     convfac = 2; % conversion factor for figure scaling; for laptop display
     % convfac = 4; % for prints in paper
 end
 
 if nargin < 3
-        xscale = 0.5;
+    xscale = 0.5;
 end
 
 if nargin < 4
-        yscale = 0.5;
+    yscale = 0.5;
 end
 
 scrsz = get(0,'ScreenSize');
@@ -59,6 +57,7 @@ catch err
         throw(err)
     end
 end
+%fh = figure('Position',[scrsz(1:2) xscale*scrsz(3) yscale*scrsz(4)], 'Hidden', 'on');
 
 MyColors = [ ...
     1.0000,         0,         0; ...

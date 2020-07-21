@@ -18,6 +18,9 @@ assert(floor(npars) == npars, ...
 
 ptheta.npars = npars;
 
+% Rename
+ptheta.name = sprintf('hier_%s', ptheta.name);
+
 % Simplify the preparations
 ptheta.njm = tapas_zeromat(ptheta.jm);
 
