@@ -17,6 +17,7 @@ Eduardo Aponte           | TNU, University of Zurich          | Zurich    | CH  
 Daniel Hoffmann Ayala    | Technical University               | Munich    | D       | DanielHoffmannAyala
 Benoît Béranger          | CENIR, ICM                         | Paris     | FR      | benoitberanger
 Stephan Heunis           | Eindhoven University of Technology | Eindhoven | NL      | jsheunis
+Niklas Bürgi             | SNS, University of Zurich          | Zurich    | CH      | nbuergi
 **- Add Entry here -**   | **- Add Entry here -**             | **Add**   | **Add** | **Add**                    
 
 (hereinafter referred to as "Contributor")
