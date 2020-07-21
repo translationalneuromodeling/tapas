@@ -21,6 +21,13 @@ function haveNewerRelease = tapas_check_for_new_release(verbose)
     end
 
     [online_version,data] = tapas_check_online_version();
+    if isempty(online_version) % Could not communicate with server
+        haveNewerRelease = false;
+        if verbose
+            fprintf(1, 'Could not reach github to get current TAPAS version!\n');
+        end
+        return;
+    end  
     offline_version = tapas_get_current_version();
     % both versions are strings in the form '3.3.0'. 
     haveNewerRelease = tapas_compare_versions(online_version,offline_version);
@@ -32,18 +39,24 @@ function haveNewerRelease = tapas_check_for_new_release(verbose)
             fprintf(1, ['\nThere is a new TAPAS release available (installed %s /'...
                 +'newest %s)!\n'],offline_version,online_version);
             if verbose > 1 % Show release notes of the new releases
-                n_data = numel(data);
-                fprintf(1, 'Release notes:\n')
-                for i_data = 1:n_data
-                    str_version = data(i_data).tag_name;
-                    str_version = strrep(str_version,'v','');
-                    if tapas_compare_versions(str_version,offline_version)
-                        fprintf(1, '===== TAPAS v%s =====\n',str_version)
-                        body = data(i_data).body;
-                        body = tapas_remove_problematic_escape_characters(body);
-                        fprintf(1,body);
-                        fprintf(1,'\n======================\n')
+                try % in case the api changed and the structure of the struct is
+                    % different
+                    n_data = numel(data);
+                    fprintf(1, 'Release notes:\n')
+                    for i_data = 1:n_data
+                        str_version = data(i_data).tag_name;
+                        str_version = strrep(str_version,'v','');
+                        if tapas_compare_versions(str_version,offline_version)
+                            fprintf(1, '===== TAPAS v%s =====\n',str_version)
+                            body = data(i_data).body;
+                            body = tapas_remove_problematic_escape_characters(body);
+                            fprintf(1,body);
+                            fprintf(1,'\n======================\n')
+                        end
                     end
+                catch 
+                    fprintf(1, ['Cannot print release notes. Maybe the github API'...
+                        ' has changed.\n']);
                 end
             end
         end
