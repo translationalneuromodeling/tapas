@@ -54,6 +54,14 @@ if ~isfield(pars, 'samples')
     pars.samples = 1;
 end
 
+if ~isfield(pars, 'thinning')
+    pars.thinning = 1;
+end
+
+if ~isfield(pars, 'kernel_scale')
+    pars.kernel_scale = 0.1 * 0.1 * 0.1;
+end
+
 if pars.seed > 0
     rng(pars.seed);
 else
@@ -123,7 +131,7 @@ for i = 1 : nburnin + niter
             end
         end
         if i <= nburnin
-            ok = update_kernel(t, ok, os, diagnostics, ptheta, htheta);
+            %ok = update_kernel(t, ok, os, diagnostics, ptheta, htheta);
         end
         diagnostics(:) = 0;
     end
@@ -135,7 +143,7 @@ for i = 1 : nburnin + niter
 
     v = nllh .* T + nlpp - (ollh .* T + olpp);
     % Reject nas and positive infs
-    nansv = isnan(v) | v == inf; 
+    nansv = isnan(v) | abs(v) == inf; 
     v(nansv) = -inf;
 
     v = rand(size(v)) < exp(v);
@@ -198,7 +206,7 @@ ps_theta = mat2cell(ps_theta, size(ps_theta, 1), ...
 ps.llh = [];
 ps.ps_theta = [];
 if pars.samples
-    ps.ps_theta = ps_theta;
+    ps.ps_theta = ps_theta(1:pars.thinning:end);
     ps.llh = ellh;
 end
 % Free energy
@@ -237,7 +245,7 @@ function [nk] = init_kernel(theta, ptheta, htheta)
 % See Exploring an adaptative Metropolis Algorithm
 % 
 
-np = size(htheta.pk, 1); 
+s = htheta.kernel_scale;
 
 njm = tapas_zeromat(ptheta.jm);
 
@@ -247,8 +255,6 @@ c = chol(c);
 
 nk = cell(numel(theta), 1);
 nk(:) = {c};
-
-s = 0.05;
 
 k =  s * chol(htheta.pk)' * ptheta.jm;
 tk = cell(numel(theta), 1);

@@ -9,12 +9,12 @@ if ~isfield(inference, 'estimate_method')
     inference.estimate_method = @tapas_mcmc_blocked_estimate;
 end
 
-if ~isfield(inference, 'initilize_states')
-    inference.initilize_states = @tapas_linear_init_states;
+if ~isfield(inference, 'initialize_states')
+    inference.initialize_states = @tapas_linear_init_states;
 end
 
-if ~isfield(inference, 'initilize_state')
-    inference.initilize_state = @tapas_vlinear_init_state;
+if ~isfield(inference, 'initialize_state')
+    inference.initialize_state = @tapas_vlinear_init_state;
 end
 
 if ~isfield(inference, 'sampling_methods')

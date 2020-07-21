@@ -195,8 +195,8 @@ for r = 1:R
     hemo{r, 2} = ['decay ' labels.regions{r}];
 end
 
-tmp = [a(:); c(:); b(:); d(:)];
-idx = [dcm.a(:); dcm.c(:); dcm.b(:); dcm.d(:)];
+tmp = [a(:); b(:); c(:); d(:)];
+idx = [dcm.a(:); dcm.b(:); dcm.c(:); dcm.d(:)];
 
 tickLabels = [tmp(logical(idx)); hemo(:); {'epsilon'}];
 

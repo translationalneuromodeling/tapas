@@ -66,9 +66,9 @@ expPhysio = physio;
 actRaw = actPhysio.ons_secs.raw;
 expRaw = expPhysio.ons_secs.raw;
 
-verifyEqual(testCase, actRaw.t, expRaw.t, 'Raw time vector does not match');
-verifyEqual(testCase, actRaw.c, expRaw.c, 'Raw cardiac trace does not match');
-verifyEqual(testCase, actRaw.r, expRaw.r, 'Raw respiratory trace does not match');
+verifyEqual(testCase, actRaw.t, expRaw.t, 'RelTol', 1e-6, 'Raw time vector does not match');
+verifyEqual(testCase, actRaw.c, expRaw.c, 'RelTol', 1e-6, 'Raw cardiac trace does not match');
+verifyEqual(testCase, actRaw.r, expRaw.r, 'RelTol', 1e-6, 'Raw respiratory trace does not match');
 
 end
 

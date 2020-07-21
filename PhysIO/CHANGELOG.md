@@ -1,12 +1,124 @@
 RELEASE INFORMATION
-===============================
+===================
 
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2019b, v7.2.0*
+*Current version: PhysIO Toolbox Release R2020a, v7.3.0*
 
-August 20, 2019
+July 10th, 2020
+
+
+SCHEDULED Minor Release Notes (v7.4.0)
+----------------------------------------------
+
+### Added
+- Brain Imaging Data Structure (BIDS) export format (`.tsv.gz`, `.json`) to save raw physiological recordings after synchronization with scanner timing (internal gitlab issue #91)
+    - following current BIDS specification on [continuous physiological recordings](https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continuous-recordings.html) and its [metadata]( https://bids-specification.readthedocs.io/en/stable/02-common-principles.html#tabular-files)
+    - single tab-separated values file with columns for cardiac and respiratory recordings
+        - if sampling frequencies of the two differ, upsampling to higher frequency is performed
+
+### Changed
+
+### Fixed
+
+
+Minor Release Notes (R2020a, v7.3.0)
+------------------------------------
+
+### Added
+
+- Added descriptive names for the multiple regressors matrix.
+    - Closes GitLab issue #82.
+    - Now possible to straightforwardly inspect `physio.model.R` and the
+      contents of `physio.model.output_multiple_regressors` using
+      `physio.model.R_column_names`.
+    - Added `tapas_physio_guess_regressor_names()` to maintain backwards
+      compatibility.
+- New example datasets Siemens VB PPU3T with DICOM Sync (courtesy of Alexander Ritter, Jena, Germany)
+- More versatile control on figure visibility, saving and closing during `main` and `review` runs of PhysIO
+    - feature provided by Stephan Heunis, TU Eindhoven, The Netherlands (github issue #89)
+    - figures can now be plotted in the background without disturbing interactive Matlab sessions, and can be (more) selectively saved and closed during execution of `tapas_physio_review`
+    - more comprehensive support within `tapas_physio_main_create_regressors` to follow
+
+
+Bugfix Release Notes (v7.2.8)
+-----------------------------
+
+### Fixed
+- Bug(s) when checking SPM and PhysIO paths in `tapas_physio_init` under
+  certain particular Matlab path environment settings (Gitlab merge request !37)
+    - e.g., when add `physio-public/code` manually without subfolder
+    - or if spm existed as a folder name without being added to path
+
+
+Bugfix Release Notes (v7.2.7)
+-----------------------------
+
+### Changed
+- Reimplemented `tapas_physio_filter_respiratory.m`.
+    - Closes GitLab issue #98.
+    - Reduces the cut-off frequency of the high-pass filter, so as to behave
+      more like a detrending step. Previous value of 0.1 Hz could distort e.g.
+      sigh breaths, which can easily last upwards of 10 s.
+    - Reimplements the filters themselves, with a higher filter order, extra
+      padding, and a two step high-pass and low-pass procedure (i.e. rather
+      than band pass) to improve the overall stability.
+
+
+Bugfix Release Notes (v7.2.6)
+-----------------------------
+
+### Fixed
+- Meaningful error message for `auto_matched` peak detection, if time series is too short
+    - at least 20 peaks (and pulse templates) are required to create a pulse template
+    - this is now stated explicitly, if time series is too short
+    - reported by Joy Schuurmans Stekhoven, TNU, as gitlab issue #92
+
+
+Bugfix Release Notes (v7.2.5)
+-----------------------------
+
+### Fixed
+- Corrected documentation for ` preproc.cardiac.initial_cpulse_select.min` parameter
+    - threshold for peak relative to z-scored time series, *not* correlation
+    - reported by Sam Harrison, TNU, as gitlab issue #95
+
+
+Bugfix Release Notes (v7.2.4)
+-----------------------------
+
+### Fixed
+- Stop docked figure default throwing error with `-nodisplay`
+    - allows generating saved figure without a display, e.g., on remote server
+    - bugfix provided by Sam Harrison, TNU
+
+
+Bugfix Release Notes (v7.2.3)
+-----------------------------
+
+### Fixed
+- Bugfix manual peak selection (Github issue #85, Gitlab #90)
+    - did not work because of figure handling
+
+
+Bugfix Release Notes (v7.2.2)
+-----------------------------
+
+### Fixed
+- Bugfix Siemens VB (`*.resp, *.puls, *.ecg`)
+    - Synchronization to DICOM time stamp did not work for extended physiological recordings (not starting/ending with functional run) due to ignored absolute start time stamp
+    - reported by Alexander Ritter, Jena, Germany (Github issue #55, Gitlab #87)
+    - probably fixes Github issue #63 (Gitlab #86) as well
+
+
+Bugfix Release Notes (v7.2.1)
+-----------------------------
+
+### Changed
+- PhysIO: removed Matlab statistics toolbox dependency for PCA by SVD implementation (thanks to Benoît Beranger, [pull request 64](https://github.com/translationalneuromodeling/tapas/pull/64))
+    - new function `tapas_physio_pca` allows for switch between stats and native SVD implementation of PCA
+    - comes with unit tests checking equivalency
 
 
 Minor Release Notes (R2019b, v7.2.0)
@@ -43,6 +155,7 @@ Batch Editor and Matlab-only configuration scripts. Reference data provided in
   Sam Harrison, TNU)
 - visualization error for regressor orthogonalization (github issue #57), 
   when only `'RETROICOR'` set was chosen
+
 
 Minor Release Notes (R2019a, v7.1.0)
 ------------------------------------

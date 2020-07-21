@@ -1,6 +1,31 @@
 # Changelog
 TAPAS toolbox 
 
+## [3.3.0] 2020-07-17
+
+### Added
+- h2gf: Hierarchical inference for the HGF, beta version released
+- SERIA: Added the Watanabe Akaike information criterion (WAIC) as output.
+- SERIA: Added computation of early and late response likelihood.
+- SERIA: Added delta plots to output summary.
+
+### Changed
+- HGF: v6.0 released
+- SERIA: The constraints matrix is now automatically plot by 
+        tapas\_sem_\display_posterior.m
+- SERIA: Python code is now updated to python 3.7 and the requirement file
+            now uses the latest libraries (numpy, scipy, cython).
+- SERIA: Posterior plots includes fits of the complete group.
+- SERIA: Summaries are automatically generated when preparing the posterior.
+- PhysIO: PhysIO Toolbox Release R2020a, v7.3.0
+- PhysIO: removed Matlab statistics toolbox dependency for PCA by SVD implementation (thanks to Benoît Beranger, [pull request 64](https://github.com/translationalneuromodeling/tapas/pull/64))
+
+### Fixed
+- HUGE: fixed tick labels
+
+### Known issues
+- TAPAS uses the mcmcdiag toolbox for Monte Carlo convergence diagnostics, which shadows a number of matlab built-in functions. Affected functions include: Contents.m, cusum.m, join.m and score.m. Workaround: If you use one of these functions in your own code, remove the tapas folder from your matlab path when you are not using the TAPAS toolbox.
+
 ## [3.2.0] 2019-09-29
 
 ### Added

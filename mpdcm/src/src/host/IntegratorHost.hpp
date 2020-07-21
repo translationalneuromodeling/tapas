@@ -51,7 +51,7 @@ IntegratorHost<T_update, T_dynamics>::integrate(
     arma::Mat< double > nx = T_dynamics::create_x(dim_x);
     arma::Mat< double > *tx, *tox = &ox, *tnx = &nx;
 
-    T_dynamics::initilize_x(u.col(0), theta, ptheta, ox);
+    T_dynamics::initialize_x(u.col(0), theta, ptheta, ox);
 
     arma::Mat< double > ty(y.colptr(cy), y.n_rows, 1, 0);
     T_dynamics::update_y(ox, u.col(0), theta, ptheta, ty);

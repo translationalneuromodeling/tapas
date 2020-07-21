@@ -51,7 +51,6 @@ case 'seria'
     ptheta.jm = [...
         eye(19)
         zeros(3, 8) eye(3) zeros(3, 8)];
-    ptheta.p0(11) = tapas_logit([0.005], 1);
 case 'prosa'
     ptheta = tapas_sem_prosa_ptheta(); % Choose at convinience.
     switch param
@@ -74,7 +73,6 @@ case 'prosa'
     ptheta.jm = [...
         eye(15)
         zeros(3, 6) eye(3) zeros(3, 6)];
-
 end
 
 pars = struct();
@@ -86,14 +84,18 @@ pars.ndiag = 500;
 pars.mc3it = 4;
 pars.verbose = 1;
 
+% The total number of samples stored is floor(pars.niter/pars.thinning). This
+% saves storages and accelerates other computations.
+pars.thinning = 100;
+
 display(ptheta);
 inference = struct();
-inference.kernel_scale = 0.1 * 0.1;
 
 posterior = tapas_sem_hier_estimate(data, ptheta, inference, pars);
+summary = posterior.summary;
 
 display(posterior);
-summary = tapas_sem_display_posterior(posterior);
+tapas_sem_display_posterior(posterior);
 
 end
 

@@ -361,8 +361,10 @@ else
     % default: initial_cpulse_kRpeakfile.mat
     preproc.cardiac.initial_cpulse_select.file = 'initial_cpulse_kRpeakfile.mat';
     
-    % threshold for correlation with QRS-wave to find cardiac pulses
+    % threshold for peak height in z-scored cardiac waveform to find pulse events
     % default: 0.4
+    % NOTE: For ECG, might need increase (e.g., 2.0), because of local maximum 
+    %       of T wave after QRS complex
     preproc.cardiac.initial_cpulse_select.min = 0.4;
     
     % variable saving an example cardiac QRS-wave to correlate with
@@ -643,8 +645,8 @@ else
     % slice triggers, peak height etc.
     verbose.process_log = cell(0,1); 
     
-    % [nFigs,1] vector; collecting of all generated figure handles during a run of tapas_physio_main_create_regressors
-    verbose.fig_handles = zeros(0,1);   
+    % [1, nFigs] vector; collecting of all generated figure handles during a run of tapas_physio_main_create_regressors
+    verbose.fig_handles = zeros(1,0);   
     
     % file name (including extension) where to print all physIO output 
     % figures to.
@@ -662,7 +664,19 @@ else
     %  TODO: implement via [handles] = spm_uitab(hparent,labels,callbacks,...
     %                                           tag,active,height,tab_height)
     %
-    verbose.use_tabs = false;  
+    verbose.use_tabs = false;
+
+    % show / save / close figures
+    % Booleans to control figure visibility and saving/closing options.
+
+    % show_figs: If true, all created figures will be visible. If false, sets figure visibility to 'off', which
+    % leaves the possibility of saving the figure to file without displaying it.
+    verbose.show_figs = true;
+    % save_figs: If true, all created figures will be saved using specified fig_output_file as filename
+    verbose.save_figs = false;
+    % close_figs: If true, will close all open figs after saving them. Only used if save_figs is true.
+    verbose.close_figs = false;
+
   
     
     

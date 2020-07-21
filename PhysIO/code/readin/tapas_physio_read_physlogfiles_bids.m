@@ -105,7 +105,13 @@ if hasExplicitJsonFile
     fileJson = log_files.scan_timing;
 end
 
-hasJsonFile = isfile(fileJson);
+% 'isfile' is clearer than 'exist', because checks for correct absolute/relative path, not existence anywhere on Matlab path
+% but only available in Matlab version >= R2017b
+if exist('isfile', 'builtin')
+    hasJsonFile = isfile(fileJson);
+else
+    hasJsonFile = exist(fileJson, 'file') > 0;
+end
 
 if hasJsonFile
     val = jsondecode(fileread(fileJson));

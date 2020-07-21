@@ -357,7 +357,7 @@ end
 theta = cell(1, nt);
 theta(:) = otheta;
 
-% Fully initilize
+% Fully initialize
 
 otheta = tapas_mpdcm_fmri_set_parameters(op, theta, ptheta);
 

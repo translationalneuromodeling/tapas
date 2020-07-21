@@ -7,6 +7,18 @@ function verbose = tapas_physio_review(physio, newVerboseLevel)
 % NOTE: Change physio.verbose.level before running this function to get
 %       additonal output plots not seen during executing of the main-function
 %
+% NOTE1: Change the following flags prior to running this function in order
+% to control the output figure behavior.
+%   physio.verbose.show_figs = false; (default true)
+%   physio.verbose.save_figs = true; (default false)
+%   physio.verbose.close_figs = true; (default false)
+% An example use case is to disable figure outputs when running
+% tapas_physio_main_create_regressors (by setting physio.verbose.level = 0)
+% and then running tapas_physio_review in order to generate the figures.
+% Figures can, for example, be generated and saved in the background
+% (show_figs = false, save_figs = true) or displayed and not saved
+% (show_figs = true, save_figs = false).
+%
 % NOTE2: This is not an exact copy of the plotting behavior within
 % tapas_physio_main_create_regressors (yet). The most important plots for
 % diagnostics should show up, though.
@@ -22,7 +34,7 @@ function verbose = tapas_physio_review(physio, newVerboseLevel)
 %   several output plots and command line information on the toolbox
 %   performance
 %
-%   verbose.fig_handles     [nFigures,1] vector of figure handles created
+%   verbose.fig_handles     [1, nFigures] vector of figure handles created
 %
 % EXAMPLE
 %   tapas_physio_review
@@ -61,6 +73,11 @@ sync        = scan_timing.sync;
 model       = physio.model;
 verbose     = physio.verbose;
 
+% Compatibility with old versions
+if ~isfield(model, 'R_column_names')
+    disp('Reconstructing regressor names...')
+    model.R_column_names = tapas_physio_guess_regressor_names(model, model.R);
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 1. Write out all information from process log
@@ -86,6 +103,21 @@ verbose.level       = newVerboseLevel;
 verbose.fig_handles = [];
 verbose.process_log = {};
 
+% Set default for verbose.show_figs, verbose.save_figs and verbose.close_figs
+% if they are empty or if the fields do not exist
+% show_figs default = true (i.e. do show)
+if ~isfield(verbose, 'show_figs') || isempty(verbose.show_figs)
+    verbose.show_figs = true;
+end
+% save_figs default = false (i.e. do not save)
+if ~isfield(verbose, 'save_figs') || isempty(verbose.save_figs)
+    verbose.save_figs = false;
+end
+% close_figs default = false (i.e. do not close)
+if ~isfield(verbose, 'close_figs') || isempty(verbose.close_figs)
+    verbose.close_figs = false;
+end
+
 verbose = tapas_physio_plot_raw_physdata(ons_secs.raw, verbose);
 
 % tapas_physio_get_onsets_from_locs -> create plot function out of
@@ -95,7 +127,7 @@ verbose = tapas_physio_plot_raw_physdata(ons_secs.raw, verbose);
 
 if verbose.level >= 2
     verbose.fig_handles(end+1) = ...
-        tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar);
+        tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar, verbose);
 end
 
 [verbose, ons_secs.c_outliers_low, ons_secs.c_outliers_high, ...
@@ -110,26 +142,19 @@ end
 %   cumsumh, sumh, h, npulse, dpulse, rphase)
 
 
-%% Create mock SPM to determine columns with get_regressor-function
-
-SPM.Sess = 1;
-nRegressors = size(model.R,2);
-s = 1;
-
-SPM.xX.name = cellfun(@(iCard) ['Sn(' int2str(s) ') R' int2str(iCard)], ...
-    num2cell(1:nRegressors), 'UniformOutput', false);
-
-[colPhys, colCard, colResp, colMult, colHRV, colRVT, colRois, colMove, colAll] = ...
-    tapas_physio_check_get_regressor_columns(SPM, model);
+%% RETROICOR
 
 if model.retroicor.include
-    R = model.R(:,[colCard,colResp,colMult]);
+    retroicor = model.R(:, contains(model.R_column_names, 'RETROICOR', 'IgnoreCase', true));
     hasCardiacData = ~isempty(ons_secs.c);
     hasRespData = ~isempty(ons_secs.r);
     verbose.fig_handles(end+1) = ...
-        tapas_physio_plot_retroicor_regressors(R, model.retroicor.order, hasCardiacData, ...
-        hasRespData);
+        tapas_physio_plot_retroicor_regressors(retroicor, model.retroicor.order, hasCardiacData, ...
+        hasRespData, verbose);
 end
+
+
+%% Movement
 
 if model.movement.include
     rp = model.movement.rp;
@@ -139,10 +164,10 @@ if model.movement.include
     switch lower(model.movement.censoring_method)
         case 'fd'
             verbose.fig_handles(end+1) = tapas_physio_plot_movement_outliers_fd( ...
-                rp, quality_measures, censoring, censoring_threshold);
+                rp, quality_measures, censoring, censoring_threshold, verbose);
         case 'maxval'
             verbose.fig_handles(end+1) = tapas_physio_plot_movement_outliers_maxval( ...
-                rp, quality_measures, censoring, censoring_threshold);
+                rp, quality_measures, censoring, censoring_threshold, verbose);
     end
 end
 
@@ -150,12 +175,28 @@ end
 % tapas_physio_create_noise_rois_regressors
 % => create functions out of inline-plotting
 
-%% TODO: replace this call by just using the plot-subpart of the
-% orthogonalization
-cardiac_sess = model.R(:,colCard);
-respire_sess = model.R(:,colResp);
-mult_sess = model.R(:,colMult);
+%% Overall regressors
 
 [R, verbose] = tapas_physio_orthogonalise_physiological_regressors(...
-    cardiac_sess, respire_sess, ...
-    mult_sess, model.R, model.orthogonalise, verbose);
+    model.R, model.R_column_names, model.orthogonalise, verbose);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Save output figures to files - if specified
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if verbose.save_figs
+    [verbose] = tapas_physio_print_figs_to_file(verbose, save_dir);
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Close figures - if specified
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This logic assumes that only saved figures will have to be closed (if
+% specified), since displaying and again closing unsaved figures will not
+% serve any purpose.
+if verbose.save_figs && verbose.close_figs
+    [verbose] = tapas_physio_close_figs(verbose);
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+end

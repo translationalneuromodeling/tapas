@@ -1,9 +1,9 @@
 TAPAS PhysIO Toolbox 
 ====================
 
-*Current version: Release 2019b, v7.2.0*
+*Current version: Release 2020a, v7.3.0*
 
-> Copyright (C) 2012-2019  
+> Copyright (C) 2012-2020  
 > Lars Kasper  
 > <kasper@biomed.ee.ethz.ch>  
 >  
@@ -18,7 +18,9 @@ Download
 - Please download the latest stable versions of the PhysIO Toolbox on GitHub as part of the 
   [TAPAS software releases of the TNU](https://github.com/translationalneuromodeling/tapas/releases).
 - Older versions are available on the [TNU website](http://www.translationalneuromodeling.org/tapas).
-- The latest bugfixes can be found in the [GitHub Issue Forum](https://github.com/translationalneuromodeling/tapas/issues) or by request to the authors. 
+- The latest bugfixes can be found in the 
+  [development branch of TAPAS](https://github.com/translationalneuromodeling/tapas/tree/development) 
+  and are announced in the [GitHub Issue Forum](https://github.com/translationalneuromodeling/tapas/issues). 
 - Changes between all versions are documented in the 
   [CHANGELOG](https://gitlab.ethz.ch/physio/physio-doc/blob/master/CHANGELOG.md).
 
@@ -204,7 +206,7 @@ data from imperfect peripheral measures. Read-in of the following formats is
 currently supported (alphabetic order):
 
 - Biopac `.mat` and `.txt` -export
-- Brain Imaging Data Structure (BIDS)
+- Brain Imaging Data Structure ([BIDS](http://bids.neuroimaging.io/bids_spec.pdf) for `*_physio.tsv[.gz]/.json` files)
 - Custom logfiles: should contain one amplitude value per line, one logfile per 
   device. Sampling interval(s) are provided as a separate parameter to the toolbox.
 - General Electric
@@ -249,15 +251,14 @@ Contributors
 - Project Team: 
     - Steffen Bollmann, Centre for Advanced Imaging, University of Queensland, Australia
     - Saskia Bollmann, Centre for Advanced Imaging, University of Queensland, Australia
+    - Sam Harrison, TNU Zurich
 - Contributors (Code):
     - Eduardo Aponte, TNU Zurich
     - Tobias U. Hauser, FIL London, UK
-    - Sam Harrison, TNU Zurich
     - Jakob Heinzle, TNU Zurich
     - Chloe Hutton, FIL London, UK (previously)
     - Miriam Sebold, Charite Berlin, Germany
-    - External TAPAS contributors listed in its [Contributor License Agreement]
-    (https://github.com/translationalneuromodeling/tapas/blob/master/Contributor-License-Agreement.md)
+    - External TAPAS contributors are listed in the [Contributor License Agreement](https://github.com/translationalneuromodeling/tapas/blob/master/Contributor-License-Agreement.md)
 - Contributors (Examples):
     - listed in [EXAMPLES.md](https://gitlab.ethz.ch/physio/physio-doc/wikis/EXAMPLES)
 
@@ -268,7 +269,7 @@ Requirements
 - All specific software requirements and their versions are in a separate file
   in this folder, `requirements.txt`.
 - In brief:
-    - PhysIO needs Matlab to run, and some of its toolboxes.
+    - PhysIO needs Matlab to run, and a few of its toolboxes.
     - Some functionality requires SPM (GUI, nuisance regression, contrast reporting, 
       writing residual and SNR images).
 
@@ -304,6 +305,7 @@ Journal of Neuroscience Methods 276, 56‚Äì72. https://doi.org/10.1016/j.jneumeth
 The [FAQ](https://gitlab.ethz.ch/physio/physio-doc/wikis/FAQ#3-how-do-i-cite-physio) 
 contains a complete suggestion for a snippet in your methods section.
 
+
 ### Related Papers (Implemented noise correction algorithms and optimal parameter choices)
 
 The following sections list papers that 
@@ -317,20 +319,19 @@ paper. The list is by no means complete, and we are happy to add any relevant pa
 suggested to us. 
 
 #### RETROICOR 
-2. Glover, G.H., Li, T.Q. & Ress, D. Image‚Äêbased method for retrospective correction
+2. Glover, G.H., Li, T.Q. & Ress, D. Image‚Ä?based method for retrospective correction
 of PhysIOlogical motion effects in fMRI: RETROICOR. Magn Reson Med 44, 162-7 (2000).
 
 3. Hutton, C. et al. The impact of Physiological noise correction on fMRI at 7 T.
-NeuroImage 57, 101‚Äê112 (2011).
+NeuroImage 57, 101‚Ä?112 (2011).
 
 4. Harvey, A.K. et al. Brainstem functional magnetic resonance imaging:
 Disentangling signal from PhysIOlogical noise. Journal of Magnetic Resonance
-Imaging 28, 1337‚Äê1344 (2008).
+Imaging 28, 1337‚Ä?1344 (2008).
 
 5. Bollmann, S., Puckett, A.M., Cunnington, R., Barth, M., 2018. 
 Serial correlations in single-subject fMRI with sub-second TR. 
 NeuroImage 166, 152‚Äì166. https://doi.org/10.1016/j.neuroimage.2017.10.043
-
 
 #### aCompCor / Noise ROIs 
 6. Behzadi, Y., Restom, K., Liau, J., Liu, T.T., 2007. A component based noise

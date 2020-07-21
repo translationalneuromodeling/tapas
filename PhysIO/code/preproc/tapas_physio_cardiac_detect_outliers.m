@@ -42,17 +42,23 @@ else
 end
 
 if isVerbose
+    % Set default for verbose.show_figs if it is empty or if the field does not exist.
+    % Default = true (i.e. show figures)
+    if ~isfield(verbose, 'show_figs') || isempty(verbose.show_figs)
+        verbose.show_figs = true;
+    end
     if nargin < 6
-        fh = tapas_physio_get_default_fig_params();
-        verbose.fig_handles(end+1,1) = fh;
+        % Create figure with correct visibility according to show_figs
+        fh = tapas_physio_get_default_fig_params(verbose);
         set(fh, 'Name','Preproc: Diagnostics raw phys time series');
+        verbose.fig_handles(end+1) = fh;
     else
         fh = get(ah, 'Parent');
-        figure(fh);
+        if verbose.show_figs
+            figure(fh);
+        end
         set(fh, 'CurrentAxes', ah);
     end
-    
-    
     
     hp(1) = plot(tCardiac(2:end), dt, 'Color', [0 0.5 0]);
     xlabel('t (seconds)');

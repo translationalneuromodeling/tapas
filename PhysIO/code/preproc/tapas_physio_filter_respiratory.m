@@ -1,6 +1,9 @@
-function [rpulset, pulset] = tapas_physio_filter_respiratory(...
+function [rpulset] = tapas_physio_filter_respiratory(...
     rpulset, rsampint, doNormalize)
-% band-pass filters respiratory data (0.1...5 Hz)
+% Preprocesses respiratory data
+%   + Remove NaNs and outliers
+%   + Detrend at 0.01 Hz
+%   + Remove noise above 2.0 Hz
 %
 %   rpulset = tapas_physio_filter_respiratory(pulset,rsampint)
 %
@@ -10,10 +13,7 @@ function [rpulset, pulset] = tapas_physio_filter_respiratory(...
 %   doNormalize     default:false
 %                   Optionally, data is normalized to be in -1...+1 range
 
-% Author: Lars Kasper, 2011; heavily based on an earlier implementation of
-% Chloe Hutton (FIL, UCL London)
-%
-% Copyright (C) 2013 Institute for Biomedical Engineering, ETH/Uni Zurich.
+% Author: Sam Harrison, 2020
 %
 % This file is part of the PhysIO toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -25,42 +25,61 @@ if isempty(rpulset)
     return;
 end
 
-% @SB: Can we not just replace all NaNs by 0s and take 0 as the offset, if it is first in time series?
-% if rpulset has nans, subtraction and filtering will render whole time
-% series to nan, so we replace them with zeros
-% first, get value of first non-nan sample to correct offset
-rpulsetFirst = find(~isnan(rpulset), 1, 'first');
-rpulsetOffset = rpulset(rpulsetFirst);
-% now, replace all nans with zeros
-rpulsetNans = isnan(rpulset);
-rpulset(rpulsetNans) = 0;
-
 if nargin < 3
     doNormalize = true;
 end
 
-rpulset=rpulset-rpulsetOffset;
+%% Basic preproc
 
-% bandpass filter
-sampfreq    = 1/rsampint; % Hz
+% If rpulset has nans, replace them with zeros
+rpulsetOffset = nanmean(rpulset);
+rpulset(isnan(rpulset)) = nanmean(rpulset);
 
-% Vlad: 0.09 0.7, 4th order butterworth, filtfilt for phase mod?
-cutofflow   = 0.1; %10 seconds/rsampint units
-cutoffhigh  = 5; %Hz
-forder = 2;
-[b,a] = butter(forder,2*[cutofflow, cutoffhigh]/sampfreq);
+rpulset = detrend(rpulset, 3);  % Demean / detrend to reduce edge effects
+%figure(); hold all;
+%plot(rpulset)
 
-rpulset=filter(b,a,rpulset);
+% Now do a check for any outliers
+z_thresh = 5.0;  % Relatively high, as distribution is typically skewed
+% figure(); histogram(rpulset);
+mpulse = mean(rpulset);
+stdpulse = std(rpulset);
+outliers = (rpulset > (mpulse + (z_thresh * stdpulse)));
+rpulset(outliers) = mpulse + (z_thresh * stdpulse);
+outliers = (rpulset < (mpulse - (z_thresh * stdpulse)));
+rpulset(outliers) = mpulse - (z_thresh * stdpulse);
+%plot(rpulset)
+
+%% Detrend and remove noise via filtering
+
+% Filter properties
+sampfreq = 1 / rsampint; % Hz
+n_pad = ceil(100.0 * sampfreq); % 100.0 s either side
+
+% Low-pass filter to estimate trend
+% Then subtract to imitate high-pass filter
+% This is typically much more stable than a bandpass filter
+d = designfilt( ...
+    'lowpassiir', 'HalfPowerFrequency', 0.01, ...
+    'FilterOrder', 20, 'SampleRate', sampfreq);
+trend = filtfilt(d, padarray(rpulset, n_pad, 'circular'));
+trend = trend(n_pad+1:end-n_pad);
+%plot(trend)
+rpulset = rpulset - trend;
+%plot(rpulset)
+
+% Low-pass filter to remove noise
+d = designfilt( ...
+    'lowpassiir', 'HalfPowerFrequency', 2.0, ...
+    'FilterOrder', 20, 'SampleRate', sampfreq);
+rpulset = filtfilt(d, padarray(rpulset, n_pad, 'circular'));
+rpulset = rpulset(n_pad+1:end-n_pad);
+%plot(rpulset)
+
+%% Normalise, if requested
 
 if doNormalize
     rpulset = rpulset/max(abs(rpulset));
 end
 
-% Now do a check for any outliers (> 3std)
-mpulse=mean(rpulset);
-stdpulse=std(rpulset);
-outliers=find(rpulset>(mpulse+(3*stdpulse)));
-pulset(outliers)=mpulse+(3*stdpulse);
-outliers=find(rpulset<(mpulse-(3*stdpulse)));
-rpulset(outliers)=mpulse-(3*stdpulse);
 end

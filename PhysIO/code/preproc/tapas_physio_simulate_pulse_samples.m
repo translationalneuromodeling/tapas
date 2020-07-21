@@ -47,7 +47,7 @@ switch positionString
             % if earliest pulse at multiple of pulse rate, 
             % then next pulse would be just before start of orig time
             % series
-            idxLastSimulatedPulse = nSimulatedPulses;
+            idxLastSimulatedPulse = nSimulatedSamples;
         else 
             idxLastSimulatedPulse = nSimulatedSamples - meanPulseRateInSamples ...
                 + mod(idxPulses(1), meanPulseRateInSamples);
@@ -86,7 +86,7 @@ if doDebug
     elseif doAppend
         tNew = (1:nSimulatedSamples)'*dt+t(end);
     end
-    verbose.fig_handles(end+1,1) = tapas_physio_get_default_fig_params();
+    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
     stringTitle = sprintf('Preproc: Added simulated samples %s time series', positionString);
     
     % plot orig time series and extension by simulated samples

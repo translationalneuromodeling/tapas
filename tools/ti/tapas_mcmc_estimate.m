@@ -6,8 +6,8 @@ function [posterior] = tapas_mcmc_estimate(data, model, inference)
 %
 
 nfuncs = numel(inference.sampling_methods);
-[states] = inference.initilize_states(data, model, inference);
-[state] = inference.initilize_state(data, model, inference);
+[states] = inference.initialize_states(data, model, inference);
+[state] = inference.initialize_state(data, model, inference);
 
 [sstates, si] = inference.get_stored_state(data, model, inference, state);
 if si > 0 
