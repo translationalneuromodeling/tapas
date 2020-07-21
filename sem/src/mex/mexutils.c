@@ -4,7 +4,7 @@
 #include "mexutils.h"
 
 void
-verify_input_theta_array(mxArray *theta, int dims_theta)
+verify_input_theta_array(const mxArray *theta, int dims_theta)
 {
     int i;
     int na = 1;
@@ -15,8 +15,8 @@ verify_input_theta_array(mxArray *theta, int dims_theta)
                   "Input parameters should be a cell array");
     }
 
-    mwSize nd = mxGetNumberOfDimensions(theta);
-    mwSize *np = mxGetDimensions(theta);
+    const mwSize nd = mxGetNumberOfDimensions(theta);
+    const mwSize *np = mxGetDimensions(theta);
 
     for (i = 0; i < nd; i++)
     {
@@ -32,10 +32,10 @@ verify_input_theta_array(mxArray *theta, int dims_theta)
     for (i = 0; i < na; i++)
     {
 
-        mxArray *i_params = mxGetCell(theta, i);
+        const mxArray *i_params = mxGetCell(theta, i);
 
-        mwSize stheta = mxGetNumberOfDimensions(i_params);
-        mwSize *dtheta = mxGetDimensions(i_params);
+        const mwSize stheta = mxGetNumberOfDimensions(i_params);
+        const mwSize *dtheta = mxGetDimensions(i_params);
 
         if ( !mxIsNumeric(i_params) )
         {
@@ -238,7 +238,7 @@ wrapper_seria_multi(
             {
                 llh[i + ns * j] += tllh[k];
             }
-            if ( abs(llh[i + ns * j]) == INFINITY || isnan(llh[i + ns * j]))
+            if ( fabs(llh[i + ns * j]) == INFINITY || isnan(llh[i + ns * j]))
                 llh[i + ns * j] = -INFINITY;
             free(tllh);
 
@@ -308,7 +308,7 @@ wrapper_prosa_multi(
             {
                 llh[i + ns * j] += tllh[k];
             }
-            if ( abs(llh[i + ns * j]) == INFINITY || isnan(llh[i + ns * j]))
+            if ( fabs(llh[i + ns * j]) == INFINITY || isnan(llh[i + ns * j]))
                 llh[i + ns * j] = -INFINITY;
             free(tllh);
 
@@ -344,8 +344,8 @@ reparametrize_prosa(
 
     verify_input_theta_array(prhs[0], DIM_PROSA_THETA);
 
-    mwSize nd = mxGetNumberOfDimensions(prhs[0]);
-    mwSize *np = mxGetDimensions(prhs[0]);
+    const mwSize nd = mxGetNumberOfDimensions(prhs[0]);
+    const mwSize *np = mxGetDimensions(prhs[0]);
 
     for (i = 0; i < nd; i++)
     {
@@ -361,11 +361,11 @@ reparametrize_prosa(
     {
         int j;
 
-        mxArray *i_params = mxGetCell(prhs[0], i);
+        const mxArray *i_params = mxGetCell(prhs[0], i);
         double *d_i_params = mxGetPr(i_params);
 
-        mwSize stheta = mxGetNumberOfDimensions(i_params);
-        mwSize *dtheta = mxGetDimensions(i_params);
+        const mwSize stheta = mxGetNumberOfDimensions(i_params);
+        const mwSize *dtheta = mxGetDimensions(i_params);
 
         mxArray *o_params = mxCreateDoubleMatrix(dtheta[0], 1, mxREAL);
         double *d_o_params = mxGetPr(o_params);
@@ -412,8 +412,8 @@ reparametrize_seria(
 
     verify_input_theta_array(prhs[0], DIM_SERIA_THETA);
 
-    mwSize nd = mxGetNumberOfDimensions(prhs[0]);
-    mwSize *np = mxGetDimensions(prhs[0]);
+    const mwSize nd = mxGetNumberOfDimensions(prhs[0]);
+    const mwSize *np = mxGetDimensions(prhs[0]);
 
     for (i = 0; i < nd; i++)
     {
@@ -432,7 +432,7 @@ reparametrize_seria(
         mxArray *i_params = mxGetCell(prhs[0], i);
         double *d_i_params = mxGetPr(i_params);
 
-        mwSize *dtheta = mxGetDimensions(i_params);
+        const mwSize *dtheta = mxGetDimensions(i_params);
 
         mxArray *o_params = mxCreateDoubleMatrix(dtheta[0], 1, mxREAL);
 
@@ -453,3 +453,4 @@ reparametrize_seria(
     gsl_set_error_handler(NULL);
 
 }
+

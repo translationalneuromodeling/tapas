@@ -11,14 +11,21 @@ Contains functions related to the parameters.
 '''
 
 
-import containers
-import reparametrize as reparam
-import likelihoods
+from . import containers
+from . import reparametrize as reparam
+from . import likelihoods
 
 
 class Parameters(containers.AlgebraicObject):
     ''' Abstract class. '''
-    pass
+    
+    @classmethod
+    def make_dict(clc, samples):
+        '''Return a dictionary from a vector of samples.'''
+
+        sdict = dict(list(zip(clc.fields, samples)))
+
+        return sdict
 
 
 class ParametersProsa(Parameters):
@@ -39,7 +46,7 @@ class ParametersSeria(Parameters):
     pass
 
 
-class ParametersSeriaGamma(ParametersDora):
+class ParametersSeriaGamma(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):
@@ -52,12 +59,17 @@ class ParametersSeriaGamma(ParametersDora):
         return likelihoods.seria_n_states_gamma(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, a, tt, theta):
+    def l_early(t, a, tt, theta):
 
         return likelihoods.seria_early_llh_n_states_gamma(t, a, tt, theta)
 
+    @staticmethod
+    def l_late(t, a, tt, theta):
 
-class ParametersSeriaInvgamma(ParametersDora):
+        return likelihoods.seria_late_llh_n_states_gamma(t, a, tt, theta)
+
+
+class ParametersSeriaInvgamma(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):
@@ -70,12 +82,17 @@ class ParametersSeriaInvgamma(ParametersDora):
         return likelihoods.seria_n_states_invgamma(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, a, tt, theta):
+    def l_early(t, a, tt, theta):
 
         return likelihoods.seria_early_llh_n_states_invgamma(t, a, tt, theta)
 
+    @staticmethod
+    def l_late(t, a, tt, theta):
 
-class ParametersSeriaMixedgamma(ParametersDora):
+        return likelihoods.seria_late_llh_n_states_invgamma(t, a, tt, theta)
+
+
+class ParametersSeriaMixedgamma(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):
@@ -88,11 +105,17 @@ class ParametersSeriaMixedgamma(ParametersDora):
         return likelihoods.seria_n_states_mixedgamma(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, a, tt, theta):
+    def l_early(t, a, tt, theta):
 
         return likelihoods.seria_early_llh_n_states_mixedgamma(t, a, tt, theta)
 
-class ParametersSeriaLognorm(ParametersDora):
+    @staticmethod
+    def l_late(t, a, tt, theta):
+
+        return likelihoods.seria_late_llh_n_states_mixedgamma(t, a, tt, theta)
+
+
+class ParametersSeriaLognorm(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):
@@ -105,12 +128,17 @@ class ParametersSeriaLognorm(ParametersDora):
         return likelihoods.seria_n_states_lognorm(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, aa, tt, theta):
+    def l_early(t, a, tt, theta):
 
-        return likelihoods.seria_early_llh_n_states_lognorm(t, aa, tt, theta)
+        return likelihoods.seria_early_llh_n_states_lognorm(t, a, tt, theta)
+
+    @staticmethod
+    def l_late(t, a, tt, theta):
+
+        return likelihoods.seria_late_llh_n_states_lognorm(t, a, tt, theta)
 
 
-class ParametersSeriaLater(ParametersDora):
+class ParametersSeriaLater(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):
@@ -123,12 +151,17 @@ class ParametersSeriaLater(ParametersDora):
         return likelihoods.seria_n_states_later(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, aa, tt, theta):
+    def l_early(t, a, tt, theta):
 
-        return likelihoods.seria_early_llh_n_states_later(t, aa, tt, theta)
+        return likelihoods.seria_early_llh_n_states_later(t, a, tt, theta)
+
+    @staticmethod
+    def l_late(t, a, tt, theta):
+
+        return likelihoods.seria_late_llh_n_states_later(t, a, tt, theta)
 
 
-class ParametersSeriaWald(ParametersDora):
+class ParametersSeriaWald(ParametersSeria):
 
     @staticmethod
     def reparametrize(samples):
@@ -141,9 +174,14 @@ class ParametersSeriaWald(ParametersDora):
         return likelihoods.seria_n_states_wald(t, a, tt, theta)
 
     @staticmethod
-    def ler(t, aa, tt, theta):
+    def l_early(t, a, tt, theta):
 
-        return likelihoods.seria_early_llh_n_states_wald(t, aa, tt, theta)
+        return likelihoods.seria_early_llh_n_states_wald(t, a, tt, theta)
+
+    @staticmethod
+    def l_late(t, a, tt, theta):
+
+        return likelihoods.seria_late_llh_n_states_wald(t, a, tt, theta)
 
 
 class ParametersProsaGamma(ParametersProsa):

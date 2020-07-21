@@ -34,9 +34,9 @@
 // Absolute error tolerance
 #define SEM_TOL 0.00001
 // Relative error tolerance
-#define SEM_RTOL 0.001
+#define SEM_RTOL 0.0001
 // Maximum shape parameter gamma distribution
-#define SEM_GAMMA_MAX_SHAPE 30
+#define SEM_GAMMA_MAX_SHAPE 100
 
 #define NITER_NGAMMA 15
 #define INTSTEP 80
@@ -120,7 +120,6 @@ typedef struct
     double *u;
 
 } MODEL_INPUTS;
-
 // Parameters type
 
 typedef struct
@@ -174,6 +173,91 @@ typedef struct
 
 } SERIA_PARAMETERS;
 
+// --------------------------------------------------------------------------
+// Summaries
+// --------------------------------------------------------------------------
+
+typedef struct
+{
+    
+    double late_pro_rt; // Reaction time of a late prosaccade
+    double anti_rt;     // Reaction time of an antisaccade
+    double inhib_fail_rt; // Reaction time of an inhib. fail.
+    double inhib_fail_prob; // Probability of an inhibition failure
+    double late_pro_prob; // Probability of a late error
+    double predicted_pro_prob; // Predicted probability of pro
+    double predicted_pro_rt; // Predicted probability of pro
+    double predicted_anti_prob; // Predicted probability of anti
+    double predicted_anti_rt; // Predicted probability of anti
+
+} SERIA_SUMMARY;
+
+typedef struct
+{
+    
+    double anti_rt;     // Reaction time of an antisaccade
+    double inhib_fail_rt; // Reaction time of an inhib. fail.
+    double inhib_fail_prob; // Probability of an inhibition failure
+    double predicted_pro_prob; // Predicted probability of pro
+    double predicted_pro_rt; // Predicted probability of pro
+    double predicted_anti_prob; // Predicted probability of anti
+    double predicted_anti_rt; // Predicted probability of anti
+
+} PROSA_SUMMARY;
+
+
+// ------------
+
+typedef double (*SERIA_SUMMARY_FUNCTION)(double time, 
+        SERIA_PARAMETERS *params);
+
+typedef double (*PROSA_SUMMARY_FUNCTION)(double time, 
+        PROSA_PARAMETERS *params);
+
+// -------------
+
+typedef struct
+{
+    
+    SERIA_SUMMARY_FUNCTION func; // The function to compute
+    SERIA_PARAMETERS *params; // Parameters of the model
+
+} SERIA_GSL_INT_INPUT;
+
+typedef struct
+{
+    
+    PROSA_SUMMARY_FUNCTION func; // The function to compute
+    PROSA_PARAMETERS *params; // Parameters of the model
+
+} PROSA_GSL_INT_INPUT;
+
+// ---------------
+
+double
+seria_summary_parameter(
+        SERIA_SUMMARY_FUNCTION summary_func,
+        SERIA_PARAMETERS *params);
+// Compute the summary parameters from the model.
+
+double
+prosa_summary_parameter(
+        PROSA_SUMMARY_FUNCTION summary_func,
+        PROSA_PARAMETERS *params);
+// Compute the summary parameters from the model.
+
+//-------------------
+
+double
+seria_summary_wrapper(double t, void *gsl_int_pars);
+// Wrapper for numerical integration with gsl. 
+
+double
+prosa_summary_wrapper(double t, void *gsl_int_pars);
+// Wrapper for numerical integration with gsl. 
+
+//--------------------
+
 // Likelihood typedef functions
 
 typedef double (*PROSA_LLH)(double t, int a, const PROSA_PARAMETERS params); 
@@ -204,8 +288,24 @@ typedef struct
     int dim_theta;
 } SERIA_MODEL;
 
-// Other numerical
+// Summaries of subjects actions
 
+//--------------------
+
+int
+seria_model_summary(
+    const ANTIS_INPUT svals,
+    SERIA_MODEL model, 
+    SERIA_SUMMARY *summaries);
+
+int
+prosa_model_summary(
+    const ANTIS_INPUT svals,
+    PROSA_MODEL model, 
+    PROSA_SUMMARY *summaries);
+
+
+// Other numerical
 double
 lcosh(double x);
 // Logarithm of cosine hyperbolicus of x. Behaves better for large abs(x)
@@ -232,12 +332,35 @@ populate_parameters_seria(const double *theta, SERIA_PARAMETERS *stheta);
 double
 prosa_llh_abstract(double t, int a, PROSA_PARAMETERS params);
 
-// Dora model
+// Seria model
 double
 seria_llh_abstract(double t, int a, SERIA_PARAMETERS params);
 
 double
 seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params);
+
+double
+seria_late_llh_abstract(double t, int a, SERIA_PARAMETERS params);
+
+// Summary
+
+// Generate a summary of the parameters
+// A summary of the parameters for reporting
+
+int
+seria_summary_abstract(SERIA_PARAMETERS *params, SERIA_SUMMARY *summary);
+// Summary of the parameters.
+//
+// params       -- Parameters of the seria model.
+// summary      -- Output structure containing the relevant parameters.
+
+int
+prosa_summary_abstract(PROSA_PARAMETERS *params, PROSA_SUMMARY *summary);
+// Summary of the parameters.
+//
+// params       -- Parameters of the prosa model.
+// summary      -- Output structure containing the relevant parameters.
+
 
 // Models
 
@@ -410,8 +533,6 @@ double later_lsf(double x, double mu, double sigma);
 // mu       Location parameter of the corresponding Gaussian
 // sigma    Scale of the corresponding Gaussian
 
-
-
 double wald_lpdf(double x, double mu, double sigma);
 // Log pdf of the later likelihood
 // x        Time
@@ -465,8 +586,6 @@ double later_sf(double x, double mu, double sigma);
 // x        Time
 // mu       Location parameter of the corresponding Gaussian
 // sigma    Scale of the corresponding Gaussian
-
-
 
 double ngamma(double x, double a, double b, double c0, double c1);
 // Unnormalized nested incomplete gamma function.
@@ -524,6 +643,19 @@ double ninvgamma_gslint(double x0, double x1, double a, double b, double c0,
 //
 // Uses gls integrator.
 
+double ninvgamma_high_precision_gslint(double x0, double x1, double a, 
+        double b, double c0, double c1);
+// Uses a very expensive, yet more accurate method to compute the 
+// difficult integral.
+// x0       -- Left integration boundary
+// x1       -- right integration boundary
+// a        -- Parameters of the outer gamma function.
+// b        -- Parameters of the inter gamma function.
+// c0       -- Coefficient associated with a.
+// c1       -- Coefficient associated with b.
+//
+// Uses gls integrator.
+
 
 double ninvgamma_lexp(double x, double a, double b, double c0, double c1);
 // Unnormalized nested incomplete gamma function.
@@ -547,7 +679,6 @@ nlognorm_gslint(double t0, double x, double mu1, double mu2, double sig1,
 // sig2     -- Scale parameter of the inner lognormal function.
 //
 // Uses gsldouble
-
 
 double nlater_gslint(double t0, double x, double mu1, double mu2, double sig1,
        double sig2);
@@ -578,41 +709,101 @@ double nwald_gslint(double t0, double x, double mu1, double mu2, double sig1,
 
 int
 reparametrize_seria_gamma(const double *theta, SERIA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the seria model.
 
 int
 reparametrize_seria_invgamma(const double *theta, SERIA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the seria model.
 
 int
 reparametrize_seria_wald(const double *theta, SERIA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the seria model.
 
 int
 reparametrize_seria_mixedgamma(const double *theta, SERIA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the seria model.
 
 int
 reparametrize_seria_lognorm(const double *theta, SERIA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the seria model.
 
 int
 reparametrize_seria_later(const double *theta, SERIA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the seria model.
 
 //
 
 int
 reparametrize_prosa_gamma(const double *theta, PROSA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the prosa model.
 
 int
 reparametrize_prosa_invgamma(const double *theta, PROSA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the prosa model.
 
 int
 reparametrize_prosa_wald(const double *theta, PROSA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the prosa model.
 
 int
 reparametrize_prosa_mixedgamma(const double *theta, PROSA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the prosa model.
 
 int
 reparametrize_prosa_lognorm(const double *theta, PROSA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the prosa model.
 
 int
 reparametrize_prosa_later(const double *theta, PROSA_PARAMETERS *stheta);
+// Transforms the parameters entered as arrays of double into structures that
+// can be used by the more abstract functions.
+//
+// theta    -- Array of 12 parameters.
+// stheta   -- Output, stucture with the parameters of the prosa model.
 
 // Linearize turns parameter structures to doubles
 int

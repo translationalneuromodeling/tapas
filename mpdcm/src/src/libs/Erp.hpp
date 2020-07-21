@@ -50,7 +50,7 @@ public:
     linearize_theta_vector(const mxArray *matcell, ErpColumnArray *erpArray,
          const char field[], int dvector, MPFLOAT *tvector);
 	int
-	initilize_y(DataArray *u, ErpColumnArray *theta, ErpPTheta *ptheta, 
+	initialize_y(DataArray *u, ErpColumnArray *theta, ErpPTheta *ptheta, 
         DataArray *y);
 
 	int

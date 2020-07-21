@@ -4,7 +4,7 @@ function [logp, yhat, res] = tapas_softmax_mu3_wld(r, infStates, ptrans)
 % accounting for win- and loss-distortion of state values.
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2018 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2018-2019 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -35,18 +35,26 @@ res  = NaN(n,1);
 % dim 3: choice number
 % dim 4: 1: muhat, 2: sahat, 3: mu, 4: sa
 
-% Weed irregular trials out from inferred states, inputs, and responses
-states = squeeze(infStates(:,1,:,pop));
-states(r.irr,:) = [];
-mu3 = squeeze(infStates(:,3,1,3));
-mu3(r.irr) = [];
-u = r.u(:,1);
-u(r.irr) = [];
-y = r.y(:,1);
-y(r.irr) = [];
-
 % Number of choices
 nc = size(infStates,3);
+
+% Belief trajectories at 1st level
+states = squeeze(infStates(:,1,:,pop));
+
+% Log-volatility trajectory
+mu3 = squeeze(infStates(:,3,1,3));
+
+% Inputs
+u = r.u(:,1);
+
+% Responses
+y = r.y(:,1);
+
+% Weed irregular trials out from inferred states, inputs, and responses
+states(r.irr,:) = [];
+mu3(r.irr) = [];
+u(r.irr) = [];
+y(r.irr) = [];
 
 % Choice matrix Y corresponding to states
 Y = zeros(size(states));
@@ -95,4 +103,4 @@ logp(reg) = log(probc);
 yhat(reg) = probc;
 res(reg) = -log(probc);
 
-return;
+end

@@ -288,5 +288,96 @@ def seria_early_llh_n_states_wald(rt, ac, tt, theta):
 
     return wrapper(p_seria_early_llh_n_states_wald, rt, ac, tt, theta)
 
+
+def seria_late_llh_n_states_gamma(rt, ac, tt, theta):
+    ''' Likelihood of an late response in the seria model using the n_states
+        distribution.
+
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+
+    '''
+
+    return wrapper(p_seria_late_llh_n_states_gamma, rt, ac, tt, theta)
+
+
+def seria_late_llh_n_states_invgamma(rt, ac, tt, theta):
+    ''' Likelihood of an late response in the seria model using the n_states
+        distribution.
+
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+
+    '''
+
+    return wrapper(p_seria_late_llh_n_states_invgamma, rt, ac, tt, theta)
+
+
+def seria_late_llh_n_states_mixedgamma(rt, ac, tt, theta):
+    ''' Likelihood of an late response in the seria model using the n_states
+        distribution.
+
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+
+    '''
+
+    return wrapper(p_seria_late_llh_n_states_mixedgamma, rt, ac, tt, theta)
+
+
+def seria_late_llh_n_states_lognorm(rt, ac, tt, theta):
+    ''' Likelihood of an late response in the seria model using the n_states
+        distribution.
+
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+
+    '''
+
+    return wrapper(p_seria_late_llh_n_states_lognorm, rt, ac, tt, theta)
+
+
+def seria_late_llh_n_states_later(rt, ac, tt, theta):
+    ''' Likelihood of an late response in the seria model using the n_states
+        distribution.
+
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+
+    '''
+
+    return wrapper(p_seria_late_llh_n_states_later, rt, ac, tt, theta)
+
+
+def seria_late_llh_n_states_wald(rt, ac, tt, theta):
+    ''' Likelihood of an late response in the seria model using the n_states
+        distribution.
+
+    rt      Reaction times
+    ac      Action
+    tt      Trial typ
+    pars    Parameters.
+
+
+    '''
+
+    return wrapper(p_seria_late_llh_n_states_wald, rt, ac, tt, theta)
+
+
 if __name__ == '__main__':
     pass

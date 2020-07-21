@@ -8,6 +8,16 @@ cimport numpy as np
 DTYPE = np.float
 ctypedef np.float_t DTYPE_t
 
+cdef extern from "gsl/gsl_errno.h":
+
+    ctypedef void gsl_error_handler_t (const char * reason, const char * file,
+                                              int line, int gsl_errno);
+    cdef:
+        gsl_error_handler_t * gsl_set_error_handler(
+                gsl_error_handler_t * new_handler);
+
+        gsl_error_handler_t * gsl_set_error_handler_off();
+
 cdef extern from "src/antisaccades/antisaccades.h":
 
     cdef int DIM_PROSA_THETA
@@ -99,12 +109,34 @@ cdef extern from "src/antisaccades/antisaccades.h":
         FILL_PARAMETERS_SERIA fill_parameters
         SERIA_LLH llh
 
+    ctypedef struct SERIA_SUMMARY:
+        double late_pro_rt # Reaction time of a late prosaccade
+        double anti_rt     # Reaction time of an antisaccade
+        double inhib_fail_rt # Reaction time of an inhib. fail.
+        double inhib_fail_prob # Probability of an inhibition failure
+        double late_pro_prob # Probability of a late error
+        double predicted_pro_prob # Predicted probability of pro
+        double predicted_pro_rt # Predicted probability of pro
+        double predicted_anti_prob # Predicted probability of anti
+        double predicted_anti_rt # Predicted probability of anti
+
+    ctypedef struct PROSA_SUMMARY: 
+        double anti_rt # Reaction time of an antisaccade
+        double inhib_fail_rt # Reaction time of an inhib. fail.
+        double inhib_fail_prob # Probability of an inhibition failure
+        double predicted_pro_prob # Predicted probability of pro
+        double predicted_pro_rt # Predicted probability of pro
+        double predicted_anti_prob # Predicted probability of anti
+        double predicted_anti_rt # Predicted probability of anti
+
     cdef:
         double prosa_llh_abstract(double t, int a, PROSA_PARAMETERS params)
 
         double seria_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 
         double seria_early_llh_abstract(double t, int a, SERIA_PARAMETERS params)
+
+        double seria_late_llh_abstract(double t, int a, SERIA_PARAMETERS params)
 
         int prosa_model_n_states_optimized(ANTIS_INPUT svals, 
                 PROSA_MODEL fllh, double *llh)
@@ -158,3 +190,13 @@ cdef extern from "src/antisaccades/antisaccades.h":
 		double sig1, double sig2)
         double nwald_gslint(double t0, double x, double mu1, double mu2, 
 		double sig1, double sig2)
+
+        # Reparametrize
+
+        int seria_summary_abstract(
+                SERIA_PARAMETERS *params, 
+                SERIA_SUMMARY *summary);
+        int prosa_summary_abstract(
+                PROSA_PARAMETERS *params, 
+                PROSA_SUMMARY *summary);
+

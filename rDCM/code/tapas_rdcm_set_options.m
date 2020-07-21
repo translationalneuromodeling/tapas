@@ -59,7 +59,10 @@ options.padding = 0;
 % circular shift of the input (default: none)
 options.u_shift = 0;
 
-% default settings
+% filtering of signal in frequency domain (default: 1*STD)
+options.filter_str          = 1;
+
+% additional default settings for analysis
 options.coef                = 1;
 options.visualize           = 1;
 options.compute_signal      = 1;
@@ -89,9 +92,10 @@ end
 
 
 % set settings that are only relevant for rDCM with sparsity constraints
-if ( isfield(input_options,'p0_all') ), options.p0_all = input_options.p0_all; end
-if ( isfield(input_options,'iter') ), options.iter = input_options.iter; end
+if ( isfield(input_options,'p0_all') ),         options.p0_all = input_options.p0_all;                 end
+if ( isfield(input_options,'iter') ),           options.iter = input_options.iter;                     end
 if ( isfield(input_options,'restrictInputs') ), options.restrictInputs = input_options.restrictInputs; end
+if ( isfield(input_options,'p0_inform') ),      options.p0_inform = input_options.p0_inform;           end
 
 
 %% check options consistency
@@ -102,7 +106,7 @@ if strcmp(type, 'r')
 end
 
 % sampling ratio between input and signal
-r_dt = options.y_dt/DCM.U.dt; 
+r_dt = options.y_dt/DCM.U.dt;
 
 % no up/subsampling needed
 if ( r_dt == 1 )

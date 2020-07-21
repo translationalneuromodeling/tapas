@@ -12,10 +12,10 @@ Basic container classes.
 
 
 from collections import Sequence
-from pdb import set_trace as _
 import numpy as np
 from copy import deepcopy
 from scipy.integrate import cumtrapz
+
 
 class AlgebraicObject(object):
     ''' A class for the units statistics. '''
@@ -37,14 +37,14 @@ class AlgebraicObject(object):
                 self.__dict__[f] = results[f]
 
         return None
-    
+
     def set_values(self, values):
 
         for f in self.__class__.fix_fields:
             self.__dict__[f] = values[f]
         for f in self.__class__.fields:
             self.__dict__[f] = values[f]
- 
+
         return
 
     def __add__(self, other):
@@ -89,7 +89,7 @@ class AlgebraicObject(object):
 
     def __truediv__(self, arg):
 
-        return self.__mul__(self, 1./arg) 
+        return self.__mul__(1./arg)
 
     def exp(self):
 
@@ -126,7 +126,7 @@ class AlgebraicObject(object):
             nobj.__dict__[f] = self.__dict__[f][key]
 
         for f in self.__class__.fields:
-            nobj.__dict__[f] = self.__dict__[f][key] 
+            nobj.__dict__[f] = self.__dict__[f][key]
 
         return nobj
 
@@ -147,7 +147,7 @@ class AlgebraicObject(object):
 
         val = True
         for f in self.__class__.fields:
-            val = np.logical_and(val, 
+            val = np.logical_and(val,
                 not np.any(np.isnan(self.__dict__[f])))
 
         return not val
@@ -156,7 +156,7 @@ class AlgebraicObject(object):
 
         val = True
         for f in self.__class__.fields:
-            val = np.logical_and(val, 
+            val = np.logical_and(val,
                 not np.any(np.isinf(self.__dict__[f])))
 
         return not val
@@ -186,7 +186,8 @@ class TimeSeries(AlgebraicObject):
             nobj.__dict__[f] = cumtrapz(self.__dict__[f], self.time)
 
         return nobj
-        
+
+
 class FitsContainer(Sequence):
 
     def __init__(self, *items):
@@ -232,7 +233,7 @@ class FitsContainer(Sequence):
     def sum(self):
 
         if len(self) == 0:
-            raise(IndexError('Empty container'))
+            raise IndexError
 
         nobj = deepcopy(self[0])
 
@@ -244,7 +245,7 @@ class FitsContainer(Sequence):
     def mean(self):
 
         if len(self) == 0:
-            raise(IndexError('Empty container'))
+            raise IndexError
 
         nobj = deepcopy(self[0])
 
@@ -253,12 +254,11 @@ class FitsContainer(Sequence):
 
         return nobj/float(len(self))
 
-
     def var(self):
         '''Variance of the fits. '''
 
         if len(self) < 2:
-            raise(IndexError('Container requires more than one sample'))
+            raise IndexError
 
         ev = self.mean()
 
@@ -270,7 +270,6 @@ class FitsContainer(Sequence):
         return nobj/float(len(self) - 1)
 
 
-
 if __name__ == '__main__':
-    pass    
+    pass
 

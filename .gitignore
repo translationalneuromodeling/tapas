@@ -14,4 +14,6 @@ lib
 *.so
 *.mexw64
 *.asv
-examples/
+*.DS_Store
+.idea
+.idea/*

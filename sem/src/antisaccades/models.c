@@ -51,7 +51,7 @@ prosa_auxiliary(double t, double a, PROSA_MODEL model,
 
     double t0 = t - ptheta->t0;
 
-    // In case that it has not been initilize, do it now
+    // In case that it has not been initialize, do it now
     
     if ( ptheta->cumint == CUMINT_NO_INIT )
     {
@@ -220,14 +220,12 @@ seria_model_trial_by_trial(const ANTIS_INPUT svals, SERIA_MODEL model,
 }
 
 int
-seria_auxiliary(double t, double a, NESTED_INTEGRAL inhibition_race, 
-        SERIA_PARAMETERS *ptheta, double *ct)
+seria_auxiliary(double t, double a, SERIA_PARAMETERS *ptheta, double *ct)
 {
 
     double t0 = t - ptheta->t0;
 
-    // In case that it has not been initilize, do it now
-    
+    // In case that it has not been initilize, do it now 
     if ( ptheta->cumint == CUMINT_NO_INIT )
     {
         ptheta->cumint = 0;
@@ -241,8 +239,9 @@ seria_auxiliary(double t, double a, NESTED_INTEGRAL inhibition_race,
     {
         if ( t0 > *ct )
         {
-            ptheta->cumint += inhibition_race(*ct, t0, ptheta->kp,
+            ptheta->cumint += ptheta->inhibition_race(*ct, t0, ptheta->kp,
                    ptheta->ks, ptheta->tp, ptheta->ts);
+            /* Update the value. */
             *ct = t0;
         }   
     }
@@ -341,6 +340,7 @@ seria_model_n_states_optimized(const ANTIS_INPUT svals, SERIA_MODEL model,
 
     /* Enter arbitrary number of parameters */
     double *old_times = (double *) malloc(np * sizeof( double ));
+
     SERIA_PARAMETERS *ptheta = (SERIA_PARAMETERS *) 
         malloc( np * sizeof(SERIA_PARAMETERS) );
 
@@ -354,8 +354,12 @@ seria_model_n_states_optimized(const ANTIS_INPUT svals, SERIA_MODEL model,
     {
         // Update if necessary
         int trial_type = u[i];
-        seria_auxiliary(t[i], a[i], (ptheta + trial_type)->inhibition_race,
-                ptheta + trial_type, old_times + trial_type);
+        seria_auxiliary(
+                t[i], /* Time */
+                a[i], /* Action */
+                ptheta + trial_type, /* Parameter set */
+                old_times + trial_type /* Previous time. */
+                );
         llh[i] = model.llh(t[i], a[i], ptheta[trial_type]);
     }
     
@@ -367,3 +371,56 @@ seria_model_n_states_optimized(const ANTIS_INPUT svals, SERIA_MODEL model,
     return 0;
 }
 
+int
+seria_model_summary(
+    const ANTIS_INPUT svals,
+    SERIA_MODEL model, 
+    SERIA_SUMMARY *summaries)
+{
+
+    double *theta = svals.theta;
+    
+    int np = svals.np; /* Sets the number of parameters */
+
+    SERIA_PARAMETERS params;
+    // The parameters
+    
+    for (int i = 0; i < np; i++)
+    {
+        // Initilize the parameters.
+        model.fill_parameters(theta + i * DIM_SERIA_THETA, &params);
+        
+        // Generate the summary. 
+        seria_summary_abstract(&params, summaries + i);
+    }
+
+    return 0;
+
+}
+
+int
+prosa_model_summary(
+    const ANTIS_INPUT svals,
+    PROSA_MODEL model, 
+    PROSA_SUMMARY *summaries)
+{
+
+    double *theta = svals.theta;
+    
+    int np = svals.np; /* Sets the number of parameters */
+
+    PROSA_PARAMETERS params;
+    // The parameters
+    
+    for (int i = 0; i < np; i++)
+    {
+        // Initilize the parameters.
+        model.fill_parameters(theta + i * DIM_PROSA_THETA, &params);
+        
+        // Generate the summary. 
+        prosa_summary_abstract(&params, summaries + i);
+    }
+
+    return 0;
+
+}

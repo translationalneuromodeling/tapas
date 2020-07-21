@@ -28,7 +28,7 @@ function physio = tapas_physio_new(default_scheme, physio_in)
 %                     are overwritten, the others are kept as in physio_in
 %
 % OUT
-%   physio          - the complete physio structure, which can be unsed in
+%   physio          - the complete physio structure, which can be used in
 %                     tapas_physio_main_create_regressors
 %
 % NOTE
@@ -44,23 +44,24 @@ function physio = tapas_physio_new(default_scheme, physio_in)
 %   physio = tapas_physio_new('manual_peak_select', physio);
 %
 %   See also tapas_physio_main_create_regressors
-%
+
 % Author: Lars Kasper
 % Created: 2013-04-23
-% Copyright (C) 2013 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.
+% Copyright (C) 2013-2018 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.
 %
 % This file is part of the TAPAS PhysIO Toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
-%
-% $Id$
 
 % if not specified differently, create everything empty
 if ~nargin
     default_scheme = 'empty';
 end
 
+% include sub-folders of code to path as well
+pathThis = fileparts(mfilename('fullpath'));
+addpath(genpath(pathThis)); 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Modules (Overview)
@@ -101,35 +102,36 @@ else
     log_files              = [];
     
     % vendor                Name depending on your MR Scanner system
-    %                       'Philips' (default)
-    %                       'GE',
-    %                       'Siemens'
-    %                       'Siemens_Tics' - new Siemens physiological
-    %                       logging with time stamps in tics
-    %                       (= steps of 2.5 ms since midnight) and
-    %                       extra acquisition (scan_timing) logfile with
-    %                       time stamps of all volumes and slices
-    %
-    %                       or
+    %                       'BIDS' - Brain Imaging Data Structure (http://bids.neuroimaging.io/bids_spec.pdf, section 8.6)'
+    %                       'Biopac_Txt' - exported txt files from Biopac system (4 columns, [Resp PPU GSR Trigger]'
+    %                       'Biopac_Mat' - exported mat files from Biopac system'
+    %                       'BrainProducts' - .eeg files from BrainProducts EEG system'
     %                       'Custom'
-    %
-    %  'Custom' expects the logfiles (separate files for cardiac and respiratory)
-    %  to be plain text, with one cardiac (or
-    %  respiratory) sample per row;
-    %  If heartbeat (R-wave peak) events are
-    %  recorded as well, they have to be put
-    %  as a 2nd column in the cardiac logfile
-    %  by specifying a 1; 0 in all other rows
-    %  e.g.:
-    %      0.2  0
-    %      0.4  1 <- cardiac pulse event
-    %      0.2  0
-    %      -0.3 0
-    %
-    %
-    % NOTE: the sampling interval has to be specified for these files as
-    % well (s.b.)
-    
+    %                           'Custom' expects the logfiles (separate files for cardiac and respiratory)'
+    %                           to be plain text, with one cardiac (or'
+    %                           respiratory) sample per row;'
+    %                           If heartbeat (R-wave peak) events are'
+    %                           recorded as well, they have to be put'
+    %                           as a 2nd column in the cardiac logfile'
+    %                           by specifying a 1; 0 in all other rows'
+    %                           e.g.:'
+    %                           0.2  0'
+    %                           0.4  1 <- cardiac pulse event'
+    %                           0.2  0'
+    %                           -0.3 0'
+    %                           NOTE: the sampling interval has to be specified for these files as'
+    %                           well (s.b.)'
+    %                       'GE'
+    %                       'Philips'
+    %                       'Siemens'
+    %                       'Siemens_Tics' - new Siemens physiological'
+    %                           Logging with time stamps in tics'
+    %                           (= steps of 2.5 ms since midnight) and'
+    %                           extra acquisition (scan_timing) logfile with'
+    %                           time stamps of all volumes and slices'
+    %                       'Siemens_HCP' - Human Connectome Project (HCP) Physiology Data' 
+    %                           HCP-downloaded files of  name format  *_Physio_log.txt '
+    %                           are already preprocessed into this simple 3-column text format'
     log_files.vendor       = 'Philips';
     
     % Logfile with cardiac data, e.g. 
@@ -146,8 +148,8 @@ else
     % additional file for relative timing information between logfiles and
     % MRI scans.
     % Currently implemented for 2 cases
-    % Siemens:      Enter the first or last Dicom volume of your session here,
-    %               The time stamp in the dicom header is on the same time
+    % Siemens:      Enter the first or last DICOM volume of your session here,
+    %               The time stamp in the DICOM header is on the same time
     %               axis as the time stamp in the physiological log file
     % Siemens_Tics: log-file which holds table conversion for tics axis to 
     %               time conversion 
@@ -164,7 +166,9 @@ else
     
     % Time (in seconds) when the 1st scan (or, if existing, dummy) started,
     % relative to the start of the logfile recording;
-    % e.g.  0 if simultaneous start
+    % e.g.  
+    %       [] (empty) to read from explicit acquisition timing info (s.b.)
+    %       0 if simultaneous start
     %       10, if 1st scan starts 10
     %       seconds AFTER physiological
     %       recording
@@ -173,10 +177,11 @@ else
     % NOTE: 
     %       1. For Philips SCANPHYSLOG, this parameter is ignored, if
     %       scan_timing.sync is set.
-    %       2. If you specify an acquisition_info file, leave this parameter
-    %       at 0 (e.g., for Siemens_Tics) since physiological recordings
-    %       and acquisition timing are already synchronized by this
-    %       information, and you would introduce another shift.
+    %       2. If you specify an acquisition_info file, leave this
+    %       parameter empty or 0 (e.g., for Siemens_Tics, BIDS) since
+    %       physiological recordings and acquisition timing are already
+    %       synchronized by this information, and you would introduce an
+    %       additional shift.
     %
     log_files.relative_start_acquisition = 0;
     
@@ -186,7 +191,7 @@ else
     % to pre-scans
     %
     % NOTE: In all cases, log_files.relative_start_acquisition is
-    %       added to timing after the initial alignmnent to first/last scan
+    %       added to timing after the initial alignment to first/last scan
     %
     % 'first'   start of logfile will be aligned to first scan volume
     % 'last'    end of logfile will be aligned to last scan volume
@@ -217,7 +222,7 @@ else
     % Count of preparation pulses
     % BEFORE 1st dummy scan. 
     % Only important, if log_files.scan_align = 'first', since then
-    % preparation pulses and dummiy triggers are counted and discarded 
+    % preparation pulses and dummy triggers are counted and discarded 
     % as first scan onset
     scan_timing.sqpar.Nprep             = [];
     
@@ -248,15 +253,17 @@ else
     %                       e.g., 
     %                       *_INFO.log for 'Siemens_Tics' (time stamps for 
     %                                       every slice and volume)
-    %                       *.dcm (DICOM) of first volume (non-dummy) used
+    %                       *.dcm (DICOM) for Siemens, is first volume (non-dummy) used
     %                                     in GLM analysis
+    %                       *.tsv (3rd column) for BIDS, using the scanner
+    %                                     volume trigger onset events
     %                       NOTE:   This setting needs a valid filename to
     %                               entered in log_files.scan_timing
     scan_timing.sync.method = 'gradient_log';
     scan_timing.sync.grad_direction = ''; % 'x', 'y', or 'z';
     
     % if set, sequence timing is calculated
-    % from logged gradient timecourse along
+    % from logged gradient time-course along
     % this coordinate axis;
     
     scan_timing.sync.zero     = [];   % gradient values below this value are set to zero;
@@ -287,31 +294,84 @@ else
     preproc = [];
     
     preproc.cardiac = [];
-    preproc.cardiac.modality = 'ecg_wifi'; % 'ECG','ECG_raw', or 'OXY'/'PPU' (for pulse oximetry), 'OXY_OLD', [deprecated]
+    
+    % Measurement modality of input cardiac signal 
+    % 'ECG','ECG_raw', or 'OXY'/'PPU' (for pulse oximetry), 'OXY_OLD', [deprecated]
+    preproc.cardiac.modality = 'ecg_wifi'; 
+    
+    % Filter properties for bandpass-filtering of cardiac signal before peak
+    % detection, phase extraction, and other physiological traces
+    preproc.cardiac.filter = [];
+    
+    preproc.cardiac.filter.include = 0; % 1 = filter executed; 0 = not used
+    
+    % filter type   default: 'cheby2'
+    %   'cheby2'    Chebychev Type II filter, use for steep transition from
+    %               start to stop band
+    %   'butter'    butterworth filter, standard filter with maximally flat
+    %               passband (Infinite impulse response), but stronger
+    %               ripples in transition band
+    preproc.cardiac.filter.type = 'butter';
+    
+    %
+    % [f_min, f_max] frequency interval in Hz of all frequency that should
+    %                pass the passband filter
+    %                default: [0.3 9] (to remove slow drifts, breathing
+    %                                   and slice sampling artifacts)
+    %                if empty, no filtering is performed
+    preproc.cardiac.filter.passband = [0.3 9];
+   
+    % [f_min, f_max] frequency interval in Hz of all frequencies, s.th. frequencies
+    %                outside this band should definitely *NOT* pass the filter
+    %                Default: [] 
+    %                NOTE: only relevant for 'cheby2' filter type
+    %                if empty, and passband is empty, no filtering is performed
+    %                if empty, but passband exists, stopband interval is
+    %                10% increased passband interval
+    preproc.cardiac.filter.stopband = [];
     
     % The initial cardiac pulse selection structure: Determines how the
     % majority of cardiac pulses is detected
-    % 'auto'    - auto generation of representative QRS-wave; detection via
-    %             maximising auto-correlation with it
-    % 'load_from_logfile' - from phys logfile, detected R-peaks of scanner
-    % 'manual'  - via manually selected QRS-wave for autocoreelations
+    % default: 'auto_matched'
+    %
+    % 'auto_matched'
+    %           - auto generation of representative QRS-wave; detection via
+    %             maximizing auto-correlation with it
+    % 'load_from_logfile' 
+    %           - from phys logfile, detected R-peaks of scanner
+    % 'manual'  - via manually selected QRS-wave for autocorrelations
     % 'load'    - from previous manual/auto run
-    preproc.cardiac.initial_cpulse_select.method = 'load_from_logfile';
+    preproc.cardiac.initial_cpulse_select.method = 'auto_matched';
     
+    % maximum allowed physiological heart rate (in beats per minute)
+    % for subject; default: 90 bpm
+    % - If set too low, the auto_mathed pulse detection might miss genuine
+    %   cardiac pulses
+    % - If set too high, it might introduce artifactual pulse events, i.e.
+    %   interpreting local maxima within a pulse as new pulse events
+    % Adjust this value, if you have a subject with very high heart rate 
+    % (increase!), or if you have very pronounced local maxima in your wave form
+    % (decrease!).
+    preproc.cardiac.initial_cpulse_select.max_heart_rate_bpm = 90;
+
     % file containing reference ECG-peak (variable kRpeak)
     % used for method 'manual' or 'load' [default: not set]
     % if method == 'manual', this file is saved after picking the QRS-wave
     % such that results are reproducible
-    preproc.cardiac.initial_cpulse_select.file = '';
+    % default: initial_cpulse_kRpeakfile.mat
+    preproc.cardiac.initial_cpulse_select.file = 'initial_cpulse_kRpeakfile.mat';
     
-    % threshold for correlation with QRS-wave to find cardiac pulses
-    preproc.cardiac.initial_cpulse_select.min = [];
+    % threshold for peak height in z-scored cardiac waveform to find pulse events
+    % default: 0.4
+    % NOTE: For ECG, might need increase (e.g., 2.0), because of local maximum 
+    %       of T wave after QRS complex
+    preproc.cardiac.initial_cpulse_select.min = 0.4;
     
     % variable saving an example cardiac QRS-wave to correlate with
     % ECG time series
     preproc.cardiac.initial_cpulse_select.kRpeak = [];
     
-    % The posthoc cardiac pulse selection structure: If only few (<20)
+    % The post-hoc cardiac pulse selection structure: If only few (<20)
     % cardiac pulses are missing in a session due to bad signal quality, a
     % manual selection after visual inspection is possible using the
     % following parameters. The results are saved for reproducibility
@@ -340,9 +400,9 @@ else
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % 'none'        no physiological model is computed; only the read-out
     %               logfile data is read out and saved in physio.ons_secs
-    % 'RETROICOR'   as in Glover el al, MRM 44, 2000l
-    %               order of expansion:  See Harvey et al, JMRI 28, 2008
-    % 'HRV'         heart rate variability, as in Chang et al, 2009
+    % 'RETROICOR'   as in Glover et al., MRM 44, 2000
+    %               order of expansion:  See Harvey et al., JMRI 28, 2008
+    % 'HRV'         heart rate variability, as in Chang et al., 2009
     % 'RVT'         respiratory volume time, as in Birn et al., 2006/8
     % 'movement'    realignment parameters, derivatives, 
     %               + squared (parameters+derivatives),
@@ -368,8 +428,8 @@ else
     %   'RETROICOR'
     %   'HRV'
     %   'RVT'
-    %   'movement
-    %   noise_rois 
+    %   'movement'
+    %   'noise_rois' 
     model.orthogonalise = 'none';         
     
     % true or false (default)
@@ -403,7 +463,7 @@ else
     %% RETROICOR (Model): Glover et al. 2000
     % Retrospective image correction method, based on Fourier expansion of
     % cardiac and respiratory phase, plus multiplicative interaction terms
-    % (Harvey et al, 2008)
+    % (Harvey et al., 2008)
     
     model.retroicor.include = 1; % 1 = included; 0 = not used
     % natural number, order of cardiac phase Fourier expansion
@@ -416,22 +476,20 @@ else
     model.retroicor.order.cr = 1;
    
     
-    %% RVT (Model): Respiratory Volume per time model , Birn et al, 2006/8
+    %% RVT (Model): Respiratory Volume per time model , Birn et al., 2006/8
     model.rvt.include = 0;
     
     % one or multiple delays (in seconds) can be specified to shift 
-    % canonical RVT response function from Birn et al, 2006 paper
+    % canonical RVT response function from Birn et al., 2006 paper
     % Delays e.g. 0, 5, 10, 15, and 20s (Jo et al., 2010 NeuroImage 52)
-    
     model.rvt.delays = 0;
  
     
-    %% HRV (Model): Heart Rate variability, Chang et al, 2009
-    
+    %% HRV (Model): Heart Rate variability, Chang et al., 2009
     model.hrv.include = 0;
     
     % one or multiple delays (in seconds) can be specified to shift 
-    % canonical HRV response function from Chang et al, 2009 paper
+    % canonical HRV response function from Chang et al., 2009 paper
     % Delays e.g. 0:6:24s (Shmueli et al, 2007, NeuroImage 38)
     model.hrv.delays = 0;
     
@@ -444,13 +502,15 @@ else
     % T.T., 2007. A component based noise correction method (CompCor) 
     % for BOLD and perfusion based fMRI. NeuroImage 37, 90-101. 
     % doi:10.1016/j.neuroimage.2007.04.042
-     
     model.noise_rois.include = 0;
-    % cell of preprocessed fmri nifti/analyze files, from which time series
+   
+    % cell of preprocessed fMRI nifti/analyze files, from which time series
     % shall be extracted
     model.noise_rois.fmri_files = {}; 
+   
     % cell of Masks/tissue probability maps characterizing where noise resides
     model.noise_rois.roi_files = {};
+   
     % Single threshold or vector [1, nRois] of thresholds to be applied to mask files to decide
     % which voxels to include (e.g. a probability like 0.99, if roi_files
     % are tissue probability maps)
@@ -470,6 +530,17 @@ else
     % extracted
     model.noise_rois.n_components = 1;
     
+    % Noise ROIs volumes must have the same geometry as the functional time series.
+    % It means same affine transformation(space) and same matrix(voxel size)
+    % Possible values:
+    % 'Yes' or 1/true (default)
+    %   Coregister : Estimate & Reslice will be performed on the noise NOIs,
+    %   so their geometry (space + voxel size) will match the fMRI volume.
+    % 'No' or 0 or false 
+    %   Geometry will be tested:
+    %   1) If they match, continue
+    %   2) If they don't match, perform a Coregister : Estimate & Reslice as fallback
+    model.noise_rois.force_coregister = 1;
     
     %% movement (Model): Regressor model 6/12/24, Friston et al. 1996
     % Also: sudden movement exceedance regressors
@@ -484,7 +555,7 @@ else
     %        Volterra expansion V_t, V_t^2, V_(t-1), V_(t-1)^2
     model.movement.order = 6;
     
-    % Censoring Outlier Threshold;
+    % Censoring outlier threshold;
     % Threshold, above which a stick (''spike'') regressor is created for 
     % corresponding outlier volume exceeding threshold'
    %
@@ -509,11 +580,11 @@ else
     % quality criterion will be created, using one of these methods:
     % 
     %   'None'      - no motion censoring performed
-    %   'MAXVAL'    - tresholding (max. translation/rotation)
-    %   'FD''       - framewise displacement (as defined by Power et al., 2012)
+    %   'MAXVAL'    - thresholding (max. translation/rotation)
+    %   'FD''       - frame-wise displacement (as defined by Power et al., 2012)
     %                 i.e., |rp_x(n+1) - rp_x(n)| + |rp_y(n+1) - rp_y(n)| + |rp_z(n+1) - rp_z(n)|
-    %                       + 50mm *(|rp_pitch(n+1) - rp_pitch(n)| + |rp_roll(n+1) - rp_roll(n)| + |rp_yaw(n+1) - rp_yaw(n)|
-    %                 where 50mm is an average head radius mapping a rotation into a translation of head surface
+    %                       + 50 mm *(|rp_pitch(n+1) - rp_pitch(n)| + |rp_roll(n+1) - rp_roll(n)| + |rp_yaw(n+1) - rp_yaw(n)|
+    %                 where 50 mm is an average head radius mapping a rotation into a translation of head surface
     %   'DVARS'     - root mean square over brain voxels of
     %                 difference in voxel intensity between consecutive volumes
     %                 (Power et al., 2012))
@@ -569,11 +640,13 @@ else
     %                                   regressors
     %                            Fig 9: final multiple_regressors matrix
     verbose.level = 1;
+    
+    % stores text outputs of PhysIO Toolbox processing, e.g. warnings about missed
+    % slice triggers, peak height etc.
     verbose.process_log = cell(0,1); 
-                                % stores text outputs of PhysIO Toolbox
-                                % processing, e.g. warnings about missed
-                                % slice triggers, peak height etc.
-    verbose.fig_handles = zeros(0,1);     % [nFigs,1] vector; collecting of all generated figure handles during a run of tapas_physio_main_create_regressors
+    
+    % [1, nFigs] vector; collecting of all generated figure handles during a run of tapas_physio_main_create_regressors
+    verbose.fig_handles = zeros(1,0);   
     
     % file name (including extension) where to print all physIO output 
     % figures to.
@@ -586,12 +659,24 @@ else
     %         index, e.g. 'PhysIO_output_fig01.jpg'
     verbose.fig_output_file = ''; 
     
-    
-    % If true, plots are performed in tabs of SPM graphics window
+    % NOT IMPLEMENTED YET
+    %  If true, plots are performed in tabs of SPM graphics window
     %  TODO: implement via [handles] = spm_uitab(hparent,labels,callbacks,...
     %                                           tag,active,height,tab_height)
     %
-    verbose.use_tabs = false;  
+    verbose.use_tabs = false;
+
+    % show / save / close figures
+    % Booleans to control figure visibility and saving/closing options.
+
+    % show_figs: If true, all created figures will be visible. If false, sets figure visibility to 'off', which
+    % leaves the possibility of saving the figure to file without displaying it.
+    verbose.show_figs = true;
+    % save_figs: If true, all created figures will be saved using specified fig_output_file as filename
+    verbose.save_figs = false;
+    % close_figs: If true, will close all open figs after saving them. Only used if save_figs is true.
+    verbose.close_figs = false;
+
   
     
     
@@ -618,7 +703,7 @@ else
     ons_secs.c_is_reliable       = [];  % 1 for all time points where cardiac recording is reliable, 0 elsewhere (e.g. high noise, too low/high heartrates)
     ons_secs.r_is_reliable       = [];  % 1 for all time points, where respiratory recording is reliable; 0 elsewhere (e.g. constant amplitude through detachment/clipping)
   
-    % processed elements cardiac pulse detecion and phase estimations
+    % processed elements cardiac pulse detection and phase estimations
     ons_secs.cpulse         	 = [];  % onset times of cardiac pulse events (e.g. R-peaks)
     ons_secs.fr                  = [];  % filtered respiration amplitude time series
     ons_secs.c_sample_phase      = [];  % phase in heart-cycle when each slice of each volume was acquired
@@ -681,5 +766,5 @@ physio.ons_secs     = ons_secs;
 % Call functions for specific initial value settings (e.g. 3T Philips system)
 switch default_scheme
     case 'Philips'
-        physio = tapas_physio_init_philips(physio);
+        physio = tapas_physio_new_philips(physio);
 end

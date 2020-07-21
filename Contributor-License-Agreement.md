@@ -10,12 +10,15 @@ and
 
 each GitHub User listed in the following table:  
 
-Name                     | Company/Institution/Address | City      | Country | E-Mail/GitHub Username 
------------------------- | --------------------------- | --------- | ------- | ----------------------
-Lars Kasper              | TNU, University of Zurich   | Zurich    | CH      | mrikasper
-Eduardo Aponte           | TNU, University of Zurich   | Zurich    | CH      | tnutapas
-Niklas Bürgi             | SNS, University of Zurich   | Zurich    | CH      | nbuergi
-**- Add Entry here -**   | **- Add Entry here -**      | **Add**   | **Add** | **Add**                    
+Name                     | Company/Institution/Address        | City      | Country | E-Mail/GitHub Username 
+------------------------ | ---------------------------------- | --------- | ------- | ----------------------
+Lars Kasper              | TNU, University of Zurich          | Zurich    | CH      | mrikasper
+Eduardo Aponte           | TNU, University of Zurich          | Zurich    | CH      | tnutapas
+Daniel Hoffmann Ayala    | Technical University               | Munich    | D       | DanielHoffmannAyala
+Benoît Béranger          | CENIR, ICM                         | Paris     | FR      | benoitberanger
+Stephan Heunis           | Eindhoven University of Technology | Eindhoven | NL      | jsheunis
+Niklas Bürgi             | SNS, University of Zurich          | Zurich    | CH      | nbuergi
+**- Add Entry here -**   | **- Add Entry here -**             | **Add**   | **Add** | **Add**                    
 
 (hereinafter referred to as "Contributor")
 

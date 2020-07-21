@@ -19,7 +19,11 @@ muhat = infStates(:,1,1);
 n = length(muhat);
 
 % Initialize random number generator
-rng('shuffle');
+if isnan(r.c_sim.seed)
+    rng('shuffle');
+else
+    rng(r.c_sim.seed);
+end
 
 % Simulate
 y = muhat +sqrt(ze)*randn(n, 1);

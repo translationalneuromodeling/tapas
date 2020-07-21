@@ -66,6 +66,9 @@ aN   = zeros(nr,1);
 bN   = zeros(nr,1);
 logF = zeros(1,nr);
 
+% define array for predicted derivative of signal (in frequency domain)
+yd_pred_rdcm_fft = NaN(size(DCM.Y.y));
+
 
 % iterate over regions
 for k = 1:nr
@@ -135,9 +138,9 @@ for k = 1:nr
     
         % compute components of the model evidence
         log_lik      = N_eff*(psi(aN_r) - log(bN_r))/2 - N_eff*log(2*pi)/2 - QF*t;
-        log_p_weight = 1/2*log(det(l0_r)) - D_r*log(2*pi)/2 - (mN_r-m0_r)'*l0_r*(mN_r-m0_r)/2 - trace(l0_r*sN_r)/2;
+        log_p_weight = 1/2*tapas_rdcm_spm_logdet(l0_r) - D_r*log(2*pi)/2 - (mN_r-m0_r)'*l0_r*(mN_r-m0_r)/2 - trace(l0_r*sN_r)/2;
         log_p_prec   = a0*log(b0) - gammaln(a0) + (a0-1)*(psi(aN_r) - log(bN_r)) - b0*t;
-        log_q_weight = 1/2*log(det(sN_r)) + D_r*(1+log(2*pi))/2;
+        log_q_weight = 1/2*tapas_rdcm_spm_logdet(sN_r) + D_r*(1+log(2*pi))/2;
         log_q_prec   = aN_r - log(bN_r) + gammaln(aN_r) + (1-aN_r)*psi(aN_r);
 
         % compute the negative free energy per region
@@ -167,13 +170,13 @@ for k = 1:nr
     log_lik = N_eff*(psi(aN_r) - log(bN_r))/2 - N_eff*log(2*pi)/2 - QF*t;
     
     % expected ln p(theta)
-    log_p_weight = 1/2*log(det(l0_r)) - D_r*log(2*pi)/2 - (mN_r-m0_r)'*l0_r*(mN_r-m0_r)/2 - trace(l0_r*sN_r)/2;
+    log_p_weight = 1/2*tapas_rdcm_spm_logdet(l0_r) - D_r*log(2*pi)/2 - (mN_r-m0_r)'*l0_r*(mN_r-m0_r)/2 - trace(l0_r*sN_r)/2;
     
     % expected ln p(tau)
     log_p_prec = a0*log(b0) - gammaln(a0) + (a0-1)*(psi(aN_r) - log(bN_r)) - b0*t;
     
     % expected ln q(theta)
-    log_q_weight = 1/2*log(det(sN_r)) + D_r*(1+log(2*pi))/2;
+    log_q_weight = 1/2*tapas_rdcm_spm_logdet(sN_r) + D_r*(1+log(2*pi))/2;
     
     % expected ln q(tau)
     log_q_prec = aN_r - log(bN_r) + gammaln(aN_r) + (1-aN_r)*psi(aN_r);
@@ -183,10 +186,12 @@ for k = 1:nr
     
     % store region-specific parameters
     mN(k,idx(k,:))           = real(mN_r);
-    sN{k}                    = l0_r;
     sN{k}(idx(k,:),idx(k,:)) = real(sN_r);
     aN(k)                    = real(aN_r);
     bN(k)                    = real(bN_r);
+    
+    % get the predicted signal from the GLM (in frequency domain)
+    yd_pred_rdcm_fft(:,k)	= X(:,idx(k,:)') * mN_r;
     
 end
 
@@ -201,5 +206,9 @@ output.priors.b0 = b0;
 
 % store the rDCM variant
 output.inversion = 'tapas_rdcm_ridge';
+
+% store the true and predicted temporal derivatives (in frequency domain)
+output.temp.yd_source_fft    = Y;
+output.temp.yd_pred_rdcm_fft = yd_pred_rdcm_fft;
 
 end

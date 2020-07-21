@@ -9,28 +9,34 @@ function y = tapas_softmax_binary_sim(r, infStates, p)
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
-mu1hat = infStates(:,1,1);
-be = p;
-
-if size(r.u,2) == 1
-    if ~any(mu1hat<0) && ~any(mu1hat>1)
-        % Apply the logistic sigmoid to the inferred states
-        prob = tapas_sgm(be.*(2.*mu1hat-1),1);
-    else
-        error('tapas:hgf:SoftMaxBinary:InfStatesIncompatible', 'infStates incompatible with tapas_softmax_binary observation model.')
-    end
-elseif size(r.u,2) == 3
-    % Gather the reward values
-    r0 = r.u(:,2);
-    r1 = r.u(:,3);
-    % Apply the logistic sigmoid to the inferred states
-    prob = tapas_sgm(be.*(r1.*mu1hat-r0.*(1-mu1hat)),1);
+% Predictions or posteriors?
+pop = 1; % Default: predictions
+if r.c_obs.predorpost == 2
+    pop = 3; % Alternative: posteriors
 end
 
+% Inverse decision temperature beta
+be = p;
+
+% Assumed structure of infStates:
+% dim 1: time (ie, input sequence number)
+% dim 2: HGF level
+% dim 3: 1: muhat, 2: sahat, 3: mu, 4: sa
+
+% Belief trajectories at 1st level
+states = squeeze(infStates(:,1,pop));
+
+% Apply the logistic sigmoid to the inferred states
+prob = tapas_sgm(be.*(2.*states-1),1);
+
 % Initialize random number generator
-rng('shuffle');
+if isnan(r.c_sim.seed)
+    rng('shuffle');
+else
+    rng(r.c_sim.seed);
+end
 
 % Simulate
 y = binornd(1, prob);
 
-return;
+end

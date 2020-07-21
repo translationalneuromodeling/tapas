@@ -17,7 +17,11 @@ ze = exp(-mu3hat);
 prob = mu1hat.^ze./(mu1hat.^ze+(1-mu1hat).^ze);
 
 % Initialize random number generator
-rng('shuffle');
+if isnan(r.c_sim.seed)
+    rng('shuffle');
+else
+    rng(r.c_sim.seed);
+end
 
 % Simulate
 y = binornd(1, prob);

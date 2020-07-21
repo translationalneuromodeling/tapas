@@ -21,7 +21,7 @@ function optim = tapas_quasinewton_optim(f, init, varargin)
 %                  byproduct of optimization
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2012-2013 Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2012-2019 Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
@@ -128,7 +128,13 @@ for i = 1:maxIter
         t       = 0.5^j;
         newx    = x+t.*descvec;
         newval  = f(newx);
-        dval    = newval-val;
+
+        % Regularize if the objective function value is Inf
+        if isinf(newval)
+            continue
+        else
+            dval = newval-val;
+        end
         
         % Stop if the new value is sufficiently smaller
         if dval < 1e-4*t*slope

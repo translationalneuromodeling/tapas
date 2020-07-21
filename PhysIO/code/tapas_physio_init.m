@@ -11,7 +11,7 @@ function isPhysioCorrectlyInitialized = tapas_physio_init()
 %   tapas_physio_init()
 %
 %   See also
-%
+
 % Author: Lars Kasper
 % Created: 2018-02-17
 % Copyright (C) 2018 TNU, Institute for Biomedical Engineering,
@@ -23,6 +23,12 @@ function isPhysioCorrectlyInitialized = tapas_physio_init()
 % COPYING or <http://www.gnu.org/licenses/>.
 %
 
+% add path for utils, if physio not in path
+if ~exist('tapas_physio_logo')
+    pathPhysio = fileparts(mfilename('fullpath'));
+    addpath(fullfile(pathPhysio, 'utils')); % needed for further path checks
+end
+
 tapas_physio_logo(); % print logo
 
 disp('Checking Matlab PhysIO paths, SPM paths and Batch Editor integration now...');
@@ -32,8 +38,8 @@ fprintf('Checking Matlab PhysIO paths now...');
 [isPhysioOnPath, pathPhysIO] = tapas_physio_check_path();
 
 if ~isPhysioOnPath
-    addpath(pathPhysIO);
-    fprintf('added PhysIO path: %s\n', pathPhysIO);
+    addpath(genpath(pathPhysIO));
+    fprintf('added PhysIO path recursively: %s\n', pathPhysIO);
 else
     fprintf('OK.\n');
 end
@@ -72,7 +78,7 @@ isVerbose = false; % we will try to create link, don't warn yet
 
 if ~isPhysioVisibleForSpmBatchEditor
     fprintf('No link found. Trying to create one...');
-    cmdString = tapas_physio_create_spm_toolbox_link();
+    cmdString = tapas_physio_create_spm_toolbox_link(pathPhysIO);
     
     % try again...
     [isPhysioVisibleForSpmBatchEditor, pathSpm, pathPhysIO] = ...

@@ -25,10 +25,11 @@ c.verbose   = false;
 % Options for optimization
 c.tolGrad = 1e-3;
 c.tolArg  = 1e-3;
-c.maxStep = 2;
+c.maxStep = 1;
 c.maxIter = 100;
 c.maxRegu = 16;
 c.maxRst  = 10;
+c.nRandInit = 0;
 
 % Algorithm filehandle
 c.opt_algo = @tapas_quasinewton_optim;

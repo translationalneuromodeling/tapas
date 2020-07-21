@@ -148,14 +148,14 @@ c.mu_0mu = [NaN, 0, 1];
 c.mu_0sa = [NaN, 1, 1];
 
 c.logsa_0mu = [NaN,   log(0.1), log(1)];
-c.logsa_0sa = [NaN,          0,      0];
+c.logsa_0sa = [NaN,          1,      1];
 
 % Phis
 % Format: row vector of length n_levels.
 % Undefined (therefore NaN) at the first level.
 % Fix this to zero (-Inf in logit space) to set to zero.
 c.logitphimu = [NaN, tapas_logit(0.4,1), tapas_logit(0.2,1)];
-c.logitphisa = [NaN,               0.25,               0.25];
+c.logitphisa = [NaN,                  1,                   1];
 
 % ms
 % Format: row vector of length n_levels.
@@ -177,8 +177,8 @@ c.logkasa = [     0,    0.1];
 % Omegas
 % Format: row vector of length n_levels.
 % Undefined (therefore NaN) at the first level.
-c.ommu = [NaN,   -4,   -4];
-c.omsa = [NaN,  0.1,    1];
+c.ommu = [NaN,   -2,   -2];
+c.omsa = [NaN,    1,    1];
 
 % Gather prior settings in vectors
 c.priormus = [
