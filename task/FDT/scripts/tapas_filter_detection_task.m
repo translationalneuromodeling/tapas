@@ -116,17 +116,9 @@ end
 close all
 
 % Check folder location is main FDT folder
-currentLocation = pwd;
-if ispc == 1
-    idx = strfind(currentLocation,'\');
-else
-    idx = strfind(currentLocation,'/');
-end
-folderName = currentLocation(idx(end)+1:end);
-if strcmp(folderName,'FDT') == 1
-    % Continue if in right folder
-else
-    error('\nNot currently in main FDT folder.\nPlease move to FDT folder and try again.');
+[~,dir_name] = fileparts(pwd);
+if ~strcmp(dir_name,'FDT')
+   error('Not currently in main FDT folder. Please move to FDT folder and try again.');
 end
 
 % Add relevant paths

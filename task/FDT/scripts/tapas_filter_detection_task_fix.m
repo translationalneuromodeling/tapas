@@ -48,18 +48,9 @@ function tapas_filter_detection_task_fix()
 fprintf('\n______________________________________\n\n      FIX FILTER TASK RESULTS\n______________________________________\n\n');
 
 % Check folder location is main FDT folder
-currentLocation = pwd;
-if ispc == 1
-    idx = strfind(currentLocation,'\');
-else
-    idx = strfind(currentLocation,'/');
-end
-folderName = currentLocation(idx(end)+1:end);
-if strcmp(folderName,'FDT') == 1
-    % Continue if in right folder
-else
-    fprintf('\nNot currently in main FDT folder.\nPlease move to FDT folder and try again.\n');
-    return
+[~,dir_name] = fileparts(pwd);
+if ~strcmp(dir_name,'FDT')
+   error('Not currently in main FDT folder. Please move to FDT folder and try again.');
 end
 
 % Ask for option to fix results or combine trial sets
