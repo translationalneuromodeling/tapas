@@ -6,7 +6,9 @@ function haveNewerRelease = tapas_check_for_new_release(verbose)
     %                               0   no information
     %                               1   only if there is a new release (or not)
     %                               2   as 1, but if there is a new release also
-    %                                   the release notes for all non-installed
+    %                                   the release notes for the lase release
+    %                               3   as 1, but if there is a new release also
+    %                                   the release notes for all newer
     %                                   releases.
     %
     % Output
@@ -17,7 +19,7 @@ function haveNewerRelease = tapas_check_for_new_release(verbose)
     %
 
     if nargin < 1
-        verbose = 0;
+        verbose = 3;
     end
 
     [online_version,data] = tapas_check_online_version();
@@ -43,7 +45,10 @@ function haveNewerRelease = tapas_check_for_new_release(verbose)
                     % different
                     n_data = numel(data);
                     fprintf(1, 'Release notes:\n')
-                    for i_data = 1:n_data
+                    if verbose == 2
+                        n_data = 1; % Just iterate once through loop
+                    end
+                    for i_data = 1:n_data 
                         str_version = data(i_data).tag_name;
                         str_version = strrep(str_version,'v','');
                         if tapas_compare_versions(str_version,offline_version)
