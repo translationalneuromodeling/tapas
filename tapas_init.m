@@ -1,4 +1,4 @@
-function tapas_new_init(varargin)    
+function tapas_init(varargin)    
 % Initialize TAPAS and print a message in the console
 %
 % If no argument is given, all toolboxes are initialized.
