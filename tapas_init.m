@@ -54,9 +54,6 @@ end
 end
 
 
-
-
-
 function [init_options,toolboxes] = tapas_init_process_varargin(in)
 % Function to separate the varargins into options (start with '-') and 
 % function names. Options also have defaults.

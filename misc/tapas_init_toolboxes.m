@@ -69,31 +69,31 @@ end
 for iTool = 1:numel(toolbox_names) % Now we are iterating over all toolboxes.
 	if doInit(iTool) 
 		sTool = toolbox_names{iTool};
-		if doShowMessages 
-            % If the name of the toolbox was in the previously specified,
-            % we can add it. Otherwise it was dependent.
-			if ismember(sTool,toolboxes) 
-				fprintf(1,'===== Adding toolbox %s =====\n',sTool);
-			else 
-				fprintf(1,'===== Adding dependent toolbox %s =====\n',sTool);
-			end
-		end
-        % If no init function is specified, we add the "genpath(init_dir)".
-        % Otherwise we call the init function.
-		if isempty(infos.(sTool).init_function)
-			addpath(genpath(fullfile(tdir,infos.(sTool).init_dir)));
-		else
-            % So that we can call the init function. Need it?
-			addpath(fullfile(tdir,infos.(sTool).init_dir)); 
-            % Call the init function.
-			feval(infos.(sTool).init_function);
-		end
+        try
+            if doShowMessages 
+                % If the name of the toolbox was in the previously specified,
+                % we can add it. Otherwise it was dependent.
+                if ismember(sTool,toolboxes) 
+                    fprintf(1,'===== Adding toolbox %s =====\n',sTool);
+                else 
+                    fprintf(1,'===== Adding dependent toolbox %s =====\n',sTool);
+                end
+            end
+            % If no init function is specified, we add the "genpath(init_dir)".
+            % Otherwise we call the init function.
+            if isempty(infos.(sTool).init_function)
+                addpath(genpath(fullfile(tdir,infos.(sTool).init_dir)));
+            else
+                % So that we can call the init function.
+                addpath(fullfile(tdir,infos.(sTool).init_dir)); 
+                % Call the init function.
+                feval(infos.(sTool).init_function);
+            end
+        catch matx
+            fprintf('Skipping toolbox %s. Initialization failed with error: "%s"\n',sTool,matx.message)
+        end
 	end
 end
-
-
-
-
 end
 
 
@@ -158,13 +158,4 @@ function infos = tapas_init_default_toolbox_info(infos,folderName)
     infos.(fld_name).dependencies = '';
 
 end
-
-
-
-
-
-
-
-
-
 
