@@ -130,7 +130,7 @@ function infos = tapas_init_get_toolbox_infos()
 
     infos.h2gf.init_function = '';
     infos.h2gf.init_dir = 'h2gf';
-    infos.h2gf.dependencies = 'external';
+    infos.h2gf.dependencies = 'tools';
 
     infos.external.init_function = '';
     infos.external.init_dir = 'external';
