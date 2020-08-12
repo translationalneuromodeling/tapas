@@ -58,7 +58,7 @@ else
 			continue; % Don't add it, if we don't know how to do that.
 		end
 		doInit(ismember(toolbox_names,sTool)) = true;
-		dependencies = infos.(sTool).dependencies;
+		dependencies = lower(infos.(sTool).dependencies);
 		if ~isempty(dependencies) % TODO: Include dependencies of dependencies etc.
 			doInit(ismember(toolbox_names,dependencies)) = true;
 		end
@@ -130,7 +130,7 @@ function infos = tapas_init_get_toolbox_infos()
 
     infos.h2gf.init_function = '';
     infos.h2gf.init_dir = 'h2gf';
-    infos.h2gf.dependencies = 'tools';
+    infos.h2gf.dependencies = {'hgf','tools'};
 
     infos.external.init_function = '';
     infos.external.init_dir = 'external';
