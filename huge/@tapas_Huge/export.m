@@ -78,12 +78,12 @@ switch method
             obj.idx.P_c + obj.idx.P_h, obj.N);
         try % estimate covariances from samples
             theta = ...
-                [reshape([obj.trace(:).theta_c], obj.N, obj.idx.P_c, []), ...
-                 reshape([obj.trace(:).theta_h], obj.N, obj.idx.P_h, [])];
+                [reshape([obj.trace.smp(:).theta_c], obj.N, obj.idx.P_c, []), ...
+                 reshape([obj.trace.smp(:).theta_h], obj.N, obj.idx.P_h, [])];
             for n = 1:obj.N
                 Sigma_n(:,:,n) = cov(permute(theta(n,:,:), [3 2 1]));
             end
-            mu = reshape([obj.trace(:).mu], obj.K, obj.idx.P_c, []);
+            mu = reshape([obj.trace.smp(:).mu], obj.K, obj.idx.P_c, []);
             for k = 1:obj.K
                 S_k(:,:,k) = cov(permute(mu(k,:,:), [3 2 1]));
             end
@@ -155,6 +155,10 @@ function [ dcm ] = spm_post( dcm, obj, m_k, S_k, mu_n, Sigma_n, lambda, mu_h, Si
     % subject-level
     [A, B, C, D, tau, kappa, epsilon] = obj.theta2abcd(mu_n, obj.idx,...
          obj.R, obj.L);
+    % transform C matrix
+    if obj.options.nvp.transforminput
+        C = .5*exp(C);
+    end
     dcm.Ep = struct('A', A, 'B', B, 'C', C, 'D', D, 'transit', tau, ...
         'decay', kappa, 'epsilon', epsilon);
     idx = [obj.idx.clustering; obj.idx.homogenous];
@@ -166,6 +170,10 @@ function [ dcm ] = spm_post( dcm, obj, m_k, S_k, mu_n, Sigma_n, lambda, mu_h, Si
     % cluster-level
     [A, B, C, D, tau, kappa, epsilon] = obj.theta2abcd([m_k mu_h],...
          obj.idx, obj.R, obj.L);
+    % transform C matrix
+    if obj.options.nvp.transforminput
+        C = .5*exp(C);
+    end
     dcm.M.pE = struct('A', A, 'B', B, 'C', C, 'D', D, 'transit', tau, ...
         'decay', kappa, 'epsilon', epsilon);
 

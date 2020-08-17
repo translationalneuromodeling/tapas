@@ -1,6 +1,11 @@
 # Changelog
 TAPAS toolbox 
 
+## [4.0.0] 2020-09-06
+
+### Changed
+- HUGE: removed deprecated functions
+
 ## [3.3.0] 2020-07-17
 
 ### Added

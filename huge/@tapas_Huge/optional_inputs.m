@@ -3,7 +3,7 @@ function [ obj ] = optional_inputs( obj, varargin )
 % estimate method.
 % 
 % This is a protected method of the tapas_Huge class. It cannot be called
-% from outsite the class.
+% from outside the class.
 % 
 
 % Author: Yu Yao (yao@biomed.ee.ethz.ch)
@@ -52,6 +52,7 @@ if ~isempty(nvp.dcm) || ~isempty(nvp.confounds) || ...
     nvp.omitfromclustering = [];
 end
 
+  
 % number of clusters
 obj.K = nvp.k;
 
@@ -102,7 +103,7 @@ nvp.priorvarianceratio;
 if ischar(val) && strcmpi(val, 'default')
     nvp.priorvarianceratio = defaultOptions.nvp.priorvarianceratio;
 else
-    assert( isnumeric(val) && val(1) > 0, 'TAPAS:HUGE:Nvp:PriorTau', ...
+    assert( isnumeric(val) && any(val(:) > 0), 'TAPAS:HUGE:Nvp:PriorTau', ...
         'PriorVarianceRatio must be a positive scalar.');
 end
 

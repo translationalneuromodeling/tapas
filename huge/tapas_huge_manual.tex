@@ -5,17 +5,17 @@
 \documentclass{article}
 \usepackage{graphicx}
 \usepackage[table]{xcolor}
-\usepackage[utf8]{inputenc}
-\usepackage{natbib}
-\usepackage{lmodern}
-\usepackage{enumitem}
 
 \sloppy
 \definecolor{lgray}{gray}{0.65}   
 \definecolor{llgray}{gray}{0.85}
 \setlength{\parindent}{0pt}
-\setlength\arrayrulewidth{0.8pt}
+\usepackage[utf8]{inputenc}
+\usepackage{natbib}
+\usepackage{lmodern}
+\usepackage{enumitem}
 
+\setlength\arrayrulewidth{0.8pt}
 
 \title{User Manual Hierarchical Unsupervised Generative Embedding}
 \author{\\Yu Yao\\%
@@ -26,6 +26,7 @@ University of Zurich \& ETH Zurich}
 \maketitle
 
 \tableofcontents
+
 
 
 
@@ -49,15 +50,15 @@ This toolbox implements the HUGE model as a Matlab class called \texttt{tapas\_H
 \end{par} \vspace{1em}
 \begin{par}
 Instances of the \texttt{tapas\_Huge} class are created by calling the class constructor \texttt{tapas\_Huge()}. The constructor is a function that can be called without arguments, which creates an empty \texttt{tapas\_Huge} object:
-\end{par} 
+\end{par}  
 \begin{verbatim}obj = tapas_Huge()\end{verbatim}
 \begin{par}
-However, the constructor also accepts optional arguments in the form of name-value pairs. For example, one can add a short description using the \texttt{Tag} property
-\end{par} 
+However, the constructor also accepts optional arguments in the form of name-value pairs. For example, one can add a short description using the \texttt{tag} property
+\end{par}  
 \begin{verbatim}obj = tapas_Huge('Tag','my model')\end{verbatim}
 \begin{par}
 or import data using the \texttt{Dcm} property
-\end{par} 
+\end{par}  
 \begin{verbatim}obj = tapas_Huge('Dcm',dcms)\end{verbatim}
 \begin{par}
 For more examples, see the demo script \texttt{tapas\_huge\_demo.mlx}.
@@ -68,7 +69,7 @@ For more examples, see the demo script \texttt{tapas\_huge\_demo.mlx}.
 
 \begin{par}
 Each instance of the \texttt{tapas\_Huge} class stores data, options and results in class properties, which are documented below. Properties can be accessed using dot notation:
-\end{par} 
+\end{par}  
 \begin{verbatim}value = obj.property\end{verbatim}
 \begin{par}
 where \texttt{obj} is a class instance and \texttt{property} is the name of the property.
@@ -288,11 +289,11 @@ Character array indicating toolbox version.
 
 \begin{par}
 The main functionalities of the HUGE toolbox are implemented as methods of the \texttt{tapas\_Huge} class. These methods are documented below. There are two equivalent ways to call class methods:
-\end{par} 
+\end{par}  
 \begin{verbatim}obj = obj.method( ... )\end{verbatim}
 \begin{par}
 or
-\end{par} 
+\end{par}  
 \begin{verbatim}obj = method( obj, ... )\end{verbatim}
 \begin{par}
 where \texttt{obj} is an instance of the \texttt{tapas\_Huge} class and \texttt{method} is the class method you want to call.
@@ -301,7 +302,7 @@ where \texttt{obj} is an instance of the \texttt{tapas\_Huge} class and \texttt{
 
 \subsection*{ \texttt{tapas\_Huge.estimate}}
 
- \begin{verbatim}  Estimate parameters of the HUGE model.
+  \begin{verbatim}  Estimate parameters of the HUGE model.
   
   INPUTS:
     obj - A tapas_Huge object containing fMRI time series.
@@ -332,13 +333,13 @@ where \texttt{obj} is an instance of the \texttt{tapas\_Huge} class and \texttt{
 
 \end{verbatim} \color{black}
     \begin{par}
-Note that the HUGE toolbox uses a parameterization such that the DCM networks are self-inhibiting by default. This is achieved by subtracting 0.5 from the self-connections. Hence, specifying a prior mean of zero for all DCM connections implies that the effective self-connectivity is -0.5. This parametrization has been chosen for the convenience of the user, since it eliminates the need to identify the position of the self-connections in the parameter vector.
+Note that the HUGE toolbox uses a parameterization such that the DCM networks are self-inhibiting by default. This is achieved by subtracting 0.5 from the self-connections. Hence, specifying a prior mean of zero for all DCM connections implies that the effective self-connectivity is -0.5. This is similar to DCM self-connections in SPM12. This parametrization has been chosen for the convenience of the user, since it eliminates the need to identify the position of the self-connections in the parameter vector.
 \end{par} \vspace{1em}
 
 
 \subsection*{ \texttt{tapas\_Huge.simulate}}
 
- \begin{verbatim}  Generate synthetic task-based fMRI time series data, using HUGE as a
+  \begin{verbatim}  Generate synthetic task-based fMRI time series data, using HUGE as a
   generative model. 
   
   INPUTS:
@@ -396,7 +397,7 @@ Note that the HUGE toolbox uses a parameterization such that the DCM networks ar
 
 \subsection*{ \texttt{tapas\_Huge.plot}}
 
- \begin{verbatim}  Plot cluster and subject-level estimation result from HUGE model.
+  \begin{verbatim}  Plot cluster and subject-level estimation result from HUGE model.
   
   INPUTS:
     obj - A tapas_Huge object containing estimation results.
@@ -416,7 +417,7 @@ Note that the HUGE toolbox uses a parameterization such that the DCM networks ar
 
 \subsection*{ \texttt{tapas\_Huge.save}}
 
- \begin{verbatim}  Save properties of HUGE object to mat file.
+  \begin{verbatim}  Save properties of HUGE object to mat file.
   
   INPUTS:
     filename - File name.
@@ -437,7 +438,7 @@ Note that the HUGE toolbox uses a parameterization such that the DCM networks ar
 
 \subsection*{ \texttt{tapas\_Huge.import}}
 
- \begin{verbatim}  Import fMRI time series data into HUGE object.
+  \begin{verbatim}  Import fMRI time series data into HUGE object.
  
     WARNING: Importing data into a HUGE object will delete any data and
     results which are already stored in that object.
@@ -483,7 +484,7 @@ Note that the HUGE toolbox uses a parameterization such that the DCM networks ar
 
 \subsection*{ \texttt{tapas\_Huge.export}}
 
- \begin{verbatim}  Export results and data from HUGE object to SPM's DCM format.
+  \begin{verbatim}  Export results and data from HUGE object to SPM's DCM format.
   
   INPUTS:
     obj - A tapas_Huge object containing data.
@@ -509,7 +510,7 @@ Note that the HUGE toolbox uses a parameterization such that the DCM networks ar
 
 \subsection*{ \texttt{tapas\_Huge.remove}}
 
- \begin{verbatim}  Remove data (fMRI time series, confounds, DCM network structure, ... )
+  \begin{verbatim}  Remove data (fMRI time series, confounds, DCM network structure, ... )
   and estimation results from HUGE object.
  
   INPUTS:
@@ -747,6 +748,17 @@ been extensively tested.
 \vspace{1em}
 \begin{tabular}{|l|p{10cm}|}
 \hline
+\rowcolor{lgray} Name: & \verb+TransformInput+ \\
+\hline
+\rowcolor{llgray} Value: & bool (default: false)\\
+\hline
+ \rowcolor{llgray} Description: & Transform input strength (C matrix) to log-domain.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
 \rowcolor{lgray} Name: & \verb+Verbose+ \\
 \hline
 \rowcolor{llgray} Value: & bool (default: \verb+false+)\\
@@ -770,7 +782,7 @@ The HUGE toolbox provides additional functionalities in the form of regular Matl
 
 \subsection*{ \texttt{tapas\_huge\_boxcar}}
 
- \begin{verbatim}  Generate a boxcar function for use as experimental stimulus. All
+  \begin{verbatim}  Generate a boxcar function for use as experimental stimulus. All
   timing-related arguments must be specified in seconds. 
   
   INPUTS:
@@ -797,29 +809,9 @@ The HUGE toolbox provides additional functionalities in the form of regular Matl
 \end{verbatim} \color{black}
     
 
-\subsection*{ \texttt{tapas\_huge\_bpurity}}
-
- \begin{verbatim}  Calculate balanced purity (see Brodersen2014 Eq. 13 and 14) for a set of
-  ground truth labels and a set of estimated labels
-  
-  INPUTS:
-    labels    - Vector of ground truth class labels.
-    estimates - Clustering result as array of assignment probabilities or
-                vector of cluster indices.
-  
-  OUTPUTS:
-    balancedPurity - Balanced purity score according to Brodersen (2014)
-  
-  EXAMPLES:
-    bp = TAPAS_HUGE_BPURITY(labels,estimates)
-  
-
-\end{verbatim} \color{black}
-    
-
 \subsection*{ \texttt{tapas\_huge\_bold}}
 
- \begin{verbatim}  Integrates the DCM forward equations to generate the predicted fMRI bold
+  \begin{verbatim}  Integrates the DCM forward equations to generate the predicted fMRI bold
   time series.
   
   INPUTS:
@@ -852,6 +844,26 @@ The HUGE toolbox provides additional functionalities in the form of regular Matl
   
 
 \end{verbatim} \color{black}
+    
+
+\subsection*{ \texttt{tapas\_huge\_bpurity}}
+
+  \begin{verbatim}  Calculate balanced purity (see Brodersen2014 Eq. 13 and 14) for a set of
+  ground truth labels and a set of estimated labels
+  
+  INPUTS:
+    labels    - Vector of ground truth class labels.
+    estimates - Clustering result as array of assignment probabilities or
+                vector of cluster indices.
+  
+  OUTPUTS:
+    balancedPurity - Balanced purity score according to Brodersen (2014)
+  
+  EXAMPLES:
+    bp = TAPAS_HUGE_BPURITY(labels,estimates)
+  
+
+\end{verbatim} \color{black}
     \begin{par}
 For more information on the fMRI BOLD model, please refer to \cite{stephan2007}.
 \end{par} \vspace{1em}
@@ -868,8 +880,8 @@ This function is used internally to compile the mex function the HUGE toolbox ne
 
 \begin{par}
 This function is intended for internal use only. Do not call directly
-\end{par} 
- \begin{verbatim}  Numerical stable calculation of log-determinant for positive-definite
+\end{par} \vspace{1em}
+  \begin{verbatim}  Numerical stable calculation of log-determinant for positive-definite
   matrix.
  
   INPUT:
@@ -886,12 +898,29 @@ This function is intended for internal use only. Do not call directly
 \end{verbatim} \color{black}
     
 
+\subsection*{ \texttt{tapas\_huge\_logit}}
+
+\begin{par}
+This function is intended for internal use only. Do not call directly
+\end{par} \vspace{1em}
+  \begin{verbatim}  Numerical stable calculation of logit function.
+  
+  INPUTS:
+    x - Array of double.
+  
+  OUTPUTS:
+    y - logit of x.
+  
+
+\end{verbatim} \color{black}
+    
+
 \subsection*{ \texttt{tapas\_huge\_parse\_inputs}}
 
 \begin{par}
 This function is intended for internal use only. Do not call directly
-\end{par} 
- \begin{verbatim}  Parse name-value pair type arguments into a struct.
+\end{par} \vspace{1em}
+  \begin{verbatim}  Parse name-value pair type arguments into a struct.
   
   INPUTS:
     opts - Struct containing all valid names as field names and 
@@ -907,105 +936,6 @@ This function is intended for internal use only. Do not call directly
     opts = TAPAS_HUGE_PARSE_INPUTS(struct('a',0,'b',1),'a',10)    Specify
         'a' and 'b' as valid property names and receive non-default value
         for 'a'. 
-  
-
-\end{verbatim} \color{black}
-    \begin{par}
-The following two functions provide backward compatibility to the interface of the previous version of the HUGE toolbox (version 201903).
-\end{par} \vspace{1em}
-
-
-\subsection*{ \texttt{tapas\_huge\_invert}}
-
- \begin{verbatim}    WARNING: This function is deprecated and will be removed in a future
-    version of this toolbox. Please use the new object-oriented interface
-    provided by the tapas_Huge class.
-    
-  Invert hierarchical unsupervised generative embedding (HUGE) model.
- 
-  INPUT:
-    DCM       - cell array of DCM in SPM format
-    K         - number of clusters (set K to one for empirical Bayes)
- 
-  OPTIONAL INPUT:
-    priors    - model priors stored in a struct containing the
-                following fields:
-        alpha:         parameter of Dirichlet prior (alpha_0 in Fig.1 of
-                       REF [1])
-        clustersMean:  prior mean of clusters (m_0 in Fig.1 of REF [1])
-        clustersTau:   tau_0 in Fig.1 of REF [1]
-        clustersDeg:   degrees of freedom of inverse-Wishart prior (nu_0 in
-                       Fig.1 of REF [1]) 
-        clustersSigma: scale matrix of inverse-Wishart prior (S_0 in Fig.1
-                       of REF [1]) 
-        hemMean:       prior mean of hemodynamic parameters (mu_h in Fig.1
-                       of REF [1]) 
-        hemSigma:      prior covariance of hemodynamic parameters (Sigma_h
-                       in Fig.1 of REF [1]) 
-        noiseInvScale: prior inverse scale of observation noise (b_0 in
-                       Fig.1 of REF [1]) 
-        noiseShape:    prior shape parameter of observation noise (a_0 in
-                       Fig.1 of REF [1])
-    verbose   - activates command line output (prints free energy
-                difference, default: false)
-    randomize - randomize starting values (default: false). WARNING:
-                randomizing starting values can cause divergence of DCM.
-    seed      - seed for random number generator
-  
-  OUTPUT:
-    DcmResults - struct used for storing the results from VB. Posterior
-                 parameters are stored in DcmResults.posterior, which is a
-                 struct containing the following fields:
-        alpha:               parameter of posterior over cluster weights
-                             (alpha_k in Eq.(15) of REF [1]) 
-        softAssign:          posterior assignment probability of subjects 
-                             to clusters (q_nk in Eq.(18) in REF [1])
-        clustersMean:        posterior mean of clusters (m_k in Eq.(16) of
-                             REF [1]) 
-        clustersTau:         tau_k in Eq.(16) of REF [1]
-        clustersDeg:         posterior degrees of freedom (nu_k in Eq.(16) 
-                             of REF [1])
-        clustersSigma:       posterior scale matrix (S_k in Eq.(16) of
-                             REF [1]) 
-        logDetClustersSigma: log-determinant of S_k
-        dcmMean:             posterior mean of DCM parameters (mu_n in
-                             Eq.(19) of REF [1])  
-        dcmSigma:            posterior covariance of hemodynamic
-                             parameters (Sigma_n in Eq.(19) of REF [1]) 
-        logDetPostDcmSigma:  log-determinant of Sigma_n
-        noiseInvScale:       posterior inverse scale of observation noise
-                             (b_n,r in Eq.(21) of REF [1]) 
-        noiseShape:          posterior shape parameter of observation noise
-                             (a_n,r in Eq.(21) of REF [1])
-        meanNoisePrecision:  posterior mean of precision of observation
-                             noise (lambda_n,r in Eq.(23) of REF [1])
-        modifiedSumSqrErr:   b'_n,r in Eq.(22) of REF [1]
- 
-  See also tapas_Huge, tapas_Huge.estimate, tapas_huge_demo
-  
-
-\end{verbatim} \color{black}
-    
-
-\subsection*{ \texttt{tapas\_huge\_build\_prior}}
-
- \begin{verbatim}    WARNING: This function is deprecated and will be removed in a future
-    version of this toolbox. Please use the new object-oriented interface
-    provided by the tapas_Huge class.
-  
-  Generate values for prior parameters for HUGE. Prior mean of cluster
-  centers and prior mean and covariance of hemodynamic parameters follow
-  SPM convention (SPM8 r6313).
- 
-  INPUT:
-        DcmInfo - cell array of DCM in SPM format
- 
-  OUTPUT:
-        priors  - struct containing priors
-        DcmInfo - struct containing DCM model specification and BOLD time
-                  series in DcmInfo format
- 
-  See also tapas_Huge, tapas_Huge.estimate, tapas_huge_demo
   
 
 \end{verbatim} \color{black}
@@ -1031,6 +961,7 @@ Support for this toolbox is provided via the GitHub page of TAPAS. For questions
 \bibliography{tapas_huge_manual}
 
 \end{par} \vspace{1em}
+
 
 
 

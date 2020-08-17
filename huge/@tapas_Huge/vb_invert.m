@@ -2,7 +2,7 @@ function [ obj ] = vb_invert( obj )
 % Run VB update equations until convergence.
 % 
 % This is a protected method of the tapas_Huge class. It cannot be called
-% from outsite the class.
+% from outside the class.
 % 
 
 % Author: Yu Yao (yao@biomed.ee.ethz.ch)
@@ -82,7 +82,9 @@ for iIt = 1:nIt
     if ~bUpdateClusters
         % start updating clustering parameters and confound coefficients
         bUpdateClusters = (dNfe < obj.options.convergence.dDcm && dNfe >= 0);% || iIt > 32;
-        obj.trace.convergence(1) = iIt;
+        if bUpdateClusters
+            obj.trace.convergence(1) = iIt;
+        end
         
     elseif ~bUpdateAssignments
         % start updating assignment labels
@@ -312,6 +314,7 @@ for n = 1:obj.N
         mu_prime_c = mu_prime_c + m_k(k,:)*tmps;
     end
     
+ 
     % Eq (19)
     % posterior covariance
     Lambda_bar = repmat(obj.aux.lambda_bar(n,:), obj.aux.q_r(n), 1);
@@ -322,14 +325,14 @@ for n = 1:obj.N
     Pi_n(obj.idx.P_c+1:end, obj.idx.P_c+1:end) = obj.aux.Pi_h + ...
         Pi_n(obj.idx.P_c+1:end, obj.idx.P_c+1:end);    
     obj.posterior.Sigma_n(:,:,n) = inv(Pi_n); %%% TODO Pi + diag(delta)
+    obj.aux.ldSigma(n) = - tapas_huge_logdet(Pi_n);
     % posterior mean
     tmp = obj.aux.epsilon{n}(:) + obj.aux.G{n}*obj.posterior.mu_n(n,:)';
+    % regularization factor
+    tmp = tmp*(.9.^mod(obj.trace.nRetract(n),5));   
     obj.posterior.mu_n(n,:) = ...
         ((G_Lambda*tmp)' + [mu_prime_c, obj.aux.mu_prime_h])/Pi_n;
-    
-    obj.aux.ldSigma(n) = - tapas_huge_logdet(Pi_n);
-    
-    % jacobian and residual
+    % recalculate jacobian and residual
     obj = obj.options.fncBold(obj, n);
     
     % Eq (22)
@@ -343,7 +346,7 @@ for n = 1:obj.N
 
     newNfe = obj.vb_nfe( );
     % check negative free energy (during first few iterations, accept
-    % decease in F if fit improves)
+    % decrease in F if fit improves)
     bUnstable = any(isnan(obj.aux.G{n}(:))) || any(isinf(obj.aux.G{n}(:)));
     bOverride = bCheckNfe || varEps < sum(var(obj.aux.epsilon{n}));
     if bUnstable || (tmpNfe > newNfe && bOverride) 
@@ -356,10 +359,12 @@ for n = 1:obj.N
         obj.posterior.b(n,:)         = tmpB(n,:);
         obj.aux.b_prime(n,:)         = tmpBp(n,:);
         obj.aux.lambda_bar(n,:)      = tmpLb(n,:);
+        obj.trace.nRetract(n)        = obj.trace.nRetract(n) + 1;
     else
         % otherwise accept update
         tmpNfe = newNfe;
         obj.trace.nDcmUpdate(n) = obj.trace.nDcmUpdate(n) + 1;
+        obj.trace.nRetract(n)   = 0;
     end
     
 end
