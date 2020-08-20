@@ -1,6 +1,17 @@
 # Changelog
 TAPAS toolbox 
 
+## [4.0.0] 2020-09-06
+
+### Changed
+- external toolboxes are now managed as matlab packages
+
+### Fixed
+- Fixed name collision issue due to mcmcdiag toolbox (see [issue 106](https://github.com/translationalneuromodeling/tapas/issues/106))
+
+### Known issues
+- h2gf (beta): demo script currently does not work
+
 ## [3.3.0] 2020-07-17
 
 ### Added
