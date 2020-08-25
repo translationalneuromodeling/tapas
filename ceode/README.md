@@ -43,8 +43,8 @@ Installation and Usage
 	
     For three (ERP) / four (CMC) population DCMs
     
-        Replace *f = 'spm_fx_erp'* with *f = 'tapas_ceode_fx_erp'* in *spm_dcm_x_neural.m* (line 53)
-        Replace *f = 'spm_fx_cmc'* with *f = 'tapas_ceode_fx_cmc'* in *spm_dcm_x_neural.m* (line 79)
+        Replace f = 'spm_fx_erp' with f = 'tapas_ceode_fx_erp' in spm_dcm_x_neural.m (line 53)
+        Replace f = 'spm_fx_cmc' with f = 'tapas_ceode_fx_cmc' in spm_dcm_x_neural.m (line 79)
 
 5. Run tapas_ceode_init()
 
