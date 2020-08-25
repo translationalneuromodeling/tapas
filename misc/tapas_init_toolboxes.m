@@ -144,6 +144,7 @@ function infos = tapas_init_get_toolbox_infos()
     infos = tapas_init_default_toolbox_info(infos,'sem');
     infos = tapas_init_default_toolbox_info(infos,'tools'); % Want to have that?
     infos = tapas_init_default_toolbox_info(infos,'VBLM');
+    infos = tapas_init_default_toolbox_info(infos, 'ceode');
         
 end
 
