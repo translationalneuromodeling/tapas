@@ -17,7 +17,7 @@ function [y, pst] = tapas_ceode_gen_erp(P, M, U)
 %
 % -------------------------------------------------------------------------
 %
-% Author: Dario Schöbi
+% Author: Dario SchÃ¶bi
 % Created: 2020-08-10
 % Copyright (C) 2020 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.
 %
