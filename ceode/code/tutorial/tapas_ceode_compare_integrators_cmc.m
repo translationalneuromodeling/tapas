@@ -12,7 +12,7 @@ function [ ] = tapas_ceode_compare_integrators_cmc()
 %
 % -------------------------------------------------------------------------
 %
-% Author: Dario Schöbi
+% Author: Dario SchÃ¶bi
 % Created: 2020-08-10
 % Copyright (C) 2020 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.
 %
