@@ -1,21 +1,29 @@
-Regression dynamic causal modeling (rDCM)
-=========================================
+![rDCM Logo](misc/rDCM_Logo.png?raw=true "rDCM Logo")
 
 
-> Authors: Stefan Frässle (<stefanf@biomed.ee.ethz.ch>), Ekaterina I. Lomakina
+
+rDCM - regression Dynamic Causal Modeling.
+========================================================================
+
+This ReadMe file provides the relevant information on the regression dynamic causal modeling (rDCM)
+toolbox.
 
 
-> Copyright (C) 2016-2018 
+-------------------
+General information
+-------------------
 
-> Translational Neuromodeling Unit (TNU)
+- Authors: Stefan Frässle (<stefanf@biomed.ee.ethz.ch>), Ekaterina I. Lomakina
+- Copyright (C) 2016-2020 
+- Translational Neuromodeling Unit (TNU)
+- Institute for Biomedical Engineering
+- University of Zurich & ETH Zurich
 
-> Institute for Biomedical Engineering
-
-> University of Zurich & ETH Zurich
 
 
+--------
 Download
--------
+--------
 
 - Please download the latest stable versions of the rDCM Toolbox on GitHub as part of the 
   [TAPAS software releases of the TNU](https://github.com/translationalneuromodeling/tapas/releases).
@@ -25,7 +33,7 @@ Download
 
 
 
-
+-------
 Purpose
 -------
 
@@ -34,12 +42,13 @@ of DCM for fMRI that enables extremely efficient inference on effective (i.e.,
 directed) connectivity among brain regions. Due to its
 computational efficiency, inversion of large network models becomes feasible.
 
-The accompanying technical papers about the toolbox concept and methodology 
-can be found in [Frässle et al., 2017](https://www.sciencedirect.com/science/article/pii/S105381191730201X?via%3Dihub) 
+For the accompanying technical papers, detailing the methodology presented in this toolbox,
+please see [Frässle et al., 2017](https://www.sciencedirect.com/science/article/pii/S105381191730201X?via%3Dihub) 
 and [Frässle et al., 2018](https://www.sciencedirect.com/science/article/pii/S1053811918304762?via%3Dihub).
 
 
 
+------------
 Installation
 ------------
 
@@ -51,6 +60,7 @@ Installation
 
 
 
+---------------
 Important Notes
 ---------------
 
@@ -64,6 +74,7 @@ detailed explanations.
 
 
 
+---------------
 Contact/Support
 ---------------
 
@@ -78,15 +89,18 @@ but just some general pointers and templates. Before you contact us, please try 
 
 
 
+----------
 References
 ----------
 
 ### Main Toolbox References ###
 1. Frässle, S., Lomakina, E.I., Razi, A., Friston, K.J., Buhmann, J.M., Stephan, K.E., 2017. Regression DCM for fMRI. NeuroImage 155, 406–421. doi:10.1016/j.neuroimage.2017.02.090
 2. Frässle, S., Lomakina, E.I., Kasper, L., Manjaly Z.M., Leff, A., Pruessmann, K.P., Buhmann, J.M., Stephan, K.E., 2018. A generative model of whole-brain effective connectivity. NeuroImage 179, 505-529. doi:10.1016/j.neuroimage.2018.05.058
+3. Frässle, S., Harrison, S.J., Heinzle, J., Clementz, B.A., Tamminga, C.A., Sweeney, J.A., Gershon, E.S., Keshavan, M.S., Pearlson, G.D., Powers, A., Stephan, K.E., 2020. Regression dynamic causal modeling for resting-state fMRI. bioRxiv. doi:10.1101/2020.08.12.247536
 
 
 
+---------------
 Copying/License
 ---------------
 
@@ -106,8 +120,9 @@ along with this program (see the file [LICENSE](LICENSE)).  If not, see
 
 
 
+--------------
 Acknowledgment
----------------
+--------------
 
 We would like to highlight and acknowledge that the rDCM toolbox uses some 
 functions that were publised as part of the Statistical Parameteric Mapping 

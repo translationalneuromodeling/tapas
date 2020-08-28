@@ -30,7 +30,7 @@ function [output, options] = tapas_rdcm_estimate(DCM, type, options, methods)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2018 Translational Neuromodeling Unit
+% Copyright (C) 2016-2020 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -68,7 +68,7 @@ currentTimer = tic;
 
 
 % check for endogenous DCMs, with no exogenous driving effects
-if ( ~isfield(DCM,'c') || isempty(DCM.c) || ~isfield(DCM,'U') || isempty(DCM.U.u) )
+if ( ~isfield(DCM,'c') || isempty(DCM.c) || ~isfield(DCM,'U') || isempty(DCM.U.u) || strcmp(DCM.U.name{1},'null') )
     
     % specify empty driving input
     DCM.U.u     = zeros(size(DCM.Y.y,1)*16, 1);
@@ -80,7 +80,7 @@ if ( ~isfield(DCM,'c') || isempty(DCM.c) || ~isfield(DCM,'U') || isempty(DCM.U.u
     DCM.c = zeros(DCM.n, size(DCM.U.u,2));
     DCM.d = zeros(DCM.n, DCM.n, 0);
     
-    % no inputs - don't filter frequencies
+    % no inputs - set filter strength to zero
     options.filter_str = 0;
     
 end
@@ -182,6 +182,6 @@ output.time.time_rDCM_VBinv = time_rDCM_VBinv;
 
 % store the random number seed and the version number
 output.rngSeed = rngSeed;
-output.ver     = '2018_v01';
+output.ver     = '2020_v01.2';
 
 end

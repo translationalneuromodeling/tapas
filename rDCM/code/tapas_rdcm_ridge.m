@@ -24,7 +24,7 @@ function [ output ] = tapas_rdcm_ridge(DCM, X, Y, args)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2018 Translational Neuromodeling Unit
+% Copyright (C) 2016-2020 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -42,9 +42,12 @@ function [ output ] = tapas_rdcm_ridge(DCM, X, Y, args)
 % precision limit
 pr = 10^(-5);
 
-% add a constant baseline regressor
-DCM.b(:,:,end+1) = DCM.b(:,:,1);
-DCM.c(:,end+1)   = ones(1,size(DCM.c,1));
+% add confound regressor dimensions
+Nc = size(DCM.U.X0,2);
+for nc = 1:Nc
+    DCM.b(:,:,end+1) = DCM.b(:,:,1);
+    DCM.c(:,end+1)   = ones(1,size(DCM.c,1));
+end
 
 % get the number of regions and inputs
 [nr, nu] = size(DCM.c);

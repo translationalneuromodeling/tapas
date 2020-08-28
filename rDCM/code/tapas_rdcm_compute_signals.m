@@ -16,7 +16,7 @@ function [ output ] = tapas_rdcm_compute_signals(DCM, output, options)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2018 Translational Neuromodeling Unit
+% Copyright (C) 2016-2020 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -58,12 +58,9 @@ end
 
 % store true or measured temporal derivative (in frequency domain)
 yd_source_fft                           = output.temp.yd_source_fft;
-yd_source_fft(~isfinite(yd_source_fft))  = 0;
+yd_source_fft(~isfinite(yd_source_fft)) = 0;
 output.signal.yd_source_fft             = yd_source_fft(:);
 
-
-% adding the constant baseline
-DCM.U.u(:,end+1) = ones(size(DCM.U.u,1),1);
 
 % get rDCM parameters
 DCM.Tp   = output.Ep;
@@ -73,21 +70,30 @@ if ( strcmp(options.type,'s') )
     DCM.Tp.baseline = zeros(size(DCM.Tp.C,1),1);
 end
 
-% include the baseline
-DCM.Tp.C            = [DCM.Tp.C, DCM.Tp.baseline];
-DCM.Tp.B(:,:,end+1) = DCM.Tp.B(:,:,1);
-DCM.Y.dt            = DCM.U.dt;
+% increase sampling rate
+r_dt     = DCM.Y.dt/DCM.U.dt;
+DCM.Y.dt = DCM.U.dt;
 
 % posterior probability (for sparse rDCM)
 if ( isfield(output,'Ip') )
     DCM.Tp.A = DCM.Tp.A .* output.Ip.A;
-    DCM.Tp.C = DCM.Tp.C .* [output.Ip.C, ones(size(DCM.Tp.baseline))];
+    DCM.Tp.C = DCM.Tp.C .* output.Ip.C;
 end
 
 
 % generate predicted signal (tapas_rdcm_generate)
 DCM_rDCM = tapas_rdcm_generate(DCM, options, Inf);
-output.signal.y_pred_rdcm = DCM_rDCM.Y.y(:);
+
+% add the confounds to predicted time series
+for t = 1:size(DCM.Y.y,1)
+    for r = 1:size(DCM.Y.y,2)
+        DCM_rDCM.Y.y(t,r) = DCM_rDCM.Y.y(t,r) + DCM_rDCM.Tp.baseline(r,:) * DCM_rDCM.U.X0((1+r_dt*(t-1)),:)';
+    end
+end
+
+% turn into vector
+output.signal.y_pred_rdcm = DCM_rDCM.Y.y(:) ;
+
 
 % store predicted temporal derivative (in frequency domain)
 yd_pred_rdcm_fft                = output.temp.yd_pred_rdcm_fft;
