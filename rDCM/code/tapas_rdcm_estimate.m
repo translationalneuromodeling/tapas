@@ -80,9 +80,6 @@ if ( ~isfield(DCM,'c') || isempty(DCM.c) || ~isfield(DCM,'U') || isempty(DCM.U.u
     DCM.c = zeros(DCM.n, size(DCM.U.u,2));
     DCM.d = zeros(DCM.n, DCM.n, 0);
     
-    % no inputs - set filter strength to zero
-    options.filter_str = 0;
-    
 end
 
 
