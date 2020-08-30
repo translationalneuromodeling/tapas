@@ -29,7 +29,7 @@ Download
   [TAPAS software releases of the TNU](https://github.com/translationalneuromodeling/tapas/releases).
 - The latest bugfixes can be found in the [GitHub Issue Forum](https://github.com/translationalneuromodeling/tapas/issues) or by request to the authors. 
 - Changes between all versions will be documented in the 
-  [CHANGELOG](https://tnurepository.ethz.ch/sfraessle/rDCM/blob/master/CHANGELOG.md).
+  [CHANGELOG](CHANGELOG.md).
 
 
 
