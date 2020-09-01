@@ -150,7 +150,7 @@ if ( ~isempty(U) )
         end
 
         % overwrite C-matrix
-        if ( isfield(args,'a') )
+        if ( isfield(args,'c') )
             DCM.c = args.c;
         end
     end
