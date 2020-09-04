@@ -3,6 +3,10 @@ TAPAS toolbox
 
 ## [4.0.0] 2020-09-06
 
+### Added
+- ceode: Toolbox to integrate delay differential equations (DDEs) underlying convolution based Dynamic Causal Models for ERPs. 
+
+
 ### Changed
 - HUGE: removed deprecated functions
 - external toolboxes are now managed as matlab packages
@@ -25,7 +29,7 @@ TAPAS toolbox
 ### Changed
 - HGF: v6.0 released
 - SERIA: The constraints matrix is now automatically plot by 
-        tapas\_sem_\display_posterior.m
+        tapas_sem_display_posterior.m
 - SERIA: Python code is now updated to python 3.7 and the requirement file
             now uses the latest libraries (numpy, scipy, cython).
 - SERIA: Posterior plots includes fits of the complete group.
@@ -91,11 +95,11 @@ TAPAS toolbox
 ## [3.0.0] 2018-09-09
 
 ### Added
-- tapas\_get\_tapas\_revision.m outputs the branch and hash of the repository.
+- tapas_get_tapas_revision.m outputs the branch and hash of the repository.
 - Revision is printed when initiliazing tapas.
 - Contributor License Agreement (CLA) file
 - CONTRIBUTING.md explaining coding and style guidelines, signing procedure for CLA file
-- Include the function tapas\_get\_current\_version.m.
+- Include the function tapas_get_current_version.m.
 - Implements download of example data from the server using 
     tapas_download_example_data.
 - Now there is log file that list the versions of tapas, the download link
@@ -110,7 +114,7 @@ TAPAS toolbox
 ### Changed
 - README.md to include reference to CONTRIBUTING.md and explanation of CLA
 - Dropped 4 digits versioning for 3.
-- The version of tapas is now read from misc/log\_tapas.txt. It is the first
+- The version of tapas is now read from misc/log_tapas.txt. It is the first
     line of this file.
 - Updated the documentation of SEM.
 - Updated SEM to include hierarchical models for inference.
