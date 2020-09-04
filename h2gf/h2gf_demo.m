@@ -203,7 +203,8 @@ for i = 1:numnoiselevels
 end
 clear i j
 %%
-%load('h2gf_demo_est.mat')
+% [example_dir] = tapas_download_example_data();
+% load(fullfile(example_dir,'h2gf','h2gf_demo_est.mat'));
 %% 
 % We gather the estimates of $\omega_2$ and $\omega_3$ for all grid points, 
 % noise levels, and simulated datasets.

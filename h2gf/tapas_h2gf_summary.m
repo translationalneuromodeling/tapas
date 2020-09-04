@@ -100,7 +100,7 @@ for i = 1:nsubjects
     subjects(i).optim.LME = trapz(T(i, :), mean(llh(i, :, :), 3));
     
     % Get R-hat
-    r_hat = psrf(values')';
+    r_hat = tapas_huge_psrf(values',2);
     subjects(i).optim.r_hat = r_hat;
 end
 
