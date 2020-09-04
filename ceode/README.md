@@ -130,7 +130,7 @@ Replace D = [2, 16] (ERP) or D = [1, 8] (CMC) to the desired scaling factors.
 Contact/Support
 ---------------
 
-dschoebi(at)biomed.ee.ethz.ch
+In case you encouter problems with this toolbox, please refer to the [GitHub Issue Forum](https://github.com/translationalneuromodeling/tapas/issues).
 
 
 Documentation
