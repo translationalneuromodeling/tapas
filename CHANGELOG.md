@@ -6,8 +6,8 @@ TAPAS toolbox
 ### Added
 - ceode: Toolbox to integrate delay differential equations (DDEs) underlying convolution based Dynamic Causal Models for ERPs. 
 
-
 ### Changed
+- rDCM: [version v1.2](rDCM/CHANGELOG.md)
 - HUGE: removed deprecated functions
 - external toolboxes are now managed as matlab packages
 
