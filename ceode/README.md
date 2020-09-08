@@ -31,7 +31,7 @@ It ties modularly into the existing software suite (SPM12) for the estimation of
 
 
 Some highlights:
-1. Efficient integration of delay differential equations underlying convolution based DCMs for ERPs for three (ERP model) and four (canonical microcircuit (CMC)) populations.
+1. Efficient integration of delay differential equations underlying convolution based DCMs for ERPs for three (ERP model) and four (canonical microcircuit (CMC)) populations. The integration method uses the concept of a Continuous Extension of ODE methods (CEODE).
 
 
 Installation and Usage

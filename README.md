@@ -1,6 +1,6 @@
 ![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
 
-*Version 3.3.0*
+*Version 4.4.0*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================
@@ -21,6 +21,7 @@ psychiatry, computational neurology, and computational psychosomatics.
 
 Currently, TAPAS includes the following packages:
 
+- [ceode](ceode/README.md): Continuous Extension of ODE methods. A toolbox for robust estimation of convolution based Dynamic Causal Models (DCMs) for evoked responses (ERPs). 
 - [HGF](HGF/README.md): The Hierarchical Gaussian Filter; Bayesian inference
   on computational processes from observed behaviour.
 - [HUGE](huge/README.md): Variational Bayesian inversion for hierarchical
@@ -31,6 +32,9 @@ unsupervised generative embedding (HUGE).
 - [rDCM](rDCM/README.md): DCM based, efficient inference on effective brain connectivity for fMRI.
 - [SEM](sem/README.md): SERIA Model for Eye Movements (saccades and anti-saccades) and Reaction Times.
 - [VBLM](VBLM/README.txt): Variational Bayesian Linear Regression.
+
+And the following tasks:
+- [FDT](task/FDT/README.md): Filter Detection Task.
 
 TAPAS is written in MATLAB and distributed as open source code under
 the GNU General Public License (GPL, Version 3).
