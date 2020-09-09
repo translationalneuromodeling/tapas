@@ -23,7 +23,7 @@ function [ output ] = tapas_rdcm_store_parameters(DCM, mN_cut, sN, aN, bN, logF,
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2018 Translational Neuromodeling Unit
+% Copyright (C) 2016-2020 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -38,9 +38,10 @@ function [ output ] = tapas_rdcm_store_parameters(DCM, mN_cut, sN, aN, bN, logF,
 % ----------------------------------------------------------------------
 
 
-% remove baseline regressor
-DCM.b = DCM.b(:,:,1:end-1);
-DCM.c = DCM.c(:,1:end-1);
+% remove confound regressors
+Nc = size(DCM.U.X0,2);
+DCM.b = DCM.b(:,:,1:end-Nc);
+DCM.c = DCM.c(:,1:end-Nc);
 
 % get number of regions and inputs
 [nr, nu] = size(DCM.c);
@@ -60,13 +61,12 @@ end
 output.Ep          = tapas_rdcm_empty_par(DCM);
 output.Ep.A        = mN(1:nr,1:nr);
 output.Ep.B        = reshape(mN(1:nr,nr+1:nr+nr*nu),[nr nr nu]);
-output.Ep.C        = mN(1:nr,end-nu:end-1);
-output.Ep.baseline = mN(1:nr,end);
+output.Ep.C        = mN(1:nr,end-Nc-nu+1:end-Nc);
+output.Ep.baseline = mN(1:nr,end-Nc+1:end);
 
 % modify driving inputs
 if ( strcmp(args.type,'r') )
     output.Ep.C        = output.Ep.C*16;
-    output.Ep.baseline = output.Ep.baseline*16;
 end
 
 

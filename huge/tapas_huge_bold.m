@@ -66,9 +66,6 @@ function [response, x, s, f, v, q] = tapas_huge_bold( A, B, C, D, tau, ...
 nt = size(u, 1);
 rSmp = TR/dt;
 C = C'/rSmp;
-
-% transform self-connections
-A = A - .5*eye(R);
 if isempty(D)
     D = zeros(R, R, R);
 end

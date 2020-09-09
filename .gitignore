@@ -17,3 +17,4 @@ lib
 *.DS_Store
 .idea
 .idea/*
+examples

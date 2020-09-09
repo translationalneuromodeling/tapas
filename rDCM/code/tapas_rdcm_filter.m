@@ -20,7 +20,7 @@ function [y_fft, idx] = tapas_rdcm_filter(y_fft, u_fft, h_fft, Ny, options)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2018 Translational Neuromodeling Unit
+% Copyright (C) 2016-2020 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -46,7 +46,11 @@ prec = 10^(-4);
 h_idx = abs(h_fft) > prec;
 
 % freq which are non-zero due to the input structure
-u_idx = sum(abs(u_fft),2) > prec;
+if ( options.filtu == 1 )
+    u_idx = sum(abs(u_fft),2) > prec;
+else
+    u_idx = ones(size(u_fft,1),1);
+end
 
 % padding detection
 if ( N ~= Ny )
@@ -84,7 +88,13 @@ idx = abs(y_real) > thr*std_real | abs(y_imag) > thr*std_imag;
 %% high-pass filter
 
 % specify the frequency
-freq = round(7*N/16);
+if ( options.filtu == 1 )
+    hpf  = 16;
+    freq = round(7*N/(hpf));
+else
+    hpf  = max(16 + (thr-1)*4,16);
+    freq = round(7*N/(hpf));
+end
 
 % high-pass filtering
 idx_freq = [ones(1+freq, nr); zeros(N - 2*freq - 1, nr); ones(freq, nr)];

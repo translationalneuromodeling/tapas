@@ -59,12 +59,17 @@ tapas_huge_compile( );
 seed = rng();
 
 % check if filename for storing result is valid
-if ~isempty(obj.options.nvp.saveto)
-    [pathStr, fileStr] = fileparts(obj.options.nvp.saveto);
+filename = obj.options.nvp.saveto;
+if ~isempty(filename)
+    [pathStr, fileStr, extStr] = fileparts(filename);
+    if ~strcmpi(extStr,'.mat')
+        filename = [filename '.mat'];
+        [pathStr, fileStr, extStr] = fileparts(filename);
+    end
     if isempty(fileStr)
         fileStr = ['huge' datestr(now,'-yyyymmdd-HHMMSS')];
     end
-    filename = fullfile(pathStr, [fileStr, '.mat']);
+    filename = fullfile(pathStr, [fileStr, extStr]);
     save(filename, obj);
 end
 
@@ -130,7 +135,7 @@ obj.posterior.version = obj.version;
 obj.posterior.seed = seed;
 
 % save result
-if ~isempty(obj.options.nvp.saveto)
+if ~isempty(filename)
     save(filename, obj);
     fprintf('Saved result to "%s".\n', filename);
 end
@@ -170,13 +175,14 @@ prior.m_0 = prior.m_0(:)';
 
 % nu_0
 prior.nu_0 = obj.options.nvp.priordegree;
-assert(prior.nu_0 > 0, 'TAPAS:HUGE:Prior', ...
+assert(all(prior.nu_0(:) > 0), 'TAPAS:HUGE:Prior', ...
     'PriorDegree must be positive scalar.');
 
 % tau_0
 prior.tau_0 = obj.options.nvp.priorvarianceratio;
-assert(prior.tau_0 > 0, 'TAPAS:HUGE:Prior', ...
+assert(all(prior.tau_0(:) > 0), 'TAPAS:HUGE:Prior', ...
     'PriorCovarianceRatio must be positive scalar.');
+% xxxTODO check size consistent
 
 % mu_h
 prior.mu_h = obj.options.prior.mu_h;

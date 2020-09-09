@@ -1,0 +1,27 @@
+cff-version: 1.1.0
+message: If you use this software, please cite it as below.
+authors:
+  - family-names: Aponte
+    given-names: Eduardo
+  - family-names: Brodersen
+    given-names: Kay
+  - family-names: Frässle
+    given-names: Stephan
+  - family-names: Harrison
+    given-names: Olivia
+  - family-names: Kaspers
+    given-names: Lars
+  - family-names: Mathys
+    given-names: Christoph
+  - family-names: Müller-Schrader
+    given-names: Matthias
+  - family-names: Schöbi
+    given-names: Dario
+  - family-names: Yao
+    given-names: Yu
+title: "TAPAS - Translational Algorithms for Psychiatry-Advancing Science"
+version: 4.0.0
+date-released: 2020-09-09
+repository-code: "https://github.com/translationalneuromodeling/tapas"
+url: "http://www.translationalneuromodeling.org/tapas"
+license: GPL-3.0-or-later

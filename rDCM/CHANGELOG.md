@@ -2,6 +2,20 @@
 Regression Dynamic Causal Modeling (rDCM) toolbox 
 
 
+## [1.2] 2020-09-01
+
+### Added
+- Facilitation of using rDCM for resting-state fMRI data. This includes changes to the MATLAB functions as well as information added to the [Manual](docs/Manual.pdf) of the toolbox. 
+- Possibility to include multiple confounds rather than a simple constant for baseline shifts.
+- Helper function for specification of whole-brain dynamic causal models (i.e., DCM structure).
+
+### Changed
+- Corrected small bug in the specification of regressors
+
+### Removed
+- none
+
+
 ## [1.1] 2019-03-03
 
 ### Added

@@ -2,7 +2,7 @@ function [ epsilon ] = bold_gen( obj, theta, data, inputs, hemo, R, L, idx )
 % Generate predicted fMRI BOLD time series..
 % 
 % This is a protected method of the tapas_Huge class. It cannot be called
-% from outsite the class.
+% from outside the class.
 % 
 
 % Author: Yu Yao (yao@biomed.ee.ethz.ch)
@@ -36,13 +36,16 @@ if isstruct(theta)
     kappa = theta.decay;
     epsilon = theta.epsilon;
 else
-    [A, B, C, D, tau, kappa, epsilon] = obj.theta2abcd( theta, idx, R, L);
+    [A, B, C, D, tau, kappa, epsilon] = obj.theta2abcd( theta, idx, R, L );
 end
 
-% % transform C matrix into exp domain
-% if obj.options.bPositiveInput
-%     C = exp(C);
-% end
+% transform C matrix
+if obj.options.nvp.transforminput
+    C(logical(obj.dcm.c(:)))=.5*exp(C(logical(obj.dcm.c(:))));
+end
+% baseline for self-connections
+A = A + obj.const.baseSc*eye(obj.R);
+
 
 % generate BOLD response
 pred = tapas_huge_bold( A, B, C, D, tau, kappa, epsilon, R, inputs.u, L, ...

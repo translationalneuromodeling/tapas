@@ -44,7 +44,7 @@ if nargin < 2
     subjects = [];
 end
 
-tickLabels = parse_labels( obj.dcm, obj.labels );
+tickLabels = obj.parse_labels( obj.dcm, obj.labels, obj.idx );
 
 %% assignments/boxplot
 % figure;
@@ -114,11 +114,11 @@ for n = subjects(:)'
             postSmp = randn(nSmp,obj.idx.P_c + obj.idx.P_h);
             postSmp = bsxfun(@plus, postSmp*postStd, postMean);
         case 'MH'
-            nTrace = length(obj.trace);
+            nTrace = length(obj.trace.smp);
             nSmp = min(nSmp, nTrace);
             idx = randsample(nTrace, nSmp);
-            tmp = [reshape([obj.trace(idx).theta_c], obj.N, obj.idx.P_c, []), ...
-                reshape([obj.trace(idx).theta_h], obj.N, obj.idx.P_h, [])];
+            tmp = [reshape([obj.trace.smp(idx).theta_c], obj.N, obj.idx.P_c, []), ...
+                reshape([obj.trace.smp(idx).theta_h], obj.N, obj.idx.P_h, [])];
             postSmp = permute(tmp(n,:,:), [3 2 1]);
     end
     legends = {'measured'};
@@ -142,62 +142,3 @@ end
 
 end
 
-
-function [ tickLabels ] = parse_labels( dcm, labels )
-
-L = size(dcm.c, 2);
-R = dcm.n;
-
-% linear connections
-a = cell(size(dcm.a));
-for rSource = 1:R
-    for rTarget = 1:R
-        a{rTarget, rSource} = [labels.regions{rSource} ' => ' ...
-            labels.regions{rTarget}];
-    end
-end
-
-% driving connections
-c = cell(size(dcm.c));
-for lSource = 1:L
-    for rTarget = 1:R
-        c{rTarget, lSource} = [labels.inputs{lSource} ' => ' ...
-            labels.regions{rTarget}];
-    end
-end
-
-% modulatory connections
-b = cell(size(dcm.b));
-for l = 1:L
-    for rSource = 1:R
-        for rTarget = 1:R
-            b{rTarget, rSource, l} = [labels.inputs{lSource} ' MOD ' ...
-                labels.regions{rSource} ' => ' labels.regions{rTarget}];
-        end
-    end
-end
-
-% nonlinear connections
-d = cell(size(dcm.d));
-for rMod = 1:R
-    for rSource = 1:R
-        for rTarget = 1:R
-            d{rTarget, rSource, rMod} = [labels.regions{rMod} ' MOD ' ...
-                labels.regions{rSource} ' => ' labels.regions{rTarget}];
-        end
-    end
-end
-
-% hemodynamic parameters
-hemo = cell(R, 2);
-for r = 1:R
-    hemo{r, 1} = ['transit ' labels.regions{r}];
-    hemo{r, 2} = ['decay ' labels.regions{r}];
-end
-
-tmp = [a(:); b(:); c(:); d(:)];
-idx = [dcm.a(:); dcm.b(:); dcm.c(:); dcm.d(:)];
-
-tickLabels = [tmp(logical(idx)); hemo(:); {'epsilon'}];
-
-end
