@@ -131,13 +131,16 @@ function infos = tapas_init_get_toolbox_infos()
     infos.h2gf.init_function = '';
     infos.h2gf.init_dir = 'h2gf';
     infos.h2gf.dependencies = {'hgf','tools'};
+    
+    infos.huge.init_function = 'tapas_huge_compile';
+    infos.huge.init_dir = 'huge';
+    infos.huge.dependencies = [];
 
     infos.external.init_function = '';
     infos.external.init_dir = 'external';
     infos.external.dependencies = '';
 
     % The following is just a shortcut for the defaults.
-    infos = tapas_init_default_toolbox_info(infos,'huge');
     infos = tapas_init_default_toolbox_info(infos,'MICP');
     infos = tapas_init_default_toolbox_info(infos,'mpdcm');
     infos = tapas_init_default_toolbox_info(infos,'rDCM');
