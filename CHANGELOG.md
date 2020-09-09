@@ -6,6 +6,7 @@ TAPAS toolbox
 ### Added
 - [ceode](ceode/README.md): Toolbox to integrate delay differential equations (DDEs) underlying convolution based Dynamic Causal Models for ERPs. 
 - task/FDT: Filter Detection Task [version 0.2.2](task/FDT/README.md)
+- [citation information](CITATION.cff)
 
 ### Changed
 - rDCM: [version v1.2](rDCM/CHANGELOG.md)
