@@ -9,7 +9,7 @@ authors:
     given-names: Stephan
   - family-names: Harrison
     given-names: Olivia
-  - family-names: Kaspers
+  - family-names: Kasper
     given-names: Lars
   - family-names: Mathys
     given-names: Christoph
@@ -17,6 +17,8 @@ authors:
     given-names: Matthias
   - family-names: Schöbi
     given-names: Dario
+  - family-names: Stephan
+    given-names: Klaas Enno
   - family-names: Yao
     given-names: Yu
 title: "TAPAS - Translational Algorithms for Psychiatry-Advancing Science"
