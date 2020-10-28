@@ -1,31 +1,49 @@
 # Changelog
 TAPAS toolbox 
 
-## [3.3.0] 2020-05-23
+## [4.0.0] 2020-09-09
 
 ### Added
+- [ceode](ceode/README.md): Toolbox to integrate delay differential equations (DDEs) underlying convolution based Dynamic Causal Models for ERPs. 
+- task/FDT: Filter Detection Task [version 0.2.2](task/FDT/README.md)
+- [citation information](CITATION.cff)
 
+### Changed
+- rDCM: [version v1.2](rDCM/CHANGELOG.md)
+- HUGE: removed deprecated functions
+- external toolboxes are now managed as matlab packages
+
+### Fixed
+- Fixed name collision issue due to mcmcdiag toolbox (see [issue 106](https://github.com/translationalneuromodeling/tapas/issues/106))
+
+### Known issues
+- h2gf (beta): demo script currently does not work
+
+
+## [3.3.0] 2020-07-17
+
+### Added
+- h2gf: Hierarchical inference for the HGF, beta version released
 - SERIA: Added the Watanabe Akaike information criterion (WAIC) as output.
 - SERIA: Added computation of early and late response likelihood.
 - SERIA: Added delta plots to output summary.
 
 ### Changed
-
+- HGF: v6.0 released
 - SERIA: The constraints matrix is now automatically plot by 
-        tapas\_sem_\display_posterior.m
+        tapas_sem_display_posterior.m
 - SERIA: Python code is now updated to python 3.7 and the requirement file
             now uses the latest libraries (numpy, scipy, cython).
 - SERIA: Posterior plots includes fits of the complete group.
 - SERIA: Summaries are automatically generated when preparing the posterior.
-
-
-## [3.2.1] 2019-10-15
-
-### Changed
+- PhysIO: PhysIO Toolbox Release R2020a, v7.3.0
 - PhysIO: removed Matlab statistics toolbox dependency for PCA by SVD implementation (thanks to Benoît Beranger, [pull request 64](https://github.com/translationalneuromodeling/tapas/pull/64))
 
 ### Fixed
-- HUGE: bugfix x-tick labels
+- HUGE: fixed tick labels
+
+### Known issues
+- TAPAS uses the mcmcdiag toolbox for Monte Carlo convergence diagnostics, which shadows a number of matlab built-in functions. Affected functions include: Contents.m, cusum.m, join.m and score.m. Workaround: If you use one of these functions in your own code, remove the tapas folder from your matlab path when you are not using the TAPAS toolbox.
 
 ## [3.2.0] 2019-09-29
 
@@ -79,11 +97,11 @@ TAPAS toolbox
 ## [3.0.0] 2018-09-09
 
 ### Added
-- tapas\_get\_tapas\_revision.m outputs the branch and hash of the repository.
+- tapas_get_tapas_revision.m outputs the branch and hash of the repository.
 - Revision is printed when initiliazing tapas.
 - Contributor License Agreement (CLA) file
 - CONTRIBUTING.md explaining coding and style guidelines, signing procedure for CLA file
-- Include the function tapas\_get\_current\_version.m.
+- Include the function tapas_get_current_version.m.
 - Implements download of example data from the server using 
     tapas_download_example_data.
 - Now there is log file that list the versions of tapas, the download link
@@ -98,7 +116,7 @@ TAPAS toolbox
 ### Changed
 - README.md to include reference to CONTRIBUTING.md and explanation of CLA
 - Dropped 4 digits versioning for 3.
-- The version of tapas is now read from misc/log\_tapas.txt. It is the first
+- The version of tapas is now read from misc/log_tapas.txt. It is the first
     line of this file.
 - Updated the documentation of SEM.
 - Updated SEM to include hierarchical models for inference.

@@ -3,7 +3,7 @@ function [ obj ] = bold_grad_cd( obj, n )
 % DCM parameters using central difference method.
 % 
 % This is a protected method of the tapas_Huge class. It cannot be called
-% from outsite the class.
+% from outside the class.
 % 
 
 % Author: Yu Yao (yao@biomed.ee.ethz.ch)

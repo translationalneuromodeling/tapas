@@ -19,7 +19,7 @@ function [X, Y, DCM, args] = tapas_rdcm_create_regressors(DCM, options)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2018 Translational Neuromodeling Unit
+% Copyright (C) 2016-2020 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -35,9 +35,6 @@ function [X, Y, DCM, args] = tapas_rdcm_create_regressors(DCM, options)
 
 
 %% preparations
-
-% adding a constant baseline
-DCM.U.u(:,end+1) = ones(size(DCM.U.u,1),1);
 
 % circular shift of the stimulus input function
 temp    = circshift(DCM.U.u, options.u_shift);
@@ -68,6 +65,25 @@ y_fft = fft(y);
 % convolution of stimulus input and hemodynamic response function
 u = ifft(fft(u).* repmat(h_fft, 1, nu));
 
+
+% if empty, set constant confound (task) or no confound (rest)
+if ( ~isfield(DCM.U,'X0') )
+    
+    % no inputs to filter for resting-state state
+    if ( ~strcmp(DCM.U.name{1},'null') )
+        DCM.U.X0      = ones(size(DCM.U.u,1),1);
+        options.filtu = 1;
+    else
+        DCM.U.X0      = zeros(size(DCM.U.u,1),0);
+        options.filtu = 0;
+    end
+    
+end
+
+% add confounds (e.g, constant, linear trend, sinusoids)
+u = [u, DCM.U.X0];
+
+
 % interpolation (upsampling) of BOLD data (or not)
 if options.padding
     y_fft(round(Ny / 2) + 1, : ) = y_fft(round(Ny / 2) + 1, : ) / 2;
@@ -77,7 +93,7 @@ if options.padding
 else
     if r_dt > 1
         u     = u(1 : r_dt : end, : );
-        h_fft = h_fft(1 : r_dt : end, : );
+        h_fft = fft(options.h(1 : r_dt : end, : ));
     end
     u_fft = fft(u);
 end
@@ -99,11 +115,11 @@ yd_fft = repmat(coef, 1, nr).* y_fft / y_dt;
 yd_fft(~idx) = NaN;
 
 % bilinear term (not supported in present version)
-yu_fft = zeros(Ny, nr * nu);
+yu_fft = zeros(Ny, nr * (nu+size(DCM.U.X0,2)));
 if isfield(options, 'bilinear') && options.bilinear
     y_unconv = ifft(y_fft./ repmat(h_fft_tr, 1, nr));
     for i = 1 : nr
-        for j = 1 : nu
+        for j = 1 : (nu+size(DCM.U.X0,2))
             yu_fft( : , (j - 1) * nr + i) = fft(y_unconv( : , i).* u( : , j)).* h_fft;
         end
     end
@@ -131,9 +147,6 @@ Y = tapas_rdcm_reduce_zeros(X, Y);
 % compute autocovariance for bilinear terms (not supported in present version)
 P = [];
 
-
-% remove the additional regressor 
-DCM.U.u = DCM.U.u(:,1:end-1);
 
 % define output arguments
 args.P      = P;

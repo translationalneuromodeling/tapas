@@ -3,7 +3,7 @@ function [ obj ] = vb_init( obj )
 % Requires obj.dcm and obj.prior to be intialized.
 % 
 % This is a protected method of the tapas_Huge class. It cannot be called
-% from outsite the class.
+% from outside the class.
 % 
 
 % Author: Yu Yao (yao@biomed.ee.ethz.ch)
@@ -190,7 +190,7 @@ obj.posterior.nfe = obj.vb_nfe( );
 obj.trace = struct();
 obj.trace.nfe = NaN;
 obj.trace.nDcmUpdate = zeros(obj.N, 1);
-
+obj.trace.nRetract   = zeros(obj.N,1);
 
 end
 

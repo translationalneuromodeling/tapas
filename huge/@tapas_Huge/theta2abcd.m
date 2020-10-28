@@ -1,8 +1,8 @@
-function [A, B, C, D, tau, kappa, epsilon] = theta2abcd(theta, idx, R, L)
+function [A, B, C, D, tau, kappa, epsilon] = theta2abcd(theta, idx, R, L )
 % Transform DCM parameters from vectorized to structured format
 % 
 % This is a protected method of the tapas_Huge class. It cannot be called
-% from outsite the class.
+% from outside the class.
 % 
 
 % Author: Yu Yao (yao@biomed.ee.ethz.ch)

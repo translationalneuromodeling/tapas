@@ -29,6 +29,7 @@ c.maxStep = 1;
 c.maxIter = 100;
 c.maxRegu = 16;
 c.maxRst  = 10;
+c.nRandInit = 0;
 
 % Algorithm filehandle
 c.opt_algo = @tapas_quasinewton_optim;

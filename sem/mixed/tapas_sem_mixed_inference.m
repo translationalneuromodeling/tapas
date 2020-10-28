@@ -19,7 +19,7 @@ inference.sampling_methods = {
     };
 
 inference.get_stored_state = @tapas_sem_mixed_get_stored_state;
-inference.initilize_states = @tapas_sem_mixed_init_states; 
-inference.initilize_state = @tapas_sem_mixed_init_state;
+inference.initialize_states = @tapas_sem_mixed_init_states; 
+inference.initialize_state = @tapas_sem_mixed_init_state;
 
 end

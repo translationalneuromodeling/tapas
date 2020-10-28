@@ -33,7 +33,7 @@ end
 
 if numel(failing)
     error('tapas:sem:multiv:init', ...
-    'It was not possible to initilize a sample with positive likelihood');
+    'It was not possible to initialize a sample with positive likelihood');
 end
 
 theta = repmat(theta, 1, nc);

@@ -1,5 +1,6 @@
 %% List of name-value pair arguments accepted by tapas_Huge() and estimate()
 % 
+% 
 % NAME:        Confounds
 % VALUE:       double array
 % DESCRIPTION: Specify confounds for group-level analysis (e.g. age or sex)
@@ -28,11 +29,12 @@
 % NAME:        Method  
 % VALUE:       'VB'
 % DESCRIPTION: Name of inversion method specified as character array. VB:
-%              variational Bayes
+%              variational Bayes.
 % 
 % NAME:        NumberOfIterations
-% VALUE:       positive integer (default: 999)
-% DESCRIPTION: Maximum number of iterations of VB scheme.
+% VALUE:       positive integer (default: 999 for VB, 2e5 for MH)
+% DESCRIPTION: For VB: maximum number of iterations. For Monte Carlo
+%              methods: Length of Monte Carlo chain in samples.
 % 
 % NAME:        OmitFromClustering
 % VALUE:       array of logical | struct with fields a, b, c and d
@@ -59,7 +61,8 @@
 % VALUE:       'default' | positive double
 % DESCRIPTION: nu_0 determines the prior precision of the cluster
 %              covariance. For VB, this is the degrees of freedom of the
-%              inverse-Wishart. Default: 100.
+%              inverse-Wishart. For MH, this is the prior precision of the
+%              cluster log-precision. Default: 100.
 % 
 % NAME:        PriorVarianceRatio
 % VALUE:       'default' | positive double
@@ -103,6 +106,10 @@
 % NAME:        Tag
 % VALUE:       character array
 % DESCRIPTION: Model description
+% 
+% NAME:        TransformInput
+% VALUE:       bool (default: false)
+% DESCRIPTION: Transform input strength (C matrix) to log-domain.
 % 
 % NAME:        Verbose
 % VALUE:       bool (default: false)

@@ -275,7 +275,7 @@ run_erp_kernel(const mxArray *u, const mxArray *theta, const mxArray *ptheta,
     host.linearize_theta(theta, &h_theta);
     host.transfer_device_theta(&h_theta); 
 
-    host.initilize_y(&du, &h_theta, &h_ptheta, &dy);
+    host.initialize_y(&du, &h_theta, &h_ptheta, &dy);
     host.set_host_array(&dy);
     host.set_device_array(&dy);
 

@@ -260,33 +260,5 @@ assert(all(u{2}==[0 1 0 1 0 0]'), 'tapas:huge:test', 'aux boxcar');
 fprintf('passed.\n')
 
 
-%% test: compatibility
-fprintf('Testing compatibility with version 201903: \n')
-
-[ priorsOld, DCM ] = tapas_huge_build_prior( listDcms );
-assert(all(abs(priorsOld.clustersTau(:) - prior.tau_0(:))<1e-14), ...
-    'tapas:huge:test', 'aux compatibility');
-assert(all(abs(priorsOld.clustersDeg(:) - prior.nu_0(:))<1e-14), ...
-    'tapas:huge:test', 'aux compatibility');
-assert(all(abs(priorsOld.clustersSigma(:) - prior.S_0(:))<1e-14), ...
-    'tapas:huge:test', 'aux compatibility');
-assert(all(abs(priorsOld.hemMean(:) - prior.mu_h(:))<1e-14), ...
-    'tapas:huge:test', 'aux compatibility');
-assert(all(abs(priorsOld.hemSigma(:) - prior.Sigma_h(:))<1e-14), ...
-    'tapas:huge:test', 'aux compatibility');
-
-priorsOld.clustersMean = 0.0;
-[dr] = tapas_huge_invert(listDcms, 3, priorsOld, 0, 0, posterior.seed);
-assert(all(abs(dr.posterior.dcmMean(:) - posterior.mu_n(:))<1e-14), ...
-    'tapas:huge:test', 'aux compatibility');
-assert(all(abs(dr.posterior.dcmSigma(:) - posterior.Sigma_n(:))<1e-14), ...
-    'tapas:huge:test', 'aux compatibility');
-assert(all(abs(dr.posterior.softAssign(:) - posterior.q_nk(:))<1e-14), ...
-    'tapas:huge:test', 'aux compatibility');
-
-fprintf('passed.\n')
-
-
-
 
 

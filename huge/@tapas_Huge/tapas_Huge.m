@@ -110,10 +110,10 @@ classdef tapas_Huge
             'mhAdapt', 3e3, ... % interval for adapting step sizes
             'mhTrans', 2^10, ... % sample size for adapting transform
             'mhReg',  9, ... % regularizer for adapting step sizes
-            'nPsrf', 1e5) % rate for convergence monitoring via PSRF
+            'nPsrf', 1e5, ... % rate for convergence monitoring via PSRF
+            'baseSc', -.5) % baseline self-connection
 
-        version = '2019-10'; % Toolbox version
-
+        version = '2020-09'; % Toolbox version
     end
 
 
@@ -191,6 +191,7 @@ classdef tapas_Huge
         
         % plot posterior
         [ fHdl ] = plot( obj, subjects )
+        
         % save object properties to disk
         [ ] = save( filename, obj, varargin )
         
@@ -221,17 +222,13 @@ classdef tapas_Huge
         % VB initialization
         [ obj ] = vb_init( obj )
         
-        % MH sampling
-        [ obj ] = mh_invert( obj )
-        % MH initialization
-        [ obj ] = mh_init( obj )
-        
     end
     methods (Static, Access = protected)
         
         % de-multiplex parameter vector
         [A, B, C, D, tau, kappa, epsilon] = theta2abcd(theta, idx, R, L)
-        
+        % generate labels for axis ticks
+        [ tickLabels ] = parse_labels( dcm, labels, idx )
     end
     
 end
