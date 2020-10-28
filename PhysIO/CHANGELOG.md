@@ -4,9 +4,9 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2020a, v7.3.0*
+*Current version: PhysIO Toolbox Release R2020a, v7.3.2*
 
-July 10th, 2020
+October 28th, 2020
 
 
 SCHEDULED Minor Release Notes (v7.4.0)
@@ -23,11 +23,34 @@ SCHEDULED Minor Release Notes (v7.4.0)
 ### Fixed
 
 
+Bugfix Release Notes (v7.3.2)
+-----------------------------
+
+### Added
+- version number `physio.version` in physio-struct (Gitlab issue #101)
+
+### Fixed
+- Subfolder of SPM in path (fieldtrip) created ambiguous function calls 
+  to overloaded functions (Gitlab issue #102 and Gihub issue #110)
+    - e.g., `filtfilt` in `tapas_physio_filter_respiratory` created flat 
+      regressors for v7.3 for Siemens VD example dataset
+    - now subfolders of SPM will be removed when calling
+     `tapas_physio_main_create_regressors`
+
+
+Bugfix Release Notes (v7.3.1)
+-----------------------------
+
+### Fixed
+- PPU read-in works for BioPac mat-file now 
+    - correct column labels and cardiac modality (Github Issue #103)
+    - thank you to Manon Durand-Ruel @mdurandruel for reporting  
+
+
 Minor Release Notes (R2020a, v7.3.0)
 ------------------------------------
 
 ### Added
-
 - Added descriptive names for the multiple regressors matrix.
     - Closes GitLab issue #82.
     - Now possible to straightforwardly inspect `physio.model.R` and the

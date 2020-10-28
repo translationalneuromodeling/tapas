@@ -40,6 +40,13 @@ if isSpmOnPath
         dir(fullfile(pathSpm, 'toolbox', '**/tapas_physio_cfg_matlabbatch.m'));
     
     isPhysioVisibleForSpmBatchEditor = ~isempty(filePhysioCfgMatlabbatch);
+    
+    % also important to set default modality of spm to fMRI and
+    % initialize batch editor, if not done before
+    spm('defaults', 'fmri');
+    if ~exist('cfg_util')
+        spm_jobman('initcfg');
+    end
 end
 
 [isPhysioOnPath, pathPhysIO] = tapas_physio_check_path();

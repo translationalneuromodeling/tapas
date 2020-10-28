@@ -112,13 +112,12 @@ end
 cardiacModalityArray = ...
     {'ecg1_filtered', 'ecg2_filtered', 'ecg1_raw', 'ecg2_raw', 'ppu'};
 
-% TODO: check for PPU what really is used as a label
 labelsCardiacArray = ...
     {'C0 - Comb Band Stop Filter', 'C1 - Filter', 'ECG100C', 'ECG100C', ...
-    'ECG100C'};
+    'PPG100C'};
 
 iChosenModality =  tapas_physio_find_string(cardiacModalityArray, ...
-    cardiac_modality);
+    lower(cardiac_modality));
 
 nModalities = numel(cardiacModalityArray);
 indModalities = [iChosenModality, setdiff(1:nModalities, iChosenModality)];
