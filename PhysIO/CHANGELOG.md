@@ -4,13 +4,13 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2020a, v7.3.2*
+*Current version: PhysIO Toolbox Release R2021a, v8.0.0*
 
-October 28th, 2020
+January 29th, 2021
 
 
-SCHEDULED Minor Release Notes (v7.4.0)
-----------------------------------------------
+SCHEDULED Minor Release Notes (v8.1.0)
+--------------------------------------
 
 ### Added
 - Brain Imaging Data Structure (BIDS) export format (`.tsv.gz`, `.json`) to save raw physiological recordings after synchronization with scanner timing (internal gitlab issue #91)
@@ -19,6 +19,33 @@ SCHEDULED Minor Release Notes (v7.4.0)
         - if sampling frequencies of the two differ, upsampling to higher frequency is performed
 
 ### Changed
+
+### Fixed
+
+
+Major Release Notes (v8.0.0)
+----------------------------
+
+### Added
+- New method for computing respiratory volume per unit time (RVT) via the
+  Hilbert transform.
+    - Publication: Harrison et al., "A Hilbert-based method for processing
+      respiratory timeseries", NeuroImage, 2021.
+      <https://doi.org/10.1016/j.neuroimage.2021.117787>
+    - This is now the default option, but the old method is available by
+      setting `physio.model.rvt.method = 'peaks'` (or the equivalent within
+      the SPM batch editor).
+
+- Respiratory preprocessing now includes an optional de-spiking step based on
+  median filtering.
+
+### Changed
+- Now possible to change the frequencies of the respiratory filtering during
+  preprocessing via `physio.preproc.respiratory.filter` (or the equivalent
+  within the SPM batch editor).
+
+- More robust detrending of raw respiratory timeseries via windowed padding
+  before filtering.
 
 ### Fixed
 

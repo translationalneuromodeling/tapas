@@ -171,6 +171,12 @@ if model.movement.include
     end
 end
 
+%% RVT
+
+if model.rvt.include
+      verbose.fig_handles(end+1) = tapas_physio_plot_rvt(ons_secs, sqpar);
+end
+
 %% tapas_physio_create_hrv_regressors, tapas_physio_create_rvt_regressors
 % tapas_physio_create_noise_rois_regressors
 % => create functions out of inline-plotting

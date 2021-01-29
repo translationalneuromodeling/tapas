@@ -24,7 +24,7 @@ function [convRVTOut, rvtOut, verbose] = tapas_physio_create_rvt_regressors(...
 % EXAMPLE
 %   [convHRV, hr] = tapas_physio_create_hrv_regressor(physio_out.ons_secs, physio_out.sqpar);
 %
-%   See also tapas_physio_rvt tapas_physio_rrf
+%   See also tapas_physio_rvt_hilbert tapas_physio_rvt_peaks tapas_physio_rrf
 
 % Author: Lars Kasper
 % Created: 2014-01-20
@@ -53,7 +53,14 @@ slicenum = 1:sqpar.Nslices;
 
 % Calculate RVT
 sample_points  = tapas_physio_get_sample_points(ons_secs, sqpar, slicenum);
-rvt = tapas_physio_rvt(ons_secs.fr, ons_secs.t, sample_points, verbose);
+switch lower(model_rvt.method)
+    case 'peaks'
+        [rvt, ~, ~, verbose] = tapas_physio_rvt_peaks(ons_secs.fr, ons_secs.t, sample_points, verbose);
+    case 'hilbert'
+        [rvt, verbose] = tapas_physio_rvt_hilbert(ons_secs.fr, ons_secs.t, sample_points, verbose);
+    otherwise
+        error('Unrecognised value for ''rvt.method'' (%s)!', model_rvt.method)
+end
 rvt = rvt / max(abs(rvt)); % normalize for reasonable range of regressor
 
 if verbose.level >=2

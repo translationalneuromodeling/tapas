@@ -66,19 +66,19 @@ vendor.help   = {' Vendor Name depending on your MR Scanner/Physiological record
     '                           (= steps of 2.5 ms since midnight) and'
     '                           extra acquisition (scan_timing) logfile with'
     '                           time stamps of all volumes and slices'
-    '                       ''Siemens_HCP'' - Human Connectome Project (HCP) Physiology Data' 
+    '                       ''Siemens_HCP'' - Human Connectome Project (HCP) Physiology Data'
     '                           HCP-downloaded files of  name format  *_Physio_log.txt '
     '                           are already preprocessed into this simple 3-column text format'
     };
 vendor.labels = {'BIDS (Brain Imaging Data Structure)', 'Biopac_Txt', 'Biopac_Mat', ...
-'BrainProducts', 'Custom', ...
-'GE', 'Philips', ...
- 'Siemens (VB, *.puls/*.ecg/*.resp)', ...
+    'BrainProducts', 'Custom', ...
+    'GE', 'Philips', ...
+    'Siemens (VB, *.puls/*.ecg/*.resp)', ...
     'Siemens_Tics (VD: *_PULS.log/*_ECG1.log/*_RESP.log/*_AcquisitionInfo*.log)', ...
     'Siemens_HCP (Human Connectome Project, *Physio_log.txt, 3 column format', ...
     };
 vendor.values = {'BIDS', 'Biopac_Txt','Biopac_Mat', 'BrainProducts', 'Custom', ...
-'GE', 'Philips', 'Siemens', 'Siemens_Tics', 'Siemens_HCP', ...
+    'GE', 'Philips', 'Siemens', 'Siemens_Tics', 'Siemens_HCP', ...
     };
 vendor.val    = {'Philips'};
 
@@ -124,9 +124,9 @@ log_scan_timing.help    = {
     ' Siemens:      Enter the first or last DICOM volume of your session here,'
     '               The time stamp in the DICOM header is on the same time'
     '               axis as the time stamp in the physiological log file'
-    ' Siemens_Tics: log-file which holds table conversion for tics axis to' 
-    '               time conversion' 
-     };
+    ' Siemens_Tics: log-file which holds table conversion for tics axis to'
+    '               time conversion'
+    };
 log_scan_timing.filter  = 'any';
 log_scan_timing.ufilter = '.*';
 log_scan_timing.val     = {{''}};
@@ -183,7 +183,7 @@ relative_start_acquisition.help    = {
     '       synchronized by this information, and you would introduce an'
     '       additional shift.'
     
-  };
+    };
 relative_start_acquisition.strtype = 'e';
 relative_start_acquisition.num     = [Inf Inf];
 relative_start_acquisition.val     = {0};
@@ -195,7 +195,7 @@ relative_start_acquisition.val     = {0};
 align_scan        = cfg_menu;
 align_scan.tag    = 'align_scan';
 align_scan.name   = 'align_scan';
-align_scan.help   = { 
+align_scan.help   = {
     ' Determines which scan shall be aligned to which part of the logfile'
     ' Typically, aligning the last scan to the end of the logfile is'
     ' beneficial, since start of logfile and scans might be shifted due'
@@ -206,7 +206,7 @@ align_scan.help   = {
     ''
     ' ''first''   start of logfile will be aligned to first scan volume'
     ' ''last''    end of logfile will be aligned to last scan volume'
-   
+    
     };
 align_scan.labels = {'first', 'last'};
 align_scan.values = {'first', 'last'};
@@ -317,11 +317,11 @@ Nprep         = cfg_entry;
 Nprep.tag     = 'Nprep';
 Nprep.name    = 'Nprep';
 Nprep.help    = {
-   ' Count of preparation pulses BEFORE 1st dummy scan.' 
+    ' Count of preparation pulses BEFORE 1st dummy scan.'
     ' Only important, if log_files.scan_align = ''first'', since then'
     ' preparation pulses and dummy triggers are counted and discarded '
     ' as first scan onset'
-     };
+    };
 Nprep.strtype = 'e';
 Nprep.num     = [Inf Inf];
 Nprep.val     = {[]};
@@ -426,12 +426,12 @@ sync_method_gradient_log = cfg_branch;
 sync_method_gradient_log.tag = 'gradient_log';
 sync_method_gradient_log.name = 'gradient_log';
 sync_method_gradient_log.val  = {
-   grad_direction 
-   zero 
-   slice 
-   vol 
-   vol_spacing
-};
+    grad_direction
+    zero
+    slice
+    vol
+    vol_spacing
+    };
 sync_method_gradient_log.help = { ...
     ' Derive scan-timing from logged gradient time courses'
     ' in SCANPHYSLOG-files (Philips only)'};
@@ -450,7 +450,7 @@ sync_method_gradient_log_auto.help = { ...
     ' in SCANPHYSLOG-files automatically (Philips only), '
     ' using prior information on TR and number of slices, '
     'i.e. without manual threshold settings.'
-};
+    };
 
 
 %--------------------------------------------------------------------------
@@ -484,7 +484,7 @@ sync_method_scan_timing_log.help = {
     '   *.tsv (3rd column)  for BIDS, using the scanner volume trigger onset events'
     };
 
- 
+
 %--------------------------------------------------------------------------
 % sync
 %--------------------------------------------------------------------------
@@ -499,14 +499,14 @@ sync.values  = {sync_method_nominal, ...
 sync.val = {sync_method_nominal};
 sync.help = {'Determines scan timing from nominal scan parameters or logged gradient time courses'
     ''
-' Available methods to determine slice onset times'
-' ''nominal''         - to derive slice acquisition timing from sqpar directly'
-' ''gradient_log''    - derive from logged gradient time courses'
-'                                in SCANPHYSLOG-files (Philips only)'
-' ''gradient_log_auto'' - as gradient_log, but thresholds are determined'
-'                         automatically from TR and number of slices expected' 
-' ''scan_timing_log'' - individual scan timing logfile with time stamps ("tics") for each slice and volume (e.g. Siemens_Cologne)'
-};
+    ' Available methods to determine slice onset times'
+    ' ''nominal''         - to derive slice acquisition timing from sqpar directly'
+    ' ''gradient_log''    - derive from logged gradient time courses'
+    '                                in SCANPHYSLOG-files (Philips only)'
+    ' ''gradient_log_auto'' - as gradient_log, but thresholds are determined'
+    '                         automatically from TR and number of slices expected'
+    ' ''scan_timing_log'' - individual scan timing logfile with time stamps ("tics") for each slice and volume (e.g. Siemens_Cologne)'
+    };
 
 
 %--------------------------------------------------------------------------
@@ -521,7 +521,7 @@ scan_timing.help = {'Parameters for sequence timing & synchronization, i.e.'
     '                    number of scans etc.'
     'scan_timing.sync = synchronize phys logfile to scan acquisition via logged MR gradient time courses/time stamps'
     };
- 
+
 
 % ==========================================================================
 %% Sub-structure preproc
@@ -601,10 +601,10 @@ initial_cpulse_select_method_auto_template = cfg_branch;
 initial_cpulse_select_method_auto_template.tag = 'auto_template';
 initial_cpulse_select_method_auto_template.name = 'auto_template';
 initial_cpulse_select_method_auto_template.val  = {
-    min 
-    initial_cpulse_select_file   
+    min
+    initial_cpulse_select_file
     max_heart_rate_bpm
-};
+    };
 initial_cpulse_select_method_auto_template.help = { ...
     ' Automatic generation of representative pulse shape template; detection via'
     '             maximising cross-correlation with this template (default)'};
@@ -618,10 +618,10 @@ initial_cpulse_select_method_auto_matched = cfg_branch;
 initial_cpulse_select_method_auto_matched.tag = 'auto_matched';
 initial_cpulse_select_method_auto_matched.name = 'auto_matched';
 initial_cpulse_select_method_auto_matched.val  = {
-    min 
-    initial_cpulse_select_file    
+    min
+    initial_cpulse_select_file
     max_heart_rate_bpm
-};
+    };
 initial_cpulse_select_method_auto_matched.help = { ...
     'Automatic generation of template QRS wave, '
     '            cross-correlation/matched filter detection of heartbeats'
@@ -636,9 +636,9 @@ initial_cpulse_select_method_manual_template = cfg_branch;
 initial_cpulse_select_method_manual_template.tag = 'manual_template';
 initial_cpulse_select_method_manual_template.name = 'manual_template';
 initial_cpulse_select_method_manual_template.val  = {
-    min 
-    initial_cpulse_select_file    
-};
+    min
+    initial_cpulse_select_file
+    };
 initial_cpulse_select_method_manual_template.help = { ...
     'Manually select QRS-wave for cross-correlation detection'
     };
@@ -652,9 +652,9 @@ initial_cpulse_select_method_load_template = cfg_branch;
 initial_cpulse_select_method_load_template.tag = 'load_template';
 initial_cpulse_select_method_load_template.name = 'load_template';
 initial_cpulse_select_method_load_template.val  = {
-    min 
-    initial_cpulse_select_file    
-};
+    min
+    initial_cpulse_select_file
+    };
 initial_cpulse_select_method_load_template.help = { ...
     'Load template pulse shape from previous manual/auto run to perform detection of heartbeats via maximum cross-correlation'
     };
@@ -808,7 +808,7 @@ posthoc_cpulse_select.val  = {posthoc_cpulse_select_method_off};
 posthoc_cpulse_select.values = {posthoc_cpulse_select_method_off, ...
     posthoc_cpulse_select_method_manual, ...
     posthoc_cpulse_select_method_load};
-    
+
 
 posthoc_cpulse_select.help = {
     'The post-hoc cardiac pulse selection structure: If only few (<20)'
@@ -834,6 +834,55 @@ cardiac.name = 'cardiac';
 cardiac.val  = {modality filter initial_cpulse_select posthoc_cpulse_select};
 cardiac.help = {'...'};
 
+%--------------------------------------------------------------------------
+% respiratory filter passband
+%--------------------------------------------------------------------------
+filter_passband         = cfg_entry;
+filter_passband.tag     = 'passband';
+filter_passband.name    = 'Passband';
+filter_passband.help    = {
+    '[f_min, f_max] frequency interval in Hz of all frequency that should'
+    '               pass the passband filter. Want to remove high'
+    '               frequency noise and low frequency drifts, but not'
+    '               distort e.g. sigh breaths (which can take e.g. 20 s).'
+    '               default: [0.01, 2.0]'
+    };
+filter_passband.strtype = 'r';
+filter_passband.num     = [1 2];
+filter_passband.val     = {[0.01, 2.0]};
+
+%--------------------------------------------------------------------------
+% respiratory filter
+%--------------------------------------------------------------------------
+filter      = cfg_branch;
+filter.tag  = 'filter';
+filter.name = 'filter';
+filter.val  = {filter_passband};
+filter.help = {'...'};
+
+%--------------------------------------------------------------------------
+% respiratory despiking
+%--------------------------------------------------------------------------
+
+despike        = cfg_menu;
+despike.tag    = 'despike';
+despike.name   = 'Despike';
+despike.help   = {
+    'Whether to remove spikes from the raw respiratory trace using a'
+    'sliding window median filter.'
+    };
+despike.labels = {'no', 'yes'};
+despike.values = {false, true};
+despike.val    = {false};
+
+%--------------------------------------------------------------------------
+% respiratory
+%--------------------------------------------------------------------------
+respiratory      = cfg_branch;
+respiratory.tag  = 'respiratory';
+respiratory.name = 'respiratory';
+respiratory.val  = {filter, despike};
+respiratory.help = {'...'};
 
 %--------------------------------------------------------------------------
 % preproc
@@ -841,7 +890,7 @@ cardiac.help = {'...'};
 preproc      = cfg_branch;
 preproc.tag  = 'preproc';
 preproc.name = 'preproc (Thresholding parameters for de-noising and timing)';
-preproc.val  = {cardiac};
+preproc.val  = {cardiac, respiratory};
 preproc.help = {'Thresholding parameters for de-noising of raw peripheral data'
     'and determination of sequence timing from logged MR gradient time courses'};
 
@@ -859,7 +908,7 @@ censor_phys        = cfg_menu;
 censor_phys.tag    = 'censor_unreliable_recording_intervals';
 censor_phys.name   = 'Censor unreliable recording intervals';
 censor_phys.help   = {
-    'If parts of the physiological recordings are unreliable (e.g., constant due to belt detachment)' 
+    'If parts of the physiological recordings are unreliable (e.g., constant due to belt detachment)'
     'the corresponding parts of recording-dependent RETROICOR regressors are set to 0'
     'in the final multiple_regressors file'
     };
@@ -1018,6 +1067,20 @@ retroicor.help = {'RETROICOR Model, as described in Glover et al., MRM 2000'};
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
+% rvt_method
+%--------------------------------------------------------------------------
+rvt_method        = cfg_menu;
+rvt_method.tag    = 'method';
+rvt_method.name   = 'RVT estimation method';
+rvt_method.labels = {'Hilbert', 'Peak detection'};
+rvt_method.values = {'hilbert', 'peaks'};
+rvt_method.val    = {'hilbert'};
+rvt_method.help   = {
+    'Whether to estimate RVT from the Hilbert transform or via '
+    'peak detection.'
+    };
+
+%--------------------------------------------------------------------------
 % rvt_delays
 %--------------------------------------------------------------------------
 rvt_delays         = cfg_entry;
@@ -1034,7 +1097,7 @@ rvt_delays.val     = {0};
 % rvt_no
 %--------------------------------------------------------------------------
 
-rvt_no         = cfg_branch;
+rvt_no      = cfg_branch;
 rvt_no.tag  = 'no';
 rvt_no.name = 'No';
 rvt_no.val  = {};
@@ -1048,7 +1111,7 @@ rvt_no.help = {'Respiratory Volume per Time Model not used'};
 rvt_yes      = cfg_branch;
 rvt_yes.tag  = 'yes';
 rvt_yes.name = 'Yes';
-rvt_yes.val  = {rvt_delays};
+rvt_yes.val  = {rvt_method, rvt_delays};
 rvt_yes.help = {
     'Include Respiratory Volume per Time (RVT) Model, '
     'as described in Birn et al. NeuroImage 40, 644?654. doi:10.1016/j.neuroimage.2007.11.059'
@@ -1126,7 +1189,7 @@ hrv.values  = {hrv_no, hrv_yes};
 hrv.help = {
     'Heart Rate Variability (HRV) Model, as described in '
     'Chang et al., NeuroImage 44, 857-869. doi:10.1016/j.neuroimage.2008.09.029'
-};
+    };
 
 
 %--------------------------------------------------------------------------
@@ -1198,7 +1261,7 @@ roi_thresholds         = cfg_entry;
 roi_thresholds.tag     = 'thresholds';
 roi_thresholds.name    = 'ROI thresholds';
 roi_thresholds.help    = {
-    'Single threshold or vector [1, nRois] of thresholds to be applied to' 
+    'Single threshold or vector [1, nRois] of thresholds to be applied to'
     'mask files to decide which voxels to include '
     '(e.g. a probability like 0.99, if roi_files'
     'are tissue probability maps'
@@ -1215,7 +1278,7 @@ n_voxel_crop         = cfg_entry;
 n_voxel_crop.tag     = 'n_voxel_crop';
 n_voxel_crop.name    = 'Number of ROI pixels to be cropped';
 n_voxel_crop.help    = {
-       'Single number or vector [1, nRois] of number of voxels to crop per ROI'
+    'Single number or vector [1, nRois] of number of voxels to crop per ROI'
     };
 n_voxel_crop.num     = [Inf Inf];
 n_voxel_crop.val     = {0};
@@ -1229,7 +1292,7 @@ n_components         = cfg_entry;
 n_components.tag     = 'n_components';
 n_components.name    = 'Number of principal components';
 n_components.help    = {
- ' Single number or vector [1, nRois] of numbers'
+    ' Single number or vector [1, nRois] of numbers'
     ' integer >=1:      number of principal components to be extracted'
     '                   from all voxel time series within each ROI'
     ' float in [0,1[    choose as many components as needed to explain this'
@@ -1320,21 +1383,21 @@ movement_censoring_threshold         = cfg_entry;
 movement_censoring_threshold.tag     = 'censoring_threshold';
 movement_censoring_threshold.name    = 'Censoring Outlier Threshold';
 movement_censoring_threshold.help    = {
-   'Threshold, above which a stick (''spike'') regressor is created for ' 
-   'corresponding outlier volume exceeding threshold'
-   ''
-   'The actual setting depends on the chosen thresholding method:'
-   '   ''MAXVAL''   - max translation (in mm) and rotation (in deg) threshold'
-   '                  recommended: 1/3 of voxel size (e.g., 1 mm)'
-   '                  1 value   -> used for translation and rotation'
-   '                  2 values  -> 1st = translation (mm), 2nd = rotation (deg)'
-   '                  6 values  -> individual threshold for each axis (x,y,z,pitch,roll,yaw)'
-   '   ''FD''       - frame-wise displacement (in mm)'
-   '                  recommended for subject rejection: 0.5 (Power et al., 2012)'
-   '                  recommended for censoring: 0.2 ((Power et al., 2015)'              
-   '   ''DVARS''    - in percent BOLD signal change'
-   '                  recommended for censoring: 1.4 % (Satterthwaite et al., 2013)'
-   };
+    'Threshold, above which a stick (''spike'') regressor is created for '
+    'corresponding outlier volume exceeding threshold'
+    ''
+    'The actual setting depends on the chosen thresholding method:'
+    '   ''MAXVAL''   - max translation (in mm) and rotation (in deg) threshold'
+    '                  recommended: 1/3 of voxel size (e.g., 1 mm)'
+    '                  1 value   -> used for translation and rotation'
+    '                  2 values  -> 1st = translation (mm), 2nd = rotation (deg)'
+    '                  6 values  -> individual threshold for each axis (x,y,z,pitch,roll,yaw)'
+    '   ''FD''       - frame-wise displacement (in mm)'
+    '                  recommended for subject rejection: 0.5 (Power et al., 2012)'
+    '                  recommended for censoring: 0.2 ((Power et al., 2015)'
+    '   ''DVARS''    - in percent BOLD signal change'
+    '                  recommended for censoring: 1.4 % (Satterthwaite et al., 2013)'
+    };
 movement_censoring_threshold.strtype = 'e';
 movement_censoring_threshold.num     = [1 Inf];
 movement_censoring_threshold.val     = {0.5};
@@ -1357,16 +1420,16 @@ movement_censoring_method        = cfg_menu;
 movement_censoring_method.tag    = 'censoring_method';
 movement_censoring_method.name   = 'Censoring Method for Thresholding';
 movement_censoring_method.help   = {'Censoring method used for thresholding'
- '  ''None''    - no motion censoring performed'
- '  ''MAXVAL''  - thresholding (max. translation/rotation)'
- '  ''FD''      - frame-wise displacement (as defined by Power et al., 2012)'
- '                i.e., |rp_x(n+1) - rp_x(n)| + |rp_y(n+1) - rp_y(n)| + |rp_z(n+1) - rp_z(n)|'
- '                      + 50 mm *(|rp_pitch(n+1) - rp_pitch(n)| + |rp_roll(n+1) - rp_roll(n)| + |rp_yaw(n+1) - rp_yaw(n)|'
- '                      where 50 mm is an average head radius mapping a rotation into a translation of head surface' 
- '  ''DVARS''   - root mean square over brain voxels of '
- '                difference in voxel intensity between consecutive volumes'
- '                (Power et al., 2012)'
-};
+    '  ''None''    - no motion censoring performed'
+    '  ''MAXVAL''  - thresholding (max. translation/rotation)'
+    '  ''FD''      - frame-wise displacement (as defined by Power et al., 2012)'
+    '                i.e., |rp_x(n+1) - rp_x(n)| + |rp_y(n+1) - rp_y(n)| + |rp_z(n+1) - rp_z(n)|'
+    '                      + 50 mm *(|rp_pitch(n+1) - rp_pitch(n)| + |rp_roll(n+1) - rp_roll(n)| + |rp_yaw(n+1) - rp_yaw(n)|'
+    '                      where 50 mm is an average head radius mapping a rotation into a translation of head surface'
+    '  ''DVARS''   - root mean square over brain voxels of '
+    '                difference in voxel intensity between consecutive volumes'
+    '                (Power et al., 2012)'
+    };
 movement_censoring_method.labels = {'none' 'MAXVAL (Maximum translation/rotation)' 'FD (Framewise Displacement)', 'DVARS'};
 movement_censoring_method.values = {'none', 'MAXVAL', 'FD', 'DVARS'};
 movement_censoring_method.val    = {'FD'};
@@ -1379,8 +1442,8 @@ movement_yes      = cfg_branch;
 movement_yes.tag  = 'yes';
 movement_yes.name = 'Yes';
 movement_yes.val  = {movement_file_realignment_parameters, movement_order, ...
-movement_censoring_method, movement_censoring_threshold ...  
-};
+    movement_censoring_method, movement_censoring_threshold ...
+    };
 movement_yes.help = {'Motion Assessment and Regression Models used'
     '- Motion 6/12/24, and as described in Friston et al., 1996'
     '- Motion Censoring (''spike'' regressors for motion-corrupted volumes)'
@@ -1469,7 +1532,7 @@ model.tag  = 'model';
 model.name = 'model';
 model.val  = {output_multiple_regressors, output_physio, orthog, censor_phys, retroicor, ...
     rvt, hrv, noise_rois, movement, other_model};
-model.help = {['Physiological Model to be estimated and Included in GLM as ' ... 
+model.help = {['Physiological Model to be estimated and Included in GLM as ' ...
     'multiple_regressors.txt']};
 
 

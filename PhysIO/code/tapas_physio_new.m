@@ -61,7 +61,7 @@ end
 
 % include sub-folders of code to path as well
 pathThis = fileparts(mfilename('fullpath'));
-addpath(genpath(pathThis)); 
+addpath(genpath(pathThis));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Modules (Overview)
@@ -90,7 +90,7 @@ else
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Overarching directory, relative to which output files are saved
-    save_dir = ''; 
+    save_dir = '';
     
     
     
@@ -129,18 +129,18 @@ else
     %                           (= steps of 2.5 ms since midnight) and'
     %                           extra acquisition (scan_timing) logfile with'
     %                           time stamps of all volumes and slices'
-    %                       'Siemens_HCP' - Human Connectome Project (HCP) Physiology Data' 
+    %                       'Siemens_HCP' - Human Connectome Project (HCP) Physiology Data'
     %                           HCP-downloaded files of  name format  *_Physio_log.txt '
     %                           are already preprocessed into this simple 3-column text format'
     log_files.vendor       = 'Philips';
     
-    % Logfile with cardiac data, e.g. 
+    % Logfile with cardiac data, e.g.
     %   'SCANPHYSLOG<date>.log' (Philips)
     %   '<id>_PAV.ecg'          (Siemens Trio etc. (VB))
     %   '<date>_ECG1-4.log'     (Siemens Prisma etc (VD))
     %   'ECGData_epiRT_<date>'  (GE)
-    log_files.cardiac      = ''; 
-  
+    log_files.cardiac      = '';
+    
     % Logfile with respiratory data, e.g. 'SCANPHYSLOG.log';
     % (same as .cardiac for Philips)
     log_files.respiration  = '';
@@ -151,10 +151,10 @@ else
     % Siemens:      Enter the first or last DICOM volume of your session here,
     %               The time stamp in the DICOM header is on the same time
     %               axis as the time stamp in the physiological log file
-    % Siemens_Tics: log-file which holds table conversion for tics axis to 
-    %               time conversion 
-    log_files.scan_timing  = ''; 
-
+    % Siemens_Tics: log-file which holds table conversion for tics axis to
+    %               time conversion
+    log_files.scan_timing  = '';
+    
     % Sampling interval in seconds (i.e. time between two rows in logfile
     % if empty, default value will be set: 2e-3 for Philips, variable for GE, e.g. 40e-3
     %         1 entry: sampling interval (seconds)
@@ -166,7 +166,7 @@ else
     
     % Time (in seconds) when the 1st scan (or, if existing, dummy) started,
     % relative to the start of the logfile recording;
-    % e.g.  
+    % e.g.
     %       [] (empty) to read from explicit acquisition timing info (s.b.)
     %       0 if simultaneous start
     %       10, if 1st scan starts 10
@@ -174,7 +174,7 @@ else
     %       recording
     %       -20, if first scan started 20
     %       seconds BEFORE phys recording
-    % NOTE: 
+    % NOTE:
     %       1. For Philips SCANPHYSLOG, this parameter is ignored, if
     %       scan_timing.sync is set.
     %       2. If you specify an acquisition_info file, leave this
@@ -195,14 +195,14 @@ else
     %
     % 'first'   start of logfile will be aligned to first scan volume
     % 'last'    end of logfile will be aligned to last scan volume
-    log_files.align_scan       = 'last'; 
-
+    log_files.align_scan       = 'last';
+    
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% scan_timing (Module)
     % Parameters for sequence timing & synchronization
-    % scan_tming.sqpar =    slice and volume acquisition starts, TR, 
+    % scan_tming.sqpar =    slice and volume acquisition starts, TR,
     %                       number of scans etc.
     % scan_timing.sync =    synchronize phys logfile to scan acquisition
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -218,11 +218,11 @@ else
     % number of full volumes saved (volumes in nifti file,
     % usually rows in your design matrix)
     scan_timing.sqpar.Nscans            = [];
-        
+    
     % Count of preparation pulses
-    % BEFORE 1st dummy scan. 
+    % BEFORE 1st dummy scan.
     % Only important, if log_files.scan_align = 'first', since then
-    % preparation pulses and dummy triggers are counted and discarded 
+    % preparation pulses and dummy triggers are counted and discarded
     % as first scan onset
     scan_timing.sqpar.Nprep             = [];
     
@@ -239,19 +239,19 @@ else
     % includes counting of preparation gradients
     scan_timing.sqpar.onset_slice       = [];
     
-
+    
     % Method to determine slice acquisition onset times
     % 'nominal'             derive slice acquisition timing from sqpar
     %                       directly
     % 'gradient_log'        derive from logged gradient time courses
     %                       in SCANPHYSLOG-files (Philips only)
-    % 'gradient_log_auto'   !!! NOT FUNCTIONAL!!! 
+    % 'gradient_log_auto'   !!! NOT FUNCTIONAL!!!
     %                       as 'gradient_log' but without defining height/
     %                       spacing thresholds (Philips only)
     % 'scan_timing_log'     uses individual scan timing logfile with time stamps
-    %                       specified in log_files.scan_timing    
-    %                       e.g., 
-    %                       *_INFO.log for 'Siemens_Tics' (time stamps for 
+    %                       specified in log_files.scan_timing
+    %                       e.g.,
+    %                       *_INFO.log for 'Siemens_Tics' (time stamps for
     %                                       every slice and volume)
     %                       *.dcm (DICOM) for Siemens, is first volume (non-dummy) used
     %                                     in GLM analysis
@@ -283,9 +283,9 @@ else
     % first slice of next volume;
     % leave [], if .vol-threshold shall be used
     scan_timing.sync.vol_spacing          = [];
-
     
-
+    
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% preproc (Module)
     % Preprocessing strategy and parameters for physiological data,
@@ -295,9 +295,9 @@ else
     
     preproc.cardiac = [];
     
-    % Measurement modality of input cardiac signal 
+    % Measurement modality of input cardiac signal
     % 'ECG','ECG_raw', or 'OXY'/'PPU' (for pulse oximetry), 'OXY_OLD', [deprecated]
-    preproc.cardiac.modality = 'ecg_wifi'; 
+    preproc.cardiac.modality = 'ecg_wifi';
     
     % Filter properties for bandpass-filtering of cardiac signal before peak
     % detection, phase extraction, and other physiological traces
@@ -313,17 +313,16 @@ else
     %               ripples in transition band
     preproc.cardiac.filter.type = 'butter';
     
-    %
     % [f_min, f_max] frequency interval in Hz of all frequency that should
     %                pass the passband filter
     %                default: [0.3 9] (to remove slow drifts, breathing
     %                                   and slice sampling artifacts)
     %                if empty, no filtering is performed
     preproc.cardiac.filter.passband = [0.3 9];
-   
+    
     % [f_min, f_max] frequency interval in Hz of all frequencies, s.th. frequencies
     %                outside this band should definitely *NOT* pass the filter
-    %                Default: [] 
+    %                Default: []
     %                NOTE: only relevant for 'cheby2' filter type
     %                if empty, and passband is empty, no filtering is performed
     %                if empty, but passband exists, stopband interval is
@@ -337,7 +336,7 @@ else
     % 'auto_matched'
     %           - auto generation of representative QRS-wave; detection via
     %             maximizing auto-correlation with it
-    % 'load_from_logfile' 
+    % 'load_from_logfile'
     %           - from phys logfile, detected R-peaks of scanner
     % 'manual'  - via manually selected QRS-wave for autocorrelations
     % 'load'    - from previous manual/auto run
@@ -349,11 +348,11 @@ else
     %   cardiac pulses
     % - If set too high, it might introduce artifactual pulse events, i.e.
     %   interpreting local maxima within a pulse as new pulse events
-    % Adjust this value, if you have a subject with very high heart rate 
+    % Adjust this value, if you have a subject with very high heart rate
     % (increase!), or if you have very pronounced local maxima in your wave form
     % (decrease!).
     preproc.cardiac.initial_cpulse_select.max_heart_rate_bpm = 90;
-
+    
     % file containing reference ECG-peak (variable kRpeak)
     % used for method 'manual' or 'load' [default: not set]
     % if method == 'manual', this file is saved after picking the QRS-wave
@@ -363,7 +362,7 @@ else
     
     % threshold for peak height in z-scored cardiac waveform to find pulse events
     % default: 0.4
-    % NOTE: For ECG, might need increase (e.g., 2.0), because of local maximum 
+    % NOTE: For ECG, might need increase (e.g., 2.0), because of local maximum
     %       of T wave after QRS complex
     preproc.cardiac.initial_cpulse_select.min = 0.4;
     
@@ -392,6 +391,18 @@ else
     preproc.cardiac.posthoc_cpulse_select.lower_thresh = 60; % minimum reduction (in %) from average heartbeat duration to be classified an abundant heartbeat
     
     
+    preproc.respiratory = [];
+    
+    % [f_min, f_max] frequency interval in Hz of all frequency that should
+    %                pass the passband filter. Want to remove high
+    %                frequency noise and low frequency drifts, but not
+    %                distort e.g. sigh breaths (which can take e.g. 20 s).
+    %                default: [0.01 2.0]
+    preproc.respiratory.filter.passband = [0.01, 2.0];
+    
+    % Whether to remove spikes from the raw respiratory trace using a
+    % sliding window median filter.
+    preproc.respiratory.despike = false;
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% Model (Module)
@@ -404,15 +415,15 @@ else
     %               order of expansion:  See Harvey et al., JMRI 28, 2008
     % 'HRV'         heart rate variability, as in Chang et al., 2009
     % 'RVT'         respiratory volume time, as in Birn et al., 2006/8
-    % 'movement'    realignment parameters, derivatives, 
+    % 'movement'    realignment parameters, derivatives,
     %               + squared (parameters+derivatives),
     %               (Volterra expansion, see: Friston KJ, Williams S, Howard R, Frackowiak
-    %               RS, Turner R. Movement-related effects in fMRI 
+    %               RS, Turner R. Movement-related effects in fMRI
     %               time-series. Magn Reson Med. 1996;35:346?355.)
     % 'noise_rois'  Principal Components of time series of all voxels in given
     %               regions of localized noise, e.g. CSF, vessels, white
     %               matter
-    %               e.g. CompCor: Behzadi, Y., Restom, K., Liau, J., Liu, 
+    %               e.g. CompCor: Behzadi, Y., Restom, K., Liau, J., Liu,
     %               T.T., 2007. A component based noise correction method (CompCor) for BOLD and perfusion based fMRI. NeuroImage 37, 90?101. doi:10.1016/j.neuroimage.2007.04.042
     model = [];
     
@@ -429,19 +440,19 @@ else
     %   'HRV'
     %   'RVT'
     %   'movement'
-    %   'noise_rois' 
-    model.orthogonalise = 'none';         
+    %   'noise_rois'
+    model.orthogonalise = 'none';
     
     % true or false (default)
     % If true, values of the nuisance regressors (R-matrix) will be set to
-    % zero (=censored) for time points that are in intervals with 
-    % unreliable related recordings, i.e., 
-    % -  cardiac regressors, if ~c_is_reliable; 
+    % zero (=censored) for time points that are in intervals with
+    % unreliable related recordings, i.e.,
+    % -  cardiac regressors, if ~c_is_reliable;
     % - respiratory regressors, if ~r_is_reliable
     %
     % NOTE: so far, this is only implemented for instantaneous effect of
     % poor recordings, e.g., the phase estimates leading to RETROICOR
-    % regressors. 
+    % regressors.
     % For the convolution models (HRV, RVT), no censoring is performed,
     % since effects of unreliable recordings have long-term effects.
     model.censor_unreliable_recording_intervals = true;
@@ -454,11 +465,11 @@ else
     model.output_physio = '';
     
     % [nScans, nRegressors, nSlices]
-    %   output design matrix of confound regressors, 
+    %   output design matrix of confound regressors,
     %   saved in 'multiple_regressors.txt'
     %   or, if multiple slices are specified as onset_slice, in multiple
     %       multiple_regressors_001.txt files, one per specified slice
-    model.R = [];                               
+    model.R = [];
     
     %% RETROICOR (Model): Glover et al. 2000
     % Retrospective image correction method, based on Fourier expansion of
@@ -474,43 +485,47 @@ else
     
     % natural number, order of cardiac-respiratory-phase-interaction Fourier expansion
     model.retroicor.order.cr = 1;
-   
+    
     
     %% RVT (Model): Respiratory Volume per time model , Birn et al., 2006/8
     model.rvt.include = 0;
     
-    % one or multiple delays (in seconds) can be specified to shift 
+    % Whether to estimate RVT from the Hilbert transform ('hilbert') or via
+    % peak detection ('peaks').
+    model.rvt.method = 'hilbert';
+    
+    % one or multiple delays (in seconds) can be specified to shift
     % canonical RVT response function from Birn et al., 2006 paper
     % Delays e.g. 0, 5, 10, 15, and 20s (Jo et al., 2010 NeuroImage 52)
     model.rvt.delays = 0;
- 
+    
     
     %% HRV (Model): Heart Rate variability, Chang et al., 2009
     model.hrv.include = 0;
     
-    % one or multiple delays (in seconds) can be specified to shift 
+    % one or multiple delays (in seconds) can be specified to shift
     % canonical HRV response function from Chang et al., 2009 paper
     % Delays e.g. 0:6:24s (Shmueli et al, 2007, NeuroImage 38)
     model.hrv.delays = 0;
     
     
     %% noise_rois (Model): Anatomical Component Correction, Behzadi et al, 2007
-    % Principal Components of time series of all voxels in given regions 
+    % Principal Components of time series of all voxels in given regions
     % of localized noise, e.g. CSF, vessels, white matter
     %
-    % e.g. CompCor: Behzadi, Y., Restom, K., Liau, J., Liu, 
-    % T.T., 2007. A component based noise correction method (CompCor) 
-    % for BOLD and perfusion based fMRI. NeuroImage 37, 90-101. 
+    % e.g. CompCor: Behzadi, Y., Restom, K., Liau, J., Liu,
+    % T.T., 2007. A component based noise correction method (CompCor)
+    % for BOLD and perfusion based fMRI. NeuroImage 37, 90-101.
     % doi:10.1016/j.neuroimage.2007.04.042
     model.noise_rois.include = 0;
-   
+    
     % cell of preprocessed fMRI nifti/analyze files, from which time series
     % shall be extracted
-    model.noise_rois.fmri_files = {}; 
-   
+    model.noise_rois.fmri_files = {};
+    
     % cell of Masks/tissue probability maps characterizing where noise resides
     model.noise_rois.roi_files = {};
-   
+    
     % Single threshold or vector [1, nRois] of thresholds to be applied to mask files to decide
     % which voxels to include (e.g. a probability like 0.99, if roi_files
     % are tissue probability maps)
@@ -536,7 +551,7 @@ else
     % 'Yes' or 1/true (default)
     %   Coregister : Estimate & Reslice will be performed on the noise NOIs,
     %   so their geometry (space + voxel size) will match the fMRI volume.
-    % 'No' or 0 or false 
+    % 'No' or 0 or false
     %   Geometry will be tested:
     %   1) If they match, continue
     %   2) If they don't match, perform a Coregister : Estimate & Reslice as fallback
@@ -556,29 +571,29 @@ else
     model.movement.order = 6;
     
     % Censoring outlier threshold;
-    % Threshold, above which a stick (''spike'') regressor is created for 
+    % Threshold, above which a stick (''spike'') regressor is created for
     % corresponding outlier volume exceeding threshold'
-   %
-   % The actual setting depends on the chosen thresholding method:
-   % 'MAXVAL'   -  [1,1...6] max translation (in mm) and rotation (in deg) threshold
-   %                recommended: 1/3 of voxel size (e.g., 1 mm)
-   %                default: 1 (mm)
-   %                1 value   -> used for translation and rotation
-   %                2 values  -> 1st = translation (mm), 2nd = rotation (deg)
-   %                6 values  -> individual threshold for each axis (x,y,z,pitch,roll,yaw)
-   % 'FD'       -   [1,1] framewise displacement (in mm)
-   %                default: 0.5 (mm)
-   %                recommended for subject rejection: 0.5 (Power et al., 2012)
-   %                recommended for censoring: 0.2 (Power et al., 2015)          
-   % 'DVARS'    -   [1,1] in percent BOLD signal change
-   %                recommended for censoring: 1.4 % (Satterthwaite et al., 2013)
-   model.movement.censoring_threshold = 0.5;
+    %
+    % The actual setting depends on the chosen thresholding method:
+    % 'MAXVAL'   -  [1,1...6] max translation (in mm) and rotation (in deg) threshold
+    %                recommended: 1/3 of voxel size (e.g., 1 mm)
+    %                default: 1 (mm)
+    %                1 value   -> used for translation and rotation
+    %                2 values  -> 1st = translation (mm), 2nd = rotation (deg)
+    %                6 values  -> individual threshold for each axis (x,y,z,pitch,roll,yaw)
+    % 'FD'       -   [1,1] framewise displacement (in mm)
+    %                default: 0.5 (mm)
+    %                recommended for subject rejection: 0.5 (Power et al., 2012)
+    %                recommended for censoring: 0.2 (Power et al., 2015)
+    % 'DVARS'    -   [1,1] in percent BOLD signal change
+    %                recommended for censoring: 1.4 % (Satterthwaite et al., 2013)
+    model.movement.censoring_threshold = 0.5;
     
     % Censoring method used for thresholding
     % Motion Censoring ('spike' regressors for motion-corrupted volumes)
-    % 1 stick regressor for outlier volume with respect to a certain 
+    % 1 stick regressor for outlier volume with respect to a certain
     % quality criterion will be created, using one of these methods:
-    % 
+    %
     %   'None'      - no motion censoring performed
     %   'MAXVAL'    - thresholding (max. translation/rotation)
     %   'FD''       - frame-wise displacement (as defined by Power et al., 2012)
@@ -592,17 +607,17 @@ else
     
     % output structure, if censoring is used
     model.movement.censoring = [];
-
-    %% other (Model): Additional, pre-computed nuisance regressors 
+    
+    %% other (Model): Additional, pre-computed nuisance regressors
     % To be included in design matrix as txt or mat-file (variable R)
     model.other.include = 0;
     model.other.input_multiple_regressors = '';
- 
+    
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% verbose (Module)
-    % Verbosity of Toolbox, i.e. how many figures shall be generated to 
+    % Verbosity of Toolbox, i.e. how many figures shall be generated to
     % visualize the workflow and save it (to graphics file(s))
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     verbose = [];
@@ -643,12 +658,12 @@ else
     
     % stores text outputs of PhysIO Toolbox processing, e.g. warnings about missed
     % slice triggers, peak height etc.
-    verbose.process_log = cell(0,1); 
+    verbose.process_log = cell(0,1);
     
     % [1, nFigs] vector; collecting of all generated figure handles during a run of tapas_physio_main_create_regressors
-    verbose.fig_handles = zeros(1,0);   
+    verbose.fig_handles = zeros(1,0);
     
-    % file name (including extension) where to print all physIO output 
+    % file name (including extension) where to print all physIO output
     % figures to.
     % e.g. 'PhysIO_output.ps' or 'PhysIO_output.jpg'
     %
@@ -657,7 +672,7 @@ else
     %     .fig, .tiff,  .jpg
     %         - one file is created for each figure, appended by a figure
     %         index, e.g. 'PhysIO_output_fig01.jpg'
-    verbose.fig_output_file = ''; 
+    verbose.fig_output_file = '';
     
     % NOT IMPLEMENTED YET
     %  If true, plots are performed in tabs of SPM graphics window
@@ -665,10 +680,10 @@ else
     %                                           tag,active,height,tab_height)
     %
     verbose.use_tabs = false;
-
+    
     % show / save / close figures
     % Booleans to control figure visibility and saving/closing options.
-
+    
     % show_figs: If true, all created figures will be visible. If false, sets figure visibility to 'off', which
     % leaves the possibility of saving the figure to file without displaying it.
     verbose.show_figs = true;
@@ -676,15 +691,15 @@ else
     verbose.save_figs = false;
     % close_figs: If true, will close all open figs after saving them. Only used if save_figs is true.
     verbose.close_figs = false;
-
-  
+    
+    
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% ons_secs (Module, output only)
-    % Output structure for all read or computed  time-dependent variables, 
+    % Output structure for all read or computed  time-dependent variables,
     % i.e. onsets, specified in seconds
-    % NOTE: all elements but .raw are cropped to the acquisition window of 
+    % NOTE: all elements but .raw are cropped to the acquisition window of
     % the session
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     ons_secs                     = [];
@@ -695,14 +710,14 @@ else
     ons_secs.c              	 = [];  % raw cardiac waveform (ECG or PPU)
     ons_secs.r              	 = [];  % raw respiration amplitude time course
     ons_secs.c_scaling           = 1;   % stores scaling factor for cardiac data
-                                        % after normalization
+    % after normalization
     ons_secs.r_scaling           = 1;   % stores scaling factor for respiratory data
-                                        % after normalization
-                                        
+    % after normalization
+    
     % flags for detected unreliable intervals of physiological recording
     ons_secs.c_is_reliable       = [];  % 1 for all time points where cardiac recording is reliable, 0 elsewhere (e.g. high noise, too low/high heartrates)
     ons_secs.r_is_reliable       = [];  % 1 for all time points, where respiratory recording is reliable; 0 elsewhere (e.g. constant amplitude through detachment/clipping)
-  
+    
     % processed elements cardiac pulse detection and phase estimations
     ons_secs.cpulse         	 = [];  % onset times of cardiac pulse events (e.g. R-peaks)
     ons_secs.fr                  = [];  % filtered respiration amplitude time series
@@ -713,7 +728,7 @@ else
     
     % statistical info about physiological data
     ons_secs.c_outliers_high     = [];  % onset of too long heart beats
-    ons_secs.c_outliers_low      = [];  % onsets of too short heart beats 
+    ons_secs.c_outliers_low      = [];  % onsets of too short heart beats
     ons_secs.r_hist              = [];  % histogram of breathing amplitudes
     
     % scan timing parameters

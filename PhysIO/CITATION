@@ -7,4 +7,11 @@ in fMRI Data.
 Journal of Neuroscience Methods 276, 56–72. 
 doi:10.1016/j.jneumeth.2016.10.019
 
+If you use respiratory volume per time (RVT) regressors or preprocessing of respiratory traces, please also cite:
+
+Harrison, S.J., Bianchi, S., Heinzle, J., Stephan, K.E., Iglesias, S., Kasper L., 2021.
+A Hilbert-based method for processing respiratory timeseries.
+NeuroImage, 117787. https://doi.org/10.1016/j.neuroimage.2021.117787
+
+
 For a detailed snippet to be included in the methods section of your manuscript, see the FAQ in the documentation.

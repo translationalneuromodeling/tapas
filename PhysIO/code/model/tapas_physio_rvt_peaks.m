@@ -1,8 +1,8 @@
 function [rvt, timeRpulseMax, timeRpulseMin, verbose] = ...
-    tapas_physio_rvt(fr, t, sample_points, verbose)
+    tapas_physio_rvt_peaks(fr, t, sample_points, verbose)
 % computes respiratory volume per time from filtered time series
 %
-%    [rvt, rpulseMax, rpulseMin] = tapas_physio_rvt(fr, t)
+%    [rvt, rpulseMax, rpulseMin] = tapas_physio_rvt_peaks(fr, t)
 %
 %
 % NEW:
@@ -35,7 +35,7 @@ function [rvt, timeRpulseMax, timeRpulseMin, verbose] = ...
 % EXAMPLE
 %   [rvt, rpulse] = tapas_physio_rvt(fr, t)
 %
-%   See also tapas_physio_create_rvt_regressor
+%   See also tapas_physio_create_rvt_regressor, tapas_physio_rvt_hilbert
 
 % Author: Lars Kasper
 % Created: 2014-01-20
