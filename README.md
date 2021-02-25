@@ -22,6 +22,7 @@ psychiatry, computational neurology, and computational psychosomatics.
 Currently, TAPAS includes the following packages:
 
 - [ceode](ceode/README.md): Continuous Extension of ODE methods. A toolbox for robust estimation of convolution based Dynamic Causal Models (DCMs) for evoked responses (ERPs). 
+- [genbed](genbed/README.md): A Python package for data exploration and classification as part of the **gen**erative em**bed**ding pipeline.
 - [HGF](HGF/README.md): The Hierarchical Gaussian Filter; Bayesian inference
   on computational processes from observed behaviour.
 - [HUGE](huge/README.md): Variational Bayesian inversion for hierarchical
