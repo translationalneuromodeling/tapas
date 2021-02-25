@@ -1,6 +1,7 @@
 # Generative Embedding
 
 > Version: 0.1.0
+>
 > Author: Sam Harrison
 
 A Python package for classification problems, with a focus on data exploration
