@@ -36,6 +36,7 @@ unsupervised generative embedding (HUGE).
 
 And the following tasks:
 - [FDT](task/FDT/README.md): Filter Detection Task.
+- [BLT](task/BLT/README.md): Breathing Learning Task.
 
 TAPAS is written in MATLAB and distributed as open source code under
 the GNU General Public License (GPL, Version 3).
