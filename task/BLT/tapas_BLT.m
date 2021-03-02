@@ -16,6 +16,12 @@ sca;
 close all;
 clearvars;
 
+% Check folder location is main BLT folder
+[~,dir_name] = fileparts(pwd);
+if ~strcmp(dir_name,'BLT')
+   error('Not currently in main BLT folder. Please move to BLT folder and try again.');
+end
+
 % Add relevant paths
 addpath('utils');
 addpath('images');
