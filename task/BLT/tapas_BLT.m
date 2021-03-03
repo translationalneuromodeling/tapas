@@ -25,7 +25,7 @@ end
 % Add relevant paths
 addpath('utils');
 addpath('images');
-addpath('utils/helper');
+addpath(fullfile('utils','helper'));
 addpath('outputfiles');
 KbName('UnifyKeyNames');
 
