@@ -15,7 +15,7 @@ function update_from_affine_matrix(this, ...
 % EXAMPLE
 %   update_from_affine_matrix
 %
-%   See also MrAffineTransformation uniqc_spm_matrix, uniqc_spm_imatrix
+%   See also MrAffineTransformation tapas_uniqc_spm_matrix, tapas_uniqc_spm_imatrix
 
 % Author:   Saskia Klein & Lars Kasper
 % Created:  2014-07-27
@@ -31,7 +31,7 @@ function update_from_affine_matrix(this, ...
 
 % round to N decimals, to avoid small numbers < double precision
 N = floor(abs(log10(eps('double'))));
-P = round(uniqc_spm_imatrix(affineMatrix),N);
+P = round(tapas_uniqc_spm_imatrix(affineMatrix),N);
 
 this.offcenter_mm       = P(1:3);
 this.rotation_deg       = P(4:6)/pi*180;

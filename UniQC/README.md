@@ -133,71 +133,79 @@ Documentation for this toolbox is provided in the following forms
 ## Demos
 
 ### Make example data
-Some of the demos require example data, which are created based on the multi-echo data references above (Heunis et al.) and the `make_example_data`
+Some of the demos require example data, which are created based on the multi-echo data references above (Heunis et al.) and the `tapas_uniqc_make_example_data`
 script which can be found in demo/Paper.
 
+### Use cases
+Below is a comprehensive list of demos highlighting the broad functionality of UniQC sorted by classes. For selected use cases, we recommend the following demos as starting points:
+- Artefact hunting and raw data visualization: `MrImage/tapas_uniqc_demo_image_math_imcalc_fslmaths.m` & `MrImage/tapas_uniqc_demo_plot_images.m`
+- Raw data QC: `MrSeries/tapas_uniqc_demo_fmri_qa.m`
+- QC for n-dimensional data using SPM preprocessing steps: `MrImage/tapas_uniqc_demo_realign.m`  
+     _Note_: While `MrImage` has the full nD functionality, `MrSeries` currently operates only on 4D images. In the next release, `MrSeries` will be upgraded to nD by replacing `MrImageSpm4D` with `MrImage` as its data class. 
+- Impact of preprocessing steps on QC measures: `MrSeries/tapas_uniqc_demo_snr_analysis_mrseries.m`
+
 ### MrImage
-`MrImage/demo_add_overlay.m`: Illustrates how to use plot with overlayImages and compares it to an implementation using native MATLAB code.
+`MrImage/tapas_uniqc_demo_add_overlay.m`: Illustrates how to use plot with overlayImages and compares it to an implementation using native MATLAB code.
 
-`MrImage/demo_constructor.m`: Illustrates how MrImage objects can be created from nifti files, folders and Philips par/rec files.
+`MrImage/tapas_uniqc_demo_constructor.m`: Illustrates how MrImage objects can be created from nifti files, folders and Philips par/rec files.
 
-`MrImage/demo_coregister.m`: Illustrates how to coregister a structural to a functional image and the difference between changing (only) the geometry and reslicing the coregistered image.
+`MrImage/tapas_uniqc_demo_coregister.m`: Illustrates how to coregister a structural to a functional image and the difference between changing (only) the geometry and reslicing the coregistered image.
 
-`MrImage/demo_image_math_imcalc_fslmaths.m`: Illustrates how to estimate image properties and compare different images.
+`MrImage/tapas_uniqc_demo_image_math_imcalc_fslmaths.m`: Illustrates how to estimate image properties and compare different images.
 
-`MrImage/demo_load_fileformats.m`: Illustrates different options to load nD nifti files.
+`MrImage/tapas_uniqc_demo_load_fileformats.m`: Illustrates different options to load nD nifti files.
 
-`MrImage/demo_plot_images.m`: Illustrates the versatile plot options.
+`MrImage/tapas_uniqc_demo_plot_images.m`: Illustrates the versatile plot options.
 
-`MrImage/demo_realign.m`: Illustrates the syntax to extend SPM pre-processing options to n-dimensional data.
+`MrImage/tapas_uniqc_demo_realign.m`: Illustrates the syntax to extend SPM pre-processing options to n-dimensional data.
 
-`MrImage/demo_reslice.m`: Illustrates the usage of reslicing (i.e. resampling to a new geometry).
+`MrImage/tapas_uniqc_demo_reslice.m`: Illustrates the usage of reslicing (i.e. resampling to a new geometry).
 
-`MrImage/demo_roi_analysis.m`: Template for a fast analysis of regions-of-interest defined using tissue masks and manually drawn masks, which can be saved and, thereby, enhance the documentation of the performed analysis.
+`MrImage/tapas_uniqc_demo_roi_analysis.m`: Template for a fast analysis of regions-of-interest defined using tissue masks and manually drawn masks, which can be saved and, thereby, enhance the documentation of the performed analysis.
 
-`MrImage/demo_segment`: Illustrates the syntax and integration of the unified segmentation in SPM into uniQC.
+`MrImage/tapas_uniqc_demo_segment`: Illustrates the syntax and integration of the unified segmentation in SPM into uniQC.
 
-`MrImage/demo_smooth`: Illustrates nD smoothing.
+`MrImage/tapas_uniqc_demo_smooth`: Illustrates nD smoothing.
 
-`MrImage/demo_split_complex.m`: Illustrates how complex data are automatically split and combined to perform SPM pre-processing operations.
+`MrImage/tapas_uniqc_demo_split_complex.m`: Illustrates how complex data are automatically split and combined to perform SPM pre-processing operations.
 
 ### MrSeries
-`MrSeries/demo_fmri_qa.m`: Illustrates how to combine different visualisations and image operations to inspect an fMRI time series.
+`MrSeries/tapas_uniqc_demo_fmri_qa.m`: Illustrates how to combine different visualisations and image operations to inspect an fMRI time series.
 
-`MrSeries/demo_model_estimation_1st_level.m`: Illustrates how to specify a 1st level model using MrGlm and estimating its parameters using the classical restricted maximum Likelihood approach within SPM (Kiebel and Holmes, 2007). Note that it requires the output of MrSeries/demo_preprocessing.
+`MrSeries/tapas_uniqc_demo_model_estimation_1st_level.m`: Illustrates how to specify a 1st level model using MrGlm and estimating its parameters using the classical restricted maximum Likelihood approach within SPM (Kiebel and Holmes, 2007). Note that it requires the output of MrSeries/demo_preprocessing.
 
-`MrSeries/demo_model_estimation_1st_level_Bayesian.m`: Illustrates how to estimate the same model as in MrSeries/demo_model_estimation_1st_level using a Variational Bayesian framework (Penny et al., 2003). Note that it requires the output of MrSeries/demo_model_estimation_1st_level and MrSeries/demo_preprocessing.
+`MrSeries/tapas_uniqc_demo_model_estimation_1st_level_Bayesian.m`: Illustrates how to estimate the same model as in MrSeries/demo_model_estimation_1st_level using a Variational Bayesian framework (Penny et al., 2003). Note that it requires the output of MrSeries/demo_model_estimation_1st_level and MrSeries/demo_preprocessing.
 
-`MrSeries/demo_preprocessing.m`: Example pre-processing script for fMRI data. Illustrates how MrSeries automatically updates data and populates appropriate properties such as mean, snr, sd images, tissue probability maps and masks.
+`MrSeries/tapas_uniqc_demo_preprocessing.m`: Example pre-processing script for fMRI data. Illustrates how MrSeries automatically updates data and populates appropriate properties such as mean, snr, sd images, tissue probability maps and masks.
 
-`MrSeries/demo_snr_analysis_mrseries.m`: Example of a tSNR assessment in different ROIS illustrating the impact of different pre-processing steps on tSNR in grey matter.
+`MrSeries/tapas_uniqc_demo_snr_analysis_mrseries.m`: Example of a tSNR assessment in different ROIS illustrating the impact of different pre-processing steps on tSNR in grey matter.
 
 ### MrDimInfo
-`MrDimInfo/demo_dim_info.m`: The MrDimInfo class implements data selection and access used in plots and computations. The demo covers the creation of dimInfo objects, retrieving parameters via get_dims and dimInfo.dimLabel, adding/setting dimensions, retrieving array indices and sampling points, selecting a subset of dimensions and creating dimInfos from files. Note that dimInfo does not know about the affineGeometry, i.e. all sampling points are with reference to the data matrix.
+`MrDimInfo/tapas_uniqc_demo_dim_info.m`: The MrDimInfo class implements data selection and access used in plots and computations. The demo covers the creation of dimInfo objects, retrieving parameters via get_dims and dimInfo.dimLabel, adding/setting dimensions, retrieving array indices and sampling points, selecting a subset of dimensions and creating dimInfos from files. Note that dimInfo does not know about the affineGeometry, i.e. all sampling points are with reference to the data matrix.
 
 ### MrAffineGeometry
-`MrAffineGeometry/demo_affine_geometry.m`: Exemplifies creating of an MrAffineGeometry object using a nifti file, a Philips par/rec file, prop/val pairs or an affine transformation matrix.
+`MrAffineGeometry/tapas_uniqc_demo_affine_geometry.m`: Exemplifies creating of an MrAffineGeometry object using a nifti file, a Philips par/rec file, prop/val pairs or an affine transformation matrix.
 
 ### MrImageGeometry
-`MrImageGeometry/demo_image_geometry.m`: Shows how an MrImageGeometry object can be created from file or via MrDimInfo and MrAffineGeometry objects.
+`MrImageGeometry/tapas_uniqc_demo_image_geometry.m`: Shows how an MrImageGeometry object can be created from file or via MrDimInfo and MrAffineGeometry objects.
 
-`MrImageGeometry/demo_load_geometry_from_nifti`: Illustrates how MrAffineGeometry and MrDimInfo are created when loading from nifti.
+`MrImageGeometry/tapas_uniqc_demo_load_geometry_from_nifti`: Illustrates how MrAffineGeometry and MrDimInfo are created when loading from nifti.
 
-`MrImageGeometry/definition_of_geometry`: Illustrates the overall definition of an affine matrix.
+`MrImageGeometry/tapas_uniqc_definition_of_geometry`: Illustrates the overall definition of an affine matrix.
 
-`MrImageGeometry/demo_change_geometry`: Illustrates the effect of changing the image geometry within MrAffineGeometry and MrDimInfo.
+`MrImageGeometry/tapas_uniqc_demo_change_geometry`: Illustrates the effect of changing the image geometry within MrAffineGeometry and MrDimInfo.
 
-`MrImageGeometry/demo_set_geometry`: Illustrates the effect of changing translation, rotation, shear and zoom in the image geometry.
+`MrImageGeometry/tapas_uniqc_demo_set_geometry`: Illustrates the effect of changing translation, rotation, shear and zoom in the image geometry.
 
 ### MrDataNd
-`MrDataNd/demo_load.m`: Illustrates different loading scenarios.
+`MrDataNd/tapas_uniqc_demo_load.m`: Illustrates different loading scenarios.
 
-`MrDataNd/demo_save.m`: Illustrates how data are split to allow compatibility with SPM read-in.
+`MrDataNd/tapas_uniqc_demo_save.m`: Illustrates how data are split to allow compatibility with SPM read-in.
 
-`MrDataNd/demo_select.m`: Illustrates how to select subsets of data.
+`MrDataNd/tapas_uniqc_demo_select.m`: Illustrates how to select subsets of data.
 
 ### MrCopyData
-`MrCopyData/demo_copy_data.m`: Shows the functionality of MrCopyData for deep cloning and recursive operations.
+`MrCopyData/tapas_uniqc_demo_copy_data.m`: Shows the functionality of MrCopyData for deep cloning and recursive operations.
 
 
 ## Background
@@ -212,10 +220,10 @@ Here, we present the uniQC toolbox that provides seamless combination of algebra
 - Lead Programmer: 
     - Lars Kasper, TNU & MR-Technology Group, IBT, University of Zurich & ETH Zurich
     - Saskia Bollmann, Centre for Advanced Imaging, University of Queensland, Australia
-- Project Team: 
-    - ...
 - Contributors:
     - Matthias Mueller-Schrader, TNU Zurich
+    - Laetitia Vionnet, IBT Zurich
+    - Michael Wyss, IBT Zurich
     - External TAPAS contributors are listed in the [Contributor License Agreement](https://github.com/translationalneuromodeling/tapas/blob/master/Contributor-License-Agreement.md)
 
 
@@ -234,6 +242,15 @@ We thank Stephan Heunis and colleagues for the provision of the [rt-me-fmri data
 
 We thank all internal users at the TNU, IBT and CAI for employing UniQC and providing helpful feedback on the toolbox functionality.
 
+The UniQC Toolbox ships with the following publicly available code from other open source projects and gratefully acknowledges their use.
+
+- `utils\tapas_uniqc_propval.m`
+    - `propval` function from Princeton MVPA toolbox (GPL)
+      a nice wrapper function to create flexible propertyName/value optional
+      parameters
+- `utils\plot\tapas_physio_hline.m` and `tapas_physio_vline.m`
+    -  Brandon Kuczenski (2001). hline and vline (https://www.mathworks.com/matlabcentral/fileexchange/1039-hline-and-vline), MATLAB Central File Exchange.
+    - plots constant vertical and horizontal lines in Matlab figures
 
 ## References
 1. Bollmann, S., Kasper, L., Pruessmann, K., Barth, M., Stephan, K.E., 2018. Interactive and flexible quality control in fMRI sequence evaluation: the uniQC toolbox, in: Proc. Intl. Soc. Mag. Reson. Med. 26. Presented at the ISMRM, Paris, France, p. 2842.

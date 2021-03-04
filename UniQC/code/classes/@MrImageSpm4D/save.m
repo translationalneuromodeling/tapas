@@ -29,9 +29,9 @@ function [this, saveFileName] = save(this, varargin)
 
 
 defaults.fileName = this.get_filename();
-args = propval(varargin, defaults);
+args = tapas_uniqc_propval(varargin, defaults);
 
-strip_fields(args);
+tapas_uniqc_strip_fields(args);
 
 saveFileName = this.write_single_file(fileName);
 end

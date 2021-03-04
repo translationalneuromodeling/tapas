@@ -38,8 +38,8 @@ function manualMask = draw_mask(this, varargin)
 defaults.z = [];
 defaults.t = 1;
 
-args = propval(varargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 if isempty(z) || any(isinf(z))
     z = 1:this.dimInfo.nSamples(3); % TODO: make it dependent on name of label?!?

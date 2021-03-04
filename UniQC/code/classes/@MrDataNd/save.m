@@ -32,7 +32,7 @@ function [this, saveFileNameArray] = save(this, varargin)
 defaults.fileName = this.get_filename(); % take only root of filename
 defaults.splitDims = 'unset'; % changed below!
 
-args = propval(varargin, defaults);
+args = tapas_uniqc_propval(varargin, defaults);
 args.doSave = true; % we do want to save here!
 
 [~, ~, saveFileNameArray] = this.split(args);

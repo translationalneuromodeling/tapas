@@ -129,8 +129,8 @@ defaults.affineRegularisation = 'mni';
 defaults.smoothnessFwhm = 0;
 defaults.samplingDistance = 3;
 
-% propval
-args = propval(varargin, defaults);
+% tapas_uniqc_propval
+args = tapas_uniqc_propval(varargin, defaults);
 
 biasFieldCorrected = this.copyobj();
 % if certain ouput parameters are requested, the input parameters must

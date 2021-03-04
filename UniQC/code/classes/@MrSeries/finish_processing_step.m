@@ -119,7 +119,7 @@ switch module
     case 'realign' % load realignment parameters into object
         
         fileRealignmentParameters = regexprep( ...
-            prefix_files(inputImage.get_filename('prefix', 'raw'), ...
+            tapas_uniqc_prefix_files(inputImage.get_filename('prefix', 'raw'), ...
             'rp_'), '\.nii$', '\.txt') ;
         this.glm.regressors.realign = load(fileRealignmentParameters);
         
@@ -151,7 +151,7 @@ if ~doSaveRaw && exist(pathRaw, 'dir')
 end
 
 if ~doSave
-    delete_with_hdr(filesProcessed);
+    tapas_uniqc_delete_with_hdr(filesProcessed);
 end
 
 % strip object data and save ...

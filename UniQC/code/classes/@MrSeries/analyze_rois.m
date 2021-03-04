@@ -66,12 +66,12 @@ for iImage = 1:nImages
         inputImages{iImage}.rois{thisRoi}.parameters.save.path = save_path;
         % create valid filename from roi.name 
         
-        if isNewGraphics()
+        if tapas_uniqc_isNewGraphics()
             inputImages{iImage}.rois{thisRoi}.parameters.save.fileName = ...
                 [matlab.lang.makeValidName(inputImages{iImage}.rois{thisRoi}.name), '.mat'];
         else
             inputImages{iImage}.rois{thisRoi}.parameters.save.fileName = ...
-                str2fn([inputImages{iImage}.rois{thisRoi}.name, '.mat']);
+                tapas_uniqc_str2fn([inputImages{iImage}.rois{thisRoi}.name, '.mat']);
         end
         
          % save roi data

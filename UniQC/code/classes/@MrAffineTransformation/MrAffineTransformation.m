@@ -23,7 +23,7 @@ classdef MrAffineTransformation < MrCopyData
     % EXAMPLE
     %   MrAffineTransformation
     %
-    %   See also uniqc_spm_matrix uniqc_spm_imatrix MrDimInfo
+    %   See also tapas_uniqc_spm_matrix tapas_uniqc_spm_imatrix MrDimInfo
     %   MrImageGeometry MrImage
     %   MrImageGeometry.set_from_dimInfo_and_affineTrafo
     

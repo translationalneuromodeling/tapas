@@ -34,8 +34,8 @@ function fhArray = plot_rois(this, varargin)
 
 defaults.selectedRois = Inf;
 
-[args, argsPlotRois] = propval(varargin, defaults);
-strip_fields(args);
+[args, argsPlotRois] = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 if isinf(selectedRois)
     selectedRois = 1:numel(this.rois);

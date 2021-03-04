@@ -28,7 +28,7 @@ function this = MrDimInfo_load_from_mat(this, testCaseLoadMat)
 %  <http://www.gnu.org/licenses/>.
 dimInfo = this.make_dimInfo_reference(0);
 % save parameters
-dataPath = get_path('data');
+dataPath = tapas_uniqc_get_path('data');
 folderName = fullfile(dataPath, 'temp_MrDimInfo_load_from_mat');
 % TODO: replace with proper exist check
 [~, ~] = mkdir(folderName);

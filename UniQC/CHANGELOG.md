@@ -4,13 +4,20 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: UniQC Toolbox Release R2021a-beta, v0.2.0*
+*Current version: UniQC Toolbox Release R2021a-beta, v0.2.1*
 
-March 1st, 2021
+March 4th, 2021
+
+Bugfix Release Notes (v0.2.1)
+-----------------------------
+
+### Changed
+- renamed files in `demo` and `utils` to adhere to TAPAS naming conventions
+- removed or acknowledged external tools
 
 
-Beta Release Notes (v0.2.0)
----------------------------
+Beta Release Notes (v0.2.0, March 2021)
+---------------------------------------
 
 ### Added
 - First beta release of UniQC within TAPAS

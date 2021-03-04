@@ -50,8 +50,8 @@ function otherImage = compute_mask(this, varargin)
 defaults.threshold = 0;
 defaults.caseEqual = 'include';
 defaults.targetGeometry = this.geometry;
-args = propval(varargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 otherImage = this.copyobj;
 % reslice if geometries differ

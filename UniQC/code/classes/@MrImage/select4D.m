@@ -95,8 +95,8 @@ end
 defaults.fixedWithinFigure  = 'slices'; 
 defaults.exclude            = 'false';
 
-[argsUsed, argsExtract] = propval(varargin, defaults);
-strip_fields(argsUsed);
+[argsUsed, argsExtract] = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(argsUsed);
 
 if strcmpi(method, 'manual')
     % plot and click montage

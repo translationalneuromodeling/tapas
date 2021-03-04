@@ -35,8 +35,8 @@ function outputImage = smooth(this, varargin)
 
 defaults.fwhm = 8;
 
-args = propval(varargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 if length(fwhm) == 1
     fwhm = fwhm*[ 1 1 1];

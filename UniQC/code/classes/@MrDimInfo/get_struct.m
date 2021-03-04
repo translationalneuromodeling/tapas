@@ -43,6 +43,6 @@ else
     % set nDims empty as default
     defaultDims.nDims = [];
     warning('on', 'MATLAB:structOnObject');
-    [outputStruct, unusedArg] = propval(varargin(:), defaultDims);
+    [outputStruct, unusedArg] = tapas_uniqc_propval(varargin(:), defaultDims);
 end
 end

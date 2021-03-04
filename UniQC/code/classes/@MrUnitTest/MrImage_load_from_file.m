@@ -28,7 +28,7 @@ function this = MrImage_load_from_file(this, testCondition)
 % For further details, see the file COPYING or
 %  <http://www.gnu.org/licenses/>.
 
-dataPath = get_path('data');
+dataPath = tapas_uniqc_get_path('data');
 niftiFile4D = fullfile(dataPath, 'nifti', 'rest', 'fmri_short.nii');
 
 switch testCondition

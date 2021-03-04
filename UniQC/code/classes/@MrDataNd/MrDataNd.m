@@ -78,7 +78,7 @@ classdef MrDataNd < MrCopyData
             defaults.name = 'MrDataNd';
             defaults.info = {};
             
-            [args, argsUnused] = propval(varargin, defaults);
+            [args, argsUnused] = tapas_uniqc_propval(varargin, defaults);
             
             % populate object with input data prop/value pairs
             props = fieldnames(defaults);

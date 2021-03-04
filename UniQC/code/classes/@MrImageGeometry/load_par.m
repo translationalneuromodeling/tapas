@@ -15,7 +15,7 @@ function this = load_par(this, filename)
 % EXAMPLE
 %   load_par
 %
-%   See also MrImageGeometry read_par_header
+%   See also MrImageGeometry tapas_uniqc_read_par_header
 
 % Author:   Lars Kasper & Laetitia Vionnet
 % Created:  2016-01-31
@@ -30,7 +30,7 @@ function this = load_par(this, filename)
 %  <http://www.gnu.org/licenses/>.
 
 
-header = read_par_header(filename);
+header = tapas_uniqc_read_par_header(filename);
 
 
 %% rotated data matrix depending on slice acquisition orientation

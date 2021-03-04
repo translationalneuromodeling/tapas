@@ -52,8 +52,8 @@ if nargin > 1
     defaults.rotation_deg = [];
     defaults.TR_s = [];
    
-    [argsGeom, argsUnused] = propval(varargin, defaults);
-    strip_fields(argsGeom);
+    [argsGeom, argsUnused] = tapas_uniqc_propval(varargin, defaults);
+    tapas_uniqc_strip_fields(argsGeom);
     
     updateOffcenter = ~isempty(offcenter_mm);
     updateRotation = ~isempty(rotation_deg);

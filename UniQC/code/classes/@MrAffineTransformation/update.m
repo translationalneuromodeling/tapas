@@ -49,8 +49,8 @@ if nargin > 1
     defaults.shear = this.shear;
 
     
-    [argsGeom, argsUnused] = propval(varargin, defaults);
-    strip_fields(argsGeom);
+    [argsGeom, argsUnused] = tapas_uniqc_propval(varargin, defaults);
+    tapas_uniqc_strip_fields(argsGeom);
     
     updateAffine = ~isempty(affineMatrix);  
     

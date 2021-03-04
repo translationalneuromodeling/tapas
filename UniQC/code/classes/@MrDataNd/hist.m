@@ -45,7 +45,7 @@ end
 [pixelsPerBin, binPositions] = hist(imgSelect.data(:), nBins);
 
 nPixels         = prod(imgSelect.dimInfo.nSamples);
-nameString      = str2label(sprintf('Pixel Histogram of %s (total: %d pixels)', ...
+nameString      = tapas_uniqc_str2label(sprintf('Pixel Histogram of %s (total: %d pixels)', ...
     this.name, nPixels));
 figureHandle    = figure('Name', nameString);
 

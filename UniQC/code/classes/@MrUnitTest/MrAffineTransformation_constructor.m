@@ -37,7 +37,7 @@ switch testVariants
         
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         % make full filename
         solutionFileName = fullfile(classesPath, '@MrUnitTest' , 'affineTrafo.mat');
         expSolution = load(solutionFileName);

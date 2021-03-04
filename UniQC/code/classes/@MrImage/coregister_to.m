@@ -106,8 +106,8 @@ defaults.trafoParameters = 'rigid';
 % other coreg_to parameters of MrImageSpm4D
 defaults.applyTransformation = 'data';
 defaults.otherImages = {};
-args = propval(varargin, defaults);
-% strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+% tapas_uniqc_strip_fields(args);
 
 methodParameters = {args};
 

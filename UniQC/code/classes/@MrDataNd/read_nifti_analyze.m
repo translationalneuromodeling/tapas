@@ -32,7 +32,7 @@ if nargin < 2
         this.parameters.unprocessedFile);
 end
 
-fileNameVolArray = get_vol_filenames(fileName);
+fileNameVolArray = tapas_uniqc_get_vol_filenames(fileName);
 
 V = spm_vol(strvcat(fileNameVolArray));
 

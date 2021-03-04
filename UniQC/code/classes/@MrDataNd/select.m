@@ -55,8 +55,8 @@ function [selectionImage, selectionIndexArray, unusedVarargin] = select(this, va
 returnUnusedVarargin = nargout >=3;
 % extract removeDims info
 defaults.removeDims = 0;
-[args, argsSelect] = propval(varargin, defaults);
-strip_fields(args);
+[args, argsSelect] = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 if returnUnusedVarargin
     [selectionDimInfo, selectionIndexArray, unusedVarargin] = ...

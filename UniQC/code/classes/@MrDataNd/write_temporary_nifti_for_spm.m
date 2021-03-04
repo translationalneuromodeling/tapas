@@ -32,7 +32,7 @@ function fileNameTemp = write_temporary_nifti_for_spm(this)
 
 [~,fn] = fileparts(this.parameters.save.fileName);
 
-fileNameTemp = [prefix_files(tempname(this.parameters.save.path), ...
+fileNameTemp = [tapas_uniqc_prefix_files(tempname(this.parameters.save.path), ...
     [fn '_']) '.nii'];
 
 % return value could be an array of filenames, if nifti is split

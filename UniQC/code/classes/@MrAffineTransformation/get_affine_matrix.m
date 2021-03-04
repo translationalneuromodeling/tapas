@@ -17,7 +17,7 @@ function affineTransformationMatrix = get_affine_matrix(this)
 % EXAMPLE
 %   get_affine_matrix
 %
-%   See also MrAffineTransformation uniqc_spm_matrix
+%   See also MrAffineTransformation tapas_uniqc_spm_matrix
 
 % Author:   Saskia Klein & Lars Kasper
 % Created:  2014-07-15
@@ -37,4 +37,4 @@ P(4:6) = this.rotation_deg*pi/180;
 P(7:9) = this.scaling;
 P(10:12) = this.shear;
 
-affineTransformationMatrix = uniqc_spm_matrix(P);
+affineTransformationMatrix = tapas_uniqc_spm_matrix(P);

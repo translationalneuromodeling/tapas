@@ -89,8 +89,8 @@ end
 defaults.select = [];
 defaults.dimInfo = [];
 defaults.affineTransformation = [];
-[args, argsUnused] = propval(varargin, defaults);
-strip_fields(args);
+[args, argsUnused] = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 % Harvest propval for dimInfo constructor
 [propValDimInfo, argsUnusedAfterDimInfo] = this.dimInfo.get_struct(argsUnused);
@@ -98,7 +98,7 @@ strip_fields(args);
 % input arguments for dimInfo constructor that are not properties
 % themselves also need to be respected...
 extraArgsDimInfo = this.dimInfo.get_additional_constructor_inputs();
-[propValDimInfoExtra, argsUnusedAfterDimInfo] = propval(argsUnusedAfterDimInfo, extraArgsDimInfo);
+[propValDimInfoExtra, argsUnusedAfterDimInfo] = tapas_uniqc_propval(argsUnusedAfterDimInfo, extraArgsDimInfo);
 
 % create propValAffineTrafo
 affineTrafo = MrAffineTransformation();
@@ -126,11 +126,11 @@ else % files or file pattern or directory
     if isExplicitFileArray
         fileArray = inputDataOrFile;
     else
-        fileArray = get_filenames(inputDataOrFile);
+        fileArray = tapas_uniqc_get_filenames(inputDataOrFile);
     end
     
     % remove _dimInfo.mat from fileArray list
-    [~, fileArray] = find_info_file(fileArray, '_dimInfo.mat');
+    [~, fileArray] = tapas_uniqc_find_info_file(fileArray, '_dimInfo.mat');
     %  get extra dimInfos from file names for select
     dimInfoExtra = MrDimInfo();
     dimInfoExtra.set_from_filenames(fileArray);
@@ -162,7 +162,7 @@ else % files or file pattern or directory
             % get filename
             fileName = fileArray{iFile};
             % get dimLabels from file name
-            [dimLabels, dimValues] = get_dim_labels_from_string(fileName);
+            [dimLabels, dimValues] = tapas_uniqc_get_dim_labels_from_string(fileName);
             % check if dimLabels could be inferred from filename
             hasFoundDimLabelInFileName = ~isempty(dimLabels);
             if hasSelect

@@ -74,8 +74,8 @@ defaults.signalPart = 'abs';
 defaults.updateProperties = 'name';
 
 % parse input arguments
-args = propval(varargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 doUpdateName = any(ismember({'name', 'all', 'both'}, cellstr(updateProperties)));
 doUpdateSave = any(ismember({'save', 'all', 'both'}, cellstr(updateProperties)));

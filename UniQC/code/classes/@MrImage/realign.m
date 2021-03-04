@@ -106,7 +106,7 @@ spmDefaults.wrapping = [0 0 0];    % fold-over direction (phase encode)
 spmDefaults.weighting = '';        % weighting image for estimation
 spmDefaults.masking = 1;           % mask incomplete timeseries?
 
-[spmParameters, unusedVarargin] = propval(varargin, spmDefaults);
+[spmParameters, unusedVarargin] = tapas_uniqc_propval(varargin, spmDefaults);
 
 % for split/apply functionality
 methodParameters = {spmParameters};
@@ -117,8 +117,8 @@ defaults.applicationIndexArray      = {}; % default: apply to all
 defaults.splitDimLabels             = {};
 defaults.splitComplex               = 'mp';
 defaults.idxOutputParameters        = 2;
-args = propval(unusedVarargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(unusedVarargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 % check whether (real/complex) 4D
 nonSDims = realignedImage.dimInfo.get_non_singleton_dimensions();

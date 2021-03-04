@@ -44,9 +44,9 @@ function [outputImage, varargout] = apply_spm_method_per_4d_split(this, methodHa
 defaults.methodParameters = {};
 defaults.splitDimLabels = {};
 
-args = propval(varargin, defaults);
+args = tapas_uniqc_propval(varargin, defaults);
 
-strip_fields(args);
+tapas_uniqc_strip_fields(args);
 %% create 4 SPM dimensions via complement of split dimensions
 % if not specified, standard dimensions are taken
 if isempty(splitDimLabels)

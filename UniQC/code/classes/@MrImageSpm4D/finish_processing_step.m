@@ -71,14 +71,14 @@ if hasMatlabbatch
     switch module
         case 'apply_transformation_field'
             prefixOutput = 'w';
-            fileOutputSpm = prefix_files(fileRaw, prefixOutput);
+            fileOutputSpm = tapas_uniqc_prefix_files(fileRaw, prefixOutput);
             
         case 'coregister_to'
             % has matlabbatch, but does not create unnecessary files...,
             % since matlabbatch not executed...
             prefixOutput = '';
             fileStationaryImage = varargin{1};
-            delete_with_hdr(fileStationaryImage);
+            tapas_uniqc_delete_with_hdr(fileStationaryImage);
             fileOutputSpm = varargin{2}; % SPM output of reslice
             filesCreated = [
                 filesCreated
@@ -88,7 +88,7 @@ if hasMatlabbatch
         case 'apply_realign'
             
             prefixOutput = 'r';
-            fileOutputSpm = prefix_files(fileRaw, prefixOutput);
+            fileOutputSpm = tapas_uniqc_prefix_files(fileRaw, prefixOutput);
             filesCreated = {
                 fileRaw
                 fileProcessed
@@ -99,11 +99,11 @@ if hasMatlabbatch
             fileWeightingRealign = varargin{1};
             
             prefixOutput = 'r';
-            fileOutputSpm = prefix_files(fileRaw, prefixOutput);
+            fileOutputSpm = tapas_uniqc_prefix_files(fileRaw, prefixOutput);
             
             fileRealignmentParameters = regexprep(...
-                prefix_files(fileRaw, 'rp_'), '\.nii', '\.txt');
-            fileRealignMean = prefix_files(fileRaw, 'mean');
+                tapas_uniqc_prefix_files(fileRaw, 'rp_'), '\.nii', '\.txt');
+            fileRealignMean = tapas_uniqc_prefix_files(fileRaw, 'mean');
             filesCreated = [
                 filesCreated
                 {fileRealignmentParameters; fileRealignMean;}
@@ -115,12 +115,12 @@ if hasMatlabbatch
         case 'reslice'
             
             prefixOutput = 'r';
-            fileOutputSpm = prefix_files(fileRaw, prefixOutput);
+            fileOutputSpm = tapas_uniqc_prefix_files(fileRaw, prefixOutput);
             
             fnTargetGeometry = varargin{1};
             
             % dummy image of target geometry always deleted
-            delete_with_hdr(fnTargetGeometry);
+            tapas_uniqc_delete_with_hdr(fnTargetGeometry);
             
         case 'segment'
             % parse inputs
@@ -131,10 +131,10 @@ if hasMatlabbatch
             
             % the bias-corrected anatomical is the output
             prefixOutput = 'm';
-            fileOutputSpm = prefix_files(fileRaw, prefixOutput);
-            tpmOutputSpm = MrImage(prefix_files(fileOutputSpm, '*', 1), ...
+            fileOutputSpm = tapas_uniqc_prefix_files(fileRaw, prefixOutput);
+            tpmOutputSpm = MrImage(tapas_uniqc_prefix_files(fileOutputSpm, '*', 1), ...
                 'updateProperties', 'save');
-            delete(prefix_files(fileOutputSpm, '*', 1));
+            delete(tapas_uniqc_prefix_files(fileOutputSpm, '*', 1));
             tpmOutputSpm.save();
             
             % get current and new tissue probability map file names
@@ -148,19 +148,19 @@ if hasMatlabbatch
             
             for iTissue = 1:nTissues
                 indTissue = indTissueTypes(iTissue);
-                filesTpm{iTissue} = prefix_files(fileRaw, ...
+                filesTpm{iTissue} = tapas_uniqc_prefix_files(fileRaw, ...
                     sprintf('c%d%', indTissue));
                 % add wildcard for multi-channel segmentation
-                filesTpm{iTissue} = prefix_files(filesTpm{iTissue}, splitSuffix, 1);
-                filesTpmProcessed{iTissue} = prefix_files( ...
+                filesTpm{iTissue} = tapas_uniqc_prefix_files(filesTpm{iTissue}, splitSuffix, 1);
+                filesTpmProcessed{iTissue} = tapas_uniqc_prefix_files( ...
                     fullfile(this.parameters.save.path, sprintf('%s.nii', ...
                     lower(allTissueTypes{indTissue}))), ...
                     'tissueProbabilityMap', isSuffix, isMixedCase);
             end
             
             if ismember(imageOutputSpace, {'mni', 'standard', 'template', 'warped'})
-                filesTpm = prefix_files(filesTpm, 'w');
-                filesTpmProcessed = prefix_files(filesTpmProcessed, ...
+                filesTpm = tapas_uniqc_prefix_files(filesTpm, 'w');
+                filesTpmProcessed = tapas_uniqc_prefix_files(filesTpmProcessed, ...
                     'warped', isSuffix, isMixedCase);
             end
             
@@ -171,31 +171,31 @@ if hasMatlabbatch
             hasForwardField = ismember(deformationFieldDirection, {'forward', 'both', 'all'});
             hasBackwardField = ismember(deformationFieldDirection, {'backward', 'both', 'all'});
             if hasForwardField
-                filesDeformationField{end+1,1} = prefix_files(fileRaw, 'y_');
-                filesDeformationField{end,1} = prefix_files(filesDeformationField{end,1}, splitSuffix, 1);
+                filesDeformationField{end+1,1} = tapas_uniqc_prefix_files(fileRaw, 'y_');
+                filesDeformationField{end,1} = tapas_uniqc_prefix_files(filesDeformationField{end,1}, splitSuffix, 1);
                 filesDeformationFieldProcessed{end+1,1} = ...
                     fullfile(pathSave, 'forwardDeformationField.nii');
             end
             if hasBackwardField
-                filesDeformationField{end+1, 1} = prefix_files(fileRaw, 'iy_');
-                filesDeformationField{end,1} = prefix_files(filesDeformationField{end,1}, splitSuffix, 1);
+                filesDeformationField{end+1, 1} = tapas_uniqc_prefix_files(fileRaw, 'iy_');
+                filesDeformationField{end,1} = tapas_uniqc_prefix_files(filesDeformationField{end,1}, splitSuffix, 1);
                 filesDeformationFieldProcessed{end+1, 1} = ...
                     fullfile(pathSave, 'backwardDeformationField.nii');
             end
             
             % bias field names
-            fileBiasField = cellstr(prefix_files(fileRaw, ...
+            fileBiasField = cellstr(tapas_uniqc_prefix_files(fileRaw, ...
                 'BiasField_'));
             fileBiasFieldProcessed = cellstr(fullfile(pathSave, ...
                 'biasField.nii'));
             
             % join bias field and bias field corrected outputs
             % add wildcard for multi-channel segmentation
-            biasFieldPath = dir(prefix_files(fileBiasField{1}, '*', 1));
+            biasFieldPath = dir(tapas_uniqc_prefix_files(fileBiasField{1}, '*', 1));
             if ~isempty(biasFieldPath)
-                tmpBiasField = MrImage(prefix_files(fileBiasField{1}, '*', 1), ...
+                tmpBiasField = MrImage(tapas_uniqc_prefix_files(fileBiasField{1}, '*', 1), ...
                     'updateProperties', 'save');
-                delete(prefix_files(fileBiasField{1}, '*', 1));
+                delete(tapas_uniqc_prefix_files(fileBiasField{1}, '*', 1));
                 tmpBiasField.save();
             else
                 this.save('fileName', fullfile(fileBiasField{1}));
@@ -212,7 +212,7 @@ if hasMatlabbatch
                 filesDeformationFieldProcessed
                 fileBiasFieldProcessed
                 ];
-            move_with_hdr(filesMoveSource, filesMoveTarget);
+            tapas_uniqc_move_with_hdr(filesMoveSource, filesMoveTarget);
             
             % now load all output variables
             
@@ -281,7 +281,7 @@ if hasMatlabbatch
             
         case 'smooth'
             prefixOutput = 's';
-            fileOutputSpm = prefix_files(fileRaw, prefixOutput);
+            fileOutputSpm = tapas_uniqc_prefix_files(fileRaw, prefixOutput);
     end
     
     % copy dimInfo to SPM-output file, if it exists
@@ -290,11 +290,11 @@ if hasMatlabbatch
     if ~any(strcmp(module, {'coregister_to'}))
         fileDimInfoRaw = this.get_filename('prefix', 'dimInfoRaw');
         if exist(fileDimInfoRaw, 'file')
-            copyfile(fileDimInfoRaw, prefix_files(fileDimInfoRaw, prefixOutput))
+            copyfile(fileDimInfoRaw, tapas_uniqc_prefix_files(fileDimInfoRaw, prefixOutput))
         end
     end
     
-    move_with_hdr(fileOutputSpm, fileProcessed);
+    tapas_uniqc_move_with_hdr(fileOutputSpm, fileProcessed);
     
     % load back data into matrix
     this.load(fileProcessed);
@@ -335,7 +335,7 @@ if hasMatlabbatch
     
     % delete all unwanted files
     if ~doSaveRaw
-        delete_with_hdr(filesCreated);
+        tapas_uniqc_delete_with_hdr(filesCreated);
         
         % delete raw sub-folder of current processing step
         if exist(pathRaw, 'dir')

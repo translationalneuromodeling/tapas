@@ -48,8 +48,8 @@ defaults.dimSizes       = [];
 defaults.imageType      = 'abs';
 defaults.iEcho          = 1;
 defaults.rescaleMode    = 'display';
-[args, argsUnused]      = propval(varargin, defaults);
-strip_fields(args);
+[args, argsUnused]      = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 hasDimSizes = ~isempty(dimSizes);
 
@@ -66,7 +66,7 @@ end
 
 filename = fullfile(fp, [fn, ext]);
 
-header = read_par_header(filename);
+header = tapas_uniqc_read_par_header(filename);
 
 %% read binary data
 fid = fopen( filename );
@@ -122,14 +122,14 @@ for iImageType = 1:numel(dataArray)
             % data dim 1: ap, dim 2: hf, dim 3: lr
             data = permute(data, [3 1 2 4 5 6]);
             % data dim 1: lr, dim 2: ap, dim 3: hf
-            data = flip_compatible(data, 1);
-            data = flip_compatible(data, 3);
+            data = tapas_uniqc_flip_compatible(data, 1);
+            data = tapas_uniqc_flip_compatible(data, 3);
             % data dim 1: rl, dim 2: ap, dim 3: fh
         case 3 % coronal, dim1 = lr, dim2 = fh, dim3 = ap
             % data dim 1: rl, dim 2: hf, dim 3: ap
             data = permute(data, [1 3 2 4 5 6]);
             % data dim 1: rl, dim 2: ap, dim 3: hf
-            data = flip_compatible(data, 3);
+            data = tapas_uniqc_flip_compatible(data, 3);
             % data dim 1: rl, dim 2: ap, dim 3: fh
     end
     

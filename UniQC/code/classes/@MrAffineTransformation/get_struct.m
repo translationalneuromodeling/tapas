@@ -49,6 +49,6 @@ else
         defaultAffineTrafo.(thisField{1}) = [];
     end
     warning('on', 'MATLAB:structOnObject');
-    [outputStruct, unusedArg] = propval(varargin(:), defaultAffineTrafo);
+    [outputStruct, unusedArg] = tapas_uniqc_propval(varargin(:), defaultAffineTrafo);
 end
 end

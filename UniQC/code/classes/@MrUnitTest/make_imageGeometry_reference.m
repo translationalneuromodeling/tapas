@@ -47,7 +47,7 @@ if makeFromFile
     imageGeom = MrImageGeometry(fileName);
     [~,name] = fileparts(fileName);
     % get classes path
-    classesPath = get_path('classes');
+    classesPath = tapas_uniqc_get_path('classes');
     % make full filename using date
     filename = fullfile(classesPath, '@MrUnitTest' , ...
         ['imageGeom-' name '.mat']);
@@ -61,7 +61,7 @@ else
     imageGeom = MrImageGeometry(dimInfo, affineTransformation);
     
     % get classes path
-    classesPath = get_path('classes');
+    classesPath = tapas_uniqc_get_path('classes');
     % make full filename using date
     filename = fullfile(classesPath, '@MrUnitTest' , 'imageGeom.mat');
 end

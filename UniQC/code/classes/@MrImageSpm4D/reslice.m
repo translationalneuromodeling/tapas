@@ -50,7 +50,7 @@ defaults.interpolation = 7;     % degree of b-spline interpolation for estimatio
 defaults.wrapping = [0 0 0];    % fold-over direction (phase encode)
 defaults.masking = 1;           % mask incomplete timeseries?
 
-args = propval(varargin, defaults);
+args = tapas_uniqc_propval(varargin, defaults);
 reslicedImage = this.copyobj();
 
 % Save as nifti to use spm functionality

@@ -31,7 +31,7 @@ doPlotRoi = 0;
 doPlotTrialsActiveVoxel = true; % plot active voxel for all events
 
 %% Load short fMRI example
-pathExample = get_path('examples');
+pathExample = tapas_uniqc_get_path('examples');
 %pathExample = fullfile(pathExample, 'nifti', 'rest');
 %fileExample = fullfile(pathExample, 'fmri_short.nii');
 pathExample = fullfile(pathExample, 'nifti', 'paradigm_visual');

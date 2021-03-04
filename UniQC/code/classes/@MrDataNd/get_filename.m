@@ -58,8 +58,8 @@ defaults.isSuffix = 0;
 defaults.isMixedCase = [];
 defaults.splitDims = {};
 
-args = propval(varargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 % default setting for isMixedCase: use it, if prefix was specified!
 if isempty(isMixedCase)
@@ -103,9 +103,9 @@ for iSelection = 1:nSelections
             filename = fullfile(this.parameters.save.path, ...
                 this.parameters.save.fileName);
             % prefix filename
-            filename = prefix_files(filename, prefix, isSuffix, isMixedCase);
+            filename = tapas_uniqc_prefix_files(filename, prefix, isSuffix, isMixedCase);
     end
-    filename = prefix_files(filename, sfxArray{iSelection}, 1, 0);
+    filename = tapas_uniqc_prefix_files(filename, sfxArray{iSelection}, 1, 0);
     filenameArray{iSelection} = filename;
 end
 

@@ -38,7 +38,14 @@ function this = read_cpx(this, filename, selectedVolumes, selectedCoils, ...
 % For further details, see the file COPYING or
 %  <http://www.gnu.org/licenses/>.
 
-
+if ~exist('read_cpx.m' , 'file')
+    msg = [
+        'Readin of Philips CPX data requires read_cpx.m from Gyrotools, ' ...
+        'which is not part of UniQC. Please retrieve separately and add to ' ...
+        'the Matlab path.'
+        ];
+    error('tapas:uniqc', msg);
+end
 hasSelectedVolumes = ~isinf(selectedVolumes);
 hasSelectedCoils = ~any(isinf(selectedCoils)) && ~any(selectedCoils==0) ;
 

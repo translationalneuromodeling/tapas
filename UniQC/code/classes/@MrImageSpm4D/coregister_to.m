@@ -99,13 +99,13 @@ spmDefaults.tolerances = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 
 spmDefaults.histSmoothingFwhm = [7 7];
 spmDefaults.trafoParameters = 'rigid';
 % will be forwarded to get_matlabbatch to update the batch
-[spmParameters, unusedVarargin] = propval(varargin, spmDefaults);
+[spmParameters, unusedVarargin] = tapas_uniqc_propval(varargin, spmDefaults);
 
 % method parameters
 defaults.applyTransformation = 'data';
 defaults.otherImages = {};
-args = propval(unusedVarargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(unusedVarargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 % create output image
 outputImage = this.copyobj();
@@ -202,7 +202,7 @@ x  = spm_coreg(char(job.ref), char(job.source), job.eoptions);
 % A\B = inv(A) * B
 
 % get affine coregistration matrix
-affineCoregistrationMatrix = uniqc_spm_matrix(x);
+affineCoregistrationMatrix = tapas_uniqc_spm_matrix(x);
 affineCoregistrationGeometry = MrAffineTransformation(affineCoregistrationMatrix);
 
 %% update geometry/data if necessary

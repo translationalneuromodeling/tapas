@@ -15,7 +15,7 @@ function outputImage = resize(this, newDimInfo)
 % EXAMPLE
 %   resize
 %
-%   See also MrDataNd resizeNd
+%   See also MrDataNd tapas_uniqc_resizeNd
 
 % Author:   Saskia Bollmann & Lars Kasper
 % Created:  2016-06-24
@@ -47,7 +47,7 @@ factorsReplication(iSingletonDim) = newDimInfo.nSamples(iSingletonDim);
 resizedData = repmat(resizedData, factorsReplication);
 
 % b) interpolation of non-singleton dimensions (e.g. 5 slices => 10 slices)
-resizedData  = resizeNd(resizedData, newDimInfo.nSamples);
+resizedData  = tapas_uniqc_resizeNd(resizedData, newDimInfo.nSamples);
 
 % Save output, update data and dimInfo
 outputImage 	 	= this.copyobj();

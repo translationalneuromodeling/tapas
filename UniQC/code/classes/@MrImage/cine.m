@@ -51,8 +51,8 @@ defaults.colorMap               = 'gray';
 defaults.colorBar               = 'off';
 
 
-args = propval(varargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 isGif = strcmpi(movieFormat, 'gif');
 
@@ -62,7 +62,7 @@ showColorbar = strcmpi(colorBar, 'on');
 timeStamp = datestr(now, 'yyyymmdd_HHMMSS');
 
 if isempty(filename)
-    filename = [str2fn(this.name), '_', timeStamp '.' movieFormat];
+    filename = [tapas_uniqc_str2fn(this.name), '_', timeStamp '.' movieFormat];
 end
 
 % re-arrange the data dimensions

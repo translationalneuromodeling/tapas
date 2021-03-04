@@ -69,7 +69,7 @@ for k = sel(:)'
                 ip = input_obj.(pname);
                 
                 if ~isnumeric(p) % compare cells, strings via isequal (no tolerance)
-                    isPropertyEqual = isequaltol(p,ip, tolerance);
+                    isPropertyEqual = tapas_uniqc_isequaltol(p,ip, tolerance);
                 else % check vector/matrix (size) and equality with numerical tolerance?
                     isPropertyEqual = prod(double(size(p)==size(ip)));
                     if isPropertyEqual

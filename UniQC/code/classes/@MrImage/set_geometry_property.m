@@ -50,8 +50,8 @@ defaults.rotation_deg   = outputImage.geometry.rotation_deg;
 defaults.shear          = outputImage.geometry.shear;
 
 % get arguments
-[args, ~] = propval(varargin, defaults);
-inputVarargin = struct2propval(args);
+[args, ~] = tapas_uniqc_propval(varargin, defaults);
+inputVarargin = tapas_uniqc_struct2propval(args);
 
 % create temp MrImageGeometry with new parameters
 tmpGeometry = MrImageGeometry([], inputVarargin{:});

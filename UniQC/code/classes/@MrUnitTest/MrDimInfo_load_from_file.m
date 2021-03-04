@@ -33,49 +33,49 @@ switch testFile
     case '3DNifti'
         % 3D Nifti
         % actual solution
-        dataPath = get_path('data');
+        dataPath = tapas_uniqc_get_path('data');
         niftiFile3D = fullfile(dataPath, 'nifti', 'rest', 'meanfmri.nii');
         actSolution = MrDimInfo(niftiFile3D);
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         expSolution = load(fullfile(classesPath, '@MrUnitTest' , ...
             'dimInfo-meanfmri.mat'));
         expSolution = expSolution.dimInfo;
     case '4DNifti'
         % 4D Nifti
         % actual solution
-        dataPath = get_path('data');
+        dataPath = tapas_uniqc_get_path('data');
         niftiFile4D = fullfile(dataPath, 'nifti', 'rest', 'fmri_short.nii');
         actSolution = MrDimInfo(niftiFile4D);
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         expSolution = load(fullfile(classesPath, '@MrUnitTest' , ...
             'dimInfo-fmri_short.mat'));
         expSolution = expSolution.dimInfo;
     case 'Folder'
         % several files in folder
         % actual solution
-        dataPath = get_path('data');
+        dataPath = tapas_uniqc_get_path('data');
         niftiFolder= fullfile(dataPath, 'nifti', 'split', 'full');
         actSolution = MrDimInfo(niftiFolder);
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         expSolution = load(fullfile(classesPath, '@MrUnitTest' , ...
             'dimInfo-full.mat'));
         expSolution = expSolution.dimInfo;
     case 'ParRec'
         % par/rec data
         % actual solution
-        dataPath = get_path('data');
+        dataPath = tapas_uniqc_get_path('data');
         % par/rec
         parRecFile = fullfile(dataPath, 'parrec', 'rest_feedback_7T', 'fmri1.par');
         actSolution = MrDimInfo(parRecFile);
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         expSolution = load(fullfile(classesPath, '@MrUnitTest' , ...
             'dimInfo-fmri1.mat'));
         expSolution = expSolution.dimInfo;

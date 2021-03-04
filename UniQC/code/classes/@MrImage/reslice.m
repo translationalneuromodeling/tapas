@@ -64,10 +64,10 @@ spmDefaults.masking = 1;           % mask incomplete timeseries?
 defaults.splitDimLabels = {};
 defaults.splitComplex = 'ri';
 
-[args, unusedVarargin] = propval(varargin, defaults);
-strip_fields(args);
+[args, unusedVarargin] = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
-methodParameters = {propval(unusedVarargin, spmDefaults)};
+methodParameters = {tapas_uniqc_propval(unusedVarargin, spmDefaults)};
 
 % default split is along any dimensions other than {x, y, z, y}
 if isempty(splitDimLabels)

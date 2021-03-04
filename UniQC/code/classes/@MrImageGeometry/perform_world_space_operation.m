@@ -38,12 +38,12 @@ switch operation
     % shift
     case 'shift'
         P = [parameters, 0, 0, 0, 1, 1, 1, 0, 0, 0];
-        operationMatrix = uniqc_spm_matrix(P);
+        operationMatrix = tapas_uniqc_spm_matrix(P);
         
         % rotation
     case 'rotation'
         P = [0, 0, 0, parameters/180*pi, 1, 1, 1, 0, 0, 0];
-        operationMatrix = uniqc_spm_matrix(P);
+        operationMatrix = tapas_uniqc_spm_matrix(P);
         
         % zoom
     case 'zoom'
@@ -51,12 +51,12 @@ switch operation
         % required
         parameters(parameters == 0) = 1;
         P = [0, 0, 0, 0, 0, 0, parameters, 0, 0, 0];
-        operationMatrix = uniqc_spm_matrix(P);
+        operationMatrix = tapas_uniqc_spm_matrix(P);
         
         % shear
     case 'shear'
         P = [0, 0, 0, 0, 0, 0, 1, 1, 1, parameters];
-        operationMatrix = uniqc_spm_matrix(P);
+        operationMatrix = tapas_uniqc_spm_matrix(P);
         
     otherwise
         error('Unknown operation.')

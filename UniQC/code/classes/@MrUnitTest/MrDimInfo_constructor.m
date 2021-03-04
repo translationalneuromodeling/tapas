@@ -44,7 +44,7 @@ switch dimInfoVariants
         % define actual solution
         actSolution = dimInfo;
         % load expected solution
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         solutionFileName = fullfile(classesPath, '@MrUnitTest' , 'dimInfo.mat');
         expSolution = load(solutionFileName);
         expSolution = expSolution.dimInfo;

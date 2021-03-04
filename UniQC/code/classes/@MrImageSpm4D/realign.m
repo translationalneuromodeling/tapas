@@ -70,7 +70,7 @@ defaults.wrapping = [0 0 0];    % fold-over direction (phase encode)
 defaults.weighting = '';        % weighting image for estimation
 defaults.masking = 1;           % mask incomplete timeseries?
 
-args = propval(varargin, defaults);
+args = tapas_uniqc_propval(varargin, defaults);
 
 realignedImage = this.copyobj();
 

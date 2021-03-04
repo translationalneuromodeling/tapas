@@ -5,7 +5,7 @@ function this = plot3d(this, varargin)
 %   Y.plot3d(inputs)
 %
 % This is a method of class MrImage.
-% This method interfaces with the general 3d plot utility of view3d,
+% This method interfaces with the general 3d plot utility of tapas_uniqc_view3d,
 % offering similar capabilities in terms of data selection as MrImage.plot
 %
 % IN
@@ -47,7 +47,7 @@ function this = plot3d(this, varargin)
 % EXAMPLE
 %   plot3d
 %
-%   See also MrImage view3d MrImage.plot extract_plot_data
+%   See also MrImage tapas_uniqc_view3d MrImage.plot extract_plot_data
 
 % Author:   Saskia Bollmann & Lars Kasper
 % Created:  2015-03-09
@@ -65,7 +65,7 @@ warning off images:imshow:magnificationMustBeFitForDockedFigure
 warning off MATLAB:Figure:SetPosition
 
 defaults = [];
-[argsPlot, argsExtract] = propval(varargin, defaults);
+[argsPlot, argsExtract] = tapas_uniqc_propval(varargin, defaults);
 argsExtract = struct(argsExtract{:});
 
 if ~isfield(argsExtract, 'selectedVolumes')
@@ -75,7 +75,7 @@ dataPlot = this.extract_plot4D_data(argsExtract);
 
 voxelSizeRatio = this.geometry.resolution_mm;
 %this.geometry.nVoxels(1:3).*this.geometry.resolution_mm;
-view3d(dataPlot, voxelSizeRatio);
+tapas_uniqc_view3d(dataPlot, voxelSizeRatio);
 
 warning on images:imshow:magnificationMustBeFitForDockedFigure 
 warning on MATLAB:Figure:SetPosition

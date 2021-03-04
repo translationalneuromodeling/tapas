@@ -44,7 +44,7 @@ if makeFromFile
     affineTrafo = MrAffineTransformation(fileName);
     [~,name] = fileparts(fileName);
     % get classes path
-    classesPath = get_path('classes');
+    classesPath = tapas_uniqc_get_path('classes');
     % make full filename using date
     filename = fullfile(classesPath, '@MrUnitTest' , ...
         ['affineTrafo-' name '.mat']);
@@ -54,7 +54,7 @@ else
         'shear', [0.2 3 1], 'scaling', [1.3 1.3 1.25]);
     
     % get classes path
-    classesPath = get_path('classes');
+    classesPath = tapas_uniqc_get_path('classes');
     % make full filename using date
     filename = fullfile(classesPath, '@MrUnitTest' , ['affineTrafo.mat']);
 end

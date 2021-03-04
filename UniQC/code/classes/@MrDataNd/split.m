@@ -48,8 +48,8 @@ defaults.fileName = this.get_filename(); % take only root of filename
 defaults.splitDims = 'unset'; % changed below!
 defaults.doRemoveDims = false;
 
-args = propval(varargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 % defaults splitDims are adapted depending on file extension to have
 % e.g. default 4D nifti files.

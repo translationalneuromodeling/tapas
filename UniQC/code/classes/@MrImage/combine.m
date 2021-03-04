@@ -72,7 +72,7 @@ for iSplit = 1:nSplits
             iSplit);
     end
     % check if common prefix available
-    [~, ~, pfx{iSplit}, ext{iSplit}] = get_dim_labels_from_string(imageArray{iSplit}.parameters.save.fileName);
+    [~, ~, pfx{iSplit}, ext{iSplit}] = tapas_uniqc_get_dim_labels_from_string(imageArray{iSplit}.parameters.save.fileName);
 end
 
 % check if filename prefix and file extension are the same

@@ -77,8 +77,8 @@ defaults.sliceDimension     = 3;
 defaults.plotMode           = 'linear';
 defaults.rotate90           = 0;
 
-args = propval(varargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 % permute data dimensions for adjustible slice direction
 switch sliceDimension

@@ -131,7 +131,7 @@ isStructPropval = isstruct(varargin{1});
 % convert struct input to prop/val pair cell array
 if isStructPropval
     doRemoveEmptyProps = 1;
-    propvalArray = struct2propval(varargin{1},doRemoveEmptyProps);
+    propvalArray = tapas_uniqc_struct2propval(varargin{1},doRemoveEmptyProps);
 else
     propvalArray = varargin;
 end
@@ -139,7 +139,7 @@ end
 iValidLabel = find(isValidLabel);
 callForMultipleDimensions = nDimsToSplitVarargin > 1;
 if callForMultipleDimensions
-    vararginDim = split_propval(propvalArray, nDimsToSplitVarargin);
+    vararginDim = tapas_uniqc_split_propval(propvalArray, nDimsToSplitVarargin);
     % call dimension setting for each dimension individually
     % and with respective caller arguments
     for d  = 1:nDimsToSet
@@ -159,7 +159,7 @@ elseif nDimsToSet==1 % no execution for empty dimensions
     defaults.nSamples = [];
     defaults.resolutions = [];
     
-    args = propval(propvalArray, defaults);
+    args = tapas_uniqc_propval(propvalArray, defaults);
     
     %% convert cells to content of their first entry, if parameters were
     % given with an enclosing {}, as if for multiple dimensions
@@ -170,7 +170,7 @@ elseif nDimsToSet==1 % no execution for empty dimensions
         end
     end
     
-    strip_fields(args);
+    tapas_uniqc_strip_fields(args);
     %% First the easy stuff: explicit updates (without difficult dependencies)
     % of dimLabels and units
     

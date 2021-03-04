@@ -52,7 +52,7 @@ defaults.smoothingFwhm = 5;     % FWHM (mm) of Gaussian smoothing kernel used fo
 defaults.realignToMean = 1;     % boolean; if true, 2-pass procedure, registering to mean
 defaults.weighting = '';        % weighting image for estimation
 
-spmParameters = propval(varargin, defaults);
+spmParameters = tapas_uniqc_propval(varargin, defaults);
 
 
 %% save image file for processing as nii in SPM

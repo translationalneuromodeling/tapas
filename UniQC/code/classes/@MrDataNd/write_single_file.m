@@ -49,7 +49,7 @@ if nargin < 2
 end
 
 if nargin < 3
-    dataType = get_data_type_from_n_voxels(this.dimInfo.nSamples);
+    dataType = tapas_uniqc_get_data_type_from_n_voxels(this.dimInfo.nSamples);
 end
 
 % no data, no saving...

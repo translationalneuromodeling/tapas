@@ -47,7 +47,7 @@ if makeFromFile
     dimInfo = MrDimInfo(fileName);
     [~,name] = fileparts(fileName);
     % get classes path
-    classesPath = get_path('classes');
+    classesPath = tapas_uniqc_get_path('classes');
     % make full filename using date
     filename = fullfile(classesPath, '@MrUnitTest' , ...
         ['dimInfo-' name '.mat']);
@@ -62,7 +62,7 @@ else
         'units', {'mm', 'mm', 'mm', 's', 'nil'}, ...
         'samplingPoints', samplingPoints5D);
     % get classes path
-    classesPath = get_path('classes');
+    classesPath = tapas_uniqc_get_path('classes');
     % make full filename using date
     filename = fullfile(classesPath, '@MrUnitTest' , 'dimInfo.mat');
 end

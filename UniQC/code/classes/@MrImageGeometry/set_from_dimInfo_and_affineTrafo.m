@@ -37,7 +37,7 @@ if isValidInput
     
     % The definition of an affine matrix (A) follows SPM and is given by
     % A = T*R*Z*S, with T = translation , R = rotation, Z = zoom (scaling)
-    % and S = shear. See uniqc_spm_matrix for more details.
+    % and S = shear. See tapas_uniqc_spm_matrix for more details.
     
     % The final affine image geometry is computed from
     % AImage = AAffineTrafo * ADimInfo
@@ -52,7 +52,7 @@ if isValidInput
     % split into individual affine operations (shift, rot etc.)
     % but round to significant decimals of double precision
     N = floor(abs(log10(eps('double'))));
-    P = round(uniqc_spm_imatrix(AImage),N);
+    P = round(tapas_uniqc_spm_imatrix(AImage),N);
     
     % populate fields with affine transformations
     this.offcenter_mm       = P(1:3);

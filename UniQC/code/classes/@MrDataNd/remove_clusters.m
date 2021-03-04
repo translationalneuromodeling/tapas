@@ -49,8 +49,8 @@ defaults.nPixelRange = [0 0];
 defaults.pAreaRange = [0 0];
 defaults.applicationDimension = '3D';
 
-args = propval(varargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 areaRange = pAreaRange/100;
 is3D = strcmpi(applicationDimension, '3D');

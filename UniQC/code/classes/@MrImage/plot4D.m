@@ -37,7 +37,7 @@ function fh = plot4D(this, varargin)
 %                                                   allow clicking into spm
 %                                                   figure
 %                                       '3D'/'3d'/'ortho'
-%                                                   See also view3d plot3
+%                                                   See also tapas_uniqc_view3d plot3
 %                                                   Plots 3 orthogonal
 %                                                   sections
 %                                                   (with CrossHair) of
@@ -159,8 +159,8 @@ defaults.overlayMode            = 'mask';
 defaults.overlayThreshold       = [];
 defaults.overlayAlpha           = 0.1;
 
-args = propval(varargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 doPlotColorBar = strcmpi(colorBar, 'on');
 doPlotOverlays = any(strcmpi(plotType, {'overlay', 'overlays'})) || ...
@@ -172,8 +172,8 @@ doPlotOverlays = any(strcmpi(plotType, {'overlay', 'overlays'})) || ...
 if useSlider
     defaults.selectedVolumes = Inf;
     defaults.selectedSlices = Inf;
-    args = propval(varargin, defaults);
-    strip_fields(args);
+    args = tapas_uniqc_propval(varargin, defaults);
+    tapas_uniqc_strip_fields(args);
 end
 
 % Assemble parameters for data extraction into one structure
@@ -223,17 +223,17 @@ if useSlider
     % useSlider is not a plotType, since it shall be combined with all
     % plot-types (overlays, montages) in a later version of this code
     
-    % slider4d(dataPlot, @(varargin) ...
-    %      plot_abs_image(varargin{:}, colorMap), ...
+    % tapas_uniqc_slider4d(dataPlot, @(varargin) ...
+    %      tapas_uniqc_plot_abs_image(varargin{:}, colorMap), ...
     %     nSlices);
     
     
-    slider4d(dataPlot, @(Y,iDynSli, fh, yMin, yMax) ...
-        plot_abs_image(Y,iDynSli, fh, yMin, yMax, colorMap, colorBar), ...
+    tapas_uniqc_slider4d(dataPlot, @(Y,iDynSli, fh, yMin, yMax) ...
+        tapas_uniqc_plot_abs_image(Y,iDynSli, fh, yMin, yMax, colorMap, colorBar), ...
         nSlices, displayRange(1), displayRange(2), this.name);
     
     % to also plot phase:
-    %    slider4d(dataPlot, @plot_image_diagnostics, ...
+    %    tapas_uniqc_slider4d(dataPlot, @tapas_uniqc_plot_image_diagnostics, ...
     %        nSlices);
     
 else
@@ -256,7 +256,7 @@ else
             end
             
             % select Volumes
-            fileNameVolArray = get_vol_filenames(fileNameNifti);
+            fileNameVolArray = tapas_uniqc_get_vol_filenames(fileNameNifti);
             
             % display image
             if numel(selectedVolumes) > 1
@@ -305,13 +305,13 @@ else
                             selectedVolumes(iVol));
                         fh(iVol,1) = figure('Name', stringTitle, 'WindowStyle', 'docked');
                         
-                        labeled_montage(permute(dataPlot(:,:,:,iVol), [1, 2, 4, 3]), ...
+                        tapas_uniqc_labeled_montage(permute(dataPlot(:,:,:,iVol), [1, 2, 4, 3]), ...
                             'DisplayRange', displayRange, ...
                             'LabelsIndices', stringLabelSlices);
                         
                         set(gca, 'DataAspectRatio', abs([resolution_mm(1) resolution_mm(2), 1]));
                         
-                        title(str2label(stringTitle));
+                        title(tapas_uniqc_str2label(stringTitle));
                         if doPlotColorBar
                             colorbar;
                         end
@@ -325,12 +325,12 @@ else
                         stringTitle = sprintf('%s - slice %d', this.name, ...
                             selectedSlices(iSlice));
                         fh(iSlice,1) = figure('Name', stringTitle, 'WindowStyle', 'docked');
-                        labeled_montage(dataPlot(:,:,iSlice,:), ...
+                        tapas_uniqc_labeled_montage(dataPlot(:,:,iSlice,:), ...
                             'DisplayRange', displayRange, ...
                             'LabelsIndices', stringLabelVolumes);
                         
                         set(gca, 'DataAspectRatio', [resolution_mm(1) resolution_mm(2), 1]);
-                        title(str2label(stringTitle));
+                        title(tapas_uniqc_str2label(stringTitle));
                         if doPlotColorBar
                             colorbar;
                         end

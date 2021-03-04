@@ -35,37 +35,37 @@ switch testFile
     case '3DNifti'
         % 3D Nifti
         % actual solution
-        dataPath = get_path('data');
+        dataPath = tapas_uniqc_get_path('data');
         niftiFile3D = fullfile(dataPath, 'nifti', 'rest', 'meanfmri.nii');
         actSolution = MrAffineTransformation(niftiFile3D);
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         expSolution = load(fullfile(classesPath, '@MrUnitTest' , ...
             'affineTrafo-meanfmri.mat'));
         expSolution = expSolution.affineTrafo;
     case '4DNifti'
         % 4D Nifti
         % actual solution
-        dataPath = get_path('data');
+        dataPath = tapas_uniqc_get_path('data');
         niftiFile4D = fullfile(dataPath, 'nifti', 'rest', 'fmri_short.nii');
         actSolution = MrAffineTransformation(niftiFile4D);
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         expSolution = load(fullfile(classesPath, '@MrUnitTest' , ...
             'affineTrafo-fmri_short.mat'));
         expSolution = expSolution.affineTrafo;
     case 'ParRec'
         % par/rec data
         % actual solution
-        dataPath = get_path('data');
+        dataPath = tapas_uniqc_get_path('data');
         % par/rec
         parRecFile = fullfile(dataPath, 'parrec', 'rest_feedback_7T', 'fmri1.par');
         actSolution = MrAffineTransformation(parRecFile);
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         expSolution = load(fullfile(classesPath, '@MrUnitTest' , ...
             'affineTrafo-fmri.mat'));
         expSolution = expSolution.affineTrafo;

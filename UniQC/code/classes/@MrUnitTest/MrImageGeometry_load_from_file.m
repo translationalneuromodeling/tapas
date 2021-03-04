@@ -35,49 +35,49 @@ switch testFile
     case '3DNifti'
         % 3D Nifti
         % actual solution
-        dataPath = get_path('data');
+        dataPath = tapas_uniqc_get_path('data');
         niftiFile3D = fullfile(dataPath, 'nifti', 'rest', 'meanfmri.nii');
         actSolution = MrImageGeometry(niftiFile3D);
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         expSolution = load(fullfile(classesPath, '@MrUnitTest' , ...
             'imageGeom-meanfmri.mat'));
         expSolution = expSolution.imageGeom;
     case '4DNifti'
         % 4D Nifti
         % actual solution
-        dataPath = get_path('data');
+        dataPath = tapas_uniqc_get_path('data');
         niftiFile4D = fullfile(dataPath, 'nifti', 'rest', 'fmri_short.nii');
         actSolution = MrImageGeometry(niftiFile4D);
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         expSolution = load(fullfile(classesPath, '@MrUnitTest' , ...
             'imageGeom-fmri_short.mat'));
         expSolution = expSolution.imageGeom;
     case 'Folder'
         % several files in folder
         % actual solution
-        dataPath = get_path('data');
+        dataPath = tapas_uniqc_get_path('data');
         niftiFolder= fullfile(dataPath, 'nifti', 'split', 'full');
         actSolution = MrImageGeometry(niftiFolder);
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         expSolution = load(fullfile(classesPath, '@MrUnitTest' , ...
             'imageGeom-full.mat'));
         expSolution = expSolution.imageGeom;
     case 'ParRec'
         % par/rec data
         % actual solution
-        dataPath = get_path('data');
+        dataPath = tapas_uniqc_get_path('data');
         % par/rec
         parRecFile = fullfile(dataPath, 'parrec', 'rest_feedback_7T', 'fmri1.par');
         actSolution = MrImageGeometry(parRecFile);
         % expected solution
         % get classes path
-        classesPath = get_path('classes');
+        classesPath = tapas_uniqc_get_path('classes');
         expSolution = load(fullfile(classesPath, '@MrUnitTest' , ...
             'imageGeom-fmri.mat'));
         expSolution = expSolution.imageGeom;

@@ -40,13 +40,13 @@ defaults.dependent = 'dimInfo'; % 'dimInfo' or 'geometry'
 defaults.dimLabels = [];
 defaults.removeDims = false;
 
-[argsUpdate, argsGeomDimInfo] = propval(varargin, defaults);
+[argsUpdate, argsGeomDimInfo] = tapas_uniqc_propval(varargin, defaults);
 
 dimLabelsGeom = {'x', 'y', 'z', 't'};
 dimUnitsGeom = {'mm', 'mm', 'mm', 's'};
 
-argsGeometry = filter_propval(argsGeomDimInfo, MrImageGeometry());
-argsDimInfo = filter_propval(argsGeomDimInfo, MrDimInfo());
+argsGeometry = tapas_uniqc_filter_propval(argsGeomDimInfo, MrImageGeometry());
+argsDimInfo = tapas_uniqc_filter_propval(argsGeomDimInfo, MrDimInfo());
 
 
 % Create dimInfo with right dimLabels/units, if it does not exist

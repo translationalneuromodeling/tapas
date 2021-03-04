@@ -33,7 +33,7 @@ function this = set_from_filenames(this, fileArray)
 
 
 % determine common prefix
-% pfx = get_common_prefix(fileArray);
+% pfx = tapas_uniqc_get_common_prefix(fileArray);
 % determine dim labels and sizes
 
 nFiles = numel(fileArray);
@@ -42,7 +42,7 @@ dimValues= cell(nFiles,1);
 for iFile = 1:nFiles  
     [fp, fn, ext] = fileparts(fileArray{iFile}); % remove path for analysis
     fileName = [fn ext];
-    [dimLabels, dimValues{iFile}, pfx, sfx] = get_dim_labels_from_string(fileName);
+    [dimLabels, dimValues{iFile}, pfx, sfx] = tapas_uniqc_get_dim_labels_from_string(fileName);
 end
 
 dimValues = cell2mat(dimValues);

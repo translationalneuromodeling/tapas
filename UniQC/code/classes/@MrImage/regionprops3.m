@@ -30,8 +30,8 @@ function stats = regionprops3(this, varargin)
 % parse input arguments
 defaults.conn = 6;
 defaults.props = {'basic'};
-[args, ~] = propval(varargin, defaults);
-strip_fields(args);
+[args, ~] = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 % compute connected components
 CC = bwconncomp(this.data, conn);

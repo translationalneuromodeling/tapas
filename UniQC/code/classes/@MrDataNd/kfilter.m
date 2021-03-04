@@ -58,8 +58,8 @@ defaults.fractionFOV = 0.5;
 defaults.beta = 0.5;
 defaults.doPlotFilter = false;
 
-args = propval(varargin, defaults);
-strip_fields(args);
+args = tapas_uniqc_propval(varargin, defaults);
+tapas_uniqc_strip_fields(args);
 
 is3D = ndims(this) >= 2;
 
@@ -78,7 +78,7 @@ end
 switch filterType
     case 'raised_cosine'
         % from J. Vannesjo, utils/general/raised_cosine.m Recon5-6, IBT
-        funFilter = @(x) raised_cosine((1:x) - floor(x/2), ...
+        funFilter = @(x) tapas_uniqc_raised_cosine((1:x) - floor(x/2), ...
             1/(fractionFOV*x), beta);
     otherwise
         funFilter = str2func(filterType);

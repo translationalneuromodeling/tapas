@@ -35,7 +35,7 @@ function [dimLabels, resolutions, nSamples, units, firstSamplingPoint] = ...
 
 
 %% read header information
-header = read_par_header(filename);
+header = tapas_uniqc_read_par_header(filename);
 
 %% dimLabels
 dimLabels = {'x', 'y', 'z', 't'}; % MNI space XYZ, NOT Philips XYZ

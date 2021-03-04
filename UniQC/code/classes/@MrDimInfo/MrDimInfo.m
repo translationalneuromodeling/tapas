@@ -171,9 +171,9 @@ classdef MrDimInfo < MrCopyData
                 propertyValues = varargin(2:2:end);
                 % Find nSamples property, and corresponding value to determine
                 % dimension
-                iArgNsamples = find_string(propertyNames, 'nSamples');
-                iArgSamplingPoints = find_string(propertyNames, 'samplingPoints');
-                iArgRanges = find_string(propertyNames, 'ranges');
+                iArgNsamples = tapas_uniqc_find_string(propertyNames, 'nSamples');
+                iArgSamplingPoints = tapas_uniqc_find_string(propertyNames, 'samplingPoints');
+                iArgRanges = tapas_uniqc_find_string(propertyNames, 'ranges');
                 
                 hasNsamples = ~isempty(iArgNsamples);
                 hasExplicitSamplingPoints = ~isempty(iArgSamplingPoints);
@@ -408,7 +408,7 @@ classdef MrDimInfo < MrCopyData
             %   isValidLabel    [nLabels,1] returns for each given label 1/0
             %                   i.e. whether it is indeed a label of dimInfo
             defaults.invert = false;
-            args = propval(varargin,defaults);
+            args = tapas_uniqc_propval(varargin,defaults);
             if isnumeric(dimLabel) % (vector of) numbers
                 iDim = dimLabel;
                 % cell of numbers:
@@ -416,7 +416,7 @@ classdef MrDimInfo < MrCopyData
                 iDim = cell2mat(dimLabel);
             else % string or cell of strings
                 isExact = 1;
-                iDim = find_string(this.dimLabels, dimLabel, isExact);
+                iDim = tapas_uniqc_find_string(this.dimLabels, dimLabel, isExact);
                 if iscell(iDim)
                     isValidLabel = ~cellfun(@isempty, iDim);
                     iDim = iDim(isValidLabel); % remove unfound dimensions;
