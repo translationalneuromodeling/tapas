@@ -1,3 +1,4 @@
+5.0.0   https://www.tapas.tnu-zurich.com/examples_v5.0.0.zip   24c1248d3054f025b853b5ab7ce08a1a
 4.0.0   https://www.tapas.tnu-zurich.com/examples_v4.0.0.zip   1c8f1b5f53f2ec5e7ab6d5b2d942c1d5
 3.3.0   https://www.tapas.tnu-zurich.com/examples_v3.3.0.zip   95b885041126dfd81e689c95d7bb4aab
 3.2.0   https://www.tapas.tnu-zurich.com/examples_v3.2.0.zip   00137f7a332be031fdb2a748a8b1592c

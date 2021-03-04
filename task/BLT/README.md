@@ -30,6 +30,7 @@ This task is a breathing learning task, which operates under a simple associativ
 ### IMPORTANT NOTES
 
   1) This task requires MATLAB and PsychToolBox to be installed to run. MATLAB2017b and PsychToolBox-3 have been tested. If you would like to set up the task to wait for an external trigger (e.g. from an MRI scanner) before starting, you will also need Cogent installed.
+  2) Before running this task, you will need to download additional resources. To do this, start MATLAB, set your current working directory to the `BLT` folder and execute the command `tapas_BLT_setup()`. Note: this commands will require a working internet connection and may take some time to finish.
   2) You need to run the task from the main BLT folder in MATLAB. If at any point you should need to terminate the task, use the escape button or 'control' + 'c' followed by 'sca' to exit the loop. All data up to that point will be saved in the specified output file.
   3) To run the task, type the name of the main function at the terminal (tapas_BLT). You will be prompted to enter the experiment mode you would like to use, where the options are:
 
