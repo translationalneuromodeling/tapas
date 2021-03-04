@@ -52,7 +52,8 @@ if is4D
     end
     recastMrImageSpm4D.info{end+1,1} = 'recast_as_MrImageSpm4D';
 else
-    error('recast only possible for max. 4D MrImages. Use split_into_MrImageSpm4D instead');
+    error('tapas:uniqc:MrImage:recast:TooManyDimensions', ...
+        'recast only possible for max. 4D MrImages. Use split_into_MrImageSpm4D instead');
 end
 end
            

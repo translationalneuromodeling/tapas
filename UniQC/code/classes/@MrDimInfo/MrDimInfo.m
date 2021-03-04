@@ -242,7 +242,8 @@ classdef MrDimInfo < MrCopyData
             
             nSamplesOld = this.nSamples;
             if numel(nSamplesNew) ~= numel(nSamplesOld)
-                error('nDims cannot change via nSamples, use add_dims instead');
+                error('tapas:uniqc:MrDimInfo:NDimsChanged', ...
+                    'nDims cannot change via nSamples, use add_dims instead');
             end
             
             iChangedDims = find(nSamplesOld ~= nSamplesNew);
@@ -287,7 +288,8 @@ classdef MrDimInfo < MrCopyData
             resolutionsOld = this.resolutions;
             
             if numel(resolutionsNew) ~= numel(resolutionsOld)
-                error('nDims cannot change via resolutions, use add_dims instead');
+                error('tapas:uniqc:MrDimInfo:NDimsChanged', ...
+                    'nDims cannot change via resolutions, use add_dims instead');
             end
             
             iChangedDims = find(~arrayfun(@isequaln, resolutionsOld, resolutionsNew));
@@ -334,7 +336,8 @@ classdef MrDimInfo < MrCopyData
             rangesOld = this.ranges;
             
             if numel(rangesNew) ~= numel(rangesOld)
-                error('nDims cannot change via ranges, use add_dims instead');
+                error('tapas:uniqc:MrDimInfo:NDimsChanged', ...
+                    'nDims cannot change via ranges, use add_dims instead');
             end
             
             iChangedDims = union(find(rangesOld(1,:) ~= rangesNew(1,:)), ...

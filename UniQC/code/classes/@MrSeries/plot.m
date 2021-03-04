@@ -36,6 +36,7 @@ switch module
     case {'data', 'mean', 'sd', 'snr', 'coeffVar', 'diffLastFirst'} 
         this.(module).plot(varargin{:});
     otherwise
-        error(sprintf('plotting module %s not implemented for MrSeries', ...
-            module));
+        error('tapas:uniqc:MrSeries:InvalidPlotModule', ...
+            'plotting module %s not implemented for MrSeries', ...
+            module);
 end

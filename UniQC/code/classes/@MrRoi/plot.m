@@ -182,7 +182,8 @@ isStandardErrorMean = strcmpi(statTypeArray, 'mean+sem');
 
 
 if isempty(this.data)
-    error(sprintf('Data matrix empty for MrImage-object %s', this.name));
+    error('tapas:uniqc:MrRoi:EmptyDataMatrix', ...
+        'Data matrix empty for MrImage-object %s', this.name);
 end
 
 

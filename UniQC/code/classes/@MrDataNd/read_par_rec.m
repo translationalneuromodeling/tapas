@@ -61,7 +61,7 @@ switch ext
     case '.rec'
         % everything fine
     otherwise
-        error('No par/rec file specified. Cannot read this file');
+        error('tapas:uniqc:MrDataNd:NoParRecFile', 'No par/rec file specified. Cannot read this file');
 end
 
 filename = fullfile(fp, [fn, ext]);

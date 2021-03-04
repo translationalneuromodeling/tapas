@@ -109,7 +109,8 @@ if ischar(cellOrString)
             end
             
             if isempty(fileArray)
-                error('No matching image files with name/location/regex %s', cellOrString);
+                error('tapas:uniqc:NoMatchingFilenames', ...
+                    'No matching image files with name/location/regex %s', cellOrString);
             end
             
         end
@@ -125,5 +126,6 @@ elseif iscell(cellOrString)
         'UniformOutput', false)));
     fileArray = fileArray(iExistingFiles);
 else
-    error('Input must be cell of strings or string');
+    error('tapas:uniqc:InputNotStringOrCell', ...
+        'Input must be cell of strings or string');
 end

@@ -102,6 +102,7 @@ if nargin < 2
 else
     A = eval(sprintf('%s;', order));
     if ~isnumeric(A) || ~isequal(size(A),[4 4])
-        error('Invalid order expression ''%s''.', order);
+        error('tapas:uniqc:SpmMatrix:InvalidOrderExpression', ...
+            'Invalid order expression ''%s''.', order);
     end
 end

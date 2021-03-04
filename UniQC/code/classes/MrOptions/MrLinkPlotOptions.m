@@ -75,7 +75,8 @@ methods
                             cellfun(@(x) {x(1)}, dimInfo.samplingPoints(idxFixedDims))';
                         this.fixedDimsPoint = reshape([fixedDimLabels fixedDimValues], 1, []);
                     otherwise
-                        error('Unknown shortcut constructor for class MrLinkPlotOptions');
+                        error('tapas:uniqc:MrLinkPlotOptions:UnknownShortcutConstructor', ...
+                            'Unknown shortcut constructor for class MrLinkPlotOptions');
                 end
             else
             % propname/value pairs

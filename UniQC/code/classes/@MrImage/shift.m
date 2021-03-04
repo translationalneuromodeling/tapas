@@ -62,5 +62,6 @@ switch worldOrVolumeSpace
             this.geometry.perform_world_space_operation('shift', dr, this.dimInfo);
     case 'volume'
     otherwise
-        error('%s...A space where no one has gone before', worldOrVolumeSpace);
+        error('tapas:uniqc:MrImage:shift:UnknownSpace', ...
+            '%s...A space where no one has gone before', worldOrVolumeSpace);
 end

@@ -51,7 +51,8 @@ for nSelect = 1:numel(mergeDims)
         dimIndex = mergeDims{nSelect};
         dimLabel = this.dimLabels(dimIndex);
     else
-        error('Invalid mergeDims specifier. Allowed are dimLabels or dimIndices.');
+        error('tapas:uniqc:MrDimInfo:InvalidMergeDimension', ...
+            'Invalid mergeDims specifier. Allowed are dimLabels or dimIndices.');
     end
     commonArray.(dimLabel) = 1:this.nSamples(dimIndex);
     if nSelect == 1

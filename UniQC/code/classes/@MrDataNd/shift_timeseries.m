@@ -43,7 +43,7 @@ function shiftedY = shift_timeseries(this, dt)
 
 switch numel(dt)
     case 0
-        error('empty value for shift dt given');
+        error('tapas:uniqc:MrDataNd:EmptyTimeShift','empty value for shift dt given');
     case 1
         shiftamount = dt*ones(1, this.dimInfo.z.nSamples); % all slices shifted by same amount!
     otherwise

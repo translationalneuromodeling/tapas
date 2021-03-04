@@ -47,7 +47,8 @@ tolerance = 1e-4;
     image.geometry.diffobj(maskGeometry, tolerance);
 
 if ~isEqualGeom3D
-    error('Roi extraction: Image geometries do not match. Resize Image or Mask');
+    error('tapas:uniqc:MrRoi:UnmatchingImageGeometries', ...
+        'Roi extraction: Image geometries do not match. Resize Image or Mask');
 else
     for iSlice = 1:nSlices    
         [currentSlice, selectionIndexArray] = image.select('z', iSlice);

@@ -360,7 +360,8 @@ elseif nDimsToSet==1 % no execution for empty dimensions
         
     end
 else
-    error('Dimension with label "%s" does not exist in %s dimInfo', dimLabel, ...
+    error('tapas:uniqc:MrDimInfoSetDimsNonExistingDimension', ...
+        'Dimension with label "%s" does not exist in %s dimInfo', dimLabel, ...
         inputname(1));
 end
 

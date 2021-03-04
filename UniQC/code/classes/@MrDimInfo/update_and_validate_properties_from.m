@@ -33,7 +33,8 @@ dimInfoIsObject = isobject(dimInfo);
 dimInfoIsStruct = isstruct(dimInfo);
 
 if ~(dimInfoIsObject || dimInfoIsStruct)
-    error('Invalid input supplied. Only MrDimInfo objects or matching structs');
+    error('tapas:uniqc:MrDimInfoInvalidInputObjectStruct', ...
+        'Invalid input supplied. Only MrDimInfo objects or matching structs');
 else
     tempDimInfoArgs = [];
     % get the number of properties/fields supplied
@@ -61,7 +62,8 @@ else
             this.add_dims(singletonDimensions, ...
                 'dimLabels', dimInfo.dimLabels(singletonDimensions));
         else % else, error
-            error('Number of dimensions in input dimInfo does not match current nDims');
+            error('tapas:uniqc:MrDimInfoUpdateNonMatchingNumberOfDimensions', ...
+                'Number of dimensions in input dimInfo does not match current nDims');
         end
     end
     for iArg = 1:nArgs
@@ -113,7 +115,8 @@ else
             % compare nDims here for struct
             if isValidProperty && dimInfoIsStruct
                 if ~(numel(oldVal) == numel(currVal))
-                    error('Number of dimensions in input dimInfo does not match current nDims');
+                    error('tapas:uniqc:MrDimInfoUpdateNonMatchingNumberOfDimensions', ...
+                        'Number of dimensions in input dimInfo does not match current nDims');
                 end
             end
             

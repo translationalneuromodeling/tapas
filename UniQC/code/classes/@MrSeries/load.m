@@ -54,7 +54,8 @@ else
                 %into a cell, if varargin is given directly...
                 this.restore('last', varargin{:}); % automatically restores last processing step
             else
-                error('Path for MrSeries does not exist. Cannot restore.');
+                error('tapas:uniqc:MrSeries:InvalidPath', ...
+                    'Path for MrSeries does not exist. Cannot restore.');
             end
     end
     this.name = regexprep(this.data.name, 'MrImage_', 'MrSeries_');

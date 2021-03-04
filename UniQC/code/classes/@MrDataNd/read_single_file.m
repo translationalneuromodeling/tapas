@@ -136,7 +136,8 @@ else %load single file, if existing
                         case 'ImageData'
                             this.read_recon6_image_data(obj);
                         otherwise
-                            error('Unsupported object format to load into MrDataNd: %s', class(obj));
+                            error('tapas:uniqc:MrDataNd:UnsupportedObjectClass', ...
+                                'Unsupported object format to load into MrDataNd: %s', class(obj));
                     end
                 end
                 clear obj tmp;
@@ -144,7 +145,8 @@ else %load single file, if existing
                 if isdir(fileName) % previously saved object, load
                     % TODO: load MrImage from folder
                 else
-                    error('File with unsupported extension or non-existing');
+                    error('tapas:uniqc:MrDataNd:UnsupportedOrNonExistingFileExtension', ...
+                        'File with unsupported extension or non-existing');
                 end
         end
         

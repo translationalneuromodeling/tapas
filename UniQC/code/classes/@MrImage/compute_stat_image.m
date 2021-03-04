@@ -67,8 +67,9 @@ if isempty(applicationIndex)
         applicationDimension = this.dimInfo.dimLabels(applicationIndex);
         applicationDimension = applicationDimension{1};
     else
-        error(sprintf('The specified application dimension %s does not exist.', ...
-            applicationDimension));
+        error('tapas:uniqc:MrImage:ApplicationDimensionDoesNotExist', ...
+            'The specified application dimension %s does not exist.', ...
+            applicationDimension);
     end
 end
 

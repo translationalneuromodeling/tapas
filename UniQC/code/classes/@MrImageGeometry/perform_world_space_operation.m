@@ -59,7 +59,8 @@ switch operation
         operationMatrix = tapas_uniqc_spm_matrix(P);
         
     otherwise
-        error('Unknown operation.')
+        error('tapas:uniqc:MrImageGeometry:UnknownOperation', ...
+            'Unknown operation.')
 end
 
 % compute new affine Matrix

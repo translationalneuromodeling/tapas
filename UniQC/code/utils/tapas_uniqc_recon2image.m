@@ -74,7 +74,8 @@ switch imageType
         data = recon.conjphase.w_map.data;
         name = 'B0-map (rad/s)';
     otherwise
-        error('%s is no valid imageType', imageType);
+        error('tapas:uniqc:InvalidImageType', ...
+            '%s is no valid imageType', imageType);
 end
 
 

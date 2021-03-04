@@ -24,13 +24,17 @@ end
 %==========================================================================
 function V = create_vol(V)
 
-if ~isstruct(V),        error('Not a structure.'); end
+if ~isstruct(V),        error('tapas:uniqc:NotStructure', ...
+        'Not a structure.'); end
 
-if ~isfield(V,'fname'), error('No "fname" field'); end
+if ~isfield(V,'fname'), error('tapas:uniqc:MissingField', ...
+        'No "fname" field'); end
 
-if ~isfield(V,'dim'),   error('No "dim" field'); end
+if ~isfield(V,'dim'),   error('tapas:uniqc:MissingField', ...
+        'No "dim" field'); end
 if ~all(size(V.dim)==[1 3])
-    error(['"dim" field is the wrong size (' num2str(size(V.dim)) ').']);
+    error('tapas:uniqc:WrongFieldSizeDim', ...
+        ['"dim" field is the wrong size (' num2str(size(V.dim)) ').']);
 end
 
 if ~isfield(V,'n')
@@ -40,7 +44,8 @@ else
     V.n =  V.n(1:2);
 end
 if V.n(1)>1 && V.n(2)>1
-    error('Can only do up to 4D data (%s).',V.fname);
+    error('tapas:uniqc:TooManyDimensions', ...
+        'Can only do up to 4D data (%s).',V.fname);
 end
 
 if ~isfield(V,'dt')
@@ -48,7 +53,8 @@ if ~isfield(V,'dt')
 end
 dt{1} = spm_type(V.dt(1));
 if strcmp(dt{1},'unknown')
-    error(['"' dt{1} '" is an unrecognised datatype (' num2str(V.dt(1)) ').']);
+    error('tapas:uniqc:UnrecognizedDatatype', ...
+        ['"' dt{1} '" is an unrecognised datatype (' num2str(V.dt(1)) ').']);
 end
 if V.dt(2), dt{2} = 'BE'; else dt{2} = 'LE'; end
 
@@ -64,7 +70,8 @@ switch ext
     case {'nii'}
         minoff = 352; % or 544 for NIfTI-2
     otherwise
-        error(['".' ext '" is not a recognised extension.']);
+        error('tapas:uniqc:InvalidFileExtension', ...
+            ['".' ext '" is not a recognised extension.']);
 end
 bits   = spm_type(V.dt(1),'bits');
 minoff = minoff + ceil(prod(V.dim(1:2))*bits/8)*V.dim(3)*(V.n(1)-1+V.n(2)-1);
@@ -103,24 +110,30 @@ if ~isempty(N0)
     % If the dimensions differ, then there is the potential for things to go badly wrong.
     tmp = [N0.dat.dim ones(1,5)];
     if any(tmp(1:3) ~= dim(1:3))
-        warning(['Incompatible x,y,z dimensions in file "' V.fname '" [' num2str(tmp(1:3)) ']~=[' num2str(dim(1:3)) '].']);
+        warning('tapas:uniqc', ...
+            ['Incompatible x,y,z dimensions in file "' V.fname '" [' num2str(tmp(1:3)) ']~=[' num2str(dim(1:3)) '].']);
     end
     if dim(5) > tmp(5) && tmp(4) > 1
-        warning(['Incompatible 4th and 5th dimensions in file "' V.fname '" (' num2str([tmp(4:5) dim(4:5)]) ').']);
+        warning('tapas:uniqc', ...
+            ['Incompatible 4th and 5th dimensions in file "' V.fname '" (' num2str([tmp(4:5) dim(4:5)]) ').']);
     end
     N.dat.dim = [dim(1:3) max(dim(4:5),tmp(4:5))];
     
     if ~strcmp(dat.dtype,N0.dat.dtype)
-        warning(['Incompatible datatype in file "' V.fname '" ' N0.dat.dtype ' ~= ' dat.dtype '.']);
+        warning('tapas:uniqc', ...
+            ['Incompatible datatype in file "' V.fname '" ' N0.dat.dtype ' ~= ' dat.dtype '.']);
     end
     if single(N.dat.scl_slope) ~= single(N0.dat.scl_slope) && (size(N0.dat,4)>1 || V.n(1)>1)
-        warning(['Incompatible scalefactor in "' V.fname '" ' num2str(N0.dat.scl_slope) '~=' num2str(N.dat.scl_slope) '.']);
+        warning('tapas:uniqc', ...
+            ['Incompatible scalefactor in "' V.fname '" ' num2str(N0.dat.scl_slope) '~=' num2str(N.dat.scl_slope) '.']);
     end
     if single(N.dat.scl_inter) ~= single(N0.dat.scl_inter)
-        warning(['Incompatible intercept in "' V.fname '" ' num2str(N0.dat.scl_inter) '~=' num2str(N.dat.scl_inter) '.']);
+        warning('tapas:uniqc', ...
+            ['Incompatible intercept in "' V.fname '" ' num2str(N0.dat.scl_inter) '~=' num2str(N.dat.scl_inter) '.']);
     end
     if single(N.dat.offset) ~= single(N0.dat.offset)
-        warning(['Incompatible intercept in "' V.fname '" ' num2str(N0.dat.offset) '~=' num2str(N.dat.offset) '.']);
+        warning('tapas:uniqc', ...
+            ['Incompatible intercept in "' V.fname '" ' num2str(N0.dat.offset) '~=' num2str(N.dat.offset) '.']);
     end
     
     if V.n(1)==1
@@ -175,7 +188,8 @@ if isfield(N.extras,'mat')
     if sum(N.extras.mat(:).^2) < 1e-8*size(N.extras.mat,3)
         N.extras = [];
         if ~isempty(N0) && ~isempty(N0.extras) && isstruct(N0.extras) && isfield(N0.extras,'mat')
-            warning('Forcing deletion of MAT-file.');
+            warning('tapas:uniqc', ...
+                'Forcing deletion of MAT-file.');
             spm_unlink(spm_file(N.dat.fname,'ext','mat'));
         end
     end

@@ -44,7 +44,7 @@ if ~exist('read_cpx.m' , 'file')
         'which is not part of UniQC. Please retrieve separately and add to ' ...
         'the Matlab path.'
         ];
-    error('tapas:uniqc', msg);
+    error('tapas:uniqc:MrDataNd:CPXReaderNotFound', msg);
 end
 hasSelectedVolumes = ~isinf(selectedVolumes);
 hasSelectedCoils = ~any(isinf(selectedCoils)) && ~any(selectedCoils==0) ;

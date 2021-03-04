@@ -46,7 +46,8 @@ if ischar(applicationDimensions)
             applicationDimensions = this.get_dim_index(applicationDimensions);
             % default: last dimension, if nothing found
             if isempty(applicationDimensions)
-               error('DimLabel %s is not a valid dim label of this dimInfo', ...
+               error('tapas:uniqc:MrDimInfo:InvalidDimLabel', ...
+                   'DimLabel %s is not a valid dim label of this dimInfo', ...
                    applicationDimensions);
             end
     end

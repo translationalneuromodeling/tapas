@@ -116,7 +116,8 @@ else
     
     % error, if split into 4D would not work...
     if numel(dimIndexSpm4D) ~= 4
-        error('Specified split dimensions do not split into 4D images');
+        error('tapas:uniqc:MrImage:SplitDimensionsNot4D', ...
+            'Specified split dimensions do not split into 4D images');
     else
         dimLabelsSpm4D = this.dimInfo.dimLabels(dimIndexSpm4D);
     end

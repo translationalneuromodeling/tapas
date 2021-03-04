@@ -77,6 +77,6 @@ else
             fileNameDimInfo = fullfile(fp, [fn '_dimInfo.mat']);
             this.dimInfo.save(fileNameDimInfo);
         otherwise
-            error('Unknown file extension');
+            error('tapas:uniqc:MrDataNd:UnsuppportedFileType', 'Unsupported file type');
     end
 end

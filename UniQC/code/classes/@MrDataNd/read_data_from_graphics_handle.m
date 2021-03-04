@@ -62,7 +62,7 @@ elseif isLinePlot
     dimLabels = {'t', 'y'}; % TODO: read from axis labels
     units = {'s', '1'};
 else
-    error('No children of type Image found for specified handle');
+    error('tapas:uniqc:MrDataNd:ImageNotFound', 'No children of type Image found for specified handle');
 end
 
 this.data = data;

@@ -104,17 +104,20 @@ end
 
 % check for valid inputs
 if ~iscell(propvals) & ~isstruct(propvals) & ~isempty(propvals)
-  error('Property-value pairs must be a cell array or a structure.');
+  error('tapas:uniqc:PropertyValuePairsNotCellorStruct', ...
+      'Property-value pairs must be a cell array or a structure.');
 end
 
 if ~isstruct(defaults) & ~isempty(defaults)
-  error('Defaults struct must be a structure.');
+  error('tapas:uniqc:DefaultsStructNotStruct', ...
+      'Defaults struct must be a structure.');
 end
 
 % check for empty defaults structure
 if isempty(defaults)
   if pvargs.strict & ~pvargs.ignore_missing_default
-   error('Empty defaults structure passed to tapas_uniqc_propval.');
+   error('tapas:uniqc:EmptyDefaultsStruct', ...
+       'Empty defaults structure passed to tapas_uniqc_propval.');
   end
   defaults = struct();
 end
@@ -156,7 +159,8 @@ else
 end
 
 if numel(properties) ~= numel(values)
-  error(sprintf('Found %g properties but only %g values.', numel(properties), ...
+  error('tapas:uniqc:MismatchedPropertyToValueNumber', ...
+      sprintf('Found %g properties but only %g values.', numel(properties), ...
                 numel(values)));
 end
 
@@ -164,7 +168,8 @@ end
 for i = 1:numel(properties)
 
   if ~ischar(properties{i})
-    error(sprintf('Property %g is not a string.', i));
+    error('tapas:uniqc:PropertyNotString', ...
+        sprintf('Property %g is not a string.', i));
   end
 
   % convert property names to lower case
@@ -172,7 +177,8 @@ for i = 1:numel(properties)
 
   % check for multiple usage
   if isfield(used, properties{i})
-    error(sprintf('Property %s is defined more than once.\n', ...
+    error('tapas:uniqc:DuplicateProperties', ...
+        sprintf('Property %s is defined more than once.\n', ...
                   properties{i}));
   end
   
@@ -197,7 +203,8 @@ for i = 1:numel(properties)
     end
 
     if pvargs.strict
-      error('Property ''%s'' has no default value.', properties{i});
+      error('tapas:uniqc:PropertyNoDefaultValue', ...
+          'Property ''%s'' has no default value.', properties{i});
     end
     
   end

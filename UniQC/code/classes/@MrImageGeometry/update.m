@@ -129,7 +129,8 @@ if nargin > 1
                 elseif hasFOV
                     FOV_mm = this.FOV_mm;
                 else
-                    error(['No FOV_mm and resolution_mm given in %s. - ' ...
+                    error('tapas:uniqc:MrImageGeometry:UnspecifiedFOVResolution', ...
+                        ['No FOV_mm and resolution_mm given in %s. - ' ...
                         'Don''t know what else to do update with nVoxels.' ], ...
                         inputname(1));
                 end
@@ -153,7 +154,8 @@ if nargin > 1
             
             
         else
-            error('unknown update dependency for geometry %s', inputname(1));
+            error('tapas:uniqc:MrImageGeometry:UnknownUpdateDependency', ...
+                'unknown update dependency for geometry %s', inputname(1));
         end
         
         this.FOV_mm = FOV_mm;

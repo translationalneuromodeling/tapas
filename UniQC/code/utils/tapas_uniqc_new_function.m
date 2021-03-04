@@ -55,7 +55,8 @@ function tapas_uniqc_new_function(varargin)
             fname = ['tapas_uniqc_', fname];
             authors = varargin{2};
 		otherwise
-			error('too many input arguments')
+			error('tapas:uniqc:TooManyInputArguments', ...
+                'too many input arguments')
 	end
 
 	try lasterror

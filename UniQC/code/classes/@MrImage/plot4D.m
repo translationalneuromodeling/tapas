@@ -184,7 +184,8 @@ argsExtract = struct('sliceDimension', sliceDimension, ...
 
 
 if isempty(this.data)
-    error(sprintf('Data matrix empty for MrImage-object %s', this.name));
+    error('tapas:uniqc:MrImage:plot4D:EmptyDataMatrix', ...
+        'Data matrix empty for MrImage-object %s', this.name);
 end
 
 

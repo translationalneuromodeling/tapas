@@ -84,7 +84,8 @@ for iDimSelect = 1:nParseDims
         if returnUnusedVarargin
             unusedVarargin(end+1:end+2) = {dimLabel, currentIndices};
         else
-            error('Dimension with label "%s" does not exist in %s', dimLabel, ...
+            error('tapas:uniqc:MrDimInfoSelectNonExistingDimension', ...
+                'Dimension with label "%s" does not exist in %s', dimLabel, ...
                 inputname(1));
         end
     else

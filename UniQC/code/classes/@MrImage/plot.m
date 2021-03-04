@@ -180,7 +180,8 @@ function [fh, plotImage] = plot(this, varargin)
 
 % check whether image object has data
 if isempty(this.data)
-    error('Data matrix empty for MrImage-object %s', this.name);
+    error('tapas:uniqc:MrImageEmptyDataMatrix', ...
+        'Data matrix empty for MrImage-object %s', this.name);
 end
 %% set defaults
 % default signal part and plot mode
@@ -258,7 +259,8 @@ if doLinkPlot
                 linkOptions = MrLinkPlotOptions('ts', this.dimInfo, ...
                     imagePlotDim, iDimLinkedPlot);
             else
-                error('linkOptions must be a MrLinkOptions object or a shortcut string');
+                error('tapas:uniqc:MrImage:InvalidLinkOptions', ...
+                    'linkOptions must be a MrLinkOptions object or a shortcut string');
             end
         end
     end
@@ -385,7 +387,8 @@ if doPlotOverlays
     nDimsPlotImage = sum(plotImage.dimInfo.nSamples > 1);
     is3dBackground = nDimsPlotImage < 4;
     if ~is3dBackground
-        error(['Background image is not 3D but has ', ...
+        error('tapas:uniqc:MrImage:plot:UnderlayNot3D', ...
+            ['Background image is not 3D but has ', ...
             num2str(nDimsPlotImage), ' dimensions.']);
     end
     % extract data from background image
@@ -467,7 +470,8 @@ if doPlotOverlays
             numel(overlayNSamples) == numel(backgroundNSamples) && ...
             all(overlayNSamples == backgroundNSamples);
         if any(~equalDimBackgroundOverlay)
-            error(['Different number of samples for background (', ...
+            error('tapas:uniqc:MrImage:plot:NumberOfSamplesUnderlayOverlayMismatch', ...
+                ['Different number of samples for background (', ...
                 num2str(backgroundNSamples), ') and overlay image (', ...
                 num2str(size(dataOverlays{iOverlay})), ').']);
         end
@@ -541,7 +545,8 @@ if useSlider
     nDimsPlotImage = sum(plotImage.dimInfo.nSamples > 1);
     is4dor3dPlotImage = (nDimsPlotImage == 3 || nDimsPlotImage == 4);
     if ~is4dor3dPlotImage
-        error(['Selected plot image is not 3D or 4D but has ', ...
+        error('tapas:uniqc:MrImage:plot:SliderImageTooManyDimensions', ...
+            ['Selected plot image is not 3D or 4D but has ', ...
             num2str(nDimsPlotImage), ' dimensions.']);
     end
     nSlices = plotImage.dimInfo.nSamples(3);
@@ -678,7 +683,8 @@ else % different plot types: montage, 3D, spm
             nDimsPlotImage = sum(plotImage.dimInfo.nSamples > 1);
             is3dPlotImage = nDimsPlotImage == 3;
             if ~is3dPlotImage
-                error(['Selected plot image is not 3D but has ', ...
+                error('tapas:uniqc:MrImage:plot:3DPlotImageNot3D', ...
+                    ['Selected plot image is not 3D but has ', ...
                     num2str(nDimsPlotImage), ' dimensions.']);
             end
             % get voxel size ratio
@@ -699,7 +705,8 @@ else % different plot types: montage, 3D, spm
                 fileNameNifti = fileNameNifti{1};
             elseif ischar(fileNameNifti)
             else
-                error('SPM plots not implemented for 5+dimensional data yet');
+                error('tapas:uniqc:MrImage:plot:SPMPlotTooManyDimensions', ...
+                    'SPM plots not implemented for 5+dimensional data yet');
             end
             
             % select Volumes
@@ -715,7 +722,8 @@ else % different plot types: montage, 3D, spm
                         fileNameAdditionalNiftis = fileNameAdditionalNiftis{1};
                     elseif ischar(fileNameAdditionalNiftis) && ~isempty(fileNameAdditionalNiftis)
                     else
-                        error('High dimensional plotting with SPM not implemented yet');
+                        error('tapas:uniqc:MrImage:plot:SPMPlotTooManyDimensions', ...
+                            'High dimensional plotting with SPM not implemented yet');
                     end
                     volArrayFileNameNiftiAddImages{iAddImages} = strvcat(tapas_uniqc_get_vol_filenames(fileNameAdditionalNiftis));
                 end

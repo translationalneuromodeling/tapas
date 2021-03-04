@@ -54,7 +54,8 @@ switch nargin
         fname = varargin{1};
         authors = varargin{2};
     otherwise
-        error('too many input arguments')
+        error('tapas:uniqc:TooManyInputArguments', ...
+            'too many input arguments')
 end
 
 % determine class name from directory name
