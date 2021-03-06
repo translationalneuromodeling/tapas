@@ -3,6 +3,8 @@
 > Version: 0.1.0
 >
 > Author: Sam Harrison
+>
+> Maintainer: Sam Harrison
 
 A Python package for classification problems, with a focus on data exploration
 and visualisation. Within TAPAS, this forms a core part of the **gen**erative
@@ -35,14 +37,19 @@ classification pipeline, then please let us know.
 
 ### Installation
 
-We use [`conda`](https://conda.io/) to manage the Python dependencies.
-Installation should simply be a case of using the supplied
-[`environment.yml`](environment.yml) file.
+We use [`conda`](https://conda.io/) to manage the Python dependencies. We can
+use this to create and manage a bespoke Python environment. If this (or
+Anaconda) is not already installed, then you will need to do this first.
+We recommend Miniconda as this gives a simple, lightweight installation. For
+more details see:
+ + <https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html>
+ + <https://docs.conda.io/en/latest/miniconda.html>
+ + <https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html#anaconda-or-miniconda>
 
+Once `conda` is available, installation of the `genbed` environment should
+simply be a case of using the supplied [`environment.yml`](environment.yml)
+file:
 ```shell
-git clone --branch=master \
-    git@tnurepository.ethz.ch:samuelha/genbed.git
-
 cd genbed/
 conda env create --file environment.yml
 conda activate genbed
@@ -55,6 +62,26 @@ to temporarily add the code to your Python path:
 import sys
 sys.path.insert(0, '/path/to/genbed')
 ```
+
+-------------------------
+
+### Getting started
+
+The `genbed` environment contains both
+[IPython](https://ipython.readthedocs.io/en/stable/interactive/tutorial.html)
+and [Jupyter](https://jupyter-notebook.readthedocs.io/en/stable/notebook.html)
+for running code interactively. See the links for more documentation.
+
+The easiest place to start is probably the included Jupyter notebook:
+[`doc/ExampleAnalysis.ipynb`](doc/ExampleAnalysis.ipynb). To run locally, use
+the following and then navigate to the notebook itself:
+```shell
+conda activate genbed
+jupyter notebook
+```
+
+The rest of this README provides a more detailed overview of the available
+functionality, and how to build a workflow suitable for your own data.
 
 -------------------------
 
