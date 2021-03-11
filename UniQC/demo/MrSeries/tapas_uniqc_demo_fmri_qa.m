@@ -35,7 +35,7 @@ clc;
 
 
 doSaveForManuscript = 0;
-savePath = 'R:\docs\PhD_thesis\chapter5-unique\thesis\figures\raw';
+savePath = fullfile(pwd, 'outputFigures');
 
 doRealign           = true;
 doSaveResults       = false;

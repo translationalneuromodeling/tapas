@@ -48,11 +48,11 @@ switch folder
     case 'utils'
         pathOut = pathUtils;
     case 'code'
-        pathOut = fullfile(pathUtils, '..\');
+        pathOut = fullfile(pathUtils, '..');
     case 'classes'
-        pathOut = fullfile(pathUtils, '..\classes');
+        pathOut = fullfile(pathUtils, '..', 'classes');
     case {'example', 'examples', 'data'}
-        pathOut = fullfile(pathUtils, '..\..\data');
+        pathOut = fullfile(pathUtils, '..', '..', 'data');
         
         % at least this nifti file should exist in example folder
         relativePathNiftiFile = fullfile('nifti', 'paradigm_social_learning', ...
@@ -81,9 +81,9 @@ switch folder
             end
         end
     case {'tests', 'test'}
-        pathOut = fullfile(pathUtils, '..\..\test');
+        pathOut = fullfile(pathUtils, '..', '..', 'test');
     case {'demo', 'demos'}
-        pathOut = fullfile(pathUtils, '..\..\demo');
+        pathOut = fullfile(pathUtils, '..', '..', 'demo');
 end
 
 pathOut = tapas_uniqc_simplify_path(pathOut);

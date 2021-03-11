@@ -25,7 +25,8 @@ close all;
 clc;
 
 doSaveForManuscript = 0;
-savePath = 'R:\docs\PhD_thesis\chapter5-unique\thesis\figures\raw';
+savePath = fullfile(pwd, 'outputFigures');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 0. Load example data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

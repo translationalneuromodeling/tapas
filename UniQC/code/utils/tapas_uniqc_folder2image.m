@@ -37,7 +37,7 @@ function outputImage = tapas_uniqc_folder2image(pathFolder, savedVariable, fileP
 
 
 if nargin < 1
-    pathFolder = '/Users/kasperla/Temp/Output/Reconstructions/Default/8';
+    pathFolder = uigetdir();
 end
 
 if nargin < 2

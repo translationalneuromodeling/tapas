@@ -43,7 +43,7 @@ disp(affineTransformationNifti);
 %% Load from Par/Rec
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-parRecFile = fullfile(dataPath, 'parrec/rest_feedback_7T', 'fmri1.par');
+parRecFile = fullfile(dataPath, 'parrec', 'rest_feedback_7T', 'fmri1.par');
 affineTransformationParRec = MrAffineTransformation(parRecFile);
 disp(affineTransformationParRec);
 

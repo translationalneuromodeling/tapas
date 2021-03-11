@@ -3,9 +3,30 @@
 %
 %  make_example_data
 %
+% NOTE: This script has to be run only once, in order to prepare some 
+%       example files for all uniqc-demos from a publicly available imaging
+%       dataset.
 %
-%   See also
- 
+% INSTRUCTIONS:
+% 1. Please download the following data 
+%   (we only need subject sub-001 and sub-021) separately at
+%    https://dataverse.nl/dataverse/rt-me-fmri.
+%
+%   from 
+%   Heunis, Stephan, 2020, "rt-me-fMRI: A task and resting state dataset for
+%   real-time, multi-echo fMRI methods development and validation",
+%   https://doi.org/10.34894/R1TNL8, DataverseNL, V1. 
+%
+% 2. Unzip the downloaded subject folders
+%   
+% 3. Update the paths in section "User Input" below, i.e.
+%       a) where the downloaded, unzipped data resides (parent folder of sub-001)
+%       b) where the generated uniqc example data files shall be stored
+%          (for future use)
+%
+% 4. Run this script
+%
+
 % Author:   Saskia Bollmann & Lars Kasper
 % Created:  2021-02-26
 % Copyright (C) 2021 Institute for Biomedical Engineering
@@ -20,26 +41,24 @@
  
 clear; close all; clc; 
  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Make example data from Heunis et al. for demos
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Heunis, Stephan, 2020, "rt-me-fMRI: A task and resting state dataset for
-% real-time, multi-echo fMRI methods development and validation",
-% https://doi.org/10.34894/R1TNL8, DataverseNL, V1. 
-% Please download it separately at https://dataverse.nl/dataverse/rt-me-fmri.
 
-% This needs to run only once to prepare some example files (as we can't
-% share the original example data).
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% User Inputs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % file path to the Heunis-example data (we only need sub-001)
-sourceDataPath = '/30days/uqsboll2/data/me_sh_data';
+% PLEASE MODIFY TO YOUR PATH
+sourceDataPath = 'path/to/downloaded/me_sh_data';
 
 % where do want to store the example data for uniQC - this is also the path
 % you will be asked for when running the examples
-exampleDataPath = '/30days/uqsboll2/data/uniQC-examples';
+% PLEASE MODIFY TO YOUR PATH
+exampleDataPath = '/path/to/save/uniQC-examples';
 
-% load source data
-m = MrImage(fullfile(sourceDataPath, 'sub-001', 'func', 'sub-001_task-fingerTapping_echo-2_bold.nii'));
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Load and plot source data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+m = MrImage(fullfile(sourceDataPath, 'sub-001', 'func', ...
+    'sub-001_task-fingerTapping_echo-2_bold.nii'));
 m.plot();
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

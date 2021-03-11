@@ -22,13 +22,19 @@
 clear;
 close all;
 clc;
- 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% (0) User Inputs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% uses the output of demo_preprocessing; PLEASE MODIFY TO YOUR PATH
+pathOutputDemoPreprocessing = fullfile(pwd, 'preprocessing', 'MrSeries_*');
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% (1) Load data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% uses the output of demo_preprocessing
-S = MrSeries('/data/home/uqsboll2/code/uniqc-code/demo/MrSeries/preprocessing/MrSeries_210226_170649');
+
+S = MrSeries(pathOutputDemoPreprocessing);
 % change directory to get a separate it from the preprocessing
 S.parameters.save.path = strrep(S.parameters.save.path, 'preprocessing', 'model_estimation');
 
