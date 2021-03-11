@@ -4,15 +4,24 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: UniQC Toolbox Release R2021a-beta, v0.2.2*
+*Current version: UniQC Toolbox Release R2021a-beta, v0.2.3*
 
-March 4th, 2021
+March 11th, 2021
+
+
+Bugfix Release Notes (v0.2.3)
+-----------------------------
+
+## Changed
+- use relative paths and generic file separator in UniQC Demos
+
 
 Bugfix Release Notes (v0.2.2)
 -----------------------------
 
 ### Fixed
 - error message Ids with `tapas:uniqc` prefix
+
 
 Bugfix Release Notes (v0.2.1)
 -----------------------------
