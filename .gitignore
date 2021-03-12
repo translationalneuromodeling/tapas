@@ -18,3 +18,10 @@ lib
 .idea
 .idea/*
 examples
+
+# Python
+# See e.g. https://github.com/github/gitignore/blob/master/Python.gitignore
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints
