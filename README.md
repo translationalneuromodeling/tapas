@@ -38,7 +38,14 @@ And the following tasks:
 - [FDT](task/FDT/README.md): Filter Detection Task.
 - [BLT](task/BLT/README.md): Breathing Learning Task.
 
-TAPAS is written in MATLAB and distributed as open source code under
+
+TAPAS also includes beta versions of a number toolboxes. Currently, these include:
+- [h2gf](h2gf/README.md): hierarchical extension of HGF.
+- [UniQC](UniQC/README.md): unified neuroimaging quality control.
+Please note that toolboxes in beta versions have not been extensively tested and are still in active development.
+
+
+TAPAS is written in MATLAB and Python and distributed as open source code under
 the GNU General Public License (GPL, Version 3).
 
 
@@ -46,9 +53,9 @@ the GNU General Public License (GPL, Version 3).
 INSTALLATION
 ------------
 
-TAPAS is a collection of toolboxes written in MATLAB (Version R2016b). The key
+TAPAS is a collection of toolboxes written in MATLAB (Version R2016b) and Python. The key
 requirement is the installation of MATLAB (produced by The MathWorks, Inc.
-Natick, MA, USA. http://www.mathworks.com/).
+Natick, MA, USA. http://www.mathworks.com/). Toolboxes written in Python currently include: genbed. For requirements see the genbed [documentation](genbed/README.md).
 
 Please download TAPAS from our
 [Github Release Page](https://github.com/translationalneuromodeling/tapas/releases).
