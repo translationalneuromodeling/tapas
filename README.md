@@ -39,10 +39,10 @@ And the following tasks:
 - [BLT](task/BLT/README.md): Breathing Learning Task.
 
 
-TAPAS also includes beta versions of a number toolboxes. Currently, these include:
+TAPAS also includes beta versions the following toolboxes:
 - [h2gf](h2gf/README.md): hierarchical extension of HGF.
 - [UniQC](UniQC/README.md): unified neuroimaging quality control.
-Please note that toolboxes in beta versions have not been extensively tested and are still in active development.
+Please note that these toolboxes have not been extensively tested and are still in active development.
 
 
 TAPAS is written in MATLAB and Python and distributed as open source code under
@@ -99,8 +99,11 @@ SUPPORT
 Cite Me
 -------
 
-Information about citations and current version can be printed from matlab with
-the command: `tapas_version(1);`
+Please cite this toolbox as:
+
+S. Frässle, E. A. Aponte, K. H. Brodersen, C. T. Do, O. Harrison, S. J. Harrison, J. Heinzle, S. Iglesias, L. Kasper, E. I. Lomakina, C. D. Mathys, M. Müller-Schrader, I. Pereira, F. H. Petzschner, S. Raman, D. Schöbi, B. Toussaint, L. A. Weber, Y. Yao, and K. E. Stephan, “TAPAS: an open-source toolbox for translational neuromodeling and computational psychiatry,” \[Online\]. Available: https://arxiv.org/abs/2012.05744
+
+For additional information about citations and current version, enter `tapas_version(1);` on your MATLAB command line.
 
 ---------------
 Current release
