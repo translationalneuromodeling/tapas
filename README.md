@@ -101,7 +101,7 @@ Cite Me
 
 Please cite this toolbox as:
 
-S. Frässle, E. A. Aponte, K. H. Brodersen, C. T. Do, O. Harrison, S. J. Harrison, J. Heinzle, S. Iglesias, L. Kasper, E. I. Lomakina, C. D. Mathys, M. Müller-Schrader, I. Pereira, F. H. Petzschner, S. Raman, D. Schöbi, B. Toussaint, L. A. Weber, Y. Yao, and K. E. Stephan, “TAPAS: an open-source toolbox for translational neuromodeling and computational psychiatry,” \[Online\]. Available: https://arxiv.org/abs/2012.05744
+S. Frässle, E. A. Aponte, K. H. Brodersen, C. T. Do, O. Harrison, S. J. Harrison, J. Heinzle, S. Iglesias, L. Kasper, E. I. Lomakina, C. D. Mathys, M. Müller-Schrader, I. Pereira, F. H. Petzschner, S. Raman, D. Schöbi, B. Toussaint, L. A. Weber, Y. Yao, and K. E. Stephan, “TAPAS: an open-source toolbox for translational neuromodeling and computational psychiatry,” \[Online\]. Available: https://www.biorxiv.org/content/10.1101/2021.03.12.435091v1
 
 For additional information about citations and current version, enter `tapas_version(1);` on your MATLAB command line.
 
