@@ -6,7 +6,8 @@ TAPAS toolbox
 - [genbed](genbed/README.md): Python package for Generative Embedding
 - [UniQC](UniQC/README.md): unified neuroimaging quality control (beta release)
 - [task/BLT](task/BLT/README.md): breathing learning task 
-
+- [PhysIO](PhysIO/CHANGELOG.md): Release 2021a-v8.0; new method for estimating respiratory volume per unit time (RVT) via the Hilbert transform ([Harrison et al., NeuroImage 230 (2021)](https://doi.org/10.1016/j.neuroimage.2021.117787))
+    - also: robust respiratory preprocessing: optional de-spiking (median filter) and window-padded detrending
 
 ## [4.0.0] 2020-09-09
 
