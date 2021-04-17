@@ -182,7 +182,7 @@ assert(all(prior.nu_0(:) > 0), 'TAPAS:HUGE:Prior', ...
 prior.tau_0 = obj.options.nvp.priorvarianceratio;
 assert(all(prior.tau_0(:) > 0), 'TAPAS:HUGE:Prior', ...
     'PriorCovarianceRatio must be positive scalar.');
-% xxxTODO check size consistent
+
 
 % mu_h
 prior.mu_h = obj.options.prior.mu_h;
@@ -298,7 +298,7 @@ end
 
 % randomize starting values
 if obj.options.nvp.randomize && ~(strcmpi(obj.options.nvp.method, 'MH') && ...
-        ~obj.options.mh.nSteps.clusters) %%% TODO remove exception and introduce new method for clustering only
+        ~obj.options.mh.nSteps.clusters)
     stVal2 = stVal2 + randn(size(stVal2)).*obj.options.start.gmm;
 end
 

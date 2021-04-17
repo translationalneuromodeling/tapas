@@ -37,6 +37,14 @@ obj.options.nvp.tag = obj.tag;
 nvp = tapas_huge_parse_inputs( obj.options.nvp, varargin );
 
 %% check and process inputs
+% length of burn-in period in samples    
+val = nvp.burnin;
+if ~isempty(val)
+    assert(isscalar(val) && isnumeric(val) && val > 0 && mod(val, 1) == 0, ...
+        'TAPAS:HUGE:Nvp:Burnin', ...
+        'Length of burn-in period must be positive integer.');
+end
+
 % switch confounds on/off
 assert(any(strcmpi(nvp.confoundsvariant, {'default', 'none', 'global', ...
     'cluster'})), 'TAPAS:HUGE:Nvp:ConfoundsVariant',  ['Valid values for ' ...
@@ -52,13 +60,31 @@ if ~isempty(nvp.dcm) || ~isempty(nvp.confounds) || ...
     nvp.omitfromclustering = [];
 end
 
-  
+% inverse temperature of MCMC
+val = nvp.inversetemperature;
+assert(isnumeric(val) && all(val >=0) && all(val <= 1), ...
+    'TAPAS:HUGE:Nvp:InvTemp', ...
+    'Inverse chain temperature must be between 0 and 1.')
+nvp.inversetemperature = val(1);
+            
 % number of clusters
 obj.K = nvp.k;
 
+% special kernel
+val = nvp.kernelratio;
+assert(isnumeric(val) && all(val >=0), ...
+    'TAPAS:HUGE:Nvp:kernel', ...
+    'Kernel ratio must be numeric and larger or equal zero.')
+if numel(val) > 0
+    obj.options.mh.nSteps.knGmm = fix(val(1));
+end
+if numel(val) > 1
+    obj.options.mh.nSteps.knKm = fix(val(2));
+end
+
 % inversion scheme
-assert(any(strcmpi(nvp.method, {'vb'})), 'TAPAS:HUGE:Nvp:Method', ...
-    'Valid values for Method are: VB.')
+assert(any(strcmpi(nvp.method, {'vb', 'mh'})), 'TAPAS:HUGE:Nvp:Method', ...
+    'Valid value for Method are: VB and MH.')
 nvp.method = upper(nvp.method);
 
 % number of iterations
@@ -105,6 +131,16 @@ if ischar(val) && strcmpi(val, 'default')
 else
     assert( isnumeric(val) && any(val(:) > 0), 'TAPAS:HUGE:Nvp:PriorTau', ...
         'PriorVarianceRatio must be a positive scalar.');
+end
+
+% number of samples to keep from MCMC
+val = nvp.retainsamples;
+if ischar(val) && strcmpi(val, 'all')
+    obj.options.nTrace = [];
+elseif ~isempty(val)
+    assert(isnumeric(val) && mod(val(1), 1) == 0 && val(1) > 0, ...
+        'TAPAS:HUGE:Nvp:Trace', 'RetainSamples must be positive integer.');
+    obj.options.nTrace = val(1);
 end
 
 % path and filename for saving results

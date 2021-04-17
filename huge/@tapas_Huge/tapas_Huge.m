@@ -5,7 +5,7 @@ classdef tapas_Huge
 %   (task-based) fMRI data from heterogeneous cohorts. For more details on
 %   the theory behind the HUGE model, see:
 %
-%   Yao Y, Raman SS, Schiek M, Leff A, Frässle S, Stephan KE (2018).
+%   Yao Y, Raman SS, Schiek M, Leff A, Frï¿½ssle S, Stephan KE (2018).
 %   Variational Bayesian Inversion for Hierarchical Unsupervised Generative
 %   Embedding (HUGE). NeuroImage, 179: 604-619
 %   https://doi.org/10.1016/j.neuroimage.2018.06.073
@@ -113,7 +113,7 @@ classdef tapas_Huge
             'nPsrf', 1e5, ... % rate for convergence monitoring via PSRF
             'baseSc', -.5) % baseline self-connection
 
-        version = '2020-09'; % Toolbox version
+        version = '2021-04'; % Toolbox version
     end
 
 
@@ -153,7 +153,7 @@ classdef tapas_Huge
             obj.options = obj.default_options( );
                         
             if nargin == 1
-                %%% TODO build from posterior
+                %%% TODO add support for building object from posterior
             elseif nargin > 1
                 % key value pairs
                 obj = obj.optional_inputs(varargin{:});
@@ -192,6 +192,9 @@ classdef tapas_Huge
         % plot posterior
         [ fHdl ] = plot( obj, subjects )
         
+        % plot posterior
+        [ fHdl ] = pair_plot( obj, clusters, subjects, pdx, maxSmp )
+        
         % save object properties to disk
         [ ] = save( filename, obj, varargin )
         
@@ -221,6 +224,11 @@ classdef tapas_Huge
         [ nfe ] = vb_nfe( obj, ns )
         % VB initialization
         [ obj ] = vb_init( obj )
+        
+        % MH sampling
+        [ obj ] = mh_invert( obj )
+        % MH initialization
+        [ obj ] = mh_init( obj )
         
     end
     methods (Static, Access = protected)

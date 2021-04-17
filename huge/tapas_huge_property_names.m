@@ -1,5 +1,8 @@
 %% List of name-value pair arguments accepted by tapas_Huge() and estimate()
 % 
+% NAME:        BurnIn
+% VALUE:       positive integer (default: half of number of iterations)
+% DESCRIPTION: Length of burn-in period in samples.
 % 
 % NAME:        Confounds
 % VALUE:       double array
@@ -22,14 +25,26 @@
 % DESCRIPTION: Specify DCM structure and BOLD time series for all subjects
 %              as cell array with one DCM struct in SPM format per subject.
 % 
+% NAME:        InverseTemperature
+% VALUE:       double between 0 and 1 (default: 1)
+% DESCRIPTION: Inverse chain temperature for Monte Carlo based methods.
+% 
 % NAME:        K
 % VALUE:       positive integer (default: 1)
 % DESCRIPTION: Number of clusters.
 % 
+% NAME:        KernelRatio
+% VALUE:       2x1 array of positive integer or zero (default: [10 100])
+% DESCRIPTION: Inverse frequency of selecting special kernel during MCMC
+%              inversion. 1st element: GMM kernel, 2nd element: k-means
+%              kernel. 10 means: use special kernel for every 10th sample.
+%              0 means: do not use special kernel.
+% 
 % NAME:        Method  
-% VALUE:       'VB'
+% VALUE:       'VB' | 'MH'
 % DESCRIPTION: Name of inversion method specified as character array. VB:
-%              variational Bayes.
+%              variational Bayes, MH: Metropolized Gibbs sampling on
+%              collapsed HUGE model.
 % 
 % NAME:        NumberOfIterations
 % VALUE:       positive integer (default: 999 for VB, 2e5 for MH)
@@ -75,6 +90,13 @@
 % VALUE:       bool (default: false)
 % DESCRIPTION: If true, starting values for subject level DCM parameter 
 %              estimates are randomized.
+% 
+% NAME:        RetainSamples
+% VALUE:       'all' | positive integer (default: 1000)
+% DESCRIPTION: Number of samples from the Markkov chain to be kept. 'all'
+%              keeps the entire chain including burn-in. Otherwise discards
+%              burn-in and retains the specified number of samples by
+%              uniformly thinning the post-burn-in samples.
 % 
 % NAME:        SaveTo
 % VALUE:       character array

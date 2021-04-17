@@ -2,7 +2,7 @@ function [ tickLabels ] = parse_labels( dcm, labels, idx )
 % Generate labels for axis ticks.
 % 
 % This is a protected method of the tapas_Huge class. It cannot be called
-% from outsite the class.
+% from outside the class.
 % 
 
 % Author: Yu Yao (yao@biomed.ee.ethz.ch)
