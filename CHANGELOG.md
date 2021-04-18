@@ -1,5 +1,14 @@
 # Changelog
 TAPAS toolbox 
+## [5.1.0] 2021-04-23
+
+### Added
+- HUGE: Added Monte Carlo based inference (https://doi.org/10.1002/hbm.25431)
+
+### Fixed
+- Fixed typos
+
+
 ## [5.0.0] 2021-03-15
 
 ### Added
