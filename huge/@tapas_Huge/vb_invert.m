@@ -60,7 +60,7 @@ for iIt = 1:nIt
             obj = update_confounds( obj );
         end
         % update m_k, tau_k, nu_k, S_k
-        obj = update_clusters( obj ); %%% TODO cluster-specific prior mean and scale
+        obj = update_clusters( obj ); %%% TODO add support for cluster-specific prior mean and scale
     end
 
     % update mu_n, Sigma_n, b_nr
@@ -324,7 +324,7 @@ for n = 1:obj.N
         Pi_n(1:obj.idx.P_c, 1:obj.idx.P_c);
     Pi_n(obj.idx.P_c+1:end, obj.idx.P_c+1:end) = obj.aux.Pi_h + ...
         Pi_n(obj.idx.P_c+1:end, obj.idx.P_c+1:end);    
-    obj.posterior.Sigma_n(:,:,n) = inv(Pi_n); %%% TODO Pi + diag(delta)
+    obj.posterior.Sigma_n(:,:,n) = inv(Pi_n);
     obj.aux.ldSigma(n) = - tapas_huge_logdet(Pi_n);
     % posterior mean
     tmp = obj.aux.epsilon{n}(:) + obj.aux.G{n}*obj.posterior.mu_n(n,:)';

@@ -146,7 +146,7 @@ d = cell(obj.K, 1);
 for k = 1:obj.K
     d{k} = repmat(k, sizes(k), 1);
     if ~isfield(clusters{k}.Y, 'y')
-        rSmp = clusters{k}.Y.dt/clusters{k}.U.dt; %%% TODO 16
+        rSmp = clusters{k}.Y.dt/clusters{k}.U.dt;
         clusters{k}.Y.y = zeros(length(clusters{k}.U.u(rSmp:rSmp:end, 1)), ...
             clusters{k}.n);
     end
@@ -188,7 +188,7 @@ for n = 1:N
         dcm.U = options.inputs{n};
     end
     L = size(dcm.U.u, 2);
-    rSmp = dcm.Y.dt/dcm.U.dt; %%% fix
+    rSmp = dcm.Y.dt/dcm.U.dt;
     
     data = struct( 'bold', zeros(fix(size(dcm.U.u, 1)/rSmp), dcm.n), ...
         'tr', dcm.Y.dt, 'te', 0.04, 'res', []);

@@ -158,8 +158,23 @@ fprintf('passed.\n')
 %% test: estimate
 fprintf('Testing model inversion: \n')
 
+% monte carlo
+nSmp = 2048;
+obj = obj.estimate('K', 2,'method','mh','numberofiterations',nSmp);
+assert(obj.K == 2, 'tapas:huge:test', 'estimate K2 mcmc');
+assert(obj.options.nvp.numberofiterations==nSmp, 'tapas:huge:test', 'estimate nIt');
+assert(strcmp(obj.options.nvp.method,'MH'), 'tapas:huge:test', 'estimate mcmc');
+assert(all(size(obj.posterior.q_nk) == [obj.N obj.K]), ...
+    'tapas:huge:test', 'estimate q_nk2 mcmc');
+assert(length(obj.trace.smp)==1000, 'tapas:huge:test', 'estimate mcmc trace');
+
+% variational inference
+obj = tapas_Huge('Tag', 'import');
+obj = obj.import(listDcms);
+
 obj = obj.estimate('K', 1);
 assert(obj.K == 1, 'tapas:huge:test', 'estimate K1');
+assert(strcmp(obj.options.nvp.method,'VB'), 'tapas:huge:test', 'estimate VB');
 assert(all(size(obj.posterior.q_nk) == [obj.N obj.K]), ...
     'tapas:huge:test', 'estimate q_nk1');
 obj = obj.estimate('K', 2);

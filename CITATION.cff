@@ -3,8 +3,8 @@ message: If you use this software, please cite it as below.
 authors:
   - family-names: Aponte
     given-names: Eduardo
-  - family-names: Bollman
-    given-names: Sakia
+  - family-names: Bollmann
+    given-names: Saskia
   - family-names: Brodersen
     given-names: Kay
   - family-names: Frässle
@@ -28,8 +28,8 @@ authors:
   - family-names: Yao
     given-names: Yu
 title: "TAPAS - Translational Algorithms for Psychiatry-Advancing Science"
-version: 5.0.0
-date-released: 2021-03-12
+version: 5.1.0
+date-released: 2021-04-23
 repository-code: "https://github.com/translationalneuromodeling/tapas"
 url: "http://www.translationalneuromodeling.org/tapas"
 license: GPL-3.0-or-later

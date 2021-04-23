@@ -10,6 +10,7 @@
 \definecolor{lgray}{gray}{0.65}   
 \definecolor{llgray}{gray}{0.85}
 \setlength{\parindent}{0pt}
+
 \usepackage[utf8]{inputenc}
 \usepackage{natbib}
 \usepackage{lmodern}
@@ -26,9 +27,6 @@ University of Zurich \& ETH Zurich}
 \maketitle
 
 \tableofcontents
-
-
-
 
 \section{Introduction}
 
@@ -50,15 +48,15 @@ This toolbox implements the HUGE model as a Matlab class called \texttt{tapas\_H
 \end{par} \vspace{1em}
 \begin{par}
 Instances of the \texttt{tapas\_Huge} class are created by calling the class constructor \texttt{tapas\_Huge()}. The constructor is a function that can be called without arguments, which creates an empty \texttt{tapas\_Huge} object:
-\end{par}  
+\end{par} \vspace{1em}
 \begin{verbatim}obj = tapas_Huge()\end{verbatim}
 \begin{par}
 However, the constructor also accepts optional arguments in the form of name-value pairs. For example, one can add a short description using the \texttt{tag} property
-\end{par}  
+\end{par} \vspace{1em}
 \begin{verbatim}obj = tapas_Huge('Tag','my model')\end{verbatim}
 \begin{par}
 or import data using the \texttt{Dcm} property
-\end{par}  
+\end{par} \vspace{1em}
 \begin{verbatim}obj = tapas_Huge('Dcm',dcms)\end{verbatim}
 \begin{par}
 For more examples, see the demo script \texttt{tapas\_huge\_demo.mlx}.
@@ -69,7 +67,7 @@ For more examples, see the demo script \texttt{tapas\_huge\_demo.mlx}.
 
 \begin{par}
 Each instance of the \texttt{tapas\_Huge} class stores data, options and results in class properties, which are documented below. Properties can be accessed using dot notation:
-\end{par}  
+\end{par} \vspace{1em}
 \begin{verbatim}value = obj.property\end{verbatim}
 \begin{par}
 where \texttt{obj} is a class instance and \texttt{property} is the name of the property.
@@ -199,7 +197,7 @@ A struct storing priors of the HUGE model. Note: Set priors using name-value pai
 \subsection*{ \texttt{posterior}}
 
 \begin{par}
-A struct storing the estimation results. The fields correspond to the parameters of the posterior distribution (see\cite{yao2018}).
+A struct storing the estimation results. For VB-based inference, the fields correspond to the parameters of the posterior distribution (see\cite{yao2018}).
 \end{par} \vspace{1em}
 \begin{itemize}[align=parleft, labelsep=10ex, leftmargin=15ex]
 \setlength{\itemsep}{-1ex}
@@ -218,6 +216,27 @@ A struct storing the estimation results. The fields correspond to the parameters
    \item [ \texttt{nfe} ] The negative free energy ($F$).
    \item [ \texttt{mu\_r} ] When using group-level confounds, array containing posterior mean of residual DCM parameters, ($m_r$). Otherwise, empty array.
    \item [ \texttt{Sigma\_r} ] When using group-level confounds, array containing posterior covariance of residual DCM parameters, ($S_r$). Otherwise, empty array.
+\end{itemize}
+\begin{par}
+When using MH sampling, the field contains posterior statistics and quantiles. Note however, that the statistics associated with cluster level parameters should be treated with caution, since they are calcuated without relabeling.
+\end{par} \vspace{1em}
+\begin{itemize}[align=parleft, labelsep=10ex, leftmargin=15ex]
+\setlength{\itemsep}{-1ex}
+   \item [ \texttt{nIt} ] Number of samples (incl. burn-in).
+   \item [ \texttt{nBi} ] Length of burn-in period.
+   \item [ \texttt{q\_nk} ] Estimated subject assignment probability.
+   \item [ \texttt{ratio} ] Acceptance ratios.
+   \item [ \texttt{psrf} ] Potential scale reduction factor (convergence statistics).
+   \item [ \texttt{mean} ] Posterior mean.
+   \item [ \texttt{variance} ] Posterior variance.
+   \item [ \texttt{quantile} ] Posterior quantiles for the probability levels stored in \texttt{obj.options.quantiles}.
+   \item [ \texttt{lvarBold} ] Log-variance of observed BOLD signal.
+\end{itemize}
+\begin{par}
+Independent from the inversion method, \texttt{posterior} always contains the following fields:
+\end{par} \vspace{1em}
+\begin{itemize}[align=parleft, labelsep=10ex, leftmargin=15ex]
+\setlength{\itemsep}{-1ex}
    \item [ \texttt{nrv} ] Normalized residual variance. An array containing the amount of non-explained variance (1 minus variance explained) per subject and per region.
    \item [ \texttt{bPurity} ] When using synthetic data, balanced purity of estimation result.
    \item [ \texttt{method} ] Character array indicating inversion method.
@@ -229,7 +248,7 @@ A struct storing the estimation results. The fields correspond to the parameters
 \subsection*{ \texttt{trace}}
 
 \begin{par}
-A struct containing convergence diagnostics, with fields:
+If inference method is VB, this is a struct containing convergence diagnostics, with fields:
 \end{par} \vspace{1em}
 \begin{itemize}[align=parleft, labelsep=10ex, leftmargin=15ex]
 \setlength{\itemsep}{-1ex}
@@ -239,12 +258,15 @@ A struct containing convergence diagnostics, with fields:
    \item [ \texttt{kmeans} ] Struct containing information about the K-means initialization step.
    \item [ \texttt{epsilon} ] Cell array containing the residual (observed minus predicted BOLD time series) for each subject at convergence.
 \end{itemize}
+\begin{par}
+If inference methods is MH, this is a struct containing fields: * [ \texttt{smp} ] struct array containg posterior samples. * [ \texttt{lpr} ] struct array containg log-probabilities for samples in \texttt{smp}.
+\end{par} \vspace{1em}
 
 
 \subsection*{ \texttt{aux}}
 
 \begin{par}
-A struct used for storing auxiliary variables during model estimation.
+A struct used for storing auxiliary variables during model estimation. Will be cleared after inference.
 \end{par} \vspace{1em}
 
 
@@ -289,11 +311,11 @@ Character array indicating toolbox version.
 
 \begin{par}
 The main functionalities of the HUGE toolbox are implemented as methods of the \texttt{tapas\_Huge} class. These methods are documented below. There are two equivalent ways to call class methods:
-\end{par}  
+\end{par} \vspace{1em}
 \begin{verbatim}obj = obj.method( ... )\end{verbatim}
 \begin{par}
 or
-\end{par}  
+\end{par} \vspace{1em}
 \begin{verbatim}obj = method( obj, ... )\end{verbatim}
 \begin{par}
 where \texttt{obj} is an instance of the \texttt{tapas\_Huge} class and \texttt{method} is the class method you want to call.
@@ -302,7 +324,7 @@ where \texttt{obj} is an instance of the \texttt{tapas\_Huge} class and \texttt{
 
 \subsection*{ \texttt{tapas\_Huge.estimate}}
 
-  \begin{verbatim}  Estimate parameters of the HUGE model.
+\begin{verbatim}  Estimate parameters of the HUGE model.
   
   INPUTS:
     obj - A tapas_Huge object containing fMRI time series.
@@ -339,7 +361,7 @@ Note that the HUGE toolbox uses a parameterization such that the DCM networks ar
 
 \subsection*{ \texttt{tapas\_Huge.simulate}}
 
-  \begin{verbatim}  Generate synthetic task-based fMRI time series data, using HUGE as a
+\begin{verbatim}  Generate synthetic task-based fMRI time series data, using HUGE as a
   generative model. 
   
   INPUTS:
@@ -397,7 +419,7 @@ Note that the HUGE toolbox uses a parameterization such that the DCM networks ar
 
 \subsection*{ \texttt{tapas\_Huge.plot}}
 
-  \begin{verbatim}  Plot cluster and subject-level estimation result from HUGE model.
+\begin{verbatim}  Plot cluster and subject-level estimation result from HUGE model.
   
   INPUTS:
     obj - A tapas_Huge object containing estimation results.
@@ -415,9 +437,39 @@ Note that the HUGE toolbox uses a parameterization such that the DCM networks ar
 \end{verbatim} \color{black}
     
 
+\subsection*{ \texttt{tapas\_Huge.pair\_plot}}
+
+\begin{verbatim}  Generate pair plots for cluster and subject-level parameters from MCMC
+  trace.
+  
+  INPUTS:
+    obj - A tapas_Huge object containing estimation results.
+  
+  OPTIONAL INPUTS:
+    clusters - A vector containing indices of clusters for which to make
+               pair plots. If empty, plot all clusters.
+    subjects - A vector containing indices of subjects for which to make
+               pair plots. If empty, plot all subjects.
+    pdx      - A vector containing indices of parameters to plot. If empty,
+               plot all parameters.
+    maxSmp   - Maximum number of samples to use for plots (default: 1000).
+  
+  OUTPUTS:
+    fHdls - Cell array of figure handles.
+ 
+  EXAMPLES:
+    [fHdls] = PAIRS_PLOT(obj, [], 1, 1:3)    Generate pairs plot for the
+        first three parameters for all clusters and the first subject.
+  
+  See also tapas_Huge.PLOT
+  
+
+\end{verbatim} \color{black}
+    
+
 \subsection*{ \texttt{tapas\_Huge.save}}
 
-  \begin{verbatim}  Save properties of HUGE object to mat file.
+\begin{verbatim}  Save properties of HUGE object to mat file.
   
   INPUTS:
     filename - File name.
@@ -438,7 +490,7 @@ Note that the HUGE toolbox uses a parameterization such that the DCM networks ar
 
 \subsection*{ \texttt{tapas\_Huge.import}}
 
-  \begin{verbatim}  Import fMRI time series data into HUGE object.
+\begin{verbatim}  Import fMRI time series data into HUGE object.
  
     WARNING: Importing data into a HUGE object will delete any data and
     results which are already stored in that object.
@@ -484,7 +536,7 @@ Note that the HUGE toolbox uses a parameterization such that the DCM networks ar
 
 \subsection*{ \texttt{tapas\_Huge.export}}
 
-  \begin{verbatim}  Export results and data from HUGE object to SPM's DCM format.
+\begin{verbatim}  Export results and data from HUGE object to SPM's DCM format.
   
   INPUTS:
     obj - A tapas_Huge object containing data.
@@ -510,7 +562,7 @@ Note that the HUGE toolbox uses a parameterization such that the DCM networks ar
 
 \subsection*{ \texttt{tapas\_Huge.remove}}
 
-  \begin{verbatim}  Remove data (fMRI time series, confounds, DCM network structure, ... )
+\begin{verbatim}  Remove data (fMRI time series, confounds, DCM network structure, ... )
   and estimation results from HUGE object.
  
   INPUTS:
@@ -548,6 +600,17 @@ Both the class constructor \texttt{tapas\_Huge} and the method \texttt{estimate}
 
 {\renewcommand{\arraystretch}{1.5}
 \renewcommand{\tabcolsep}{0.2cm}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+BurnIn+ \\
+\hline
+\rowcolor{llgray} Value: & positive integer (default: half of number of iterations)\\
+\hline
+ \rowcolor{llgray} Description: & Length of burn-in period in samples.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
 \begin{tabular}{|l|p{10cm}|}
 \hline
 \rowcolor{lgray} Name: & \verb+Confounds+ \\
@@ -588,6 +651,18 @@ been extensively tested.
 \vspace{1em}
 \begin{tabular}{|l|p{10cm}|}
 \hline
+\rowcolor{lgray} Name: & \verb+InverseTemperature+ \\
+\hline
+\rowcolor{llgray} Value: & double between 0 and 1 (default: 1)\\
+\hline
+ \rowcolor{llgray} Description: & Inverse chain temperature for Monte
+ Carlo based methods.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
 \rowcolor{lgray} Name: & \verb+K+ \\
 \hline
 \rowcolor{llgray} Value: & positive integer (default: 1)\\
@@ -599,11 +674,24 @@ been extensively tested.
 \vspace{1em}
 \begin{tabular}{|l|p{10cm}|}
 \hline
+\rowcolor{lgray} Name: & \verb+KernelRatio+ \\
+\hline
+\rowcolor{llgray} Value: & 2x1 array of positive integer or zero (default: [10 100])\\
+\hline
+ \rowcolor{llgray} Description: & Inverse frequency of selecting special kernel during MCMC inversion. 1st element: GMM kernel, 2nd element: k-means kernel. 10 means: use special kernel for every 10th sample. 0 means: do not use special kernel.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
 \rowcolor{lgray} Name: & \verb+Method+ \\
 \hline
-\rowcolor{llgray} Value: & \verb+'VB'+\\
+\rowcolor{llgray} Value: & \verb+'VB' | 'MH'+\\
 \hline
- \rowcolor{llgray} Description: & Name of inversion method specified as character array. VB:              variational Bayes
+ \rowcolor{llgray} Description: & Name of inversion method specified as
+ character array. VB: variational Bayes, MH: Metropolized Gibbs sampling
+ on collapsed HUGE model.
 \\
 \hline
 \end{tabular}
@@ -687,6 +775,20 @@ been extensively tested.
 \rowcolor{llgray} Value: & bool (default: \verb+false+)\\
 \hline
  \rowcolor{llgray} Description: & If \verb+true+, starting values for subject level DCM parameter estimates are randomized.
+\\
+\hline
+\end{tabular}
+\vspace{1em}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{lgray} Name: & \verb+RetainSamples+ \\
+\hline
+\rowcolor{llgray} Value: & 'all' | positive integer (default: 1000)\\
+\hline
+ \rowcolor{llgray} Description: & Number of samples from the Markkov
+ chain to be kept. 'all' keeps the entire chain including burn-in.
+ Otherwise discards burn-in and retains the specified number of samples
+ by uniformly thinning the post-burn-in samples.
 \\
 \hline
 \end{tabular}
@@ -782,7 +884,7 @@ The HUGE toolbox provides additional functionalities in the form of regular Matl
 
 \subsection*{ \texttt{tapas\_huge\_boxcar}}
 
-  \begin{verbatim}  Generate a boxcar function for use as experimental stimulus. All
+\begin{verbatim}  Generate a boxcar function for use as experimental stimulus. All
   timing-related arguments must be specified in seconds. 
   
   INPUTS:
@@ -811,7 +913,7 @@ The HUGE toolbox provides additional functionalities in the form of regular Matl
 
 \subsection*{ \texttt{tapas\_huge\_bold}}
 
-  \begin{verbatim}  Integrates the DCM forward equations to generate the predicted fMRI bold
+\begin{verbatim}  Integrates the DCM forward equations to generate the predicted fMRI bold
   time series.
   
   INPUTS:
@@ -848,7 +950,7 @@ The HUGE toolbox provides additional functionalities in the form of regular Matl
 
 \subsection*{ \texttt{tapas\_huge\_bpurity}}
 
-  \begin{verbatim}  Calculate balanced purity (see Brodersen2014 Eq. 13 and 14) for a set of
+\begin{verbatim}  Calculate balanced purity (see Brodersen2014 Eq. 13 and 14) for a set of
   ground truth labels and a set of estimated labels
   
   INPUTS:
@@ -881,7 +983,7 @@ This function is used internally to compile the mex function the HUGE toolbox ne
 \begin{par}
 This function is intended for internal use only. Do not call directly
 \end{par} \vspace{1em}
-  \begin{verbatim}  Numerical stable calculation of log-determinant for positive-definite
+\begin{verbatim}  Numerical stable calculation of log-determinant for positive-definite
   matrix.
  
   INPUT:
@@ -903,7 +1005,7 @@ This function is intended for internal use only. Do not call directly
 \begin{par}
 This function is intended for internal use only. Do not call directly
 \end{par} \vspace{1em}
-  \begin{verbatim}  Numerical stable calculation of logit function.
+\begin{verbatim}  Numerical stable calculation of logit function.
   
   INPUTS:
     x - Array of double.
@@ -920,7 +1022,7 @@ This function is intended for internal use only. Do not call directly
 \begin{par}
 This function is intended for internal use only. Do not call directly
 \end{par} \vspace{1em}
-  \begin{verbatim}  Parse name-value pair type arguments into a struct.
+\begin{verbatim}  Parse name-value pair type arguments into a struct.
   
   INPUTS:
     opts - Struct containing all valid names as field names and 

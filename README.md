@@ -1,6 +1,6 @@
 ![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
 
-*Version 5.0.0*
+*Version 5.1.0*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================
@@ -39,10 +39,9 @@ And the following tasks:
 - [BLT](task/BLT/README.md): Breathing Learning Task.
 
 
-TAPAS also includes beta versions the following toolboxes:
+TAPAS also includes beta versions the following toolboxes. Please note that these toolboxes have not been extensively tested and are still in active development:
 - [h2gf](h2gf/README.md): hierarchical extension of HGF.
 - [UniQC](UniQC/README.md): unified neuroimaging quality control.
-Please note that these toolboxes have not been extensively tested and are still in active development.
 
 
 TAPAS is written in MATLAB and Python and distributed as open source code under
@@ -53,9 +52,11 @@ the GNU General Public License (GPL, Version 3).
 INSTALLATION
 ------------
 
-TAPAS is a collection of toolboxes written in MATLAB (Version R2016b) and Python. The key
-requirement is the installation of MATLAB (produced by The MathWorks, Inc.
-Natick, MA, USA. http://www.mathworks.com/). Toolboxes written in Python currently include: genbed. For requirements see the genbed [documentation](genbed/README.md).
+TAPAS is a collection of toolboxes written in MATLAB (Version R2016b) and Python. 
+- The key requirement is the installation of MATLAB (produced by The MathWorks, Inc.
+Natick, MA, USA. http://www.mathworks.com/). 
+- Toolboxes written in Python currently include: 
+    - genbed: For requirements see the genbed [documentation](genbed/README.md).
 
 Please download TAPAS from our
 [Github Release Page](https://github.com/translationalneuromodeling/tapas/releases).
@@ -101,7 +102,8 @@ Cite Me
 
 Please cite this toolbox as:
 
-S. Frässle, E. A. Aponte, K. H. Brodersen, C. T. Do, O. Harrison, S. J. Harrison, J. Heinzle, S. Iglesias, L. Kasper, E. I. Lomakina, C. D. Mathys, M. Müller-Schrader, I. Pereira, F. H. Petzschner, S. Raman, D. Schöbi, B. Toussaint, L. A. Weber, Y. Yao, and K. E. Stephan, “TAPAS: an open-source toolbox for translational neuromodeling and computational psychiatry,” \[Online\]. Available: https://www.biorxiv.org/content/10.1101/2021.03.12.435091v1
+Frässle, S., Aponte, E.A., Bollmann, S., Brodersen, K.H., Do, C.T., Harrison, O.K., Harrison, S.J., Heinzle, J., Iglesias, S., Kasper, L., Lomakina, E.I., Mathys, C., Müller-Schrader, M., Pereira, I., Petzschner, F.H., Raman, S., Schöbi, D., Toussaint, B., Weber, L.A., Yao, Y., Stephan, K.E., 2021. TAPAS: an open-source software package for Translational Neuromodeling and Computational Psychiatry. bioRxiv 2021.03.12.435091. https://doi.org/10.1101/2021.03.12.435091
+
 
 For additional information about citations and current version, enter `tapas_version(1);` on your MATLAB command line.
 
