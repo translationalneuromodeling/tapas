@@ -1,6 +1,6 @@
 ![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
 
-*Version 5.1.0*
+*Version 5.1.1*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================
@@ -97,18 +97,21 @@ SUPPORT
 
 
 -------
-Cite Me
+CITE ME
 -------
 
-Please cite this toolbox as:
+When using a toolbox which is part of the TAPAS collection, please cite the paper(s) mentioned in the README of the respective toolbox and the paper below describing the entire collection.
 
-Frässle, S., Aponte, E.A., Bollmann, S., Brodersen, K.H., Do, C.T., Harrison, O.K., Harrison, S.J., Heinzle, J., Iglesias, S., Kasper, L., Lomakina, E.I., Mathys, C., Müller-Schrader, M., Pereira, I., Petzschner, F.H., Raman, S., Schöbi, D., Toussaint, B., Weber, L.A., Yao, Y., Stephan, K.E., 2021. TAPAS: an open-source software package for Translational Neuromodeling and Computational Psychiatry. bioRxiv 2021.03.12.435091. https://doi.org/10.1101/2021.03.12.435091
+You can include for example the following snippet in your Methods section:
 
+> The analysis was performed using the Matlab [NAME-OF-THE-TOOLBOX] Toolbox ([CITATION(S)-OF-TOOBOX], open-source code available as part of the TAPAS software collection: [1] / https://www.translationalneuromodeling.org/tapas)
 
-For additional information about citations and current version, enter `tapas_version(1);` on your MATLAB command line.
+[1] Frässle, S., Aponte, E.A., Bollmann, S., Brodersen, K.H., Do, C.T., Harrison, O.K., Harrison, S.J., Heinzle, J., Iglesias, S., Kasper, L., Lomakina, E.I., Mathys, C., Müller-Schrader, M., Pereira, I., Petzschner, F.H., Raman, S., Schöbi, D., Toussaint, B., Weber, L.A., Yao, Y., Stephan, K.E.: TAPAS: An Open-Source Software Package for Translational Neuromodeling and Computational Psychiatry, Frontiers in Psychiatry 12, 857, 2021. https://doi.org/10.3389/fpsyt.2021.680811
+
+For additional information concerning citations and the current TAPAS version, enter `tapas_version(1);` in your MATLAB command line.
 
 ---------------
-Current release
+CURRENT RELEASE
 ---------------
 
 Information about changes in the current release can be found in the [CHANGELOG.md](CHANGELOG.md)
