@@ -10,7 +10,14 @@ function y = tapas_beta_obs_sim(r, infStates, p)
 % COPYING or <http://www.gnu.org/licenses/>.
 
 % Inferred states
-mu = tapas_sgm(infStates(:,2,3), 1);
+if strcmp(r.c_prc.model,'tapas_rw_binary')
+    mu = infStates(:,1,1); % Default: predictions (ie, mu1hat)
+else
+    mu = infStates(:,1,1); % Default: predictions (ie, mu1hat)
+    if r.c_obs.predorpost == 2
+        mu = tapas_sgm(infStates(:,2,3), 1); % Alternative: posteriors (ie, sgm(mu2))
+    end
+end
 if strcmp(r.c_prc.model,'hgf_whichworld')
     mu = tapas_sgm(infStates(:,2,1,3), 1);
 end
