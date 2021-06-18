@@ -30,7 +30,7 @@ unsupervised generative embedding (HUGE).
 - [MICP](MICP/Readme%20for%20MATLAB.pdf): Bayesian Mixed-effects Inference for Classification Studies.
 - [MPDCM](mpdcm/README.md): Massively Parallel DCM; Efficient integration of DCMs using massive parallelization.
 - [PhysIO](PhysIO/README.md): Physiological Noise Correction for fMRI.
-- [rDCM](rDCM/README.md): DCM based, efficient inference on effective brain connectivity for fMRI.
+- [rDCM](rDCM/README.md): Regression dynamic causal modeling; efficient inference on whole-brain effective connectivity from fMRI data.
 - [SEM](sem/README.md): SERIA Model for Eye Movements (saccades and anti-saccades) and Reaction Times.
 - [VBLM](VBLM/README.txt): Variational Bayesian Linear Regression.
 
