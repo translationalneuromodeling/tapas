@@ -35,6 +35,26 @@ classification pipeline, then please let us know.
 
 -------------------------
 
+### Citing `genbed`
+
+You can include for example the following snippet in your Methods section,
+along with a brief description of the classification pipeline used. See the
+[main TAPAS README](../README.md) for more details on citing TAPAS itself.
+
+> The analysis was performed using the Python genbed toolbox (version 0.1.0,
+> open-source code available as part of the TAPAS software collection: [1] /
+> <https://www.translationalneuromodeling.org/tapas>)
+
+ 1. Frässle, S.; Aponte, E.A.; Bollmann, S.; Brodersen, K.H.; Do, C.T.;
+    Harrison, O.K.; Harrison, S.J.; Heinzle, J.; Iglesias, S.; Kasper, L.;
+    Lomakina, E.I.; Mathys, C.; Müller-Schrader, M.; Pereira, I.; Petzschner,
+    F.H.; Raman, S.; Schöbi, D.; Toussaint, B.; Weber, L.A.; Yao, Y.; Stephan,
+    K.E.; *TAPAS: An Open-Source Software Package for Translational
+    Neuromodeling and Computational Psychiatry*, Frontiers in Psychiatry 12,
+    857, 2021. <https://doi.org/10.3389/fpsyt.2021.680811>
+
+-------------------------
+
 ### Installation
 
 We use [`conda`](https://conda.io/) to manage the Python dependencies. We can

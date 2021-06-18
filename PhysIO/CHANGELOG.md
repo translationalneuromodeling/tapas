@@ -4,9 +4,9 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2021a, v8.0.0*
+*Current version: PhysIO Toolbox Release R2021a, v8.0.1*
 
-January 29th, 2021
+June 16th, 2021
 
 
 SCHEDULED Minor Release Notes (v8.1.0)
@@ -21,6 +21,13 @@ SCHEDULED Minor Release Notes (v8.1.0)
 ### Changed
 
 ### Fixed
+
+
+Bugfix Release Notes (v8.0.1)
+-----------------------------
+
+### Changed
+- Citation of novel [TAPAS paper](https://doi.org/10.3389/fpsyt.2021.680811) in README and CITATION
 
 
 Major Release Notes (v8.0.0)

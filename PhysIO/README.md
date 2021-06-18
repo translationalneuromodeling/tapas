@@ -1,7 +1,7 @@
 TAPAS PhysIO Toolbox 
 ====================
 
-*Current version: Release 2021a, v8.0.0*
+*Current version: Release 2021a, v8.0.1*
 
 > Copyright (C) 2012-2021  
 > Lars Kasper  
@@ -289,31 +289,41 @@ open source projects and gratefully acknowledges their use.
     - Matlab file exchange, adam.tudorjones@pharm.ox.ac.uk
 
 
-References
-----------
+Cite Me
+-------
 
-### Main Toolbox Reference
+### Main Toolbox and TAPAS Reference
 
-Please cite the following paper in all of your publications that utilized the 
+Please cite the following papers in all of your publications that utilized the 
 PhysIO Toolbox. 
 
 1. Kasper, L., Bollmann, S., Diaconescu, A.O., Hutton, C., Heinzle, J., Iglesias, 
 S., Hauser, T.U., Sebold, M., Manjaly, Z.-M., Pruessmann, K.P., Stephan, K.E., 2017. 
 The PhysIO Toolbox for Modeling Physiological Noise in fMRI Data. 
 Journal of Neuroscience Methods 276, 56-72. https://doi.org/10.1016/j.jneumeth.2016.10.019
+    - *main PhysIO Toolbox reference*
+2. Frässle, S., Aponte, E.A., Bollmann, S., Brodersen, K.H., Do, C.T., Harrison, O.K., Harrison, S.J., Heinzle, J., Iglesias, S., Kasper, L., Lomakina, E.I., Mathys, C., Müller-Schrader, M., Pereira, I., Petzschner, F.H., Raman, S., Schöbi, D., Toussaint, B., Weber, L.A., Yao, Y., Stephan, K.E., 2021. TAPAS: an open-source software package for Translational Neuromodeling and Computational Psychiatry. Frontiers in Psychiatry 12, 857. https://doi.org/10.3389/fpsyt.2021.680811
+    - *main TAPAS software collection reference*
 
-The [FAQ](https://gitlab.ethz.ch/physio/physio-doc/wikis/FAQ#3-how-do-i-cite-physio) 
-contains a complete suggestion for a snippet in your methods section.
+You can include the following snippet in your Methods section,
+along with a brief description of the physiological noise models used: 
 
-### Novel methods
+> The analysis was performed using the Matlab PhysIO Toolbox ([1], version x.y.z,
+> open-source code available as part of the TAPAS software collection: [2], 
+> <https://www.translationalneuromodeling.org/tapas>)
 
-The following list contains references for methods originating from PhysIO
-development. Please cite the relevant papers if using the techniques.
+If you use respiratory volume per time (RVT) regressors or preprocess respiratory traces 
+for RETROICOR, please also cite:
 
-2. Harrison, S.J., Bianchi, S., Heinzle, J., Stephan, K.E., Iglesias, S., Kasper L., 2021.
+3. Harrison, S.J., Bianchi, S., Heinzle, J., Stephan, K.E., Iglesias, S., Kasper L., 2021.
 A Hilbert-based method for processing respiratory timeseries.
 NeuroImage, 117787. https://doi.org/10.1016/j.neuroimage.2021.117787
-    - *Superior RVT computation, preprocessing of respiratory traces*
+    - *superior RVT computation, preprocessing of respiratory traces*
+
+Our [FAQ](https://gitlab.ethz.ch/physio/physio-doc/wikis/FAQ#3-how-do-i-cite-physio) 
+contains a suggestion for a more comprehensive RETROICOR-related methods paragraph.
+See the [main TAPAS README](../README.md) for more details on citing TAPAS itself.
+
 
 ### Related Papers (Implemented noise correction algorithms and optimal parameter choices)
 
@@ -328,51 +338,51 @@ paper. The list is by no means complete, and we are happy to add any relevant pa
 suggested to us. 
 
 #### RETROICOR 
-3. Glover, G.H., Li, T.Q. & Ress, D. Image-based method for retrospective correction
+4. Glover, G.H., Li, T.Q. & Ress, D. Image-based method for retrospective correction
 of Physiological motion effects in fMRI: RETROICOR. Magn Reson Med 44, 162-7 (2000).
 
-4. Hutton, C. et al. The impact of Physiological noise correction on fMRI at 7 T.
+5. Hutton, C. et al. The impact of Physiological noise correction on fMRI at 7 T.
 NeuroImage 57, 101-112 (2011).
 
-5. Harvey, A.K. et al. Brainstem functional magnetic resonance imaging:
+6. Harvey, A.K. et al. Brainstem functional magnetic resonance imaging:
 Disentangling signal from PhysIOlogical noise. Journal of Magnetic Resonance
 Imaging 28, 1337-1344 (2008).
 
-6. Bollmann, S., Puckett, A.M., Cunnington, R., Barth, M., 2018. 
+7. Bollmann, S., Puckett, A.M., Cunnington, R., Barth, M., 2018. 
 Serial correlations in single-subject fMRI with sub-second TR. 
 NeuroImage 166, 152-166. https://doi.org/10.1016/j.neuroimage.2017.10.043
 
 #### aCompCor / Noise ROIs 
-7. Behzadi, Y., Restom, K., Liau, J., Liu, T.T., 2007. A component based noise
+8. Behzadi, Y., Restom, K., Liau, J., Liu, T.T., 2007. A component based noise
 correction method (CompCor) for BOLD and perfusion based fMRI. NeuroImage 37,
 90-101. https://doi.org/10.1016/j.neuroimage.2007.04.042
 
 #### RVT
-8. Birn, R.M., Smith, M.A., Jones, T.B., Bandettini, P.A., 2008. The respiration response
+9. Birn, R.M., Smith, M.A., Jones, T.B., Bandettini, P.A., 2008. The respiration response
 function: The temporal dynamics of fMRI signal fluctuations related to changes in
 respiration. NeuroImage 40, 644-654. doi:10.1016/j.neuroimage.2007.11.059
-9. Jo, H.J., Saad, Z.S., Simmons, W.K., Milbury, L.A., Cox, R.W., 2010. 
+10. Jo, H.J., Saad, Z.S., Simmons, W.K., Milbury, L.A., Cox, R.W., 2010. 
 Mapping sources of correlation in resting state FMRI, with artifact detection 
 and removal. NeuroImage 52, 571-582. https://doi.org/10.1016/j.neuroimage.2010.04.246  
     - *regressor delay suggestions*
 
 #### HRV
-10. Chang, C., Cunningham, J.P., Glover, G.H., 2009. Influence of heart rate on the
+11. Chang, C., Cunningham, J.P., Glover, G.H., 2009. Influence of heart rate on the
 BOLD signal: The cardiac response function. NeuroImage 44, 857-869.
 doi:10.1016/j.neuroimage.2008.09.029
-11. Shmueli, K., van Gelderen, P., de Zwart, J.A., Horovitz, S.G., Fukunaga, M., 
+12. Shmueli, K., van Gelderen, P., de Zwart, J.A., Horovitz, S.G., Fukunaga, M., 
 Jansma, J.M., Duyn, J.H., 2007. Low-frequency fluctuations in the cardiac rate 
 as a source of variance in the resting-state fMRI BOLD signal. 
 NeuroImage 38, 306-320. https://doi.org/10.1016/j.neuroimage.2007.07.037  
     - *regressor delay suggestions*
 
 #### Motion (Censoring, Framewise Displacement)
-12. Siegel, J.S., Power, J.D., Dubis, J.W., Vogel, A.C., Church, J.A., Schlaggar, B.L.,
+13. Siegel, J.S., Power, J.D., Dubis, J.W., Vogel, A.C., Church, J.A., Schlaggar, B.L.,
 Petersen, S.E., 2014. Statistical improvements in functional magnetic resonance
 imaging analyses produced by censoring high-motion data points. Hum. Brain Mapp.
 35, 1981-1996. https://doi.org/10.1002/hbm.22307
 
-13. Power, J.D., Barnes, K.A., Snyder, A.Z., Schlaggar, B.L., Petersen, S.E., 2012. 
+14. Power, J.D., Barnes, K.A., Snyder, A.Z., Schlaggar, B.L., Petersen, S.E., 2012. 
 Spurious but systematic correlations in functional connectivity MRI networks 
 arise from subject motion. NeuroImage 59, 2142-2154. 
 https://doi.org/10.1016/j.neuroimage.2011.10.018

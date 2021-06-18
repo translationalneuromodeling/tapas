@@ -16,7 +16,7 @@ function [ output ] = tapas_rdcm_compute_signals(DCM, output, options)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2020 Translational Neuromodeling Unit
+% Copyright (C) 2016-2021 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -37,12 +37,17 @@ output.signal.y_source = DCM.Y.y(:);
 % true (deterministic) signal / VBL signal
 if strcmp(options.type,'s')
     
-    % noise-free signal
-    DCMs = tapas_rdcm_generate(DCM, options, Inf);
-    output.signal.y_clean = DCMs.Y.y(:);
+    % if signal should be computed
+    if ( options.compute_signal )
     
-    % compute the MSE of the noisy data
-    output.residuals.y_mse_clean = mean((output.signal.y_source - output.signal.y_clean).^2);
+        % noise-free signal
+        DCMs = tapas_rdcm_generate(DCM, options, Inf);
+        output.signal.y_clean = DCMs.Y.y(:);
+
+        % compute the MSE of the noisy data
+        output.residuals.y_mse_clean = mean((output.signal.y_source - output.signal.y_clean).^2);
+        
+    end
     
 else
     
@@ -62,37 +67,42 @@ yd_source_fft(~isfinite(yd_source_fft)) = 0;
 output.signal.yd_source_fft             = yd_source_fft(:);
 
 
-% get rDCM parameters
-DCM.Tp   = output.Ep;
+% if signal in time domain should be computed
+if ( options.compute_signal )
 
-% no baseline for simulated data
-if ( strcmp(options.type,'s') )
-    DCM.Tp.baseline = zeros(size(DCM.Tp.C,1),1);
-end
+    % get rDCM parameters
+    DCM.Tp   = output.Ep;
 
-% increase sampling rate
-r_dt     = DCM.Y.dt/DCM.U.dt;
-DCM.Y.dt = DCM.U.dt;
-
-% posterior probability (for sparse rDCM)
-if ( isfield(output,'Ip') )
-    DCM.Tp.A = DCM.Tp.A .* output.Ip.A;
-    DCM.Tp.C = DCM.Tp.C .* output.Ip.C;
-end
-
-
-% generate predicted signal (tapas_rdcm_generate)
-DCM_rDCM = tapas_rdcm_generate(DCM, options, Inf);
-
-% add the confounds to predicted time series
-for t = 1:size(DCM.Y.y,1)
-    for r = 1:size(DCM.Y.y,2)
-        DCM_rDCM.Y.y(t,r) = DCM_rDCM.Y.y(t,r) + DCM_rDCM.Tp.baseline(r,:) * DCM_rDCM.U.X0((1+r_dt*(t-1)),:)';
+    % no baseline for simulated data
+    if ( strcmp(options.type,'s') )
+        DCM.Tp.baseline = zeros(size(DCM.Tp.C,1),1);
     end
-end
 
-% turn into vector
-output.signal.y_pred_rdcm = DCM_rDCM.Y.y(:) ;
+    % increase sampling rate
+    r_dt     = DCM.Y.dt/DCM.U.dt;
+    DCM.Y.dt = DCM.U.dt;
+
+    % posterior probability (for sparse rDCM)
+    if ( isfield(output,'Ip') )
+        DCM.Tp.A = DCM.Tp.A .* output.Ip.A;
+        DCM.Tp.C = DCM.Tp.C .* output.Ip.C;
+    end
+
+
+    % generate predicted signal (tapas_rdcm_generate)
+    DCM_rDCM = tapas_rdcm_generate(DCM, options, Inf);
+
+    % add the confounds to predicted time series
+    for t = 1:size(DCM.Y.y,1)
+        for r = 1:size(DCM.Y.y,2)
+            DCM_rDCM.Y.y(t,r) = DCM_rDCM.Y.y(t,r) + DCM_rDCM.Tp.baseline(r,:) * DCM_rDCM.U.X0((1+r_dt*(t-1)),:)';
+        end
+    end
+
+    % turn into vector
+    output.signal.y_pred_rdcm = DCM_rDCM.Y.y(:);
+    
+end
 
 
 % store predicted temporal derivative (in frequency domain)
@@ -110,8 +120,10 @@ end
 
 
 % compute the MSE of predicted signal
-output.residuals.y_mse_rdcm     = mean((output.signal.y_source - output.signal.y_pred_rdcm).^2);
-output.residuals.R_rdcm         = output.signal.y_source - output.signal.y_pred_rdcm;
+if ( options.compute_signal )
+    output.residuals.y_mse_rdcm     = mean((output.signal.y_source - output.signal.y_pred_rdcm).^2);
+    output.residuals.R_rdcm         = output.signal.y_source - output.signal.y_pred_rdcm;
+end
 
 
 % store the driving inputs

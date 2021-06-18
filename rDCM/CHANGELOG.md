@@ -2,6 +2,20 @@
 Regression Dynamic Causal Modeling (rDCM) toolbox 
 
 
+## [1.3] 2021-06-10
+
+### Added
+none
+
+### Changed
+- Adapted "Cite Me" information to include TAPAS paper and update existing rDCM references
+- Corrected typo in the comments of tapas_rdcm_estimate.m
+- Corrected bug in construction of the full posterior covariance matrix (from the region-wise posterior covariance matrices) 
+
+### Removed
+none
+
+
 ## [1.2] 2020-09-01
 
 ### Added

@@ -23,7 +23,7 @@ function [ output ] = tapas_rdcm_store_parameters(DCM, mN_cut, sN, aN, bN, logF,
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2020 Translational Neuromodeling Unit
+% Copyright (C) 2016-2021 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -81,24 +81,44 @@ if ( isempty(z_cut) && args.evalCp == 1 )
     % empty covariance matrix
     output.Cp = sparse(D,D);
     
-    % get the number of A matrix entries
+    % get the number of entries
     nr_A    = numel(output.Ep.A);
+    nr_C    = numel(output.Ep.C);
     nr_A_B  = numel(output.Ep.A(1,:))+numel(output.Ep.B(1,:,:))+numel(output.Ep.B(1,:,1));
     
-    % asign the covariances among the endogenous connections
+    
+    % define an index matrix for endogenous connections
+    indexA = reshape(1:nr_A,nr,nr);
+    
+    % get the (co)variances of the endogenous connections
     for k = 1:nr
-        output.Cp(1+size(output.Ep.A,1)*(k-1):size(output.Ep.A,1)*(k-1)+size(output.Ep.A,1),1+size(output.Ep.A,1)*(k-1):size(output.Ep.A,1)*(k-1)+size(output.Ep.A,1)) = sN{k}(1:size(output.Ep.A,1),1:size(output.Ep.A,1));
+        for int = 1:nr
+            for int2 = 1:nr
+                output.Cp(indexA(k,int),indexA(k,int2)) = sN{k}(int,int2);
+            end
+        end
     end
     
-    % asign the covariances among the driving inputs
+    % define an index matrix for driving input parameters
+    indexC = reshape(1:nr_C,nr,nu);
+    
+    % get the (co)variances of the driving input parameters
     for k = 1:nr
-        output.Cp(1+nr_A+size(output.Ep.C,2)*(k-1):size(output.Ep.C,2)*(k-1)+nr_A+size(output.Ep.C,2),1+nr_A+size(output.Ep.C,2)*(k-1):size(output.Ep.C,2)*(k-1)+nr_A+size(output.Ep.C,2)) = sN{k}(nr_A_B+1:nr_A_B+size(output.Ep.C,2),nr_A_B+1:nr_A_B+size(output.Ep.C,2));
+        for int = 1:nu
+            for int2 = 1:nu
+                output.Cp(nr_A+indexC(k,int),nr_A+indexC(k,int2)) = sN{k}(nr_A_B+int,nr_A_B+int2);
+            end
+        end
     end
     
-    % asign the cross-covariance terms
+    % get the covariances between endogeous and driving input parameters
     for k = 1:nr
-        output.Cp(1+nr_A+size(output.Ep.C,2)*(k-1):size(output.Ep.C,2)*(k-1)+nr_A+size(output.Ep.C,2),1+size(output.Ep.A,2)*(k-1):size(output.Ep.A,2)*(k-1)+size(output.Ep.A,2)) = sN{k}(nr_A_B+1:nr_A_B+size(output.Ep.C,2),1:size(output.Ep.A,2));
-        output.Cp(1+size(output.Ep.A,2)*(k-1):size(output.Ep.A,2)*(k-1)+size(output.Ep.A,2),1+nr_A+size(output.Ep.C,2)*(k-1):size(output.Ep.C,2)*(k-1)+nr_A+size(output.Ep.C,2)) = sN{k}(1:size(output.Ep.A,2),nr_A_B+1:nr_A_B+size(output.Ep.C,2));
+        for int = 1:nr
+            for int2 = 1:nu
+                output.Cp(indexA(k,int),nr_A+indexC(k,int2)) = sN{k}(int,nr_A_B+int2);
+                output.Cp(nr_A+indexC(k,int2),indexA(k,int)) = sN{k}(int,nr_A_B+int2);
+            end
+        end
     end
 end
 
