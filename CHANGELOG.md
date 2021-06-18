@@ -1,6 +1,6 @@
 # Changelog
 TAPAS toolbox 
-## [5.1.1] 2021-0-17
+## [5.1.1] 2021-06-18
 
 ### Fixed
 - Added references to TAPAS paper (in collection and toolboxes)
