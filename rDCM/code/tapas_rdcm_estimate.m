@@ -30,7 +30,7 @@ function [output, options] = tapas_rdcm_estimate(DCM, type, options, methods)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2020 Translational Neuromodeling Unit
+% Copyright (C) 2016-2021 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -79,6 +79,9 @@ if ( ~isfield(DCM,'c') || isempty(DCM.c) || ~isfield(DCM,'U') || isempty(DCM.U.u
     DCM.b = zeros(DCM.n, DCM.n, size(DCM.U.u,2));
     DCM.c = zeros(DCM.n, size(DCM.U.u,2));
     DCM.d = zeros(DCM.n, DCM.n, 0);
+    
+    % no predicted signal in time domain
+    options.compute_signal = 0;
     
 end
 
@@ -179,6 +182,6 @@ output.time.time_rDCM_VBinv = time_rDCM_VBinv;
 
 % store the random number seed and the version number
 output.rngSeed = rngSeed;
-output.ver     = '2020_v01.2';
+output.ver     = '2021_v01.3';
 
 end

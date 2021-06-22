@@ -252,7 +252,29 @@ The UniQC Toolbox ships with the following publicly available code from other op
     -  Brandon Kuczenski (2001). hline and vline (https://www.mathworks.com/matlabcentral/fileexchange/1039-hline-and-vline), MATLAB Central File Exchange.
     - plots constant vertical and horizontal lines in Matlab figures
 
-## References
-1. Bollmann, S., Kasper, L., Pruessmann, K., Barth, M., Stephan, K.E., 2018. Interactive and flexible quality control in fMRI sequence evaluation: the uniQC toolbox, in: Proc. Intl. Soc. Mag. Reson. Med. 26. Presented at the ISMRM, Paris, France, p. 2842.
 
-2. Bollmann, S., 2018. Evaluating Acquisition Techniques for Functional Magnetic Resonance Imaging at Ultra-High Field (PhD Thesis). The University of Queensland. Chapter 4, p. 96-127 https://doi.org/10.14264/uql.2018.635
+## Cite Me
+
+### Main Toolbox and TAPAS Reference
+
+Please cite the following papers in all of your publications that utilize the UniQC Toolbox. 
+
+1. Bollmann, S., Kasper, L., Pruessmann, K., Barth, M., Stephan, K.E., 2018. Interactive and flexible quality control in fMRI sequence evaluation: the uniQC toolbox, in: Proc. Intl. Soc. Mag. Reson. Med. 26. Presented at the ISMRM, Paris, France, p. 2842.
+    - *main UniQC Toolbox reference*
+2. Frässle, S., Aponte, E.A., Bollmann, S., Brodersen, K.H., Do, C.T., Harrison, O.K., Harrison, S.J., Heinzle, J., Iglesias, S., Kasper, L., Lomakina, E.I., Mathys, C., Müller-Schrader, M., Pereira, I., Petzschner, F.H., Raman, S., Schöbi, D., Toussaint, B., Weber, L.A., Yao, Y., Stephan, K.E., 2021. TAPAS: an open-source software package for Translational Neuromodeling and Computational Psychiatry. Frontiers in Psychiatry 12, 857. https://doi.org/10.3389/fpsyt.2021.680811
+    - *main TAPAS software collection reference*
+
+You can include the following snippet in your Methods section,
+along with a brief description of the physiological noise models used: 
+
+> The analysis was performed using the Matlab UniQC Toolbox ([1], version x.y.z,
+> open-source code available as part of the TAPAS software collection: [2], 
+> <https://www.translationalneuromodeling.org/tapas>)
+
+
+### Related References
+
+References that describe relevant work and novel methods implemented in UniQC.
+
+3. Bollmann, S., 2018. Evaluating Acquisition Techniques for Functional Magnetic Resonance Imaging at Ultra-High Field (PhD Thesis). The University of Queensland. Chapter 4, p. 96-127 https://doi.org/10.14264/uql.2018.635
+    - *Chapter in Saskia Bollmann's PhD Thesis describing the earlier 4D version of UniQC in depth with all design considerations and example cases*

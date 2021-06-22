@@ -25,8 +25,9 @@ end
 if verbose
     tapas_print_logo();
     fprintf(1, '\n\nVersion %s.%s.%s\n', version{:});
-    fprintf(1, 'In your citation please include the current version.\n');
-    fprintf(1, 'Please cite the corresponding publications according to the toolboxes used:\n');
+    fprintf(1, 'In your citation please include the following reference and the current software version.\n');
+    fprintf(1, '        https://doi.org/10.3389/fpsyt.2021.680811\n')
+    fprintf(1, 'Please also cite the corresponding publications according to the toolboxes used:\n');
     fprintf(1, 'PhysIO: https://www.ncbi.nlm.nih.gov/pubmed/27832957\n');
     fprintf(1, 'HGF:    https://www.ncbi.nlm.nih.gov/pubmed/21629826\n');
     fprintf(1, '        https://www.ncbi.nlm.nih.gov/pubmed/25477800\n');

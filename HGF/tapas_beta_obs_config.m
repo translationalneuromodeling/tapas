@@ -27,11 +27,11 @@ function c = tapas_beta_obs_config
 c = struct;
 
 % Is the decision based on predictions or posteriors? Comment as appropriate.
-%c.predorpost = 1; % Predictions
-c.predorpost = 2; % Posteriors
+c.predorpost = 1; % Predictions
+%c.predorpost = 2; % Posteriors
 
 % Model name
-c.model = 'beta_obs';
+c.model = 'tapas_beta_obs';
 
 % Sufficient statistics of Gaussian parameter priors
 

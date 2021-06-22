@@ -24,7 +24,7 @@ function [ output ] = tapas_rdcm_ridge(DCM, X, Y, args)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2020 Translational Neuromodeling Unit
+% Copyright (C) 2016-2021 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -92,7 +92,7 @@ for k = 1:nr
     
     %% read priors
     
-    % prior covariance matrix
+    % prior precision matrix
     l0_r = diag(l0(k,idx(k,:)));
     
     % prior means
