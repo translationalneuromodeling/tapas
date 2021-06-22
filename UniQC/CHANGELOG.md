@@ -4,9 +4,16 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: UniQC Toolbox Release R2021a-beta, v0.2.3*
+*Current version: UniQC Toolbox Release R2021a-beta, v0.2.4*
 
-March 11th, 2021
+June 16th, 2021
+
+
+Bugfix Release Notes (v0.2.4)
+-----------------------------
+
+## Changed
+- TAPAS paper reference and citation snippet (README, CITATION)
 
 
 Bugfix Release Notes (v0.2.3)

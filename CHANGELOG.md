@@ -1,5 +1,14 @@
 # Changelog
 TAPAS toolbox 
+
+## [5.1.1] 2021-06-22
+
+
+### Fixed
+- Added references to TAPAS paper (in collection and toolboxes)
+- HGF: [Version 6.3](HGF/README.md#release-notes): Minor improvements
+- rDCM: [Version v1.3](rDCM/CHANGELOG.md): Corrected bug in construction of the full posterior covariance matrix (from the region-wise posterior covariance matrices)
+
 ## [5.1.0] 2021-04-23
 
 ### Added

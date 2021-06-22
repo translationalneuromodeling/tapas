@@ -14,7 +14,7 @@ General information
 -------------------
 
 - Authors: Stefan Frässle (<stefanf@biomed.ee.ethz.ch>), Ekaterina I. Lomakina
-- Copyright (C) 2016-2020 
+- Copyright (C) 2016-2021 
 - Translational Neuromodeling Unit (TNU)
 - Institute for Biomedical Engineering
 - University of Zurich & ETH Zurich
@@ -38,9 +38,9 @@ Purpose
 -------
 
 The regression dynamic causal modeling (rDCM) toobox implements a novel variant 
-of DCM for fMRI that enables extremely efficient inference on effective (i.e.,
-directed) connectivity among brain regions. Due to its
-computational efficiency, inversion of large network models becomes feasible.
+of DCM for fMRI that enables computationally efficient inference on effective (i.e.,
+directed) connectivity parameters among brain regions. Due to its
+computational efficiency, inversion of large (whole-brain) networks becomes feasible.
 
 For the accompanying technical papers, detailing the methodology presented in this toolbox,
 please see [Frässle et al., 2017](https://www.sciencedirect.com/science/article/pii/S105381191730201X?via%3Dihub) 
@@ -64,7 +64,7 @@ Installation
 Important Notes
 ---------------
 
-Please note that rDCM is a method that is still in it's infancy and thus subject to 
+Please note that rDCM is a method that is still in an early stage of development and thus subject to 
 various limiations. Due to these limitations, requirements of rDCM in terms of 
 fMRI data quality (i.e., fast TR, high SNR) are high. For data that does not
 meet these conditions, the method might not give reliable results. It remains the 
@@ -82,21 +82,28 @@ We are very happy to provide support on how to use the rDCM Toolbox. However,
 due to time constraints, we might not provide a detailed answer to your request, 
 but just some general pointers and templates. Before you contact us, please try the following:
 
-1. First, look at the [FAQ](https://tnurepository.ethz.ch/sfraessle/rDCM/wikis/FAQ) 
-   (which is frequently extended) for answers to your questions.
+1. First, look at the [Manual](docs/Manual.pdf) and the tutorial script `tapas_rdcm_tutorial()` as starting points for answers to your questions.
 2. For new requests, we would like to ask you to submit them as 
    [issues](https://github.com/translationalneuromodeling/tapas/issues) on our github release page for TAPAS.
 
 
 
 ----------
-References
+Cite Me
 ----------
 
-### Main Toolbox References ###
-1. Frässle, S., Lomakina, E.I., Razi, A., Friston, K.J., Buhmann, J.M., Stephan, K.E., 2017. Regression DCM for fMRI. NeuroImage 155, 406–421. doi:10.1016/j.neuroimage.2017.02.090
-2. Frässle, S., Lomakina, E.I., Kasper, L., Manjaly Z.M., Leff, A., Pruessmann, K.P., Buhmann, J.M., Stephan, K.E., 2018. A generative model of whole-brain effective connectivity. NeuroImage 179, 505-529. doi:10.1016/j.neuroimage.2018.05.058
-3. Frässle, S., Harrison, S.J., Heinzle, J., Clementz, B.A., Tamminga, C.A., Sweeney, J.A., Gershon, E.S., Keshavan, M.S., Pearlson, G.D., Powers, A., Stephan, K.E., 2020. Regression dynamic causal modeling for resting-state fMRI. bioRxiv. doi:10.1101/2020.08.12.247536
+Please cite the following paper (main TAPAS reference):
+- Frässle, S., Aponte, E.A., Bollmann, S., Brodersen, K.H., Do, C.T., Harrison, O.K., Harrison, S.J., Heinzle, J., Iglesias, S., Kasper, L., Lomakina, E.I., Mathys, C., Müller-Schrader, M., Pereira, I., Petzschner, F.H., Raman, S., Schöbi, D., Toussaint, B., Weber, L.A., Yao, Y., Stephan, K.E., 2021. TAPAS: an open-source software package for Translational Neuromodeling and Computational Psychiatry. Frontiers in Psychiatry 12, 857. https://doi.org/10.3389/fpsyt.2021.680811
+
+In addition, please cite the following key references for the rDCM Toolbox:
+- Frässle, S., Lomakina, E.I., Razi, A., Friston, K.J., Buhmann, J.M., Stephan, K.E., 2017. Regression DCM for fMRI. NeuroImage 155, 406–421. https://doi.org/10.1016/j.neuroimage.2017.02.090
+- Frässle, S., Lomakina, E.I., Kasper, L., Manjaly Z.M., Leff, A., Pruessmann, K.P., Buhmann, J.M., Stephan, K.E., 2018. A generative model of whole-brain effective connectivity. NeuroImage 179, 505-529. https://doi.org/10.1016/j.neuroimage.2018.05.058
+
+Finally, when using rDCM for resting-state fMRI data, feel free to also cite:
+- Frässle, S., Harrison, S.J., Heinzle, J., Clementz, B.A., Tamminga, C.A., Sweeney, J.A., Gershon, E.S., Keshavan, M.S., Pearlson, G.D., Powers, A., Stephan, K.E., 2021. Regression dynamic causal modeling for resting-state fMRI. Human Brain Mapping 42, 2159-2180. https://doi.org/10.1002/hbm.25357
+
+You can include for example the following snippet in your Methods section:
+> The analysis was performed using the regression dynamic causal modeling (rDCM) toolbox (Frässle et al., 2017; 2018), open-source code available as part of the TAPAS software collection (Frässle et al., 2021).
 
 
 

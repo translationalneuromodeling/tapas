@@ -7,6 +7,18 @@ in fMRI Data.
 Journal of Neuroscience Methods 276, 56–72. 
 doi:10.1016/j.jneumeth.2016.10.019
 
+
+Please also cite the parent software collection TAPAS:
+
+Frässle, S., Aponte, E.A., Bollmann, S., Brodersen, K.H., Do, C.T., Harrison, O.K., 
+Harrison, S.J., Heinzle, J., Iglesias, S., Kasper, L., Lomakina, E.I., Mathys, C., 
+Müller-Schrader, M., Pereira, I., Petzschner, F.H., Raman, S., Schöbi, D., 
+Toussaint, B., Weber, L.A., Yao, Y., Stephan, K.E., 2021. 
+TAPAS: an open-source software package for Translational Neuromodeling and Computational Psychiatry. 
+Frontiers in Psychiatry 12, 857. 
+https://doi.org/10.3389/fpsyt.2021.680811
+
+
 If you use respiratory volume per time (RVT) regressors or preprocessing of respiratory traces, please also cite:
 
 Harrison, S.J., Bianchi, S., Heinzle, J., Stephan, K.E., Iglesias, S., Kasper L., 2021.

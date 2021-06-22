@@ -25,6 +25,14 @@ along with this program (see the file COPYING).  If not, see
 
 ---
 
+## How to cite the HGF Toolbox
+Please cite the following paper when using the HGF Toolbox:
+
+Frässle, S., et al. (2021). TAPAS: An Open-Source Software Package for
+Translational Neuromodeling and Computational Psychiatry. Frontiers in
+Psychiatry, 12:680811. https://doi.org/10.3389/fpsyt.2021.680811
+
+
 ## Installation
 
 Move this folder to a location of your choice and add it to your Matlab
@@ -45,6 +53,10 @@ opening hgf_demo.mlx in Matlab. A PDF version is available in
 hgf_demo.pdf.
 
 ## Release notes
+
+### v6.1
+- Improved functionality of beta_obs response model
+- Included reference to TAPAS paper
 
 ### v6.0
 - Introduced first eHGF models (ehgf, ehgf_binary, ehgf_jget)

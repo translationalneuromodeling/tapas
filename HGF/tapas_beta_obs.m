@@ -21,9 +21,13 @@ yhat = NaN(n,1);
 res  = NaN(n,1);
 
 % Predictions or posteriors?
-mu = infStates(:,1,1); % Default: predictions (ie, mu1hat)
-if r.c_obs.predorpost == 2
-    mu = tapas_sgm(infStates(:,2,3), 1); % Alternative: posteriors (ie, sgm(mu2))
+if strcmp(r.c_prc.model,'tapas_rw_binary')
+    mu = tapas_sgm(infStates(:,1), 1);
+else
+    mu = infStates(:,1,1); % Default: predictions (ie, mu1hat)
+    if r.c_obs.predorpost == 2
+        mu = tapas_sgm(infStates(:,2,3), 1); % Alternative: posteriors (ie, sgm(mu2))
+    end
 end
 
 % Special cases
