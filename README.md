@@ -1,6 +1,6 @@
 ![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
 
-*Version 5.1.1*
+*Version 5.1.2*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================
@@ -15,9 +15,10 @@ DESCRIPTION
 -----------
 
 TAPAS is a collection of algorithms and software tools developed by the
-Translational Neuromodeling Unit (TNU, Zurich) and collaborators. The goal of
-these tools is to support clinical neuromodeling, particularly computational
-psychiatry, computational neurology, and computational psychosomatics.
+Translational Neuromodeling Unit (TNU, Zurich) and collaborators. These 
+tools are intended to support the development of computational assays 
+(Translational Neuromodeling) and their clinical application in 
+Computational Psychiatry, Neurology and Psychosomatics.
 
 Currently, TAPAS includes the following packages:
 
