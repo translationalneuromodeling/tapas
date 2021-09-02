@@ -1,8 +1,12 @@
 # Changelog
 TAPAS toolbox 
 
-## [5.1.1] 2021-06-22
+## [5.1.2] 2021-09-06
 
+### Fixed
+- TOOLS: Fixed a bug in the computation of WAIC (function [tapas_waic.m](tools/tapas_waic.m)). Added new function to compute log-exp_sum (function [tapas_logsumexp.m](tools/tapas_logsumexp.m)).
+
+## [5.1.1] 2021-06-22
 
 ### Fixed
 - Added references to TAPAS paper (in collection and toolboxes)

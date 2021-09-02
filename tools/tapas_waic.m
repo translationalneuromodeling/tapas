@@ -1,4 +1,4 @@
-function [waic, accuracy] = tapas_waic(llh)
+function [waic, lppd] = tapas_waic(llh)
 %% Computes the Watanabe-Akaike Information criterion
 %
 % Input
@@ -7,10 +7,10 @@ function [waic, accuracy] = tapas_waic(llh)
 %                       the number of samples.
 %
 % Output
-%       waic        -- The Watanaba AIC usin the methods in [1].
-%       accuracy    -- The expected log likelihood of the model.
+%       waic        -- The Watanabe AIC usin the methods in [1].
+%       lppd    -- The log pointwise predictive density of the model.
 %
-% The WAIC can be computed as the accuracy - penalization, where the
+% The WAIC can be computed as the lppd - penalization, where the
 % penalization is the sum of the variance of the log likelihood, i.e., the
 % gradient of the Free energy.
 %
@@ -21,13 +21,21 @@ function [waic, accuracy] = tapas_waic(llh)
 % aponteeduardo@gmail.com
 % copyright (C) 2019
 %
+% REVISION LOG:
+%
+%      Jakob Heinzle, 2021/04/16: changed computation of accuracy to be exactly log
+%      pointwise predictive density as in Gelman et al.
+%
+%%
+
+s = size(llh,2);
 
 % Estimator of the accuracy
-accuracy = sum(mean(llh, 2));
+lppd = sum(tapas_logsumexp(llh')-log(s));
 
 % Estimator of the variance
 penalization = sum(var(llh, [], 2));
 
-waic = accuracy - penalization;
+waic = lppd - penalization;
 
 end
