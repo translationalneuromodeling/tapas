@@ -116,8 +116,7 @@ end
 [h, cardiacPhaseArray] = hist(c_phase, nCardiacPhases);
 
 if verbose
-    stringTitle = 'Assess: Number of slice/volume occurences of each cardiac
-    phase';
+    stringTitle = 'Assess: Number of slice/volume occurences of each cardiac phase';
     fh(1) = tapas_physio_get_default_fig_params();
     set(gcf, 'Name', stringTitle);
     bar(cardiacPhaseArray,h); xlabel('cardiac phase'); ylabel('counts');
