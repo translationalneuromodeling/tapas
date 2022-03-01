@@ -1,11 +1,13 @@
-function [fList] = tapas_diagnose_file(fileNames,filterNames,notifyMultipleOccurences)
+function [fList,isFine] = tapas_diagnose_file(fileNames,filterNames,notifyMultipleOccurences)
 % TAPAS_DIAGNOSE_FILE Checks if file uses functions which are overloaded
 %
 % IN
-%   fileName
+%   fileName [character vector of cell array of character vectors]
+%           The file names to be checked. 
 %
 % OUT
 %   fList   Filtered list of files needed to execute the function
+%   isFine  No problem found.
 %
 % This function is using the matlab codetools to determine 
 % which functions are used and warns, if some of these are
@@ -72,5 +74,6 @@ for iCheck = 1:nCheck % loop through files
 end
 
 if isFine
-    fprintf('Did not find a problem!\n')
+    fprintf('Did not find a problem for the file(s):\n')
+    fprintf('\t%s\n',fileNames{:})
 end
