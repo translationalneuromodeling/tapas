@@ -1,6 +1,18 @@
 # Changelog
 TAPAS toolbox 
 
+## [6.0.0] 2022-03-DD
+For this major release of TAPAS, we have decided to move currently unmaintained toolboxes
+to a dedicated [TAPAS Legacy repository](TODO: LINK).
+
+### Added
+
+### Changed 
+- Moved `MICP`,`VBLM`,`h2gf` and `mpdcm` toolboxes to TAPAS Legacy repository.
+
+### Fixed
+
+
 ## [5.1.2] 2021-09-06
 
 ### Fixed

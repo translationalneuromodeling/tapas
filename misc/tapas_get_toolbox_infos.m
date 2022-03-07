@@ -17,7 +17,8 @@ function infos = tapas_get_toolbox_infos()
 	%           name in the struct). At the moment, we cannot check for depen- 
 	%           dencies of dependencies, so they should be specified as depen-
 	%           dencies as well.
-	%                  
+	%   diagnose_files [character vector/cell array of character vectors]
+        %           Name(s) of files to be checked by TAPAS_diagnose('toolboxName').
 	%   
 	% muellmat@ethz.ch 
 	% copyright (C) 2022
@@ -34,11 +35,6 @@ function infos = tapas_get_toolbox_infos()
 	infos.hgf.dependencies = [];
 	infos.hgf.diagnose_files = '';
 
-	infos.h2gf.init_function = '';
-	infos.h2gf.init_dir = 'h2gf';
-	infos.h2gf.dependencies = {'hgf','tools'};
-	infos.h2gf.diagnose_files = '';
-
 	infos.huge.init_function = 'tapas_huge_compile';
 	infos.huge.init_dir = 'huge';
 	infos.huge.dependencies = [];
@@ -50,12 +46,9 @@ function infos = tapas_get_toolbox_infos()
 	infos.external.diagnose_files = '';
 
 	% The following is just a shortcut for the defaults.
-	infos = tapas_default_toolbox_info(infos,'MICP');
-	infos = tapas_default_toolbox_info(infos,'mpdcm');
 	infos = tapas_default_toolbox_info(infos,'rDCM');
 	infos = tapas_default_toolbox_info(infos,'sem');
 	infos = tapas_default_toolbox_info(infos,'tools'); % Want to have that?
-	infos = tapas_default_toolbox_info(infos,'VBLM');
 	infos = tapas_default_toolbox_info(infos, 'ceode');
 	        
 end
