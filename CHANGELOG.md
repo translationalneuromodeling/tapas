@@ -9,6 +9,7 @@ to a dedicated [TAPAS Legacy repository](TODO: LINK).
 
 ### Changed 
 - Moved `MICP`,`VBLM`,`h2gf` and `mpdcm` toolboxes to TAPAS Legacy repository.
+ HGF: [Version 7.0](HGF/README.md#release-notes): Numerical stability improvements, various enhancements
 
 ### Fixed
 
