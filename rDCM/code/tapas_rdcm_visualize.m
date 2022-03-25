@@ -18,7 +18,7 @@ function tapas_rdcm_visualize(output, DCM, options, plot_regions, plot_mode)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2021 Translational Neuromodeling Unit
+% Copyright (C) 2016-2022 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -43,32 +43,65 @@ if ( nargin < 4 || isempty(plot_regions) )
     plot_regions = 1;
 end
 
+% specify a colormap for plotting the adjacency matrices
+% (if the "cbrewer" tool is in your MATLAB path, a "pretty" colormap will
+%  be selected from the cbrewer-library, otherwise the default MATLAB
+%  colormap is used)
+try
+    [cmap] = cbrewer('div', 'RdBu', 71, 'PCHIP');
+    cmap   = flipud(cmap);
+catch
+    cmap   = 'parula';
+end
+
+
+% test of predicted and actual power spectral density or BOLD signal time 
+% series should be plotted
+if ( plot_mode == 1 )
+    if ( isfield(output.signal,'yd_source_fft') && isfield(output.signal,'yd_pred_rdcm_fft') )
+        plotSignal = 1;
+    else
+        plotSignal = 0;
+    end
+elseif ( plot_mode == 2 )
+    if ( isfield(output.signal,'y_source') && isfield(output.signal,'y_pred_rdcm') )
+        plotSignal = 1;
+    else
+        plotSignal = 0;
+    end
+end
+
+
 
 %% visualize results
 
 % simulation (where true parameters are known) or empirical analysis
 if ( options.visualize )
     if ( options.type == 's' )
-        if ( options.compute_signal && isfield(output,'signal') )
+        if ( plotSignal == 1 )
 
             % visualize estimated connectivity pattern
             figure('units','normalized','outerposition',[0 0 1 1])
-            subplot(2,2,1)
+            sub1 = subplot(2,2,1);
+            colormap(sub1,cmap)
             imagesc(output.Ep.A)
             title('estimated','FontSize',14)
             axis square
             caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
+            colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',12)
             ylabel('region (to)','FontSize',12)
 
             % visualize true connectivity pattern
-            subplot(2,2,2)
+            sub2 = subplot(2,2,2);
+            colormap(sub2,cmap)
             imagesc(DCM.Tp.A)
             title('true','FontSize',14)
             axis square
             caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
+            colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',12)
@@ -78,8 +111,8 @@ if ( options.visualize )
             if ( plot_mode == 1 )
                 y_source_reshape    = reshape(output.signal.yd_source_fft,length(output.signal.yd_source_fft)/size(output.Ep.A,1),size(output.Ep.A,1));
                 y_pred_rdcm_reshape = reshape(output.signal.yd_pred_rdcm_fft,length(output.signal.yd_pred_rdcm_fft)/size(output.Ep.A,1),size(output.Ep.A,1));
-                y_source_reshape    = abs(y_source_reshape(:,plot_regions)).^2;
-                y_pred_rdcm_reshape	= abs(y_pred_rdcm_reshape(:,plot_regions)).^2;
+                y_source_reshape    = abs(y_source_reshape(1:size(y_source_reshape,1)/2,plot_regions)).^2;
+                y_pred_rdcm_reshape	= abs(y_pred_rdcm_reshape(1:size(y_pred_rdcm_reshape,1)/2,plot_regions)).^2;
             elseif ( plot_mode == 2 )
                 y_source_reshape    = reshape(output.signal.y_source,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
                 y_pred_rdcm_reshape = reshape(output.signal.y_pred_rdcm,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
@@ -90,41 +123,49 @@ if ( options.visualize )
             % visualize true and predicted BOLD signal
             subplot(2,1,2)
             hold on
-            ha(1) = plot(y_source_reshape(:),'Color',[0.3 0.3 0.3]);
-            ha(2) = plot(y_pred_rdcm_reshape(:),'b');
+            ha(1) = plot(y_source_reshape(:),'Color',[0.7002 0.7088 0.7004],'LineWidth',1.5);
+            ha(2) = plot(y_pred_rdcm_reshape(:),'Color',[0.5059 0.0118 0.1255],'LineWidth',1.5);
             yl = ylim;
             for int = 1:size(y_pred_rdcm_reshape,2)-1, plot([int*size(y_pred_rdcm_reshape,1) int*size(y_pred_rdcm_reshape,1)],yl,'k.-'), end
             xlim([0 numel(y_source_reshape)])
-            legend(ha,{'true','predicted'},'Location','NE')
+            set(gca,'xtick',[1 size(y_source_reshape,1)/2 size(y_source_reshape,1)])
+            set(gca,'xticklabel',[1 size(y_source_reshape,1)/2 size(y_source_reshape,1)])
+            legend(ha,{'true','predicted'},'Location','NE','FontSize',12)
+            legend boxoff
             xlabel('sample index','FontSize',12)
             if ( plot_mode == 1 )
+                if ( numel(plot_regions) == 1 ), axis square, end
                 title('true and prediced power spectral density','FontSize',14);
                 ylabel('PSD','FontSize',12)
             elseif ( plot_mode == 2 )
                 title('true and prediced time series','FontSize',14);
                 ylabel('BOLD','FontSize',12)
             end
-
+            
         else
 
             % visualize estimated connectivity pattern
             figure('units','normalized','outerposition',[0 0 1 1])
-            subplot(1,2,1)
+            sub1 = subplot(1,2,1);
+            colormap(sub1,cmap)
             imagesc(output.Ep.A)
             title('estimated','FontSize',16)
             axis square
             caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
+            colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',14)
             ylabel('region (to)','FontSize',14)
 
             % visualize true connectivity pattern
-            subplot(1,2,2)
+            sub2 = subplot(1,2,2);
+            colormap(sub2,cmap)
             imagesc(DCM.Tp.A)
             title('true','FontSize',16)
             axis square
             caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
+            colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',14)
@@ -134,16 +175,17 @@ if ( options.visualize )
 
     else
 
-        if ( options.compute_signal && isfield(output,'signal') )
+        if ( plotSignal == 1 )
 
             % visualize estimated connectivity pattern
             figure('units','normalized','outerposition',[0 0 1 1])
             sub1 = subplot(2,2,1);
-            colormap(sub1,'parula')
+            colormap(sub1,cmap)
             imagesc(output.Ep.A)
             title('estimated','FontSize',14)
             axis square
             caxis([-1*max(max(abs(output.Ep.A-diag(diag(output.Ep.A))))) max(max(abs(output.Ep.A-diag(diag(output.Ep.A)))))])
+            colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',12)
@@ -156,6 +198,7 @@ if ( options.visualize )
             title('Pp binary indicator','FontSize',14)
             axis square
             caxis([0 1])
+            colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',12)
@@ -166,8 +209,8 @@ if ( options.visualize )
             if ( plot_mode == 1 )
                 y_source_reshape    = reshape(output.signal.yd_source_fft,length(output.signal.yd_source_fft)/size(output.Ep.A,1),size(output.Ep.A,1));
                 y_pred_rdcm_reshape = reshape(output.signal.yd_pred_rdcm_fft,length(output.signal.yd_pred_rdcm_fft)/size(output.Ep.A,1),size(output.Ep.A,1));
-                y_source_reshape    = abs(y_source_reshape(:,plot_regions)).^2;
-                y_pred_rdcm_reshape	= abs(y_pred_rdcm_reshape(:,plot_regions)).^2;
+                y_source_reshape    = abs(y_source_reshape(1:size(y_source_reshape,1)/2,plot_regions)).^2;
+                y_pred_rdcm_reshape	= abs(y_pred_rdcm_reshape(1:size(y_pred_rdcm_reshape,1)/2,plot_regions)).^2;
             elseif ( plot_mode == 2 )
                 y_source_reshape    = reshape(output.signal.y_source,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
                 y_pred_rdcm_reshape = reshape(output.signal.y_pred_rdcm,length(output.signal.y_source)/size(output.Ep.A,1),size(output.Ep.A,1));
@@ -178,14 +221,18 @@ if ( options.visualize )
             % visualize measured and predicted BOLD signal
             subplot(2,1,2);
             hold on
-            ha(1) = plot(y_source_reshape(:),'Color',[0.3 0.3 0.3]);
-            ha(2) = plot(y_pred_rdcm_reshape(:),'b');
+            ha(1) = plot(y_source_reshape(:),'Color',[0.7002 0.7088 0.7004],'LineWidth',1.5);
+            ha(2) = plot(y_pred_rdcm_reshape(:),'Color',[0.5059 0.0118 0.1255],'LineWidth',1.5);
             yl = ylim;
             for int = 1:size(y_pred_rdcm_reshape,2)-1, plot([int*size(y_pred_rdcm_reshape,1) int*size(y_pred_rdcm_reshape,1)],yl,'k.-'), end
             xlim([0 numel(y_source_reshape)])
-            legend(ha,{'true','predicted'},'Location','NE')
+            set(gca,'xtick',[1 size(y_source_reshape,1)/2 size(y_source_reshape,1)])
+            set(gca,'xticklabel',[1 size(y_source_reshape,1)/2 size(y_source_reshape,1)])
+            legend(ha,{'true','predicted'},'Location','NE','FontSize',12)
+            legend boxoff
             xlabel('sample index','FontSize',12)
             if ( plot_mode == 1 )
+                if ( numel(plot_regions) == 1 ), axis square, end
                 title('true and prediced power spectral density','FontSize',14);
                 ylabel('PSD','FontSize',12)
             elseif ( plot_mode == 2 )
@@ -198,11 +245,12 @@ if ( options.visualize )
             % visualize estimated connectivity pattern
             figure('units','normalized','outerposition',[0 0 1 1])
             sub1 = subplot(1,2,1);
-            colormap(sub1,'parula')
+            colormap(sub1,cmap)
             imagesc(output.Ep.A)
             title('estimated','FontSize',16)
             axis square
             caxis([-1*max(max(abs(output.Ep.A-diag(diag(output.Ep.A))))) max(max(abs(output.Ep.A-diag(diag(output.Ep.A)))))])
+            colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',14)
@@ -215,6 +263,7 @@ if ( options.visualize )
             title('Pp binary indicator','FontSize',16)
             axis square
             caxis([0 1])
+            colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             xlabel('region (from)','FontSize',14)

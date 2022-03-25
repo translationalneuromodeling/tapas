@@ -2,13 +2,27 @@
 Regression Dynamic Causal Modeling (rDCM) toolbox 
 
 
+## [1.4] 2022-03-22
+
+### Added
+- Helper function that converts the model inversion output from the rDCM format to the SPM format. This will allow users to use the SPM machinery to perform additional analyses on their rDCM 
+results (e.g., Bayesian model selection, Bayesian model averaging, Parametric Empirical Bayes). NOTE: Not all functionality in SPM is compatible with the rDCM conversion.
+
+### Changed
+- Improved the visualization function tapas_rdcm_visualize.m
+- Corrected bug in construction of the full posterior covariance matrix (from the region-wise posterior covariance matrices)
+
+### Removed
+- Removed the misleading "empty" predicted BOLD signal time courses for resting-state models (only PSD are relevant) 
+
+
 ## [1.3] 2021-06-10
 
 ### Added
 none
 
 ### Changed
-- Adapted "Cite Me" information to include TAPAS paper and update existing rDCM references
+- Adapted "Cite Me" information to include TAPAS paper and update existing rDCM papers
 - Corrected typo in the comments of tapas_rdcm_estimate.m
 - Corrected bug in construction of the full posterior covariance matrix (from the region-wise posterior covariance matrices) 
 

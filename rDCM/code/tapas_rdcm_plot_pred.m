@@ -19,7 +19,7 @@ function tapas_rdcm_plot_pred(Ep, Y, X, region_id)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2021 Translational Neuromodeling Unit
+% Copyright (C) 2016-2022 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
