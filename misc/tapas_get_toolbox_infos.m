@@ -30,6 +30,11 @@ function infos = tapas_get_toolbox_infos()
 	infos.physio.dependencies = [];
 	infos.physio.diagnose_files = 'tapas_physio_main_create_regressors';
 
+	infos.uniqc.init_dir = 'UniQC';
+	infos.uniqc.init_function = '';
+	infos.uniqc.dependencies = [];
+	infos.uniqc.diagnose_files = 'tapas_uniqc_demo_fmri_qa'; % in subfolder demo/MrSeries
+
 	infos.hgf.init_function = '';
 	infos.hgf.init_dir = 'HGF';
 	infos.hgf.dependencies = [];
