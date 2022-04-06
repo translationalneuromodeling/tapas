@@ -33,11 +33,11 @@ function data_table = tapas_physio_siemens_line2table(lineData, cardiacModality)
 
 
 % signals start of data logging
-iTrigger = regexpi(lineData, '6002');
+iTrigger = regexpi(lineData, ' 6002 ');
 
 if ~isempty(iTrigger)
     % crop string after trigger
-    lineData = lineData((iTrigger(end)+4):end);
+    lineData = lineData((iTrigger(end)+6):end);
     doCropLater = false;
 else
     % crop first 4 values as in UPenn manual after conversion

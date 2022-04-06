@@ -1,8 +1,3 @@
-%-----------------------------------------------------------------------
-% Job saved on 08-Jan-2021 14:10:44 by cfg_util (rev $Rev: 7345 $)
-% spm SPM - SPM12 (7771)
-% cfg_basicio BasicIO - Unknown
-%-----------------------------------------------------------------------
 matlabbatch{1}.spm.tools.physio.save_dir = {'physio_out'};
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'BIDS';
 matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'sub-s998_task-random_run-99_physio.tsv'};

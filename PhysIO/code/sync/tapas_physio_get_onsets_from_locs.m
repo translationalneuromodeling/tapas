@@ -96,12 +96,24 @@ if verbose.level >= 3
     xlabel('t (seconds since SCANPHYSLOG-start)');
 end
 
-if do_count_from_start
-    REALLOCS = cell2mat(SLICELOCS(Nprep+Ndummies+(1:Nscans))');
-    DUMMYLOCS = cell2mat(SLICELOCS(Nprep+(1:Ndummies))');
-else
-    REALLOCS = cell2mat(SLICELOCS(end-Nscans+1:end)');
-    DUMMYLOCS = cell2mat(SLICELOCS(end-Nscans-Ndummies+1:end-Nscans)');
+try
+    if do_count_from_start
+        REALLOCS = cell2mat(SLICELOCS(Nprep+Ndummies+(1:Nscans))');
+        DUMMYLOCS = cell2mat(SLICELOCS(Nprep+(1:Ndummies))');
+    else
+        REALLOCS = cell2mat(SLICELOCS(end-Nscans+1:end)');
+        DUMMYLOCS = cell2mat(SLICELOCS(end-Nscans-Ndummies+1:end-Nscans)');
+    end
+catch err
+    if exist('REALLOCS', 'var')
+        verbose = tapas_physio_log(...
+            sprintf('Number of dummy slice event bundles does not match Ndummies. Check parameter sqpar.Ndummies or set to 0.\n\t (Matlab error: %s)', ...
+            err.message), verbose, 2);
+    else
+        verbose = tapas_physio_log(...
+            sprintf('Number of slice event bundles does not match Nscans. Check parameters sqpar.Nscans, Ndummies and Nprep.\n\t (Matlab error: %s)', ...
+            err.message), verbose, 2);
+    end
 end
 
 DUMMYLOCS = reshape(DUMMYLOCS,length(DUMMYLOCS),1);
