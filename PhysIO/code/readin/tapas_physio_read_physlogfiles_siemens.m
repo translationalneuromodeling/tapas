@@ -98,14 +98,36 @@ hasCardiacData = ~isempty(log_files.cardiac);
 hasRespData = ~isempty(log_files.respiration);
 
 if hasScanTimingDicomImage
+    % Times are in seconds since start of the day
+    
     dicomHeader             = spm_dicom_headers(...
         fullfile(log_files.scan_timing));
     
-    tStartScanDicom    = dicomHeader{1}.AcquisitionTime;
+    try % old example DICOM format
+        tStartScanDicom    = dicomHeader{1}.AcquisitionTime;
+        
+        TR = dicomHeader{1}.RepetitionTime/1000;
+        
+        % TODO: Include AcquisitionNumber? InstanceNumber?
+        
+    catch % new XA30 DICOM export
+        dc = dicomHeader{1};
+        
+        % tried different fields, Study/SeriesTime refer to 1st volume
+        % ContentTime > InstanceCreationTime > dc.AcquisitionDateTime
+        % difference is about one second each
+        % (1.14 and 0.89s for vol 250, 1.35 and 1.97s for vol 001, TR was 1.2s)
+        % Since naming was most similar to AcquisitionDateTime, we chose
+        % that one...
+        % parse Date/Time format from Dicom field, and reformat it as
+        % seconds since start of day
+        dateVector = datevec(dc.AcquisitionDateTime, 'yyyymmddHHMMSS.FFF');
+        tStartScanDicom = dateVector(end-2:end)*[3600 60 1]';
+        TR = dc.SharedFunctionalGroupsSequence{1}.MRTimingAndRelatedParametersSequence{1}.RepetitionTime/1000;
+        
+    end
     
-    % TODO: Include AcquisitionNumber? InstanceNumber?
-    tStopScanDicom     = dicomHeader{1}.AcquisitionTime + ...
-        dicomHeader{1}.RepetitionTime/1000;
+    tStopScanDicom     = tStartScanDicom + TR;
 end
 
 
@@ -122,7 +144,7 @@ if hasCardiacData
     
     if hasScanTimingDicomImage
         tStartScan = tStartScanDicom; % this is just the start of the selected DICOM volume
-        tStopScan = tStopScanDicom + sqpar.TR; % is incorrect, i.e., equals start of volume, therefore use tStartScan + TR!
+        tStopScan = tStopScanDicom;    
     else
         % Just different time scale, gives bad scaling in plots, and not
         % needed...

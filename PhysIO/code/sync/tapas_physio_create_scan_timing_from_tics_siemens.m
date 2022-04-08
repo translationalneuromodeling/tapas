@@ -92,17 +92,44 @@ else
     end
 end
 
+if DEBUG
+    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
+    stringTitle = 'Sync: Extracted Sequence Timing Siemens';
+    set(gcf, 'Name', stringTitle);
+    subplot(2,1,1);
+    stem(tAcqSeconds, 2*ones(size(tAcqSeconds)));
+    hold all;
+    stem(t, ones(size(t)));
+    xlabel('t (seconds), relative to phys logfile start');
+    legend('time stamps AcquisitionLog (slice/volume onsets)', ...
+        'time points Physiological Log file');
+    title('Time intervals of Physiological Logfile and Scanner Acquisition')
+end
+
 % extract start times of volume by detecting index change volume id
 indVolStarts = [1; find(diff(idVolumes) > 0) + 1]; 
 VOLLOCS = LOCS(indVolStarts);
 
+% if physiological logfile has blank periods, several acquisition volume
+% onsets will flog to the same "nearest neighbor" phys log sample, because
+% there is no physiological time series snippet covering this exact volume
+hasDifferentVolumeStarts = numel(unique(VOLLOCS)) == numel(indVolStarts);
+
+if ~hasDifferentVolumeStarts
+    verbose = tapas_physio_log(...
+    ['Physiological Logfile information does not cover the ' ...
+    'requested acquisition interval. Check Sync debug plots (verbose.level = 3). You might have ' ...
+    'defined mismatching log_files.scan_timing and log_files.cardiac/respiration'], ...
+    verbose, 1);
+end
+
 if DEBUG
-   verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-   stringTitle = 'Sync: Extracted Sequence Timing Siemens';
-   set(gcf, 'Name', stringTitle);
+   % extracted slice/volume locations in phys logfile times
+   subplot(2,1,2);
    stem(t(LOCS), ones(size(LOCS))); hold all;
    stem(t(VOLLOCS), 1.5*ones(size(VOLLOCS)));
    legend('slice start events', 'volume start events');
-   xlabel('t (seconds)');
-   title(stringTitle);
+    xlabel('t (seconds), relative to phys logfile start');
+   title('Extracted slice/volume onsets in physiological logfile time grid');
+   %tapas_physio_suptitle(stringTitle);
 end

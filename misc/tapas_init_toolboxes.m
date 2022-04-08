@@ -74,7 +74,10 @@ for iTool = 1:numel(toolbox_names) % Now we are iterating over all toolboxes.
                 % If the name of the toolbox was in the previously specified,
                 % we can add it. Otherwise it was dependent.
                 if ismember(sTool,toolboxes) 
-                    fprintf(1,'===== Adding toolbox %s =====\n',sTool);
+                    str = sprintf(['~~~~~~~~~~~~~~~~~~~~~~~~ ADDING TOOLBOX',...
+                        ' <strong>%s</strong> ~~~~~~~~~~~~~~~~~~~~~~~~'],upper(sTool));
+                    str(end+1:80+17) = '~'; % 17 for <strong></strong>
+                    fprintf(1,'%s\n',str);
                 else 
                     fprintf(1,'===== Adding dependent toolbox %s =====\n',sTool);
                 end

@@ -42,7 +42,7 @@ infos = tapas_get_toolbox_infos();
 toolboxes_in_tapas = fieldnames(infos);
 nToolbox = numel(toolboxes_in_tapas);
 if isempty(toolbox_names)
-	warning('This is a coffe function - get some coffe and wait for the execution to finish.')
+	warning('This is a coffee function - get some coffee and wait for the execution to finish.')
 	checkToolbox = ones(nToolbox,1,'logical');
 else
 	checkToolbox = ismember(toolboxes_in_tapas,toolbox_names);

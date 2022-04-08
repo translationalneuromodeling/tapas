@@ -48,7 +48,7 @@ else
             % linking indeed the other way around than in Linux/Mac
             % cmdString = sprintf('mklink /D %s %s', pathLinkPhysIOSPM, pathPhysIO);
         else %unix/Mac
-            cmdString = sprintf('ln -s %s %s', pathPhysIO, pathLinkPhysIOSPM);
+            cmdString = sprintf('ln -s ''%s'' ''%s''', pathPhysIO, pathLinkPhysIOSPM);
             system(cmdString);
         end
     else
