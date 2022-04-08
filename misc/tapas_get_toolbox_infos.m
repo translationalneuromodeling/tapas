@@ -1,4 +1,4 @@
-function infos = tapas_get_toolbox_infos()
+function [infos, auxillary_toolboxes] = tapas_get_toolbox_infos()
 	% Function storing information regarding toolboxes.
 	%
 	% Each toolbox is represented by a field with its lower-case-name.
@@ -58,6 +58,8 @@ function infos = tapas_get_toolbox_infos()
 	infos.external.diagnose_files = '';
 
     infos = tapas_default_toolbox_info(infos,'tools'); % Want to have that?
+    
+    auxillary_toolboxes = {'external','tools'}; % Just inform - let init decide what to do
 end
 
 
