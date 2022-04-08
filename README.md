@@ -37,7 +37,7 @@ And the following tasks:
 - [BLT](task/BLT/README.md): Breathing Learning Task.
 
 
-TAPAS also includes beta versions the following toolboxes. Please note that these toolboxes have not been extensively tested and are still in active development:
+TAPAS also includes beta versions of the following toolboxes. Please note that these toolboxes have not been extensively tested and are still in active development:
 - [UniQC](UniQC/README.md): unified neuroimaging quality control.
 
 

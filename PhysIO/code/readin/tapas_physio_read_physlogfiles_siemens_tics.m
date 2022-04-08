@@ -30,9 +30,14 @@ function [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles_
 %       .fig_handles        appended by handle to output figure
 %
 %       varargin            propertyName/value pairs, as follows
-%           'ecgChannel'    'v1', 'v2', 'v3', 'v4', 'mean' (default)
-%                           determines which ECG channel to use as
-%                           output cardiac curve
+%           'ecgChannel'    string indicating which channel (combination) 
+%                           shall be used
+%                           'c1' (='PULS'), 'c2', 'c3', 'c4', ...
+%                           single channel data is returned
+%                           'v12'(='v1'), 'v23', .... v34 (='v2')
+%                           voltage difference channel 1 - 2, 2-3 etc. is
+%                           returned
+%                           'mean'  = 1/2 (v12 + v34);
 % OUT
 %   cpulse              time events of R-wave peak in cardiac time series (seconds)
 %   r                   respiratory time series

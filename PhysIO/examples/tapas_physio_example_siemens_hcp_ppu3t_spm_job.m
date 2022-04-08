@@ -1,8 +1,3 @@
-%-----------------------------------------------------------------------
-% Job saved on 23-Jan-2018 23:35:15 by cfg_util (rev $Rev: 6460 $)
-% spm SPM - SPM12 (6906)
-% cfg_basicio BasicIO - Unknown
-%-----------------------------------------------------------------------
 matlabbatch{1}.spm.tools.physio.save_dir = {'physio_out'};
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'Siemens_HCP';
 matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'tfMRI_MOTOR_LR_Physio_log.txt'};
@@ -21,12 +16,17 @@ matlabbatch{1}.spm.tools.physio.scan_timing.sqpar.time_slice_to_slice = [];
 matlabbatch{1}.spm.tools.physio.scan_timing.sqpar.Nprep = [];
 matlabbatch{1}.spm.tools.physio.scan_timing.sync.nominal = struct([]);
 matlabbatch{1}.spm.tools.physio.preproc.cardiac.modality = 'PPU';
+matlabbatch{1}.spm.tools.physio.preproc.cardiac.filter.no = struct([]);
 matlabbatch{1}.spm.tools.physio.preproc.cardiac.initial_cpulse_select.auto_matched.min = 0.4;
 matlabbatch{1}.spm.tools.physio.preproc.cardiac.initial_cpulse_select.auto_matched.file = 'initial_cpulse_kRpeakfile.mat';
+matlabbatch{1}.spm.tools.physio.preproc.cardiac.initial_cpulse_select.auto_matched.max_heart_rate_bpm = 90;
 matlabbatch{1}.spm.tools.physio.preproc.cardiac.posthoc_cpulse_select.off = struct([]);
+matlabbatch{1}.spm.tools.physio.preproc.respiratory.filter.passband = [0.01 2];
+matlabbatch{1}.spm.tools.physio.preproc.respiratory.despike = false;
 matlabbatch{1}.spm.tools.physio.model.output_multiple_regressors = 'multiple_regressors.txt';
 matlabbatch{1}.spm.tools.physio.model.output_physio = 'physio.mat';
 matlabbatch{1}.spm.tools.physio.model.orthogonalise = 'none';
+matlabbatch{1}.spm.tools.physio.model.censor_unreliable_recording_intervals = false;
 matlabbatch{1}.spm.tools.physio.model.retroicor.yes.order.c = 3;
 matlabbatch{1}.spm.tools.physio.model.retroicor.yes.order.r = 4;
 matlabbatch{1}.spm.tools.physio.model.retroicor.yes.order.cr = 1;

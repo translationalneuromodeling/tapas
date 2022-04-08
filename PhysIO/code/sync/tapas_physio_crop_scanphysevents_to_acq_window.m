@@ -95,7 +95,7 @@ sqpar.t        = intersect(spulse,svolpulse);
 if maxscan<max(size(sqpar.t))
     sqpar.t    = sqpar.t(1:maxscan*Nslices/NslicesPerBeat); %cut what's not needed
 end
-sqpar.maxscan=length(sqpar.t); %counts each excitation
+sqpar.maxscan = length(sqpar.t); %counts each excitation
 
 % Counts only real repetitions of a slice
 sqpar.Nvols_paradigm   = (length(sqpar.t) - ...
@@ -103,8 +103,8 @@ sqpar.Nvols_paradigm   = (length(sqpar.t) - ...
 
 
 % Mean TR of time paradigm is running, excluding dummies
-lastmin1    = min([length(svolpulse)-1,sqpar.maxscan]);
-sqpar.meanTR   = mean( diff(svolpulse((sqpar.Ndummies:Nslices/NslicesPerBeat:lastmin1)+1)));
+lastmin1        = min([length(svolpulse)-1,sqpar.maxscan]);
+sqpar.meanTR    = mean( diff(svolpulse((sqpar.Ndummies:Nslices/NslicesPerBeat:lastmin1)+1)));
 
 formatstr = ['    maxscan (incl. dummies) = %d \n    ', ...
     'tmin (1st scan start (1st dummy))= %6.2f s\n    ',...
