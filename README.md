@@ -45,7 +45,7 @@ TAPAS is written in MATLAB and Python and distributed as open source code under
 the GNU General Public License (GPL, Version 3).
 
 If you cannot find the toolbox you were looking for in the downloaded version, 
-you might find it in the [TAPAS Legacy repository](TODO:LINK).
+you might find it in the [TAPAS Legacy repository](https://tnurepository.ethz.ch/TNU/tapas/-/tree/development).
 
 ------------
 INSTALLATION
@@ -75,11 +75,11 @@ DOCUMENTATION
 
 - The latest documentation of TAPAS can be found in this README and on the
   [GitHub Wiki](https://github.com/translationalneuromodeling/tapas/wiki) of the
-  [TAPAS GitHub page](https://github.com/translationalneuromodeling/tapas)
+  [TAPAS GitHub page](https://github.com/translationalneuromodeling/tapas).
 - In general, each toolbox comes with their own documentation as Wiki, PDF,
   matlab tutorials etc.
 - Documentation for older versions (<= 2.7.0.0) is provided on the
-  [TNU page](https://www.tnu.ethz.ch/de/software/tapas/documentations)
+  [TNU page](https://www.tnu.ethz.ch/de/software/tapas/documentations).
 
 
 -------
@@ -92,7 +92,7 @@ SUPPORT
 - This issue forum is searchable, so please have a look if your question has
   been asked before.
 - For older versions or more general questions, please also have a look at our
-  now deprecated E-Mail List, which has a searchable [Archive](https://sympa.ethz.ch/sympa/arc/tapas)
+  now deprecated E-Mail List, which has a searchable [Archive](https://sympa.ethz.ch/sympa/arc/tapas).
 
 
 -------

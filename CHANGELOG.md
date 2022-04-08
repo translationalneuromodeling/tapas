@@ -1,15 +1,17 @@
 # Changelog
 TAPAS toolbox 
 
-## [6.0.0] 2022-03-DD
+## [6.0.0] 2022-04-08
 For this major release of TAPAS, we have decided to move currently unmaintained toolboxes
-to a dedicated [TAPAS Legacy repository](TODO: LINK).
+to a dedicated [TAPAS Legacy repository](https://github.com/translationalneuromodeling/tapas_legacy).
 
 ### Added
-
+- PhysIO [Version 8.1.0](Physio/CHANGELOG.md): BIDS Read-in for separate cardiac/respiratory trace files (e.g., due to different sampling frequencies)
+    - Compatibility of whole code base with Matlab compiler in order to run `spm_make_standalone`.
 ### Changed 
 - Moved `MICP`,`VBLM`,`h2gf` and `mpdcm` toolboxes to TAPAS Legacy repository.
- HGF: [Version 7.0](HGF/README.md#release-notes): Numerical stability improvements, various enhancements
+- HGF [Version 7.0](HGF/README.md#release-notes): Numerical stability improvements, various enhancements
+- rDCM [Version 1.4](rDCM/CHANGELOG.md):  The update includes a new function that can convert the rDCM output to the SPM format. Additionally, some small bug fixes and changes have been made. No changes to the main functionality of rDCM have been made.
 
 ### Fixed
 
