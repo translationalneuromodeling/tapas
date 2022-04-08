@@ -6,10 +6,10 @@ function tapas_print_logo()
 % copyright (C) 2017
 %
 
-disp( '_________          _____                _____       _____           ____                ');
+disp( '_______            _____                _____       _____           ____                ');
 disp( '   |              |     |              |_____|     |     |         |                    ');
 disp( '   |              |-----|              |           |-----|          ----|               ');
-disp(['   | RANSLATIONAL |     |LGORITHMS for |sychiatry  |     |dvancing  ____|cience         ','']);
+disp(['   | RANSLATIONAL |     |LGORITHMS FOR |SYCHIATRY  |     |DVANCING  ____|CIENCE         ','']);
 fprintf('\n');
 
 end

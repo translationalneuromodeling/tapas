@@ -24,13 +24,10 @@ function infos = tapas_get_toolbox_infos()
 	% copyright (C) 2022
 
 	infos = struct();
-
-	infos.physio.init_dir = strcat('PhysIO',filesep,'code');
-	infos.physio.init_function = 'tapas_physio_init';
-	infos.physio.dependencies = [];
-	infos.physio.diagnose_files = 'tapas_physio_main_create_regressors';
-
-	infos.hgf.init_function = '';
+    %% Order determines init-order: do that by alphabet for main toolboxes
+	infos = tapas_default_toolbox_info(infos, 'ceode');
+    
+    infos.hgf.init_function = '';
 	infos.hgf.init_dir = 'HGF';
 	infos.hgf.dependencies = [];
 	infos.hgf.diagnose_files = '';
@@ -40,17 +37,22 @@ function infos = tapas_get_toolbox_infos()
 	infos.huge.dependencies = [];
 	infos.huge.diagnose_files = '';
 
-	infos.external.init_function = '';
+	infos.physio.init_dir = strcat('PhysIO',filesep,'code');
+	infos.physio.init_function = 'tapas_physio_init';
+	infos.physio.dependencies = [];
+	infos.physio.diagnose_files = 'tapas_physio_main_create_regressors';
+
+	infos = tapas_default_toolbox_info(infos,'rDCM');
+    
+	infos = tapas_default_toolbox_info(infos,'sem');
+	%% Auxillary toolboxes: 
+    infos.external.init_function = '';
 	infos.external.init_dir = 'external';
 	infos.external.dependencies = '';
 	infos.external.diagnose_files = '';
 
-	% The following is just a shortcut for the defaults.
-	infos = tapas_default_toolbox_info(infos,'rDCM');
-	infos = tapas_default_toolbox_info(infos,'sem');
-	infos = tapas_default_toolbox_info(infos,'tools'); % Want to have that?
-	infos = tapas_default_toolbox_info(infos, 'ceode');
-	        
+
+    infos = tapas_default_toolbox_info(infos,'tools'); % Want to have that?
 end
 
 
