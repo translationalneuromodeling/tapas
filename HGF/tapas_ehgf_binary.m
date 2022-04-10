@@ -108,6 +108,9 @@ for k = 2:1:n
         % ~~~~~~~~~
         % Prediction
         muhat(k,1) = tapas_sgm(ka(1) *muhat(k,2), 1);
+        % Ensure numerical stability by avoiding extremes
+        muhat(k,1) = max(muhat(k,1), 0.001);
+        muhat(k,1) = min(muhat(k,1), 0.999);
         
         % Precision of prediction
         pihat(k,1) = 1/(muhat(k,1)*(1 -muhat(k,1)));

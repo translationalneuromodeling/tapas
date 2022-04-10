@@ -20,7 +20,7 @@ function [y_fft, idx] = tapas_rdcm_filter(y_fft, u_fft, h_fft, Ny, options)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2021 Translational Neuromodeling Unit
+% Copyright (C) 2016-2022 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -63,7 +63,7 @@ end
 str_idx = h_idx & u_idx & y_idx;
 
 
-%% filtering by comapring to noise variance
+%% filtering by comparing to noise variance
 
 % relative threshold of signal compare to noise
 thr = options.filter_str;

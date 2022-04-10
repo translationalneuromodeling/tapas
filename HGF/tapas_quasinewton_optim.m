@@ -39,6 +39,7 @@ maxStep = 2;
 maxIter = 1e3;
 maxRegu = 4;
 maxRst  = 4;
+optIter = 0;
 
 % Overrides
 if nargin > 2
@@ -71,6 +72,10 @@ if nargin > 2
     if isfield(options,'verbose')
         verbose = options.verbose;
     end
+    
+    if isfield(options, 'optIter')
+        optIter = options.optIter;
+    end
 end
 
 % Make sure init is a column vector
@@ -81,9 +86,23 @@ if ~iscolumn(init)
     end
 end
 
+% preallocation (iterations of opt algo)
+if optIter
+    iter.x = NaN(maxIter+1, length(init));
+    iter.val = NaN(maxIter+1, 1);
+    iter.invH = struct;
+    iter.rst = [];
+else
+    iter = [];
+end
+
 % Evaluate initial value of objective function
 x = init;
 val = f(x);
+if optIter
+    iter.x(1,:) = x';
+    iter.val(1) = val;
+end
 
 if verbose
     disp(' ')
@@ -97,6 +116,9 @@ grad = tapas_riddersgradient(f, x, gradoptions);
 
 % Initialize negative Sigma (here called T) as the unit matrix
 T = eye(n);
+if optIter
+    iter.invH(1).T = T;
+end
 
 % Initialize descent vector and slope
 descvec = -grad';
@@ -149,10 +171,22 @@ for i = 1:maxIter
         dx   = newx-x;
         x    = newx;
         val  = newval;
+        % Update step of optim algo
+        if optIter
+            iter.x(i+1,:) = x';
+            iter.val(i+1) = val;
+        end
     elseif resetcount < maxRst
         T       = eye(n);
         x       = x+0.1*(init-x);
         val     = f(x);
+        % Update step of optim algo
+        if optIter
+            iter.x(i+1,:) = x';
+            iter.val(i+1) = val;
+            iter.invH(i+1).T = T;
+            iter.rst = [iter.rst, i];
+        end
 
         grad = tapas_riddersgradient(f, x, gradoptions);
         descvec = -grad';
@@ -188,6 +222,11 @@ for i = 1:maxIter
             disp(' ')
             disp('Converged on step size')
         end
+        if optIter
+            iter.x(i,:) = x';
+            iter.val(i) = val;
+            iter.invH(i).T = T;
+        end
         break
     end
     
@@ -201,6 +240,11 @@ for i = 1:maxIter
         if verbose
             disp(' ')
             disp('Converged on gradient size')
+        end
+        if optIter
+            iter.x(i,:) = x';
+            iter.val(i) = val;
+            iter.invH(i).T = T;
         end
         break
     end
@@ -222,6 +266,11 @@ for i = 1:maxIter
     % Update slope
     slope = grad*descvec;
     
+    % Update step of optim algo
+    if optIter
+        iter.invH(i+1).T = T;
+    end
+    
     % Warn if termination is only due to maximum of iterations being reached
     if i == maxIter
         disp(' ')
@@ -233,5 +282,6 @@ end
 optim.valMin = val;
 optim.argMin = x;
 optim.T      = T;
+optim.iter   = iter;
 
 return;

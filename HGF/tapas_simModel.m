@@ -163,6 +163,18 @@ prc_fun = str2func(r.c_sim.prc_model);
 % Compute perceptual states
 [r.traj, infStates] = prc_fun(r, r.p_prc.p);
 
+% Check inferred states for NaN values (due to numerical problems when taking log)
+r.traj.muhat(r.ign,:) = []; % weed out ignored trials
+if any(any(isnan(r.traj.muhat)))
+    error('tapas:hgf:VarApproxInvalid',...
+        'NaNs in infStates (muhat). Probably due to numerical problems when taking logarithms close to 1.');
+end
+r.traj.sahat(r.ign,:) = []; % weed out ignored trials
+if any(any(isnan(r.traj.sahat)))
+    error('tapas:hgf:VarApproxInvalid',...
+        'NaNs in infStates (muhat). Probably due to numerical problems when taking logarithms close to 1.');
+end
+
 if nargin > 4
     
     % Remember observation model
@@ -192,7 +204,13 @@ if nargin > 4
     obs_fun = str2func([r.c_sim.obs_model, '_sim']);
     
     % Simulate decisions
-    r.y = obs_fun(r, infStates, r.p_obs.p);
+    try
+        % different response streams
+        [r.y, r.yhat] = obs_fun(r, infStates, r.p_obs.p);
+    catch
+        % single response stream
+        r.y = obs_fun(r, infStates, r.p_obs.p);
+    end
 end
 
 return;

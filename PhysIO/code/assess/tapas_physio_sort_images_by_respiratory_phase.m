@@ -261,7 +261,7 @@ catch err
     end
 end
 T = Y(:);
-if verbose
+if verbose && ~(isdeployed || ismcc)
     Nslices = size(Y,3);
     for s = 1:Nslices
         imtool(Y(:,:,s))

@@ -1,6 +1,6 @@
 ![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
 
-*Version 5.1.2*
+*Version 6.0.0*
 
 T  A  P  A  S - Translational Algorithms for Psychiatry-Advancing Science.
 ========================================================================
@@ -28,26 +28,24 @@ Currently, TAPAS includes the following packages:
   on computational processes from observed behaviour.
 - [HUGE](huge/README.md): Variational Bayesian inversion for hierarchical
 unsupervised generative embedding (HUGE).
-- [MICP](MICP/Readme%20for%20MATLAB.pdf): Bayesian Mixed-effects Inference for Classification Studies.
-- [MPDCM](mpdcm/README.md): Massively Parallel DCM; Efficient integration of DCMs using massive parallelization.
 - [PhysIO](PhysIO/README.md): Physiological Noise Correction for fMRI.
 - [rDCM](rDCM/README.md): Regression dynamic causal modeling; efficient inference on whole-brain effective connectivity from fMRI data.
 - [SEM](sem/README.md): SERIA Model for Eye Movements (saccades and anti-saccades) and Reaction Times.
-- [VBLM](VBLM/README.txt): Variational Bayesian Linear Regression.
 
 And the following tasks:
 - [FDT](task/FDT/README.md): Filter Detection Task.
 - [BLT](task/BLT/README.md): Breathing Learning Task.
 
 
-TAPAS also includes beta versions the following toolboxes. Please note that these toolboxes have not been extensively tested and are still in active development:
-- [h2gf](h2gf/README.md): hierarchical extension of HGF.
+TAPAS also includes beta versions of the following toolboxes. Please note that these toolboxes have not been extensively tested and are still in active development:
 - [UniQC](UniQC/README.md): unified neuroimaging quality control.
 
 
 TAPAS is written in MATLAB and Python and distributed as open source code under
 the GNU General Public License (GPL, Version 3).
 
+If you cannot find the toolbox you were looking for in the downloaded version, 
+you might find it in the [TAPAS Legacy repository](https://tnurepository.ethz.ch/TNU/tapas/-/tree/development).
 
 ------------
 INSTALLATION
@@ -77,11 +75,11 @@ DOCUMENTATION
 
 - The latest documentation of TAPAS can be found in this README and on the
   [GitHub Wiki](https://github.com/translationalneuromodeling/tapas/wiki) of the
-  [TAPAS GitHub page](https://github.com/translationalneuromodeling/tapas)
+  [TAPAS GitHub page](https://github.com/translationalneuromodeling/tapas).
 - In general, each toolbox comes with their own documentation as Wiki, PDF,
   matlab tutorials etc.
 - Documentation for older versions (<= 2.7.0.0) is provided on the
-  [TNU page](https://www.tnu.ethz.ch/de/software/tapas/documentations)
+  [TNU page](https://www.tnu.ethz.ch/de/software/tapas/documentations).
 
 
 -------
@@ -94,7 +92,7 @@ SUPPORT
 - This issue forum is searchable, so please have a look if your question has
   been asked before.
 - For older versions or more general questions, please also have a look at our
-  now deprecated E-Mail List, which has a searchable [Archive](https://sympa.ethz.ch/sympa/arc/tapas)
+  now deprecated E-Mail List, which has a searchable [Archive](https://sympa.ethz.ch/sympa/arc/tapas).
 
 
 -------

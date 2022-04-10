@@ -75,7 +75,7 @@ function [c, r, t, cpulse, acq_codes, verbose] = ...
 % COPYING or <http://www.gnu.org/licenses/>.
 
 %% read out values
-DEBUG = verbose.level >= 2;
+DEBUG = verbose.level >= 3;
 
 hasRespirationFile = ~isempty(log_files.respiration);
 hasCardiacFile = ~isempty(log_files.cardiac);

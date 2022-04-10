@@ -152,8 +152,8 @@ c.omsa = [  4^2, 4^2];
 
 % Pi_u
 % Format: scalar
-% Fix this to zero (no percpeptual uncertainty) by setting
-% logpiumu = -Inf; logpiusa = 0;
+% Fix this to Inf (no percpeptual uncertainty) by setting
+% logpiumu = Inf; logpiusa = 0;
 c.logpiumu = -99993;
 c.logpiusa = 2^2;
 

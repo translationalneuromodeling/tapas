@@ -353,25 +353,47 @@ nlj = @(p) [negLogJoint(r, prc_fun, obs_fun, p(1:n_prcpars), p(n_prcpars+1:n_prc
 init = [r.c_prc.priormus, r.c_obs.priormus];
 
 % Check whether priors are in a region where the objective function can be evaluated
-[dummy1, dummy2, rval, err] = nlj(init);
-if rval ~= 0
-    rethrow(err);
+stable = 0; nresamp = 0;
+while stable == 0
+    try
+        [dummy1, dummy2, rval, err] = nlj(init);
+        if rval ~= 0
+            rethrow(err);
+        end
+        stable = 1;
+    catch
+        disp('Warning: priors in unstable region for this startpoint.')
+        disp('Re-sampling startpoints...')
+        % Get standard deviations of parameter priors
+        priorsds = sqrt([r.c_prc.priorsas, r.c_obs.priorsas]);
+        optsds = priorsds(opt_idx);
+        % re-sample starting points
+        init(opt_idx) = init(opt_idx) + randn(1,length(optsds)).*optsds;
+        % update re-sampling counter
+        nresamp = nresamp + 1;
+        if nresamp > 1000
+            error('tapas:hgf:StartpointUnstableRegionOfPriors', 'Model inversion aborted. No stable startpoint found for the current priors in 1000 startpoint sampling iterations.')
+        end
+    end
 end
 
 % Do an optimization run
 optres = optimrun(nlj, init, opt_idx, opt_algo, r.c_opt);
 
 % Record optimization results
-r.optim.init  = optres.init;
-r.optim.final = optres.final;
-r.optim.H     = optres.H;
-r.optim.Sigma = optres.Sigma;
-r.optim.Corr  = optres.Corr;
-r.optim.negLl = optres.negLl;
-r.optim.negLj = optres.negLj;
-r.optim.LME   = optres.LME;
-r.optim.accu  = optres.accu;
-r.optim.comp  = optres.comp;
+r.optim.init            = optres.init;
+r.optim.final           = optres.final;
+r.optim.H               = optres.H;
+r.optim.Sigma           = optres.Sigma;
+r.optim.Corr            = optres.Corr;
+r.optim.trialLogLlsplit = optres.trialLogLlsplit;
+r.optim.negLl           = optres.negLl;
+r.optim.negLj           = optres.negLj;
+r.optim.LME             = optres.LME;
+r.optim.decompLME       = optres.decompLME;
+r.optim.accu            = optres.accu;
+r.optim.comp            = optres.comp;
+r.optim.iter            = optres.iter;
 
 % Do further optimization runs with random initialization
 if isfield(r.c_opt, 'nRandInit') && r.c_opt.nRandInit > 0
@@ -384,7 +406,11 @@ if isfield(r.c_opt, 'nRandInit') && r.c_opt.nRandInit > 0
         optsds = priorsds(opt_idx);
 
         % Add random values to prior means, drawn from Gaussian with prior sd
-        rng('shuffle');
+        if isnan(r.c_opt.seedRandInit)
+            rng('shuffle');
+        else
+            rng(r.c_opt.seedRandInit)
+        end
         init(opt_idx) = init(opt_idx) + randn(1,length(optsds)).*optsds;
 
         % Check whether initialization point is in a region where the objective
@@ -399,16 +425,19 @@ if isfield(r.c_opt, 'nRandInit') && r.c_opt.nRandInit > 0
 
         % Record optimization if the LME is better than the previous record
         if optres.LME > r.optim.LME
-            r.optim.init  = optres.init;
-            r.optim.final = optres.final;
-            r.optim.H     = optres.H;
-            r.optim.Sigma = optres.Sigma;
-            r.optim.Corr  = optres.Corr;
-            r.optim.negLl = optres.negLl;
-            r.optim.negLj = optres.negLj;
-            r.optim.LME   = optres.LME;
-            r.optim.accu  = optres.accu;
-            r.optim.comp  = optres.comp;
+            r.optim.init            = optres.init;
+            r.optim.final           = optres.final;
+            r.optim.H               = optres.H;
+            r.optim.Sigma           = optres.Sigma;
+            r.optim.Corr            = optres.Corr;
+            r.optim.trialLogLlsplit = optres.trialLogLlsplit;
+            r.optim.negLl           = optres.negLl;
+            r.optim.negLj           = optres.negLj;
+            r.optim.LME             = optres.LME;
+            r.optim.decompLME       = optres.decompLME;
+            r.optim.accu            = optres.accu;
+            r.optim.comp            = optres.comp;
+            r.optim.iter            = optres.iter;
         end
     end
 end
@@ -426,7 +455,7 @@ r.optim.BIC  = 2*r.optim.negLl +d*log(ndp);
 end % function optim
 
 % --------------------------------------------------------------------------------------------------
-function [negLogJoint, negLogLl, rval, err] = negLogJoint(r, prc_fun, obs_fun, ptrans_prc, ptrans_obs)
+function [negLogJoint, negLogLl, rval, err, trialLogLlsplit] = negLogJoint(r, prc_fun, obs_fun, ptrans_prc, ptrans_obs)
 % Returns the the negative log-joint density for perceptual and observation parameters
 
 % Calculate perceptual trajectories. The columns of the matrix infStates contain the trajectories of
@@ -437,6 +466,7 @@ try
 catch err
     negLogJoint = realmax;
     negLogLl = realmax;
+    trialLogLlsplit = [];
     % Signal that something has gone wrong
     rval = -1;
     return;
@@ -444,9 +474,22 @@ end
 
 % Calculate the log-likelihood of observed responses given the perceptual trajectories,
 % under the observation model
-trialLogLls = obs_fun(r, infStates, ptrans_obs);
-logLl = sum(trialLogLls, 'omitnan');
-negLogLl = -logLl;
+try
+    % different response streams fitted simultaneously
+    [trialLogLls, dummy1, dummy2, trialLogLlsplit] = obs_fun(r, infStates, ptrans_obs);
+catch
+    % single response stream
+    trialLogLls = obs_fun(r, infStates, ptrans_obs);
+    trialLogLlsplit = trialLogLls;
+end
+% weed out irregular trials
+trialLogLls(r.irr) = [];
+logLl = sum(trialLogLls);
+if isnan(logLl)
+    negLogLl = realmax;
+else
+    negLogLl = -logLl;
+end
 
 % Calculate the log-prior of the perceptual parameters.
 % Only parameters that are neither NaN nor fixed (non-zero prior variance) are relevant.
@@ -496,7 +539,7 @@ final(opt_idx) = optres.argMin';
 optres.final = final;
 
 % Get the negative log-joint and negative log-likelihood
-[negLj, negLl] = nlj(final);
+[negLj, negLl, dummy3, dummy4, trialLogLlsplit] = nlj(final);
 
 % Calculate the covariance matrix Sigma and the log-model evidence (as approximated
 % by the negative variational free energy under the Laplace assumption).
@@ -525,6 +568,10 @@ if any(isinf(H(:))) || any(isnan(H(:))) || any(eig(H)<=0)
         Corr = tapas_Cov2Corr(Sigma);
         % Log-model evidence ~ negative variational free energy
         LME = -optres.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
+        % decomposed LME
+        decompLME.logjoint = -optres.valMin;
+        decompLME.postpredcorr = 1/2*log(1/det(H));
+        decompLME.freepars = d/2*log(2*pi);
     else
         disp('Warning: Cannot calculate Sigma and LME because the Hessian is not positive definite.')
     end
@@ -538,15 +585,21 @@ else
     Corr = tapas_Cov2Corr(Sigma);
     % Log-model evidence ~ negative variational free energy
     LME = -optres.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
+    % decomposed LME
+    decompLME.logjoint = -optres.valMin;
+    decompLME.postpredcorr = 1/2*log(1/det(H));
+    decompLME.freepars = d/2*log(2*pi);
 end
 
 % Record results
 optres.H = H;
 optres.Sigma = Sigma;
 optres.Corr = Corr;
+optres.trialLogLlsplit = trialLogLlsplit;
 optres.negLl = negLl;
 optres.negLj = negLj;
 optres.LME = LME;
+optres.decompLME = decompLME;
 
 % Calculate accuracy and complexity (LME = accu - comp)
 optres.accu = -negLl;
