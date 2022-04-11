@@ -94,8 +94,9 @@ switch lower(log_files.vendor)
         [c, r, t, cpulse, acq_codes, verbose] = ...
             tapas_physio_read_physlogfiles_siemens_hcp(log_files, cardiac_modality, verbose);
     otherwise
-        error('Invalid vendor "%s". See tapas_physio_new for supported vendors',...
-            log_files.vendor);
+        msg = sprintf('Invalid "%s". See tapas_physio_newfor supported vendors', ...
+                      log_files.vendor);
+        tapas_physio_log(msg, verbose, 2);
 end
 
 % Do not prepend for Siemens Tics, since can be as long as a day
