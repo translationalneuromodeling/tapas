@@ -53,18 +53,19 @@ function [physio, R, ons_secs] = tapas_physio_main_create_regressors(varargin)
 %% 0. Set Default parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Remove SPM subfolders from path to avoid conflicts with Matlab in-built
-% functions used in PhysIO
-doCorrectPath = true;
-tapas_physio_check_spm(doCorrectPath);
-% Silently check proper Batch Editor integration, if SPM exists,
-% but don't complain, if there is no SPM installed
-isVerbose = false;
-tapas_physio_check_spm_batch_editor_integration(isVerbose);
+oldPath = path();
 
-% Include subfolders of code to path as well
 pathThis = fileparts(mfilename('fullpath'));
-addpath(genpath(pathThis)); 
+ft_paths = which('ft_defaults', '-all')
+
+try
+for p = 1:size(ft_paths, 1)
+    to_remove = fileparts(ft_paths{p});
+    warning('off', 'MATLAB:rmpath:DirNotFound')
+    rmpath(genpath(to_remove));
+    warning('on', 'MATLAB:rmpath:DirNotFound')
+end
+ft_paths = which('ft_defaults', '-all')
 
 % These parameters could become toolbox inputs...
 minConstantIntervalAlertSeconds     = 0.2;
@@ -447,6 +448,12 @@ end % onset_slices
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 [physio.verbose] = tapas_physio_print_figs_to_file(physio.verbose);
+
+catch ME
+    path(oldPath);
+    rethrow(ME);
+end
+path(oldPath);
 
 end
 
