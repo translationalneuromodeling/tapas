@@ -1,5 +1,5 @@
 function physio = tapas_physio_save_batch_mat_script(fileBatchM, pathOutput, ...
-    doRemoveEmptyDefaults)
+    doRemoveEmptyDefaults, doUpdateInputFileBatchM)
 % Saves .m-matlabbatch-file as .mat and as spm-independent matlab-script
 %
 %   physio = tapas_physio_save_batch_mat_script(fileBatchM)
@@ -13,6 +13,10 @@ function physio = tapas_physio_save_batch_mat_script(fileBatchM, pathOutput, ...
 %                   If true, matlab batch lines with [] '' {} are not
 %                   printed in output .m files
 %                   default: true
+%   doUpdateInputFileBatchM
+%                   If true, input batch file m will be overwritten by
+%                   updated output batch m file (updating, e.g., certain
+%                   newly introduced default settings)
 %
 % OUT
 %   physio          physio-structure, see also tapas_physio_new
@@ -20,8 +24,10 @@ function physio = tapas_physio_save_batch_mat_script(fileBatchM, pathOutput, ...
 % SIDE EFFECTS
 %   <fileBatch>.mat         created, is .mat-job for spm_jobman, holding a
 %                           variable matlabbatch
-%   <fileBatch>_matlab_script.m    created, is standalone (w/o spm) matlab script version
-%
+%   <fileBatch>_matlab_script.m    
+%                           created, is standalone (w/o spm) matlab script version
+%   <fileBatch>.m           optionally updated after read into batch editor
+%                           and updating structures
 % EXAMPLE
 %   tapas_physio_save_batch_mat_script('example_main_job_ECG7T.m');
 %
@@ -43,6 +49,10 @@ if nargin < 1
     fileBatchM = 'example_spm_job_ECG7T.m';
 end
 
+if nargin < 4
+    doUpdateInputFileBatchM = false;
+end
+
 % file given run it!
 doSaveBatchM = true;
 if ~ischar(fileBatchM)
@@ -57,7 +67,7 @@ else
             fileBatchM = fullfile(fp,[fn '.m']);
             load(fileBatchMat);
         case '.m'
-            doSaveBatchM = false; % does exist already
+            doSaveBatchM = doUpdateInputFileBatchM; % does exist already, but can be updated
             fileBatchMat = fullfile(fp,[fn '.mat']);
             run(fileBatchM);
     end
@@ -89,46 +99,14 @@ if nargin < 3
     doRemoveEmptyDefaults = true;
 end
 
-if ~exist('cfg_files', 'file')
-    spm_jobman('initcfg');
-end
-spm('defaults', 'FMRI');
+matlabbatch = tapas_physio_update_batch_with_spm_jobman(matlabbatch, fileBatchM);
 
-% set up matlabbatch as job
-jobId = cfg_util('initjob', matlabbatch);
-fileTemp = sprintf('tmp_%s', datestr(now, 'yymmdd_HHMMSS'));
-
-% write out job
-cfg_util('genscript', jobId, pwd, fileTemp);
-
-clear matlabbatch
-
-% as input batch, but with filled out defaults
-
-fileTempJob = [fileTemp '_job.m'];
-run(fileTempJob);
-
-% delete temporary files
-
+% save m file
 if doSaveBatchM
-    delete([fileTemp '.m']);
-    movefile(fileTempJob, fileBatchMOut);
-else
-    delete([fileTemp '.m'], fileTempJob);
+    tapas_physio_save_batch_mfile(matlabbatch, fileBatchMOut)
 end
-
-% remove newly introduced absolute paths :-(
-pathJob = fileparts(fileBatchM);
-
-% also pathNow, since cfg-stuff adds the paths of the directory it was executed
-% in :-(
-pathNow = pwd;
-matlabbatch{1}.spm.tools.physio = tapas_physio_replace_absolute_paths(...
-    matlabbatch{1}.spm.tools.physio, {pathJob, pathNow});
-
 
 % save matlabbatch to mat-file
-
 save(fileBatchMat, 'matlabbatch')
 
 % convert to script variable and save to file

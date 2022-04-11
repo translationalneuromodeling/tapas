@@ -127,17 +127,23 @@ n_pad = ceil(4.0 * (1.0 / cutoff_freqs(1)) * sampfreq); % Generous padding eithe
 d = designfilt( ...
     'lowpassiir', 'HalfPowerFrequency', cutoff_freqs(1), ...
     'FilterOrder', 20, 'SampleRate', sampfreq);
+
 % Use a large padding, and window so tapers back to mean naturally
 padding_window = window(@blackmanharris, 2 * n_pad + 1);
 rpulset_padded = padarray(rpulset, n_pad, 'symmetric');
 rpulset_padded(1:n_pad) = padding_window(1:n_pad) .* rpulset_padded(1:n_pad);
 rpulset_padded(end-n_pad+1:end) = padding_window(end-n_pad+1:end) .* rpulset_padded(end-n_pad+1:end);
+
 trend = filtfilt(d, rpulset_padded);
-%figure(); plot(rpulset_padded); hold on; plot(trend)
+
+% DEBUG
+% figure('Name', 'rpulset_padded'); plot(rpulset_padded); hold on; plot(trend)
+
 trend = trend(n_pad+1:end-n_pad);
 rpulset = rpulset - trend;
 
 if verbose.level>=3
+    figure(verbose.fig_handles(end));
     handles(end+1) = plot(t, (trend - m) / s);
     labels{end+1} = '... low frequency trend';
     plot([t(1), t(end)], [-5.0, -5.0], 'Color', [0.7, 0.7, 0.7]);

@@ -2,20 +2,31 @@ function [convRVTOut, rvtOut, verbose] = tapas_physio_create_rvt_regressors(...
     ons_secs, sqpar, model_rvt, verbose)
 % computes respiratory response function regressor and respiratory volume per time
 %
-%    [convHRV, hr] = tapas_physio_create_rvt_regressors(ons_secs, sqpar )
+%    [convRVTOut, rvtOut, verbose] = tapas_physio_create_rvt_regressors(...
+%                                   ons_secs, sqpar, model_rvt, verbose)
+% References:
 %
-% Reference:
 %   Birn, R.M., Smith, M.A., Jones, T.B., Bandettini, P.A., 2008.
 %       The respiration response function: The temporal dynamics of
 %       fMRI signal fluctuations related to changes in respiration.
 %       NeuroImage 40, 644-654.
 %
+%   Harrison, S.J., Bianchi, S., Heinzle, J., Stephan, K.E., Iglesias, S., 
+%   Kasper L., 2021.
+%   A Hilbert-based method for processing respiratory timeseries.
+%   NeuroImage, 117787. https://doi.org/10.1016/j.neuroimage.2021.117787
+
 % IN
 %   ons_secs.
-%       fr              filtered respiratory signal time series
-%       spulse_per_vol  See also tapas_physio_get_sample_points
-%   sqpar.
-%       onset_slice
+%       ons_secs            ons_secs structure with variable `fr`
+%                           (filtered respiratory signal time series)
+%       sqpar               scan timing information (sequence parameters)
+%                           slice onsets etc.
+%       model_rvt           rvt modeling parameter structure. e.g.
+%                           model_rvt.method
+%                           'hilbert' (default, [Harrison2021]) or
+%                           'peaks' [Birn2006]
+%
 % OUT
 %   convRVTOut          [nScans, nDelays, nSampleSlices]
 %                       respiratory response function regressor after
@@ -28,12 +39,14 @@ function [convRVTOut, rvtOut, verbose] = tapas_physio_create_rvt_regressors(...
 
 % Author: Lars Kasper
 % Created: 2014-01-20
-% Copyright (C) 2014 TNU, Institute for Biomedical Engineering, University of Zurich and ETH Zurich.
+% Copyright (C) 2014 TNU, Institute for Biomedical Engineering, 
+%               University of Zurich and ETH Zurich.
 %
-% This file is part of the physIO toolbox, which is released under the terms of the GNU General Public
-% Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
-% (either version 3 or, at your option, any later version). For further details, see the file
-% COPYING or <http://www.gnu.org/licenses/>.
+% This file is part of the physIO toolbox, which is released under the
+% terms of the GNU General Public Licence (GPL), version 3. You can
+% redistribute it and/or modify it under the terms of the GPL (either
+% version 3 or, at your option, any later version). For further details,
+% see the file COPYING or <http://www.gnu.org/licenses/>.
 
 if nargin < 3
     physio = tapas_physio_new;

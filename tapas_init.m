@@ -27,15 +27,14 @@ addpath(fullfile(tdir,'misc')) % Add misc for core tapas functionality.
 if init_options.doShowStartupMessage
     [version, hash] = tapas_version();
     disp(strcat('Initializing TAPAS ...'));
-    fprintf(1, 'Version %s.%s.%s\n', version{:});
-
     tapas_print_logo();
+    fprintf(1, 'Version %s.%s.%s\n', version{:});
 end
 % Check for updates if not suppressed:
 if init_options.doCheckUpdates && init_options.doShowStartupMessage    
     % The level 3 shows now the infos for all newer versions. If that is
     % too much, one might change that to 2 (only notes of newest release).
-    tapas_check_for_new_release(3);
+    tapas_check_for_new_release(1);
 end
 
 % This function is adding the toolboxes. If toolboxes is empty, all are added.
@@ -46,7 +45,7 @@ if init_options.doShowStartupMessage
     if ~exist(fullfile(tdir, 'examples'), 'dir')
         fprintf(1, ...
         ['Example data can be downloaded with ' ...
-        '\''tapas_download_example_data()\''\n']);
+        '<a href="matlab:tapas_download_example_data">\''tapas_download_example_data()\''</a>\n']);
     end
 end
 
@@ -79,7 +78,7 @@ if ismember('-noMessages',opts)
 end
 if ~isempty(opts) 
     str = sprintf('\n\t%s',opts{:});
-    warning('Received unused options %s\n I am irgnoring them!\n',str)
+    warning('Received unused options %s\n I am ignoring them!\n',str)
 end
 
 end

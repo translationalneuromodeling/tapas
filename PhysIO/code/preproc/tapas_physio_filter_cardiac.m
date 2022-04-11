@@ -84,8 +84,9 @@ else
     fc=filtfilt(sos,g,c);
     
     
-    %% plot filter response
-    if verbose.level >=3
+    %% plot filter response, but not for standalone (deployed) code or during
+    % matlab-compilation, because fvtool is not part of compilation license
+    if verbose.level >=3 && ~(isdeployed || ismcc)
         fvtool(sos,'Analysis','freq')
     end
     

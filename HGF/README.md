@@ -3,7 +3,7 @@ Release ID: $Format:%h %d$
 
 --- 
 
-Copyright (C) 2012-2020 Christoph Mathys <chmathys@ethz.ch>
+Copyright (C) 2012-2022 Christoph Mathys <chmathys@ethz.ch>
 Translational Neuromodeling Unit (TNU)
 University of Zurich and ETH Zurich
 
@@ -53,6 +53,11 @@ opening hgf_demo.mlx in Matlab. A PDF version is available in
 hgf_demo.pdf.
 
 ## Release notes
+
+### v7.0
+- Numerical stability improvements to optimization
+- Combined response models (more than one observation per trial)
+- Various bugfixes and minor improvements
 
 ### v6.1
 - Improved functionality of beta_obs response model

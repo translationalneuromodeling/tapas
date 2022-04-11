@@ -18,6 +18,7 @@ Daniel Hoffmann Ayala    | Technical University               | Munich    | D   
 Benoît Béranger          | CENIR, ICM                         | Paris     | FR      | benoitberanger
 Stephan Heunis           | Eindhoven University of Technology | Eindhoven | NL      | jsheunis
 Niklas Bürgi             | SNS, University of Zurich          | Zurich    | CH      | nbuergi
+Alexandre Sayal          | CIBIT, University of Coimbra       | Coimbra   | PT      | alexsayal
 **- Add Entry here -**   | **- Add Entry here -**             | **Add**   | **Add** | **Add**                    
 
 (hereinafter referred to as "Contributor")

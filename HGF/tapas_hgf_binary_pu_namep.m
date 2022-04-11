@@ -10,7 +10,7 @@ function pstruct = tapas_hgf_binary_pu_namep(pvec)
 
 pstruct = struct;
 
-l = (length(pvec)+1)/5;
+l = (length(pvec)-2)/5;
     
 if l ~= floor(l)
     error('tapas:hgf:UndetNumLevels', 'Cannot determine number of levels');

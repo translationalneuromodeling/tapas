@@ -144,7 +144,9 @@ fr_rvt = fr_rv .* fr_if;
 
 if verbose.level>=2
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf, 'Name', 'Model: Respiratory Volume');
+    set(gcf, 'Name', 'Model: Hilbert RVT (Respiratory Volume per Time)');
+    
+    hs(1) = subplot(2,1,1);
     hold on;
     plot([t(1), t(end)], [0.0, 0.0], 'Color', [0.7, 0.7, 0.7]);
     hp(1) = plot(t, fr);
@@ -158,12 +160,10 @@ if verbose.level>=2
         'Respiratory volume'};
     legend(hp, strLegend);
     xlim([t(1), t(end)]);
-end
+    title('Respiratory Volume (from Hilbert Transform)');
 
-if verbose.level>=2
-    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf, 'Name', 'Model: Breathing rate');
-    hold on;
+    hs(2) = subplot(2,1,2);
+    hold on
     plot([t(1), t(end)], [0.0, 0.0], 'Color', [0.7, 0.7, 0.7]);
     hp(1) = plot(t, fr);
     hp(2) = plot(t, fr_lp);
@@ -176,6 +176,8 @@ if verbose.level>=2
         'Instantaneous breathing rate'};
     legend(hp, strLegend);
     xlim([t(1), t(end)]);
+    title('Instantaneous Breathing Rate (from Hilbert Transform)');
+    linkaxes(hs, 'x')
 end
 
 %% Downsample %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

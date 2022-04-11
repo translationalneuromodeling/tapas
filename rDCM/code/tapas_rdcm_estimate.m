@@ -30,7 +30,7 @@ function [output, options] = tapas_rdcm_estimate(DCM, type, options, methods)
 % 
 % Authors: Stefan Fraessle (stefanf@biomed.ee.ethz.ch), Ekaterina I. Lomakina
 % 
-% Copyright (C) 2016-2021 Translational Neuromodeling Unit
+% Copyright (C) 2016-2022 Translational Neuromodeling Unit
 %                         Institute for Biomedical Engineering
 %                         University of Zurich & ETH Zurich
 %
@@ -182,6 +182,6 @@ output.time.time_rDCM_VBinv = time_rDCM_VBinv;
 
 % store the random number seed and the version number
 output.rngSeed = rngSeed;
-output.ver     = '2021_v01.3';
+output.ver     = '2022_v1.4';
 
 end

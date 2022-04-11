@@ -1,8 +1,3 @@
-%-----------------------------------------------------------------------
-% Job saved on 28-Jan-2020 11:28:55 by cfg_util (rev $Rev: 7345 $)
-% spm SPM - SPM12 (7487)
-% cfg_basicio BasicIO - Unknown
-%-----------------------------------------------------------------------
 matlabbatch{1}.spm.tools.physio.save_dir = {'physio_out'};
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'Siemens';
 matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'20191023_V02.puls'};
@@ -26,6 +21,8 @@ matlabbatch{1}.spm.tools.physio.preproc.cardiac.initial_cpulse_select.auto_match
 matlabbatch{1}.spm.tools.physio.preproc.cardiac.initial_cpulse_select.auto_matched.file = 'initial_cpulse_kRpeakfile.mat';
 matlabbatch{1}.spm.tools.physio.preproc.cardiac.initial_cpulse_select.auto_matched.max_heart_rate_bpm = 120;
 matlabbatch{1}.spm.tools.physio.preproc.cardiac.posthoc_cpulse_select.off = struct([]);
+matlabbatch{1}.spm.tools.physio.preproc.respiratory.filter.passband = [0.01 2];
+matlabbatch{1}.spm.tools.physio.preproc.respiratory.despike = false;
 matlabbatch{1}.spm.tools.physio.model.output_multiple_regressors = 'multiple_regressors.txt';
 matlabbatch{1}.spm.tools.physio.model.output_physio = 'physio.mat';
 matlabbatch{1}.spm.tools.physio.model.orthogonalise = 'none';

@@ -53,6 +53,13 @@ function [physio, R, ons_secs] = tapas_physio_main_create_regressors(varargin)
 %% 0. Set Default parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Display splash screen with reference to relevant papers for compiled
+% version
+if isdeployed || ismcc
+    tapas_physio_splash();
+    pause(2); % wait to read
+end
+
 % Remove SPM subfolders from path to avoid conflicts with Matlab in-built
 % functions used in PhysIO
 doCorrectPath = true;
