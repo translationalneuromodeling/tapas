@@ -92,6 +92,9 @@ scan_timing = physio.scan_timing;
 model       = physio.model;
 verbose     = physio.verbose;
 
+% Checking and removing paths to FieldTrip to avoid conflicts:
+% https://github.com/translationalneuromodeling/tapas/issues/166
+% https://github.com/translationalneuromodeling/tapas/issues/180
 verbose = tapas_physio_check_ft(verbose);
 
 hasPhaseLogfile = strcmpi(log_files.vendor, 'CustomPhase');
