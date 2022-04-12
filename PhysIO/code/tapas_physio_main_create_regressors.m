@@ -53,20 +53,6 @@ function [physio, R, ons_secs] = tapas_physio_main_create_regressors(varargin)
 %% 0. Set Default parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-oldPath = path();
-
-pathThis = fileparts(mfilename('fullpath'));
-ft_paths = which('ft_defaults', '-all')
-
-try
-for p = 1:size(ft_paths, 1)
-    to_remove = fileparts(ft_paths{p});
-    warning('off', 'MATLAB:rmpath:DirNotFound')
-    rmpath(genpath(to_remove));
-    warning('on', 'MATLAB:rmpath:DirNotFound')
-end
-ft_paths = which('ft_defaults', '-all')
-
 % These parameters could become toolbox inputs...
 minConstantIntervalAlertSeconds     = 0.2;
 
@@ -86,6 +72,7 @@ else % assemble physio-structure
     physio.save_dir     = varargin{6};
 end
 
+
 % fill up empty parameters
 physio = tapas_physio_fill_empty_parameters(physio);
 
@@ -104,6 +91,8 @@ preproc     = physio.preproc;
 scan_timing = physio.scan_timing;
 model       = physio.model;
 verbose     = physio.verbose;
+
+verbose = tapas_physio_check_ft(verbose);
 
 hasPhaseLogfile = strcmpi(log_files.vendor, 'CustomPhase');
 doesNeedPhyslogFiles = model.retroicor.include || model.rvt.include || model.hrv.include;
@@ -449,12 +438,6 @@ end % onset_slices
 
 [physio.verbose] = tapas_physio_print_figs_to_file(physio.verbose);
 
-catch ME
-    path(oldPath);
-    rethrow(ME);
-end
-path(oldPath);
-
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -465,5 +448,41 @@ function [R, names] = append_regressors(R, names, regressors, name)
 
 R = [R, regressors];
 names = [names, repmat({name}, 1, size(regressors, 2))];
+
+end
+
+function verbose = tapas_physio_check_ft(verbose)
+% Will remove found FieldTrip installations
+% from matlab path
+% FieldTrip is conficting with PhysIO, see
+% https://github.com/translationalneuromodeling/tapas/issues/166
+% https://github.com/translationalneuromodeling/tapas/issues/180
+
+ft_paths = which('ft_defaults', '-all');
+
+if isempty(ft_paths)
+    return;
+end
+
+w_msg = ['Removing FieldTrip paths (',...
+         'https://github.com/translationalneuromodeling/',...
+         'tapas/issues/166',...
+         ')\n'];
+
+warning('off', 'MATLAB:rmpath:DirNotFound');
+for p = 1:size(ft_paths, 1)
+    to_remove = fileparts(ft_paths{p});
+    w_msg = [w_msg, '\t', to_remove, '\n']; %#ok<AGROW>
+    rmpath(genpath(to_remove));
+end
+warning('on', 'MATLAB:rmpath:DirNotFound');
+
+if verbose.level >= 3
+  msg = sprintf(['You can restore FieldTrip path using:\n\t',...
+                 'addpath(''%s'');\n\tft_defaults;'],...
+                ft_paths{1});
+  w_msg = [w_msg, '\n', msg];
+end
+verbose = tapas_physio_log(w_msg, verbose, 1);
 
 end
