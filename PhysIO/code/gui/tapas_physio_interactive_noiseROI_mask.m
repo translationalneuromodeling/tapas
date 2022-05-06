@@ -1,5 +1,15 @@
 function tapas_physio_interactive_noiseROI_mask( mask_path )
-global st % to overlay the final ROIs, using spm_orthviews
+%TAPAS_PHYSIO_INTERACTIVE_NOISEROI_MASK function will help visualizing the
+%effect of 'threshold' and 'erosion' in tapas_physio_create_noise_rois_regressors()
+%
+% SYNTAX
+%   tapas_physio_interactive_noiseROI_mask() % a popup window will be used to select a mask
+%   tapas_physio_interactive_noiseROI_mask('path/to/my_mask.nii')
+%
+% NOTES
+%   The noiseROI will be created on the fly and kept in memory, it will ne
+%   be written on disk.
+%
 
 default_threshold = 0.95; % [0..1]
 default_erosion   = 1;    % 0, 1, 2, ...
@@ -8,12 +18,11 @@ default_erosion   = 1;    % 0, 1, 2, ...
 %% Mask selection
 
 if nargin < 1
-    mask_path = spm_select(1,'image','Select mask');
+    mask_path = spm_select(1,'image','Select a mask');
     if isempty(mask_path)
         return
     end
 end
-
 
 
 %% Load mask & display it
@@ -26,18 +35,19 @@ spm_orthviews('context_menu','interpolation',3); % disable interpolation // 3->N
 
 
 %% Vroi
-% no need to write a volume, just create a virtual one
+% the noiseROI will be computed and displayed on the fly without writting to the disk
 
-[pth,nam,ext,num] = spm_fileparts(mask_path);
-
-Vroi = Vmask; % copy header
-Vroi.fname = fullfile(tempdir,sprintf('interactive_noiseROI_%s%s', nam, ext)); % but change name, so it's written on a new file
+% copy header
+Vroi = Vmask;
+% change some settings so the volume remains "virtual"
+% thanks to @gllmflndn for helping on this part
+Vroi.dt = [spm_type('float64') 0];
+Vroi.pinfo = [1 ; 0 ; 0];
 
 [Yroi , descrip ] = threshold_erode_mask(Ymask, default_threshold, default_erosion);
-Vroi.descrip = descrip;
+Vroi.fname = descrip; % only useful for the display in the menu
 
-fprintf('[%s]: writing volume for interactive : %s \n', mfilename, Vroi.fname)
-spm_write_vol(Vroi, Yroi);
+Vroi.dat = Yroi; % this is not a file object, just a standard matrix
 print_stats( Yroi )
 
 
@@ -49,7 +59,8 @@ UserData.Ymask = Ymask;
 UserData.Vroi  = Vroi;
 
 
-%% Figure
+%% GUI
+% add a panel so the user can enter the values in the SPM figure
 
 F = spm_figure('FindWin','Graphics');
 
@@ -102,6 +113,8 @@ edit_threshold = uicontrol(panel,...
 %% Add the overlay
 % code from spm_orthviews:add_c_image
 
+global st % global variable used by using spm_orthviews()
+
 r = 1;
 
 spm_orthviews('addcolouredimage',r,Vroi ,[1 0 0]);
@@ -110,16 +123,18 @@ c_handle    = findobj(findobj(st.vols{r}.ax{1}.cm,'label','Overlay'),'Label','Re
 ch_c_handle = get(c_handle,'Children');
 set(c_handle,'Visible','on');
 uimenu(ch_c_handle(2),'Label',hlabel,'ForegroundColor',[1 0 0],...
-    'Callback','c = get(gcbo,''UserData'');spm_orthviews(''context_menu'',''remove_c_blobs'',2,c);');
+    'Callback','c = get(gcbo,''UserData'');spm_orthviews(''context_menu'',''remove_c_blobs'',2,c);',...
+    'Tag','noiseROI_menu');
 spm_orthviews('redraw')
 
 
 end % function
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [ Yroi , descrip ] = threshold_erode_mask(Ymask, threshold, erosion)
 
-Yroi = Ymask;
+Yroi = Ymask/max(abs(Ymask(:))); % normamalize input range to [0..1]
 Yroi(Yroi< threshold) = 0;
 Yroi(Yroi>=threshold) = 1;
 
@@ -132,14 +147,18 @@ descrip = sprintf('threshold = %4.2f // erosion = %d', threshold, erosion);
 end % function
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function print_stats( Yroi )
 
-fprintf('[%s]; n_Voxels_in_ROI = %6d \n', mfilename, sum(Yroi(:)));
+fprintf('[%s]: n_Voxels_in_ROI = %6d \n', mfilename, sum(Yroi(:)));
 
 end % function
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function update_noiseROI_Callback(hObject,~)
+
+global st % to overlay the final ROIs, using spm_orthviews
 
 % Retrieve UserData
 panel = get(hObject,'Parent');
@@ -153,7 +172,6 @@ if threshold<0 || threshold>1 || isnan(threshold)
     threshold = 0.95;
     set( findobj('Tag', 'edit_threshold'), 'String', num2str(threshold));
 end
-UserData.threshold = threshold;
 
 erosion = get( findobj('Tag', 'edit_erosion'), 'String');
 erosion = str2double(erosion);
@@ -162,17 +180,19 @@ if erosion<0 || erosion>999 || isnan(erosion)
     erosion = 1;
     set( findobj('Tag', 'edit_erosion'), 'String', num2str(erosion));
 end
-UserData.erosion = erosion;
 
 
 % Apply new values on mask
 [ Yroi , descrip ] = threshold_erode_mask(UserData.Ymask, threshold, erosion);
-UserData.Vroi.descrip = descrip;
-spm_write_vol(UserData.Vroi, Yroi);
+UserData.Vroi.dat = Yroi;
+UserData.Vroi.name = descrip;
 print_stats( Yroi )
 
 
-% Redraw -> thisload the freshly written mask, and then update the figure
+% Redraw : update overlay
+st.vols{1}.blobs{1}.vol = UserData.Vroi;
+handles = findobj('Tag', 'noiseROI_menu');
+handles.Text = sprintf('%s (Red)', descrip);
 spm_orthviews('redraw')
 
 
