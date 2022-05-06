@@ -31,9 +31,11 @@ spm_orthviews('context_menu','interpolation',3); % disable interpolation // 3->N
 [pth,nam,ext,num] = spm_fileparts(mask_path);
 
 Vroi = Vmask; % copy header
-Vroi.fname = fullfile(pth,'interactive_noiseROI.nii'); % but change name, so it's written on a new file
+Vroi.fname = fullfile(tempdir,sprintf('interactive_noiseROI_%s%s', nam, ext)); % but change name, so it's written on a new file
 
-Yroi = threshold_erode_mask(Ymask, default_threshold, default_erosion);
+[Yroi , descrip ] = threshold_erode_mask(Ymask, default_threshold, default_erosion);
+Vroi.descrip = descrip;
+
 fprintf('[%s]: writing volume for interactive : %s \n', mfilename, Vroi.fname)
 spm_write_vol(Vroi, Yroi);
 print_stats( Yroi )
@@ -115,7 +117,7 @@ spm_orthviews('redraw')
 end % function
 
 
-function Yroi = threshold_erode_mask(Ymask, threshold, erosion)
+function [ Yroi , descrip ] = threshold_erode_mask(Ymask, threshold, erosion)
 
 Yroi = Ymask;
 Yroi(Yroi< threshold) = 0;
@@ -124,6 +126,8 @@ Yroi(Yroi>=threshold) = 1;
 for i = 1 : erosion
     Yroi = spm_erode(Yroi);
 end
+
+descrip = sprintf('threshold = %4.2f // erosion = %d', threshold, erosion);
 
 end % function
 
@@ -162,7 +166,8 @@ UserData.erosion = erosion;
 
 
 % Apply new values on mask
-Yroi = threshold_erode_mask(UserData.Ymask, threshold, erosion);
+[ Yroi , descrip ] = threshold_erode_mask(UserData.Ymask, threshold, erosion);
+UserData.Vroi.descrip = descrip;
 spm_write_vol(UserData.Vroi, Yroi);
 print_stats( Yroi )
 
