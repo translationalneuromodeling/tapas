@@ -164,15 +164,17 @@ prc_fun = str2func(r.c_sim.prc_model);
 [r.traj, infStates] = prc_fun(r, r.p_prc.p);
 
 % Check inferred states for NaN values (due to numerical problems when taking log)
-r.traj.muhat(r.ign,:) = []; % weed out ignored trials
-if any(any(isnan(r.traj.muhat)))
-    error('tapas:hgf:VarApproxInvalid',...
-        'NaNs in infStates (muhat). Probably due to numerical problems when taking logarithms close to 1.');
-end
-r.traj.sahat(r.ign,:) = []; % weed out ignored trials
-if any(any(isnan(r.traj.sahat)))
-    error('tapas:hgf:VarApproxInvalid',...
-        'NaNs in infStates (muhat). Probably due to numerical problems when taking logarithms close to 1.');
+if contains(prc_model,'hgf') && contains(prc_model,'binary')
+    r.traj.muhat(r.ign,:) = []; % weed out ignored trials
+    if any(any(isnan(r.traj.muhat)))
+        error('tapas:hgf:VarApproxInvalid',...
+            'NaNs in infStates (muhat). Probably due to numerical problems when taking logarithms close to 1.');
+    end
+    r.traj.sahat(r.ign,:) = []; % weed out ignored trials
+    if any(any(isnan(r.traj.sahat)))
+        error('tapas:hgf:VarApproxInvalid',...
+            'NaNs in infStates (muhat). Probably due to numerical problems when taking logarithms close to 1.');
+    end
 end
 
 if nargin > 4
