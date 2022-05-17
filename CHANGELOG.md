@@ -1,6 +1,11 @@
 # Changelog
 TAPAS toolbox 
 
+## [6.0.1] 2022-05-17
+
+### Fixed
+- HGF: [Version 7.1](HGF/README.md#release-notes): Fixed bug in `tapas_simModel`.
+
 ## [6.0.0] 2022-04-08
 For this major release of TAPAS, we have decided to move currently unmaintained toolboxes
 to a dedicated [TAPAS Legacy repository](https://github.com/translationalneuromodeling/tapas_legacy).
