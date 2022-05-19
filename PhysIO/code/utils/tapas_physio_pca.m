@@ -1,84 +1,86 @@
-function [COEFF, SCORE, LATENT, EXPLAINED, MU] = tapas_physio_pca( timeseries, method )
-% Performes the Principal Component Analysis (PCA)
+function [principal_component, mean_across_voxels, eigen_values, vairance_explained, load] = tapas_physio_pca( timeseries, verbose )
+% Performes Principal Component Analysis (PCA).
+% The functions uses the covariance matrix of input "timeseries"
+% to allow obtaining PCs whatever the number of voxels.
 %
-%   [COEFF, SCORE, LATENT, EXPLAINED, MU] = tapas_physio_pca( timeseries )
+% The code is adapted from "spm_run_voi" + "spm_regions"
 %
 % IN
-%   timeserie                 (nVoxels x nVolumes)
-%   method                    'svd' or 'stats-pca'
+%
+%   timeserie         : [ nVolume , nVoxel ]
 %
 % OUT
-%   COEFF = [nVolumes, nPCs]  principal components (PCs) ordered by variance
-%                             explained
-%   SCORE = [nVoxel, nPCs]    loads of each component in each voxel, i.e.
-%                             specific contribution of each component in
-%                             a voxel's variance
-%   LATENT = [nPCs, 1]        eigenvalues of data covariance matrix,
-%                             stating how much variance was explained by
-%                             each PC overall
-%   TSQUARED = [nVoxels,1]    Hotelling's T-Squared test whether PC
-%                             explained significant variance in a voxel
-%   EXPLAINED = [nPCs, 1]     relative amount of variance explained (in
-%                             percent) by each component
-%   MU = [1, nVolumes]        mean of all time series
+%
+% principal_component : if nVolume >  nVoxel : [ nVolume , nVoxel ] // if nVolume <= nVoxel : [ nVolume , nVolume ]
+% mean_across_voxels  :                        [ nVolume ,      1 ]
+% eigen_values        :                        [ nVolume ,      1 ]
+% vairance_explained  : in percent(%)          [ nVolume ,      1 ]
+% load                : if nVolume >  nVoxel : [ nVoxel  , nVoxel ] // if nVolume <= nVoxel : [ nVoxel  , nVolume ]
+%
 %
 % EXAMPLE
-%   [COEFF, SCORE, LATENT, EXPLAINED, MU] = tapas_physio_pca( Yroi )
+%
+% [principal_component, mean_across_voxels, eigen_values, vairance_explained, load] = tapas_physio_pca( timeseries, verbose )
+%
 %
 % See also tapas_physio_create_noise_rois_regressors
 
-[nVoxels,nVolumes] = size(timeseries);
 
-if nVoxels <= nVolumes
-    error([mfilename ':NotEnoughVoxels'], 'nVoxels <= nVolumes')
+%% Checks
+
+% Each column is a voxel timeserie
+[ nVolume , nVoxel ] = size(timeseries); % [ nVolume , nVoxel ]
+
+not_finite = ~isfinite(timeseries);
+if any(not_finite(:))
+    verbose = tapas_physio_log(...
+        sprintf('[%s]: timeseries contains NaN or Inf, replacig it with 0 : \n', mfilename),...
+        verbose, 1);
+    timeseries(not_finite) = 0;
 end
 
-if nargin < 2
-    method = 'svd';
+
+%% Center data
+
+% First regressor : mean timeserie of the ROI
+mean_across_voxels = mean(timeseries,2); % [ nVolume , 1 ]
+MU = mean_across_voxels;
+
+% Center data : remove temporal mean, mandatory step to perform SVD
+mean_across_volumes = mean(timeseries,1); % [ 1 , nVoxel ]
+timeseries_centered = timeseries - mean_across_volumes;
+
+
+%% SVD
+
+if nVolume > nVoxel
+    [v,s,v] = svd(timeseries_centered' * timeseries_centered  );
+    u       =     timeseries_centered  * v/sqrt(s);
+else
+    [u,s,u] = svd(timeseries_centered  * timeseries_centered' );
+    v       =     timeseries_centered' * u/sqrt(s);
 end
 
-switch lower(method)
-    
-    case 'svd'
-        
-        % First regressor : mean timeserie of the ROI
-        MU = mean(timeseries); % [1, nVolumes]
-        
-        % Center data : remove mean, mandatory step to perform SVD
-        timeseries = timeseries - MU;
-        
-        % Perform Singular Value Ddecomposition
-        [u,s,v] = svd(timeseries,0);
-        
-        % Singular values -> Eigen values
-        singular_values = diag(s);
-        eigen_values    = singular_values.^2/(nVoxels-1);
-        LATENT          = eigen_values; % [nPCs, 1]
-        
-        % Eigen_values -> Variance explained
-        vairance_explained = 100*eigen_values/sum(eigen_values); % in percent (%)
-        EXPLAINED          = vairance_explained;                 % [nPCs, 1]
-        
-        % Sign convention : the max(abs(PCs)) is positive
-        [~,maxabs_idx] = max(abs(v));
-        [m,n]          = size(v);
-        idx            = 0:m:(n-1)*m;
-        val            = v(maxabs_idx + idx);
-        sgn            = sign(val);
-        v              = v .* sgn;
-        u              = u .* sgn;
-        
-        COEFF = v;                     % [nVolumes, nPCs]
-        SCORE = u .* singular_values'; % [nVoxel  , nPCs]
-        
-    case 'stats-pca'
-        
-        [COEFF, SCORE, LATENT, TSQUARED, EXPLAINED, MU] = pca(timeseries);
-        
-    otherwise
-        
-        error('unrecognized method : ''svd'' of ''stats-pca'' are accepted')
-        
-end
+% Sign convention
+d                   = sign(sum(v));
+
+% if nVolume >  nVoxel : [ nVolume , nVoxel  ]
+% if nVolume <= nVoxel : [ nVolume , nVolume ]
+principal_component = u.*d;
+
+% if nVolume >  nVoxel : [ nVoxel , nVoxel  ]
+% if nVolume <= nVoxel : [ nVoxel , nVolume ]
+load                = v.*d;
+
+
+%% Diagnostics
+
+% Singular values -> Eigen values
+singular_values = diag(s);
+eigen_values    = singular_values.^2/(nVoxel-1); % [ nVolume , 1 ]
+
+% Eigen_values -> Variance explained
+vairance_explained = 100*eigen_values/sum(eigen_values); % in percent(%) [ nVolume , 1 ]
+
 
 end % function

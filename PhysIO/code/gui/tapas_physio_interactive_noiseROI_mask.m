@@ -7,11 +7,11 @@ function tapas_physio_interactive_noiseROI_mask( mask_path )
 %   tapas_physio_interactive_noiseROI_mask('path/to/my_mask.nii')
 %
 % NOTES
-%   The noiseROI will be created on the fly and kept in memory, it will ne
+%   The noiseROI will be created on the fly and kept in memory, it will not
 %   be written on disk.
 %
 
-default_threshold = 0.95; % [0..1]
+default_threshold = 0.95; % from 0 to 1
 default_erosion   = 1;    % 0, 1, 2, ...
 
 
