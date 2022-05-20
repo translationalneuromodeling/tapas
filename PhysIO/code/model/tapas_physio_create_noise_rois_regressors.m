@@ -204,6 +204,8 @@ for r = 1:nRois
     Yroi = Yimg(:,roi(:)==1); % [nVolume , nVoxel]
     
     
+    %% Perform PCA (using SVD) to extract components inside the ROI
+    
     % ---------------------------------------------------------------------
     % mean and linear trend removal according to CompCor pub
     % ---------------------------------------------------------------------
@@ -227,9 +229,18 @@ for r = 1:nRois
     end
     
     
-    %% Perform PCA (using SVD) to extract components inside the ROI
+    % ---------------------------------------------------------------------
+    % column-wise variance normalization according to CompCor pub
+    % ---------------------------------------------------------------------
     
-    [principal_component, mean_across_voxels, eigen_values, vairance_explained, load] = tapas_physio_pca( Yroi, verbose );
+    Yroi = Yroi ./ std(Yroi);
+    
+    
+    % ---------------------------------------------------------------------
+    % tapas_physio_pca() uses the covariance matrix, according to CompCor pub
+    % ---------------------------------------------------------------------
+    
+    [eigenvariate, eigenvalues, eigenimage, vairance_explained, mean_across_voxels] = tapas_physio_pca( Yroi, verbose );
     
     
     %% Select components, write results
@@ -260,7 +271,7 @@ for r = 1:nRois
     
     % Take mean and some components into noise regressor
     R = mean_across_voxels;
-    R = [R, principal_component(:,1:nComponents)];
+    R = [R, eigenvariate(:,1:nComponents)];
     
     nRegressors = size(R,2);
     
@@ -299,7 +310,7 @@ for r = 1:nRois
         % saved as float, since was masked before
         Vpc.dt = [spm_type('float32') 1];
         pcScores = zeros(Vpc.dim);
-        pcScores(roi(:)==1) = load(:, c);
+        pcScores(roi(:)==1) = eigenimage(:, c);
         spm_write_vol(Vpc, pcScores);
     end
     R_noise_rois = [R_noise_rois, R];

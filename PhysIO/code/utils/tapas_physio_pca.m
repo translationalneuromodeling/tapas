@@ -1,4 +1,4 @@
-function [principal_component, mean_across_voxels, eigen_values, vairance_explained, load] = tapas_physio_pca( timeseries, verbose )
+function [eigenvariate, eigenvalues, eigenimage, vairance_explained, mean_across_voxels] = tapas_physio_pca( timeseries, verbose )
 % Performes Principal Component Analysis (PCA).
 % The functions uses the covariance matrix of input "timeseries"
 % to allow obtaining PCs whatever the number of voxels.
@@ -11,19 +11,25 @@ function [principal_component, mean_across_voxels, eigen_values, vairance_explai
 %
 % OUT
 %
-%   principal_component : if nVolume >  nVoxel : [ nVolume , nVoxel ] // if nVolume <= nVoxel : [ nVolume , nVolume ]
-%   mean_across_voxels  :                        [ nVolume ,      1 ]
-%   eigen_values        :                        [ nVolume ,      1 ]
-%   vairance_explained  : in percent(%)          [ nVolume ,      1 ]
-%   load                : if nVolume >  nVoxel : [ nVoxel  , nVoxel ] // if nVolume <= nVoxel : [ nVoxel  , nVolume ]
+%   eigenvariate       : if nVolume >  nVoxel : [ nVolume , nVoxel ] // if nVolume <= nVoxel : [ nVolume , nVolume ]
+%   eigenvalues        :                        [ nVolume ,      1 ]
+%   eigenimage         : if nVolume >  nVoxel : [ nVoxel  , nVoxel ] // if nVolume <= nVoxel : [ nVoxel  , nVolume ]
+%   vairance_explained : in percent(%)          [ nVolume ,      1 ]
+%   mean_across_voxels :                        [ nVolume ,      1 ]
 %
 %
 % EXAMPLE
 %
-%   [principal_component, mean_across_voxels, eigen_values, vairance_explained, load] = tapas_physio_pca( timeseries, verbose )
+%   [eigenvariate, eigenvalues, eigenimage, vairance_explained, mean_across_voxels] = tapas_physio_pca( timeseries, verbose )
 %
 %
-% See also tapas_physio_create_noise_rois_regressors
+% NOTES
+%
+% An article that helped understanding PCA and SVD :
+% https://stats.stackexchange.com/questions/134282/relationship-between-svd-and-pca-how-to-use-svd-to-perform-pca
+%
+%
+% See also tapas_physio_create_noise_rois_regressors spm_regions
 
 
 %% Checks
@@ -46,10 +52,10 @@ end
 %% Center data
 
 % First regressor : mean timeserie of the ROI
-mean_across_voxels = mean(timeseries,2); % [ nVolume , 1 ]
+mean_across_voxels  = mean(timeseries,2); % [ nVolume ,      1 ]
 
 % Center data : remove temporal mean, mandatory step to perform SVD
-mean_across_volumes = mean(timeseries,1); % [ 1 , nVoxel ]
+mean_across_volumes = mean(timeseries,1); % [       1 , nVoxel ]
 timeseries_centered = timeseries - mean_across_volumes;
 
 
@@ -64,25 +70,19 @@ else
 end
 
 % Sign convention
-d                   = sign(sum(v));
+d            = sign(sum(v));
 
 % if nVolume >  nVoxel : [ nVolume , nVoxel  ]
 % if nVolume <= nVoxel : [ nVolume , nVolume ]
-principal_component = u.*d;
+eigenvariate = u.*d;
 
 % if nVolume >  nVoxel : [ nVoxel , nVoxel  ]
 % if nVolume <= nVoxel : [ nVoxel , nVolume ]
-load                = v.*d;
+eigenimage   = v.*d;
 
-
-%% Diagnostics
-
-% Singular values -> Eigen values
-singular_values = diag(s);
-eigen_values    = singular_values.^2/(nVoxel-1); % [ nVolume , 1 ]
-
-% Eigen_values -> Variance explained
-vairance_explained = 100*eigen_values/sum(eigen_values); % in percent(%) [ nVolume , 1 ]
+% eigenvalues -> Variance explained
+eigenvalues        = diag(s);                          %               [ nVolume , 1 ]
+vairance_explained = 100*eigenvalues/sum(eigenvalues); % in percent(%) [ nVolume , 1 ]
 
 
 end % function
