@@ -22,7 +22,7 @@ function [R_noise_rois, noise_rois, verbose] = tapas_physio_create_noise_rois_re
 % EXAMPLE
 %   tapas_physio_create_noise_rois_regressors
 %
-%   See also spm_ov_roi
+%   See also spm_ov_roi tapas_physio_pca spm_run_voi spm_regions svd
 
 % Author: Lars Kasper
 % Created: 2015-07-22
@@ -77,8 +77,8 @@ end
 Vimg = []; for iFile = 1:numel(fmri_files), Vimg = [Vimg; spm_vol(fmri_files{iFile})];end
 Yimg = spm_read_vols(Vimg);
 
-nVolumes = size(Yimg, 4);
-Yimg = reshape(Yimg, [], nVolumes)'; % [nVolume nVoxels]
+nVolume = size(Yimg, 4);
+Yimg = reshape(Yimg, [], nVolume)'; % [nVolume , nVoxel]
 % here we use Matlab standard orientation for matrix : each column is a vector
 
 R_noise_rois = [];
@@ -201,7 +201,7 @@ for r = 1:nRois
     % apply 3D ROI binary mask on the 4D fmri data
     % ---------------------------------------------------------------------
     
-    Yroi = Yimg(:,roi(:)==1);
+    Yroi = Yimg(:,roi(:)==1); % [nVolume , nVoxel]
     
     
     % ---------------------------------------------------------------------
@@ -209,8 +209,8 @@ for r = 1:nRois
     % ---------------------------------------------------------------------
     
     % design matrix
-    X = ones(nVolumes,1);
-    X(:,2) = 1:nVolumes;
+    X = ones(nVolume,1);
+    X(:,2) = 1:nVolume;
     % fit 1st order polynomial to time series data in each voxel
     for n_roi_voxel = 1:size(Yroi,2)
         % extract data
@@ -246,9 +246,10 @@ for r = 1:nRois
         'nVolumes = %d // nVoxels in mask = %d\n'...
         'after threshold(%g) + crop(%d) : nVoxels in ROI = %d\n' ...
         'nReg = 1 mean + %d PC\n' ...
-        ], mfilename, Vimg(1).fname, Vroi.fname,...
-        nVolumes, numel(roi),...
-        thresholds(r), n_voxel_crop(r), sum(roi(:)),...
+        ], mfilename, Vimg(1).fname, ...
+        Vroi.fname,...
+        nVolume, numel(roi),...
+        thresholds(r), n_voxel_crop(r), nVoxelsInRoi,...
         nComponents);
     verbose = tapas_physio_log(...
         msg,...
