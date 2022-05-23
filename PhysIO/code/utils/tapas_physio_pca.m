@@ -7,7 +7,7 @@ function [eigenvariate, eigenvalues, eigenimage, vairance_explained, mean_across
 %
 % IN
 %
-%   timeserie         : [ nVolume , nVoxel ]
+%   timeserie          : [ nVolume , nVoxel ]
 %
 % OUT
 %
@@ -37,14 +37,18 @@ function [eigenvariate, eigenvalues, eigenimage, vairance_explained, mean_across
 % Each column is a voxel timeserie
 [ nVolume , nVoxel ] = size(timeseries); % [ nVolume , nVoxel ]
 
-% This can happens when you combine different toolboxs that have different
-% methods to deal with the value outside a mask. For exemple, AFNI replace
-% voxel value outise a maks by NaN. But SPM uses 0 outside the mask.
+% This can happen when your input mask covers more voxels then your fMRI
+% volume, for exemple when you do not have a full brain acquisition
+%
+% This can also happens when you combine different toolboxs that have
+% different methods to deal with the value outside a mask. For exemple,
+% AFNI replace voxel value outise a maks by NaN. But SPM uses 0 outside the
+% mask.
 not_finite = ~isfinite(timeseries);
 if any(not_finite(:))
     verbose = tapas_physio_log(...
-        sprintf('[%s]: timeseries contains NaN or Inf, replacig it with 0 : %s \n', mfilename),...
-        verbose, 1);
+        sprintf('[%s]: timeseries contains NaN or Inf, replacig it with 0\n', mfilename),...
+        verbose, 0);
     timeseries(not_finite) = 0;
 end
 
