@@ -27,20 +27,23 @@ function [infos, auxillary_toolboxes] = tapas_get_toolbox_infos()
     %% Order determines init-order: do that by alphabet for main toolboxes
 	infos = tapas_default_toolbox_info(infos, 'ceode');
     
-    infos.hgf.init_function = '';
+        infos.hgf.init_function = '';
 	infos.hgf.init_dir = 'HGF';
 	infos.hgf.dependencies = [];
 	infos.hgf.diagnose_files = '';
+        infos.hgf.test_function_name = '';
 
 	infos.huge.init_function = 'tapas_huge_compile';
 	infos.huge.init_dir = 'huge';
 	infos.huge.dependencies = [];
 	infos.huge.diagnose_files = '';
+        infos.huge.test_function_name = '';
 
 	infos.physio.init_dir = strcat('PhysIO',filesep,'code');
 	infos.physio.init_function = 'tapas_physio_init';
 	infos.physio.dependencies = [];
 	infos.physio.diagnose_files = 'tapas_physio_main_create_regressors';
+        infos.physio.test_function_name = '';
 
 	infos = tapas_default_toolbox_info(infos,'rDCM');
     
@@ -50,12 +53,14 @@ function [infos, auxillary_toolboxes] = tapas_get_toolbox_infos()
 	infos.uniqc.init_function = '';
 	infos.uniqc.dependencies = [];
 	infos.uniqc.diagnose_files = 'tapas_uniqc_demo_fmri_qa'; % in subfolder demo/MrSeries
+        infos.uniqc.test_function_name = '';
 
 	%% Auxillary toolboxes: 
-    infos.external.init_function = '';
+        infos.external.init_function = '';
 	infos.external.init_dir = 'external';
 	infos.external.dependencies = '';
 	infos.external.diagnose_files = '';
+        infos.external.test_function_name = 'tapas_test_template';
 
     infos = tapas_default_toolbox_info(infos,'tools'); % Want to have that?
     
@@ -73,6 +78,6 @@ function infos = tapas_default_toolbox_info(infos,folderName)
     infos.(fld_name).init_dir = folderName;
     infos.(fld_name).dependencies = '';
     infos.(fld_name).diagnose_files = '';
-
+    infos.(fld_name).test_function_name = '';
 end
 
