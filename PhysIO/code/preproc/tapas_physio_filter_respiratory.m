@@ -62,8 +62,14 @@ end
 %% Basic preproc and outlier removal
 
 % If rpulset has nans, replace them with zeros
-rpulsetOffset = nanmean(rpulset);
-rpulset(isnan(rpulset)) = nanmean(rpulset);
+
+try 
+    rpulsetOffset = mean(rpulset, 'omitnan'); % 'omitnan' is recommended for versions after matlab 2016
+    rpulset(isnan(rpulset)) = mean(rpulset, 'omitnan');
+catch
+    rpulsetOffset = nanmean(rpulset);
+    rpulset(isnan(rpulset)) = nanmean(rpulset);
+end
 
 rpulset = detrend(rpulset, 3);  % Demean / detrend to reduce edge effects
 
