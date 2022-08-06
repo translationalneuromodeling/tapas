@@ -41,14 +41,14 @@ end
 % In the infos struct, we have all information about our toolboxes (which ones 
 % we have, what other TAPAS toolboxes they depend on and whether they have a 
 % init function):
-infos = tapas_get_toolbox_infos();
+[infos,aux_tools] = tapas_get_toolbox_infos();
 
 % Strategy: Use fieldnames of struct for list of toolboxes. Have boolean array,
 % whether to add them. 
 toolbox_names = fieldnames(infos);
 if doInitAll % That's easy: Just add all.
 	doInit = ones(size(toolbox_names),'logical');
-	toolboxes = toolbox_names;
+	toolboxes = toolbox_names(~ismember(toolbox_names,aux_tools));
 else
 	doInit = zeros(size(toolbox_names),'logical');
 	for iTool = 1:numel(toolboxes) % These are to add (input argument)
@@ -66,6 +66,9 @@ else
 end
 % Now that we know, which toolboxes (including dependencies) we want to add,
 % we can do that.
+doInit(ismember(toolbox_names,aux_tools)) = true; % Always add these.
+
+
 for iTool = 1:numel(toolbox_names) % Now we are iterating over all toolboxes.
 	if doInit(iTool) 
 		sTool = toolbox_names{iTool};
@@ -79,7 +82,11 @@ for iTool = 1:numel(toolbox_names) % Now we are iterating over all toolboxes.
                     str(end+1:80+17) = '~'; % 17 for <strong></strong>
                     fprintf(1,'%s\n',str);
                 else 
-                    fprintf(1,'===== Adding dependent toolbox %s =====\n',sTool);
+                    %fprintf(1,'===== Adding dependent toolbox %s =====\n',sTool);
+                    str = sprintf(['~~~~~~~~~~~~~~~~~~~~~~~~ ADDING DEPENDENCY ',...
+                        '%s ~~~~~~~~~~~~~~~~~~~~~~~~'],upper(sTool));
+                    str(end+1:80) = '~'; 
+                    fprintf(1,'%s\n',str);
                 end
             end
             % If no init function is specified, we add the "genpath(init_dir)".

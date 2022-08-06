@@ -36,7 +36,7 @@ function haveNewerRelease = tapas_check_for_new_release(verbose)
 
     if verbose % Show info
         if ~haveNewerRelease
-            fprintf(1, 'Your TAPAS version is up-to-date .\n\n');
+            fprintf(1, 'Your TAPAS version is up-to-date.\n\n');
         else
             fprintf(1, ['There is a new TAPAS release available (installed %s /'...
                 +'newest %s)!\n\n'],offline_version,online_version);

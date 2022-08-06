@@ -1,4 +1,4 @@
-function pstruct = tapas_hgf_binary_pu_namep(pvec)
+function pstruct = tapas_ehgf_binary_pu_namep(pvec)
 % --------------------------------------------------------------------------------------------------
 % Copyright (C) 2012-2015 Christoph Mathys, TNU, UZH & ETHZ
 %

@@ -1,4 +1,4 @@
-function y = tapas_unitsq_sgm_sim(r, infStates, p)
+function [y, prob] = tapas_unitsq_sgm_sim(r, infStates, p)
 % Simulates observations from a Bernoulli distribution
 %
 % --------------------------------------------------------------------------------------------------
