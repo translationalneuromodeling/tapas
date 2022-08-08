@@ -42,12 +42,13 @@ end
 infos = tapas_get_toolbox_infos();
 % Coding here is similar to tapas_init_toolboxes
 toolbox_names = fieldnames(infos);
-nTool = numel(toolbox_names)
+nTool = numel(toolbox_names); % All tapas-toolboxes
+NTool = numel(toolboxes); % All specified toolboxes
 if doTestAll
     doTest = ones(size(toolbox_names),'logical');
 else
     doTest = zeros(size(toolbox_names),'logical');
-    for iTool = 1:nTool 
+    for iTool = 1:NTool % Run over specified toolboxes 
         sTool = toolboxes{iTool};
         if ~ismember(sTool,toolbox_names)
         	warning('I do not know the toolbox %s - skipping it.\n',sTool);
@@ -64,31 +65,42 @@ end
 % Now run through the tests of the required toolboxes.
 testResults = zeros(nTool,2);
 for iTool = 1:nTool
-    
+    if ~doTest(iTool)
+        continue;
+    end
     toolboxName = toolbox_names{iTool};
     testFunctionName = infos.(toolboxName).test_function_name;
+   
+    str = sprintf('~~~~~~~~~~~~~~~~~~~~~~~~ TESTING  <strong>%s</strong> ~',...
+                upper(toolboxName));
+    str(end+1:80+17) = '~'; % 17 for <strong></strong>
+    fprintf(1,'%s\n',str);
     if isempty(testFunctionName)
-        fprintf('Test for toolbox %s not implemented yet.\n',toolboxName)
+        fprintf('Tests not implemented yet.\n')
+        %fprintf('\tTest for toolbox %s not implemented yet.\n',toolboxName)
         continue;
     end
     hTestFunction = str2func(testFunctionName);
-    disp(strcat('~~~ Testing <strong>',toolboxName,'</strong> ~~~'))
+    
     try 
         [nTestFailed,nTestTotal] = hTestFunction(level);
     catch me
-        warning('Test for toolbox failed with message:\n\t%s',me.message);
+        warning('Test for toolbox failed with message:\n\t%s',me.message);%#ok
         nTestFailed = 1;
         nTestTotal = 1;
     end
     testResults(iTool,1) = nTestFailed;
     testResults(iTool,2) = nTestTotal;
-    fprintf('\tSummary %s: %d out of %d test failed.\n',toolboxName,nTestFailed,...
+    fprintf('<strong>Summary</strong> %s: %d out of %d tests failed.\n',...
+        toolboxName,nTestFailed,...
         nTestTotal)
 end
 
 nTestFailed = sum(testResults(:,1));
 nTestTotal = sum(testResults(:,2));
-fprintf('Summary: %d of %d tests failed\n',nTestFailed,nTestTotal);
+fprintf(['~~~~~~~~~~~~~~~~~~~~~~~~ <strong>SUMMARY</strong> ~~~~~~~~~~~~~~~~~~~~',...
+    '~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'])
+fprintf('<strong>Summary</strong>: %d of %d tests failed\n',nTestFailed,nTestTotal);
 
 end
 
@@ -101,14 +113,13 @@ function [nTestFailed,nTestTotal] = tapas_test_template(level)
     %   1:  around 5 minutes (a coffee)
     %   2:  around an hour  (time for lunch)
     %   3:  overnight       (time to freakout [deadline])
-    
+    error('Hallloooo')
     if level < 1
         nTestTotal = 2;
     else
         nTestTotal = 3;
     end
     nTestFailed = 0;
-
     randomNumber = randn(1);
     if randomNumber < 0
         fprintf('First test failed :(\n')
@@ -123,7 +134,7 @@ function [nTestFailed,nTestTotal] = tapas_test_template(level)
 
     if level >= 1
         pause(300); % To justify the level ;)
-        randomInteger = randi(10,1)
+        randomInteger = randi(10,1);
         if randomInteger < 5
             fprintf('Third test failed :( \n')
             nTestFailed = nTestFailed + 1;
