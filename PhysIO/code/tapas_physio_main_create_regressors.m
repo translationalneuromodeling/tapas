@@ -90,6 +90,7 @@ else % assemble physio-structure
     physio.model        = varargin{4};
     physio.verbose      = varargin{5};
     physio.save_dir     = varargin{6};
+    physio.writebids    = varargin{7};
 end
 
 % fill up empty parameters
