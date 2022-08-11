@@ -137,6 +137,10 @@ if ~hasPhaseLogfile
                 verbose] = tapas_physio_read_physlogfiles(...
                 log_files, preproc.cardiac.modality, verbose, scan_timing.sqpar);
             
+            % Placeholder BIDS writer function 1
+            tapas_physio_write2bids(physio)
+
+
             % also: normalize cardiac/respiratory data, if wanted
             doNormalize = true;
             
@@ -166,7 +170,10 @@ if ~hasPhaseLogfile
                 log_files, scan_timing, ons_secs, verbose);
             minConstantIntervalAlertSamples = ceil(minConstantIntervalAlertSeconds/ons_secs.dt);
             
-            
+            % placeholder BIDS writer function 2
+            tapas_physio_write2bids(physio)
+
+
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %% 3. Extract and preprocess physiological data, crop to scan aquisition
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -263,7 +270,7 @@ else
     
 end
 
-
+% Call BISD derivative function here
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 4. Create physiological noise model regressors for GLM for all specified
