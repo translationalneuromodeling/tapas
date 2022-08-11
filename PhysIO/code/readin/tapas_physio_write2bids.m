@@ -9,9 +9,8 @@ function [t,c,r,svolpulse]= tapa_physio_write2bids(physio)
 % OUT: tsv file(s) with columns caridac, respiratory, trigger
 %    json file with meta data
 
-
-
-
+cardiac = physio.ons_secs.c;
+respiratory = physio.ons_secs.r;
 
 
 end
