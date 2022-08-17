@@ -12,5 +12,16 @@ function [t,c,r,svolpulse]= tapa_physio_write2bids(physio)
 cardiac = physio.ons_secs.c;
 respiratory = physio.ons_secs.r;
 
+subj='subject1'
+session= 'session1'
+
+ s = struct("StartTime", physio.log_files.relative_start_acquisition , ...
+        "SamplingFrequency",physio.log_files.sampling_interval, "Columns", ["cardiac", "respiratory"]); 
+   
+
+JSONFILE_name= sprintf('%s_JSON%d.json',subj, session); 
+    fid=fopen(JSONFILE_name,'w') 
+    encodedJSON = jsonencode(s); 
+    fprintf(fid, encodedJSON); 
 
 end
