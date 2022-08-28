@@ -12,7 +12,7 @@ function [c, r, t, cpulse, acq_codes, verbose] = ...
 % physiological recordings can be found here:
 %
 % https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/
-% 06-physiological-and-other-continous-recordings.html
+% 06-physiological-and-other-continuous-recordings.html
 %
 % [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles_biopac_txt(...
 %    log_files, cardiac_modality, verbose, varargin)
