@@ -1,4 +1,4 @@
-function [t,c,r,svolpulse]= tapa_physio_write2bids(physio)
+function []= tapa_physio_write2bids(physio)
 % Converts trigger cardiac and respiratory data from physio structure into
 % a tsv file according to BIDS format, with meta data 
 % in json file
@@ -8,6 +8,7 @@ function [t,c,r,svolpulse]= tapa_physio_write2bids(physio)
 
 % OUT: tsv file(s) with columns caridac, respiratory, trigger
 %    json file with meta data
+
 
 cardiac = physio.ons_secs.c;
 respiratory = physio.ons_secs.r;
@@ -26,20 +27,25 @@ end
 
 % TODO this needs to be updated to change by subjects - can this info be
 % taken from the pysio structure?
-subj='subject1';
-session= 'session1';
+subj='sub-01';
+session= 'ses-01';
+save_dir=physio.save_dir
 
 % prepare structure to write into BIDS
  s = struct("StartTime", physio.log_files.relative_start_acquisition , ...
         "SamplingFrequency",physio.log_files.sampling_interval, "Columns", ["cardiac", "respiratory", "trigger"]); 
-  
 
 
-
+% create JSON file
 JSONFILE_name= sprintf('%s_%s_JSON.json',subj, session); 
-    fid=fopen(JSONFILE_name,'w'); 
+    fid=fopen(fullfile(save_dir,JSONFILE_name),'w'); 
     encodedJSON = jsonencode(s); 
-    % TODO: think about and add output folder
+   % write output
     fprintf(fid, encodedJSON); 
+
+% write output
+writematrix(cardiac,fullfile(save_dir,'cardiac.txt'),'Delimiter','tab')
+writematrix(respiratory,fullfile(save_dir,'respiratory.txt'),'Delimiter','tab')
+writematrix(trigger_binary,fullfile(save_dir,'trigger_binary.txt'),'Delimiter','tab')
 
 end
