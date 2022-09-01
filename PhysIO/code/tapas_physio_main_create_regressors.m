@@ -172,7 +172,7 @@ if ~hasPhaseLogfile
             minConstantIntervalAlertSamples = ceil(minConstantIntervalAlertSeconds/ons_secs.dt);
             
             % placeholder BIDS writer function 2
-            tapas_physio_write2bids(physio)
+            %tapas_physio_write2bids(physio)
 
 
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
