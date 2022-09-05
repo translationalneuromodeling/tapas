@@ -41,8 +41,7 @@ doUseSpm = true;
 
 % run GE example and extract physio
 pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-% TODO: Make generic!
-pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
+pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
 
 if doUseSpm
     pathCurrentExample = fullfile(pathExamples, 'GE/PPU3T');
