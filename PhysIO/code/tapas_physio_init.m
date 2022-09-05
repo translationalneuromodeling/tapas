@@ -46,6 +46,12 @@ else
     fprintf('OK.\n');
 end
 
+% Adding test paths as well to run tapas_physio_test via tapas_test
+% TODO: does not work, if code folder in SPM/toolbox
+if ~exist('tapas_physio_test')
+   pathPhysIOTest = fullfile(fileparts(pathPhysIO), 'tests');
+   addpath(genpath(pathPhysIOTest));
+end
 
 %% Check and add SPM path
 fprintf('Checking Matlab SPM path now...');
