@@ -825,9 +825,9 @@ Help Window of the SPM Batch Editor</p>
 </ol>
 <p class="page" id="README"></p><h1>Readme</h1>
 <h1 id="tapas-physio-toolbox-">TAPAS PhysIO Toolbox </h1>
-<p><em>Current version: Release 2022a, v8.1.0</em></p>
+<p><em>Current version: Release 2022b, v8.2.0</em></p>
 <blockquote>
-<p>Copyright (C) 2012-2022<br>Lars Kasper<br><a href="#mailtox6bx61x73112101x726498105x6fx6dx65x64x2e101x65x2ex65x74x68x7ax2ex63x68">&#x6b;&#x61;&#x73;&#112;&#101;&#x72;&#64;&#98;&#105;&#x6f;&#x6d;&#x65;&#x64;&#x2e;&#101;&#x65;&#x2e;&#x65;&#x74;&#x68;&#x7a;&#x2e;&#x63;&#x68;</a>  </p>
+<p>Copyright (C) 2012-2022<br>Lars Kasper<br><a href="#mailtox6bx61115112x65114x40x62x69x6f109x65x64x2e101101x2e101x74x681224699x68">&#x6b;&#x61;&#115;&#112;&#x65;&#114;&#x40;&#x62;&#x69;&#x6f;&#109;&#x65;&#x64;&#x2e;&#101;&#101;&#x2e;&#101;&#x74;&#x68;&#122;&#46;&#99;&#x68;</a>  </p>
 <p>Translational Neuromodeling Unit (TNU)<br>Institute for Biomedical Engineering<br>University of Zurich and ETH Zurich  </p>
 </blockquote>
 <h2 id="download">Download</h2>
@@ -1661,6 +1661,7 @@ information in the <code>log_files</code> structure, and a default column order 
   ], 
   <span class="hljs-attr">&quot;StartTime&quot;</span>: <span class="hljs-number">-255.45</span>
 }</pre></li>
+<li>Note that <code>StartTime</code> refers to when the physiological recording started relative to the first scan volume of the fMRI run, which means that typically this value is negative, because one starts the recording before the onset of scan volumes.</li>
 <li>See <code>tapas_physio_read_physlogfiles_bids.m</code> for more details and technical
 documentation.</li>
 </ul>
@@ -1729,8 +1730,9 @@ documentation.</li>
 <h1 id="siemens">Siemens</h1>
 <h2 id="manual-recording">Manual Recording</h2>
 <p>Physiological data collection on the Siemens scanners uses the physiological monitoring unit (PMU). The initial sampling is performed at 400 Hz, but through the PMU buffer the effective sampling intervals are ECG: 2.5 ms, RESP: 20 ms, PULS: 20 ms and EXT: 5 ms.</p>
-<p>There are several ways to control the physiological data collection. The &#39;manual&#39; version is available on all platforms. It uses the telnet mpcu/ideacmdtool to manually start and stop the log file acquisition. The log files (logFileName.ecg, logFileName.resp, logFileName.puls, logFileName.ext) are stored in <code>\MedCom\log</code>. More details on how to record these data can be found <a href="https://cfn.upenn.edu/aguirre/wiki/public:pulse-oximetry_during_fmri_scanning">here</a> or in the &quot;Other Miscellaneous Topics&quot; slides from the IDEA course.</p>
-<p>An example of a .puls logfile is given below. The data are stored in one long line. The text between 5002 and 6002 forms the header, and the text between 5003 and 6003 the footer. Important information in the footer is the LogStartMDHTime and the LogStopMDHTime (in ms since midnight), which can be used to synchronize the logfiles with the dicom images using the AcquisitionTime in the dicom header (in hhmmss.ms). The values 5000 and 6000 are inserted into the signal trace and indicate trigger events. Note that only the modality which is selected to be displayed during the acquisition will have triggers.</p>
+<p>There are several ways to control the physiological data collection. The &#39;manual&#39; version is available on all platforms. It uses the telnet mpcu/ideacmdtool to manually start and stop the log file acquisition. The log files (<code>logFileName.ecg</code>, <code>logFileName.resp</code>, <code>logFileName.puls</code>, <code>logFileName.ext</code>) are stored in <code>\MedCom\log</code>. More details on how to record these data can be found <a href="https://cfn.upenn.edu/aguirre/wiki/public:pulse-oximetry_during_fmri_scanning">here</a> or in the &quot;Other Miscellaneous Topics&quot; slides from the IDEA course.</p>
+<p>An example of a <code>.puls</code> logfile is given below. The data are stored in one long line. The text between 5002 and 6002 forms the header, and the text between 5003 and 6003 the footer. Important information in the footer is the <code>LogStartMDHTime</code> and the <code>LogStopMDHTime</code> (in ms since midnight), which can be used to synchronize the logfiles with the DICOM images using the <code>AcquisitionTime</code> in the DICOM header (in hhmmss.ms). The values 5000 and 6000 are inserted into the signal trace and indicate trigger events. Note that only the modality which is selected to be displayed during the acquisition will have triggers.</p>
+<p>We use the time stamp of the clock of the Measurement Data Header (MDH), i.e., computer that controls the scanner, to synchronize with the DICOMs, because this computer also controls the creation of the scan data, i.e., reconstructed DICOM images. This is in accordance to other packages reading Siemens physiological logfile data, e.g., Chris Rorden&#39;s <a href="https://github.com/neurolabusc/Part#usage">PART</a>, with a detailed explanation on the DICOM timestamp in <code>AcquisitionTime</code> found <a href="https://github.com/nipy/heudiconv/issues/450#issuecomment-645003447">here</a>. </p>
 <pre class="hljs"><span class="hljs-attribute">1</span> <span class="hljs-number">2</span> <span class="hljs-number">40</span> <span class="hljs-number">280</span> <span class="hljs-number">5002</span> Logging PULSE signal: reduction factor = <span class="hljs-number">1</span>, PULS_SAMPLES_PER_SECOND = <span class="hljs-number">50</span>; PULS_SAMPLE_INTERVAL = <span class="hljs-number">20000</span> <span class="hljs-number">6002</span> <span class="hljs-number">1653</span> <span class="hljs-number">1593</span> <span class="hljs-number">1545</span> <span class="hljs-number">1510</span> <span class="hljs-number">1484</span> ...
 <span class="hljs-attribute">ACQ</span> FINISHED
  <span class="hljs-attribute">6002</span> <span class="hljs-number">3093</span> <span class="hljs-number">3096</span> <span class="hljs-number">3064</span> <span class="hljs-number">5000</span> <span class="hljs-number">3016</span> <span class="hljs-number">2926</span> <span class="hljs-number">5003</span>
@@ -1826,8 +1828,22 @@ documentation.</li>
 <span class="hljs-symbol">1 </span>   <span class="hljs-number">1904</span>    <span class="hljs-number">1780</span></pre><p class="page" id="CHANGELOG"></p><h1>Version History (Changelog)</h1>
 <h1 id="release-information">RELEASE INFORMATION</h1>
 <h2 id="current-release">Current Release</h2>
-<p><em>Current version: PhysIO Toolbox Release R2022a, v8.1.0</em></p>
-<p>April 5th, 2022</p>
+<p><em>Current version: PhysIO Toolbox Release R2022b, v8.2.0</em></p>
+<p>September 5th, 2022</p>
+<h2 id="minor-release-notes-v8-2-0-">Minor Release Notes (v8.2.0)</h2>
+<h3 id="added">Added</h3>
+<ul>
+<li>Interface <code>tapas_physio_test</code> to TAPAS-generic <code>tapas_test</code> function</li>
+<li>Added suport for logfile version 3 of Siemens physio recordings <ul>
+<li>multi ECG/Resp channels and interleaved status messages<h3 id="fixed">Fixed</h3>
+</li>
+</ul>
+</li>
+<li>Removed dependence on <code>nanmean</code> (Statistics Toolbox)<ul>
+<li>See GitHub issue #205 and </li>
+</ul>
+</li>
+</ul>
 <h2 id="minor-release-notes-v8-1-0-">Minor Release Notes (v8.1.0)</h2>
 <h3 id="added">Added</h3>
 <ul>
