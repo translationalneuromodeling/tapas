@@ -41,10 +41,9 @@ end
 
 % path to examples, needed for all test cases
 function setupOnce(testCase)
-% run GE example and extract physio
+% Get PhysIO public repo base folder from this file's location
 testCase.TestData.pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..');
-% TODO: Make generic!
-testCase.TestData.pathExamples =  fullfile(testCase.TestData.pathPhysioPublic, '..', 'examples');
+testCase.TestData.pathExamples =  tapas_physio_get_path_examples(testCase.TestData.pathPhysioPublic);
 end
 
 
