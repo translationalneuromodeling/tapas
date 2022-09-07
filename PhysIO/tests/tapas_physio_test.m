@@ -45,6 +45,9 @@ tic
 
 testResults = [];
 
+% Returns an error message, if no example data found
+tapas_physio_get_path_examples();
+
 if level >= 0
     testResults = [testResults tapas_physio_run_unit_tests()];
 else
