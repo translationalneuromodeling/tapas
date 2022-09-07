@@ -37,3 +37,9 @@ if ~isfolder(fullfile(pathExamples, 'BIDS'))
     pathExamples =  fullfile(pathPhysioPublic, ...
         '..', 'examples', tapas_get_current_version(), 'PhysIO');
 end
+
+% If no examples folder found, suggest to download them via tapas-function
+if ~isfolder(fullfile(pathExamples, 'BIDS'))
+    physio = tapas_physio_new();
+    tapas_physio_log('No PhysIO examples data found. Please download via tapas_download_example_data()', physio.verbose, 2);
+end
