@@ -6,7 +6,7 @@ Current Release
 
 *Current version: PhysIO Toolbox Release R2022b, v8.2.0*
 
-September 5th, 2022
+September 9th, 2022
 
 Minor Release Notes (v8.2.0)
 ----------------------------
@@ -17,7 +17,9 @@ Minor Release Notes (v8.2.0)
     - multi ECG/Resp channels and interleaved status messages
 ### Fixed
 - Removed dependence on `nanmean` (Statistics Toolbox)
-    - See GitHub issue #205 and 
+    - See GitHub issue #205 
+- Compatibility with multiple SPM toolbox locations for `lmod` ([GitHUb issue #211](https://github.com/translationalneuromodeling/tapas/issues/211))
+    - as listed in `spm_get_defaults('tbx')`
 
 Minor Release Notes (v8.1.0)
 ----------------------------
