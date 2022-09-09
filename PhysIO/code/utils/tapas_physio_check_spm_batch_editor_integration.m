@@ -32,14 +32,22 @@ end
 
 [isSpmOnPath, pathSpm] = tapas_physio_check_spm();
 
-isPhysioVisibleForSpmBatchEditor = isSpmOnPath; % minimum requirement for integration: SPM works!
+isPhysioVisibleForSpmBatchEditor = false; % checked below, need SPM visible for that
 
 % check for config matlabbatch file
 if isSpmOnPath
-    filePhysioCfgMatlabbatch = ...
-        dir(fullfile(pathSpm, 'toolbox', '**/tapas_physio_cfg_matlabbatch.m'));
     
-    isPhysioVisibleForSpmBatchEditor = ~isempty(filePhysioCfgMatlabbatch);
+    % check all possible SPM toolbox locations, as listed in its defaults:
+    tbx = spm_get_defaults('tbx'); % SPM toolbox parameter struct
+    
+    iDir = 1;
+    while (iDir <= numel(tbx.dir)) && ~isPhysioVisibleForSpmBatchEditor 
+        filePhysioCfgMatlabbatch = ...
+            dir(fullfile(tbx.dir{iDir}, '**/tapas_physio_cfg_matlabbatch.m'));
+        
+        isPhysioVisibleForSpmBatchEditor = ~isempty(filePhysioCfgMatlabbatch);
+        iDir = iDir + 1;
+    end
     
     % also important to set default modality of spm to fMRI and
     % initialize batch editor, if not done before
