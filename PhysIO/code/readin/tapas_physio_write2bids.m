@@ -1,18 +1,19 @@
-function []= tapa_physio_write2bids(ons_secs,which_bids )
-% Converts trigger cardiac and respiratory data from physio structure into
-% a tsv file according to BIDS format, with meta data 
-% in json file
+function []= tapa_physio_write2bids(ons_secs, location )
+% Converts trigger, cardiac and respiratory data from physio structure into
+% a .tsv file according to BIDS format, with meta data in a corresponding json file.
 
-% IN: physio structure
+% IN: ons_secs structure
+%     
+      
 %     
 
 % OUT: tsv file(s) with columns caridac, respiratory, trigger
-%    json file with meta data
+%      json file with meta data
 
 save_dir=physio.write_bids
 
 % after step1
-switch which_bids
+switch location
     case 1 | 2
         tag = ""
         cardiac = ons_secs.c;
