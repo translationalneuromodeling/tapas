@@ -1,4 +1,4 @@
-function []= tapa_physio_write2bids(ons_secs, physio, location)
+function []= tapa_physio_write2bids(ons_secs, physio)
 % Converts trigger, cardiac and respiratory data from physio structure into
 % a .tsv file according to BIDS format, with meta data in a corresponding json file.
 
@@ -17,7 +17,8 @@ function []= tapa_physio_write2bids(ons_secs, physio, location)
 
 % Author: Johanna Bayer 2022
 
-save_dir=physio.write_bids
+save_bids_dir=physio.write_bids.dir
+location = physio.write_bids.location
 
 % after step1
 switch location
@@ -30,8 +31,8 @@ switch location
         "SamplingFrequency",physio.log_files.sampling_interval, "Columns", ["cardiac", "respiratory"]); 
 
         % create JSON file
-        JSONFILE_name= sprintf('%s_%s_JSON.json',tag); 
-        fid = fopen(fullfile(save_dir,JSONFILE_name),'w'); 
+        JSONFILE_name= sprintf('%s_JSON.json',tag); 
+        fid = fopen(fullfile(save_bids_dir,JSONFILE_name),'w'); 
         encodedJSON = jsonencode(s); 
         % write output
         fprintf(fid, encodedJSON); 
