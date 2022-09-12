@@ -1,20 +1,27 @@
-function []= tapa_physio_write2bids(ons_secs, location )
+function []= tapa_physio_write2bids(ons_secs, location)
 % Converts trigger, cardiac and respiratory data from physio structure into
 % a .tsv file according to BIDS format, with meta data in a corresponding json file.
 
-% IN: ons_secs structure
-%     
-      
-%     
 
-% OUT: tsv file(s) with columns caridac, respiratory, trigger
+% IN: ons_secs structure
+%     location parameter describing the stage of the processing pipeline
+%              at which the files are being written
+        
+
+% OUT: tsv file(s) caridac, respiratory, trigger
 %      json file with meta data
+
+% REFERENCES:
+% https://bids-specification.readthedocs.io/en/stable/04-modality-specific
+% -files/06-physiological-and-other-continuous-recordings.html
+
+% Author: Johanna Bayer 2022
 
 save_dir=physio.write_bids
 
 % after step1
 switch location
-    case 1 | 2
+    case 1 
         tag = ""
         cardiac = ons_secs.c;
         respiratory = ons_secs.r;
@@ -28,6 +35,21 @@ switch location
         encodedJSON = jsonencode(s); 
         % write output
         fprintf(fid, encodedJSON); 
+
+    case 2
+    tag = ""
+    cardiac = ons_secs.c;
+    respiratory = ons_secs.r;
+
+    s = struct("StartTime", physio.log_files.relative_start_acquisition , ...
+    "SamplingFrequency",physio.log_files.sampling_interval, "Columns", ["cardiac", "respiratory"]); 
+
+     % create JSON file
+     JSONFILE_name= sprintf('%s_%s_JSON.json',tag); 
+     fid = fopen(fullfile(save_dir,JSONFILE_name),'w'); 
+     encodedJSON = jsonencode(s); 
+     % write output
+     fprintf(fid, encodedJSON);
 
     case 3
     tag = "trigger"
