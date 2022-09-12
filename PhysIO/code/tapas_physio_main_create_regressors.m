@@ -111,6 +111,7 @@ preproc     = physio.preproc;
 scan_timing = physio.scan_timing;
 model       = physio.model;
 verbose     = physio.verbose;
+write_bids  = pyhsio.write_bids
 
 hasPhaseLogfile = strcmpi(log_files.vendor, 'CustomPhase');
 doesNeedPhyslogFiles = model.retroicor.include || model.rvt.include || model.hrv.include;
