@@ -139,7 +139,7 @@ if ~hasPhaseLogfile
                 log_files, preproc.cardiac.modality, verbose, scan_timing.sqpar);
             
             % Placeholder BIDS writer function 1
-            tapas_physio_write2bids(ons_secs)
+            tapas_physio_write2bids(ons_secs, physio, location)
 
 
             % also: normalize cardiac/respiratory data, if wanted
@@ -157,7 +157,7 @@ if ~hasPhaseLogfile
             verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose);
             
             % Placeholder BIDS writer function 2
-            tapas_physio_write2bids(ons_secs)
+            tapas_physio_write2bids(ons_secs, physio, location)
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %% 2. Create scan timing nominally or from logfile
@@ -173,7 +173,7 @@ if ~hasPhaseLogfile
             minConstantIntervalAlertSamples = ceil(minConstantIntervalAlertSeconds/ons_secs.dt);
             
             % placeholder BIDS writer function 3
-            tapas_physio_write2bids(ons_secs)
+            tapas_physio_write2bids(ons_secs, physio, location)
 
 
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
