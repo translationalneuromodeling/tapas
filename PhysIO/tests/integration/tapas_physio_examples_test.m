@@ -81,6 +81,7 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+
 function test_biopac_txt_ppu3t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of BioPac_txt/PPU3T example using matlab only
@@ -107,7 +108,6 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_philips_ecg3t_v2_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG3T_V2 example using matlab only
@@ -116,7 +116,6 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_philips_ecg7t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG7T example using matlab only
@@ -124,7 +123,6 @@ dirExample = 'Philips/ECG7T';
 doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
-
 
 function test_philips_ppu3t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -152,6 +150,13 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_siemens_vb_ecg3t_logversion_3_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using matlab only
+dirExample = 'Siemens_VB/ECG3T_Logversion_3';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
 
 function test_siemens_vb_ppu3t_sync_first_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -162,12 +167,27 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_siemens_vb_ppu3t_sync_last_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Siemens_VB/PPU3T example using matlab only
 % synced to last DICOM volume of run
 dirExample = 'Siemens_VB/PPU3T_Sync_Last';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_siemens_vb_resp3t_logversion_1_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using matlab only
+dirExample = 'Siemens_VB/RESP3T_Logversion_1';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_siemens_vb_resp3t_logversion_3_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using matlab only
+dirExample = 'Siemens_VB/RESP3T_Logversion_3';
 doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
@@ -231,6 +251,7 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+
 function test_biopac_txt_ppu3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of BioPac_txt/PPU3T example using SPM Batch Editor
@@ -257,7 +278,6 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_philips_ecg3t_v2_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG3T_V2 example using SPM Batch Editor
@@ -266,7 +286,6 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_philips_ecg7t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG7T example using SPM Batch Editor
@@ -274,7 +293,6 @@ dirExample = 'Philips/ECG7T';
 doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
-
 
 function test_philips_ppu3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -302,6 +320,14 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_siemens_vb_ecg3t_logversion_3_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using SPM Batch Editor
+dirExample = 'Siemens_VB/ECG3T_Logversion_3';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
 function test_siemens_vb_ppu3t_sync_first_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Siemens_VB/PPU3T example
@@ -320,6 +346,22 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_siemens_vb_resp3t_logversion_1_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using SPM Batch Editor
+dirExample = 'Siemens_VB/RESP3T_Logversion_1';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_siemens_vb_resp3t_logversion_3_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using SPM Batch Editor
+dirExample = 'Siemens_VB/RESP3T_Logversion_3';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
 
 function test_siemens_vd_ppu3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -328,7 +370,6 @@ dirExample = 'Siemens_VD/PPU3T';
 doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
-
 
 function test_siemens_vd_ppu3t_for_bids_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file

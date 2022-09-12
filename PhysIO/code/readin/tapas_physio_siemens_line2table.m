@@ -37,9 +37,9 @@ function [data_table, log_parts] = tapas_physio_siemens_line2table(lineData, car
 % parsimonious, but it's written in a way to support all different physio
 % trace modalities and logfile versions (more detail below)
 
-% The ypical logfile structure is as follows (all data in first line of
+% The typical logfile structure is as follows (all data in first line of
 % logfile, the footer is in the next line (after 5003), not used in this
-% file, but tapas_physio_read_physlogfiles_siemens_raw)L
+% file, but tapas_physio_read_physlogfiles_siemens_raw)
 %
 % <Header> 5002 <LOGVERSION XX> 6002
 % <[optional] training trace data> 5002 uiHwRevisionPeru ... [optional] 6002

@@ -68,7 +68,7 @@ defaults.endCropSeconds     = 1;
 % used channel depends on cardiac modality
 switch cardiac_modality
     case 'ECG'
-        defaults.ecgChannel = 'mean'; %'mean'; 'v1'; 'v2'
+        defaults.ecgChannel = 'mean'; %'mean'; 'v1'; 'v2'; 'v3'; 'v4'
     otherwise
         defaults.ecgChannel = 'v1';
 end
