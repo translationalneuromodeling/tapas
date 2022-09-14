@@ -6,7 +6,7 @@ Current Release
 
 *Current version: PhysIO Toolbox Release R2022b, v8.2.0*
 
-September 12th, 2022
+September 14th, 2022
 
 Minor Release Notes (v8.2.0)
 ----------------------------
@@ -18,9 +18,10 @@ Minor Release Notes (v8.2.0)
     - new integration test for Siemens VB Logversion 3
 ### Fixed
 - Removed dependence on `nanmean` (Statistics Toolbox)
-    - See GitHub issue #205 
-- Compatibility with multiple SPM toolbox locations for `lmod` ([GitHUb issue #211](https://github.com/translationalneuromodeling/tapas/issues/211))
+    - See [GitHub issue #205](https://github.com/translationalneuromodeling/tapas/issues/205) 
+- Compatibility with multiple SPM toolbox locations for `lmod` ([GitHub issue #211](https://github.com/translationalneuromodeling/tapas/issues/211))
     - as listed in `spm_get_defaults('tbx')`
+- Refactoring of Philips read-in to support novel 12-column logfile version, see [GitHub issue #207](https://github.com/translationalneuromodeling/tapas/issues/207#issuecomment-1246078600)
 
 Minor Release Notes (v8.1.0)
 ----------------------------
