@@ -1,4 +1,4 @@
-function []= tapa_physio_write2bids(ons_secs, write_bids, save_dir, log_files)
+function []= tapa_physio_write2bids(ons_secs, write_bids, log_files)
 % Converts trigger, cardiac and respiratory data from physio structure into
 % a .tsv file according to BIDS format, with meta data in a corresponding json file.
 
@@ -18,10 +18,11 @@ function []= tapa_physio_write2bids(ons_secs, write_bids, save_dir, log_files)
 
 % Author: Johanna Bayer 2022
 
-
+which_bids=write_bids.which_bids
+bids_dir=write_bids.bids_dir{1}
 
 % after step1
-switch write_bids
+switch which_bids
     case 1 
         tag = "loc1"
         cardiac = ons_secs.c;
@@ -32,12 +33,12 @@ switch write_bids
 
         % create JSON file
         JSONFILE_name= sprintf('%s_JSON.json',tag); 
-        fid = fopen(fullfile(save_bids_dir,JSONFILE_name),'w'); 
+        fid = fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
         encodedJSON = jsonencode(s); 
         % write output
         fprintf(fid, encodedJSON); 
-        writematrix(cardiac,fullfile(save_dir,'cardiac.txt'),'Delimiter','tab')
-        writematrix(respiratory,fullfile(save_dir,'respiratory.txt'),'Delimiter','tab')
+        writematrix(cardiac,fullfile(bids_dir,'cardiac.txt'),'Delimiter','tab')
+        writematrix(respiratory,fullfile(bids_dir,'respiratory.txt'),'Delimiter','tab')
        
  
     case 2
@@ -50,13 +51,13 @@ switch write_bids
 
         % create JSON file
         JSONFILE_name= sprintf('%s_%s_JSON.json',tag); 
-        fid = fopen(fullfile(save_dir,JSONFILE_name),'w'); 
+        fid = fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
         encodedJSON = jsonencode(s); 
         % write output
         fprintf(fid, encodedJSON);
 
-        writematrix(cardiac,fullfile(save_dir,'cardiac.txt'),'Delimiter','tab')
-        writematrix(respiratory,fullfile(save_dir,'respiratory.txt'),'Delimiter','tab')
+        writematrix(cardiac,fullfile(bids_dir,'cardiac.txt'),'Delimiter','tab')
+        writematrix(respiratory,fullfile(bids_dir,'respiratory.txt'),'Delimiter','tab')
    
 
     case 3
@@ -82,14 +83,14 @@ switch write_bids
         
         % create JSON file
         JSONFILE_name= sprintf('%s_%s_JSON.json',tag); 
-        fid=fopen(fullfile(save_dir,JSONFILE_name),'w'); 
+        fid=fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
         encodedJSON = jsonencode(s); 
         % write output
         fprintf(fid, encodedJSON); 
         
         % write output
-        writematrix(cardiac,fullfile(save_dir,'cardiac.txt'),'Delimiter','tab')
-        writematrix(respiratory,fullfile(save_dir,'respiratory.txt'),'Delimiter','tab')
-        writematrix(trigger_binary,fullfile(save_dir,'trigger_binary.txt'),'Delimiter','tab')
+        writematrix(cardiac,fullfile(bids_dir,'cardiac.txt'),'Delimiter','tab')
+        writematrix(respiratory,fullfile(bids_dir,'respiratory.txt'),'Delimiter','tab')
+        writematrix(trigger_binary,fullfile(bids_dir,'trigger_binary.txt'),'Delimiter','tab')
 
 end
