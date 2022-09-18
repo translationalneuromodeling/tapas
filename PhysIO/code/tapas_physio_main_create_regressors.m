@@ -90,7 +90,7 @@ else % assemble physio-structure
     physio.model        = varargin{4};
     physio.verbose      = varargin{5};
     physio.save_dir     = varargin{6};
-    %physio.write_bids    = varargin{7};
+    physio.write_bids   = varargin{7};
 end
 
 % fill up empty parameters
@@ -111,7 +111,7 @@ preproc     = physio.preproc;
 scan_timing = physio.scan_timing;
 model       = physio.model;
 verbose     = physio.verbose;
-%write_bids  = pyhsio.write_bids % 
+write_bids  = physio.write_bids % 
 
 hasPhaseLogfile = strcmpi(log_files.vendor, 'CustomPhase');
 doesNeedPhyslogFiles = model.retroicor.include || model.rvt.include || model.hrv.include;
@@ -140,7 +140,7 @@ if ~hasPhaseLogfile
                 log_files, preproc.cardiac.modality, verbose, scan_timing.sqpar);
             
             % Placeholder BIDS writer function 1
-            tapas_physio_write2bids(ons_secs, physio)
+            tapas_physio_write2bids(ons_secs, write_bids, log_files )
 
 
             % also: normalize cardiac/respiratory data, if wanted
