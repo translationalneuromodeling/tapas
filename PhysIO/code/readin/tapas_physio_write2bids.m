@@ -37,9 +37,10 @@ switch which_bids
         encodedJSON = jsonencode(s); 
         % write output
         fprintf(fid, encodedJSON); 
-        writematrix(cardiac,fullfile(bids_dir,'cardiac.txt'),'Delimiter','tab')
-        writematrix(respiratory,fullfile(bids_dir,'respiratory.txt'),'Delimiter','tab')
-       
+        
+        writematrix(cardiac,fullfile(bids_dir,sprintf('%s_cardiac.txt',tag)),'Delimiter','tab')
+        writematrix(respiratory,fullfile(bids_dir,sprintf('%s_respiratory.txt',tag)),'Delimiter','tab')
+    
  
     case 2
         tag = "normalized"
@@ -50,14 +51,14 @@ switch which_bids
         "SamplingFrequency",log_files.sampling_interval, "Columns", ["cardiac", "respiratory"]); 
 
         % create JSON file
-        JSONFILE_name= sprintf('%s_%s_JSON.json',tag); 
+        JSONFILE_name= sprintf('%s_JSON.json',tag); 
         fid = fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
         encodedJSON = jsonencode(s); 
         % write output
         fprintf(fid, encodedJSON);
 
-        writematrix(cardiac,fullfile(bids_dir,'cardiac.txt'),'Delimiter','tab')
-        writematrix(respiratory,fullfile(bids_dir,'respiratory.txt'),'Delimiter','tab')
+        writematrix(cardiac,fullfile(bids_dir,sprintf('%s_cardiac.txt',tag)),'Delimiter','tab')
+        writematrix(respiratory,fullfile(bids_dir,sprintf('%s_respiratory.txt',tag)),'Delimiter','tab')
    
 
     case 3
@@ -82,15 +83,15 @@ switch which_bids
             "SamplingFrequency",log_files.sampling_interval, "Columns", ["cardiac", "respiratory", "trigger"]); 
         
         % create JSON file
-        JSONFILE_name= sprintf('%s_%s_JSON.json',tag); 
+        JSONFILE_name= sprintf('%s_JSON.json',tag); 
         fid=fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
         encodedJSON = jsonencode(s); 
         % write output
         fprintf(fid, encodedJSON); 
         
         % write output
-        writematrix(cardiac,fullfile(bids_dir,'cardiac.txt'),'Delimiter','tab')
-        writematrix(respiratory,fullfile(bids_dir,'respiratory.txt'),'Delimiter','tab')
-        writematrix(trigger_binary,fullfile(bids_dir,'trigger_binary.txt'),'Delimiter','tab')
+       writematrix(cardiac,fullfile(bids_dir,sprintf('%s_cardiac.txt',tag)),'Delimiter','tab')
+       writematrix(respiratory,fullfile(bids_dir,sprintf('%s_respiratory.txt',tag)),'Delimiter','tab')
+       writematrix(trigger_binary,fullfile(bids_dir,sprintf('%s_trigger_binary.txt',tag)),'Delimiter','tab')
 
 end
