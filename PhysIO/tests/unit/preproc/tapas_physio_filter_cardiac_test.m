@@ -29,10 +29,10 @@ end
 function test_philips_ppu7t_filter_cheby2(testCase)
 %% Compares previously saved Chebychev Type 2 IIR-filtered cropped cardiac 
 % time course with current re-run of same batch from Philips 7T PPU data
-% run GE example and extract physio
 
+% Get PhysIO public repo base folder from this file's location
 pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
+pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
 
 pathCurrentExample = fullfile(pathExamples, 'Philips/PPU7T');
 cd(pathCurrentExample); % for prepending absolute paths correctly
@@ -71,8 +71,7 @@ function test_philips_ppu7t_filter_butter(testCase)
 
 % run GE example and extract physio
 pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-% TODO: Make generic!
-pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
+pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
 
 pathCurrentExample = fullfile(pathExamples, 'Philips/PPU7T');
 cd(pathCurrentExample); % for prepending absolute paths correctly

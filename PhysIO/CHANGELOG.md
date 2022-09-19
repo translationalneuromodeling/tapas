@@ -4,19 +4,23 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2022a, v8.1.0*
+*Current version: PhysIO Toolbox Release R2022b, v8.2.0*
 
-April 5th, 2022
+September 12th, 2022
 
-Upcoming Release Notes (v8.2.0-beta)
-------------------------------------
+Minor Release Notes (v8.2.0)
+----------------------------
 
 ### Added
+- Interface `tapas_physio_test` to TAPAS-generic `tapas_test` function
 - Added suport for logfile version 3 of Siemens physio recordings 
     - multi ECG/Resp channels and interleaved status messages
+    - new integration test for Siemens VB Logversion 3
 ### Fixed
 - Removed dependence on `nanmean` (Statistics Toolbox)
-    - See GitHub issue #205 and 
+    - See GitHub issue #205 
+- Compatibility with multiple SPM toolbox locations for `lmod` ([GitHUb issue #211](https://github.com/translationalneuromodeling/tapas/issues/211))
+    - as listed in `spm_get_defaults('tbx')`
 
 Minor Release Notes (v8.1.0)
 ----------------------------
