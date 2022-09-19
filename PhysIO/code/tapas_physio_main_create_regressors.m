@@ -111,7 +111,7 @@ preproc     = physio.preproc;
 scan_timing = physio.scan_timing;
 model       = physio.model;
 verbose     = physio.verbose;
-write_bids  = physio.write_bids % 
+write_bids  = physio.write_bids; % 
 
 hasPhaseLogfile = strcmpi(log_files.vendor, 'CustomPhase');
 doesNeedPhyslogFiles = model.retroicor.include || model.rvt.include || model.hrv.include;
@@ -140,9 +140,9 @@ if ~hasPhaseLogfile
                 log_files, preproc.cardiac.modality, verbose, scan_timing.sqpar);
             
             % Placeholder BIDS writer function 1
-            
-            tapas_physio_write2bids(ons_secs, write_bids, log_files )
-
+            if isequal(write_bids.which_bids, 1)
+            tapas_physio_write2bids(ons_secs, write_bids, log_files );
+            end
 
             % also: normalize cardiac/respiratory data, if wanted
             doNormalize = true;
@@ -159,8 +159,9 @@ if ~hasPhaseLogfile
             verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose);
             
             % Placeholder BIDS writer function 2
-            tapas_physio_write2bids(ons_secs, write_bids, log_files )
-
+            if isequal(write_bids.which_bids, 2)
+            tapas_physio_write2bids(ons_secs, write_bids, log_files );
+            end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %% 2. Create scan timing nominally or from logfile
@@ -176,8 +177,9 @@ if ~hasPhaseLogfile
             minConstantIntervalAlertSamples = ceil(minConstantIntervalAlertSeconds/ons_secs.dt);
             
             % placeholder BIDS writer function 3
-            tapas_physio_write2bids(ons_secs, write_bids, log_files )
-
+            if isequal(write_bids.which_bids,3)
+            tapas_physio_write2bids(ons_secs, write_bids, log_files );
+            end
 
 
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
