@@ -43,7 +43,7 @@ switch which_bids
         %writematrix(respiratory,fullfile(bids_dir,sprintf('%s_respiratory.txt',tag)),'Delimiter','tab')
     
 
-        mat=[cardiac respiratory]
+        mat=[cardiac respiratory];
         writematrix(mat, fullfile(bids_dir,sprintf('%s_bids.txt',tag)),'Delimiter','\t')
 
  
@@ -67,7 +67,7 @@ switch which_bids
         %writematrix(respiratory,fullfile(bids_dir,sprintf('%s_respiratory.txt',tag)),'Delimiter','tab')
    
 
-       mat=[cardiac respiratory]
+       mat=[cardiac respiratory];
        writematrix(mat, fullfile(bids_dir,sprintf('%s_bids.txt',tag)),'Delimiter','\t')
 
     case 3
@@ -103,6 +103,6 @@ switch which_bids
        % writematrix(respiratory,fullfile(bids_dir,sprintf('%s_respiratory.txt',tag)),'Delimiter','tab')
        % writematrix(trigger_binary,fullfile(bids_dir,sprintf('%s_trigger_binary.txt',tag)),'Delimiter','\t')
        
-       mat=[cardiac respiratory trigger_binary]
+       mat=[cardiac respiratory trigger_binary];
        writematrix(mat, fullfile(bids_dir,sprintf('%s_bids.txt',tag)),'Delimiter','\t')
 end
