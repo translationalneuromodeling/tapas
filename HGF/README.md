@@ -57,6 +57,7 @@ hgf_demo.pdf.
 ### v7.1
 - Add ehgf_ar1_plotTraj
 - Bugfix
+
 ### v7.0
 - Numerical stability improvements to optimization
 - Combined response models (more than one observation per trial)
