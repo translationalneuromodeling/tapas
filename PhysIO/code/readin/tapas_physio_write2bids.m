@@ -18,13 +18,13 @@ function []= tapas_physio_write2bids(ons_secs, write_bids, log_files)
 
 % Author: Johanna Bayer 2022
 
-which_bids=write_bids.which_bids;
+bids_step=write_bids.which_bids;
 bids_dir=write_bids.bids_dir{1};
 
 % after step1
-switch which_bids
+switch bids_step
     case 1 
-        tag = "loc1";
+        tag = "raw";
         cardiac = ons_secs.c;
         respiratory = ons_secs.r;
 
@@ -48,7 +48,7 @@ switch which_bids
   
  
     case 2
-        tag = "normalized";
+        tag = "norm";
         cardiac = ons_secs.c;
         respiratory = ons_secs.r;
 
