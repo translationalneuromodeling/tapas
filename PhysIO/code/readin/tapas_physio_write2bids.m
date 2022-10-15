@@ -1,4 +1,4 @@
-function []= tapa_physio_write2bids(ons_secs, write_bids, log_files)
+function []= tapas_physio_write2bids(ons_secs, write_bids, log_files)
 % Converts trigger, cardiac and respiratory data from physio structure into
 % a .tsv file according to BIDS format, with meta data in a corresponding json file.
 
@@ -43,7 +43,7 @@ switch which_bids
         %writematrix(respiratory,fullfile(bids_dir,sprintf('%s_respiratory.txt',tag)),'Delimiter','tab')
     
         mat=[cardiac respiratory];
-        save_file= fullfile(bids_dir,sprintf('%s_bids.tsv',tag));
+        save_file= fullfile(bids_dir,sprintf('bids_%s.tsv',tag));
         save(save_file,"mat",'-ascii');
   
  
@@ -68,11 +68,11 @@ switch which_bids
    
 
        mat=[cardiac respiratory];
-       save_file= fullfile(bids_dir,sprintf('%s_bids.tsv',tag));
+       save_file= fullfile(bids_dir,sprintf('bids_%s.tsv',tag));
        save(save_file,"mat",'-ascii');
 
     case 3
-        tag = "trigger";
+        tag = "sync";
         % triggerafter step 2
         cardiac = ons_secs.c;
         respiratory = ons_secs.r;
@@ -105,6 +105,6 @@ switch which_bids
        % writematrix(trigger_binary,fullfile(bids_dir,sprintf('%s_trigger_binary.txt',tag)),'Delimiter','\t')
        
        mat=[cardiac respiratory trigger_binary];
-       save_file= fullfile(bids_dir,sprintf('%s_bids.tsv',tag));
+       save_file= fullfile(bids_dir,sprintf('bids_%s.tsv',tag));
        save(save_file,"mat",'-ascii');
 end
