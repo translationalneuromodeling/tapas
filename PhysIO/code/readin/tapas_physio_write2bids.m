@@ -68,7 +68,8 @@ switch which_bids
    
 
        mat=[cardiac respiratory];
-       writematrix(mat, fullfile(bids_dir,sprintf('%s_bids.txt',tag)),'Delimiter','\t')
+       save_file= fullfile(bids_dir,sprintf('%s_bids.tsv',tag));
+       save(save_file,"mat",'-ascii');
 
     case 3
         tag = "trigger";
@@ -104,5 +105,6 @@ switch which_bids
        % writematrix(trigger_binary,fullfile(bids_dir,sprintf('%s_trigger_binary.txt',tag)),'Delimiter','\t')
        
        mat=[cardiac respiratory trigger_binary];
-       writematrix(mat, fullfile(bids_dir,sprintf('%s_bids.txt',tag)),'Delimiter','\t')
+       save_file= fullfile(bids_dir,sprintf('%s_bids.tsv',tag));
+       save(save_file,"mat",'-ascii');
 end
