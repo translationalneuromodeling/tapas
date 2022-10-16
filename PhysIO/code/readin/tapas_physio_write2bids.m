@@ -33,7 +33,7 @@ switch bids_step
         "SamplingFrequency",log_files.sampling_interval, "Columns", ["cardiac", "respiratory"]); 
 
         % create JSON file
-        JSONFILE_name= sprintf('%s_JSON.json',tag); 
+        JSONFILE_name= sprintf('%2$s_desc_physio_%1$s.json',tag, bids_prefix); 
         fid = fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
         encodedJSON = jsonencode(s); 
         % write output
@@ -57,7 +57,7 @@ switch bids_step
         "SamplingFrequency",log_files.sampling_interval, "Columns", ["cardiac", "respiratory"]); 
 
         % create JSON file
-        JSONFILE_name= sprintf('%s_JSON.json',tag); 
+        JSONFILE_name= sprintf('%2$s_desc_physio_%1$s.json',tag, bids_prefix);
         fid = fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
         encodedJSON = jsonencode(s); 
         % write output
@@ -94,7 +94,7 @@ switch bids_step
             "SamplingFrequency",log_files.sampling_interval, "Columns", ["cardiac", "respiratory", "trigger"]); 
         
         % create JSON file
-        JSONFILE_name= sprintf('%s_JSON.json',tag); 
+        JSONFILE_name= sprintf('%2$s_desc_physio_%1$s.json',tag, bids_prefix);
         fid=fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
         encodedJSON = jsonencode(s); 
         % write output
