@@ -18,8 +18,9 @@ function []= tapas_physio_write2bids(ons_secs, write_bids, log_files)
 
 % Author: Johanna Bayer 2022
 
-bids_step=write_bids.which_bids;
+bids_step=write_bids.bids_step;
 bids_dir=write_bids.bids_dir{1};
+bids_prefix = write_bids.bids_prefix{1};
 
 % after step1
 switch bids_step
