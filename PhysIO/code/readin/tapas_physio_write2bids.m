@@ -44,7 +44,7 @@ switch bids_step
         %writematrix(respiratory,fullfile(bids_dir,sprintf('%s_respiratory.txt',tag)),'Delimiter','tab')
     
         mat=[cardiac respiratory];
-        save_file= fullfile(bids_dir,sprintf('bids_%s.tsv',tag));
+        save_file= fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
         save(save_file,"mat",'-ascii');
   
  
@@ -69,7 +69,7 @@ switch bids_step
    
 
        mat=[cardiac respiratory];
-       save_file= fullfile(bids_dir,sprintf('bids_%s.tsv',tag));
+       save_file= fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
        save(save_file,"mat",'-ascii');
 
     case 3
@@ -106,6 +106,6 @@ switch bids_step
        % writematrix(trigger_binary,fullfile(bids_dir,sprintf('%s_trigger_binary.txt',tag)),'Delimiter','\t')
        
        mat=[cardiac respiratory trigger_binary];
-       save_file= fullfile(bids_dir,sprintf('bids_%s.tsv',tag));
+       save_file= fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
        save(save_file,"mat",'-ascii');
 end
