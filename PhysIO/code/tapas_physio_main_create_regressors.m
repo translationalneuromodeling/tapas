@@ -140,7 +140,7 @@ if ~hasPhaseLogfile
                 log_files, preproc.cardiac.modality, verbose, scan_timing.sqpar);
             
             % Placeholder BIDS writer function 1
-            if isequal(write_bids.which_bids, 1)
+            if isequal(write_bids.bids_step, 1)
             tapas_physio_write2bids(ons_secs, write_bids, log_files );
             end
 
@@ -159,7 +159,7 @@ if ~hasPhaseLogfile
             verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose);
             
             % Placeholder BIDS writer function 2
-            if isequal(write_bids.which_bids, 2)
+            if isequal(write_bids.bids_step, 2)
             tapas_physio_write2bids(ons_secs, write_bids, log_files );
             end
             
@@ -177,7 +177,7 @@ if ~hasPhaseLogfile
             minConstantIntervalAlertSamples = ceil(minConstantIntervalAlertSeconds/ons_secs.dt);
             
             % placeholder BIDS writer function 3
-            if isequal(write_bids.which_bids,3)
+            if isequal(write_bids.bids_step,3)
             tapas_physio_write2bids(ons_secs, write_bids, log_files );
             end
 
