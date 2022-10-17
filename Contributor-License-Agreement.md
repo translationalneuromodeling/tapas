@@ -1,5 +1,6 @@
 Contributor License Agreement
 =============================
+Version 1.1 (2022-09-21)
 
 This AGREEMENT is made by and between the 
 
@@ -10,10 +11,17 @@ and
 
 each GitHub User listed in the following table:  
 
-Name                     | Company/Institution/Address        | City      | Country | E-Mail/GitHub Username 
------------------------- | ---------------------------------- | --------- | ------- | ----------------------
-Matthias Müller-Schrader | TNU, University of Zurich          | Zurich    | CH      | mms-neuro
-**- Add Entry here -**   | **- Add Entry here -**             | **Add**   | **Add** | **Add**                    
+Name                     | Company/Institution/Address        | City      | Country | E-Mail/GitHub Username | CLA version signed 
+------------------------ | ---------------------------------- | --------- | ------- | ---------------------- | ------------------
+Lars Kasper              | TNU, University of Zurich          | Zurich    | CH      | mrikasper              | 1.0
+Eduardo Aponte           | TNU, University of Zurich          | Zurich    | CH      | tnutapas               | 1.0
+Daniel Hoffmann Ayala    | Technical University               | Munich    | D       | DanielHoffmannAyala    | 1.0
+Benoît Béranger          | CENIR, ICM                         | Paris     | FR      | benoitberanger         | 1.0
+Stephan Heunis           | Eindhoven University of Technology | Eindhoven | NL      | jsheunis               | 1.0
+Niklas Bürgi             | SNS, University of Zurich          | Zurich    | CH      | nbuergi                | 1.0
+Alexandre Sayal          | CIBIT, University of Coimbra       | Coimbra   | PT      | alexsayal              | 1.0
+Matthias Müller-Schrader | TNU, University of Zurich          | Zurich    | CH      | mms-neuro              | 1.1
+**- Add Entry here -**   | **- Add Entry here -**             | **Add**   | **Add** | **Add**                | 1.1
 
 (hereinafter referred to as "Contributor")
 
