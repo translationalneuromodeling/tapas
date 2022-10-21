@@ -35,7 +35,11 @@ switch bids_step
         % create JSON file
         JSONFILE_name= sprintf('%2$s_desc_physio_%1$s.json',tag, bids_prefix); 
         fid = fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
-        encodedJSON = jsonencode(s); 
+        if verLessThan('matlab', '9.10')
+            encodedJSON = jsonencode(s); 
+        else
+            encodedJSON = jsonencode(s, PrettyPrint=true); 
+        end
         % write output
         fprintf(fid, encodedJSON); 
         
@@ -59,7 +63,11 @@ switch bids_step
         % create JSON file
         JSONFILE_name= sprintf('%2$s_desc_physio_%1$s.json',tag, bids_prefix);
         fid = fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
-        encodedJSON = jsonencode(s); 
+        if verLessThan('matlab', '9.10')
+            encodedJSON = jsonencode(s); 
+        else
+            encodedJSON = jsonencode(s, PrettyPrint=true); 
+        end
         % write output
         fprintf(fid, encodedJSON);
 
@@ -96,7 +104,11 @@ switch bids_step
         % create JSON file
         JSONFILE_name= sprintf('%2$s_desc_physio_%1$s.json',tag, bids_prefix);
         fid=fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
-        encodedJSON = jsonencode(s); 
+        if verLessThan('matlab', '9.10')
+            encodedJSON = jsonencode(s); 
+        else
+            encodedJSON = jsonencode(s, PrettyPrint=true); 
+        end
         % write output
         fprintf(fid, encodedJSON); 
         
