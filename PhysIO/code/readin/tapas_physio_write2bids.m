@@ -50,7 +50,7 @@ switch bids_step
         mat=[cardiac respiratory];
         save_file= fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
         save(save_file,"mat",'-ascii');
-  
+        gzip(save_file);
  
     case 2
         tag = "norm";
@@ -79,6 +79,7 @@ switch bids_step
        mat=[cardiac respiratory];
        save_file= fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
        save(save_file,"mat",'-ascii');
+       gzip(save_file);
 
     case 3
         tag = "sync";
@@ -120,4 +121,5 @@ switch bids_step
        mat=[cardiac respiratory trigger_binary];
        save_file= fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
        save(save_file,"mat",'-ascii');
+       gzip(save_file);
 end
