@@ -122,3 +122,10 @@ verifyEqual(testCase, actRaw.cpulse, expRaw.cpulse, 'Raw cardiac trace does not 
 verifyEqual(testCase, actRaw.r, expRaw.r, 'Raw respiratory trace does not match');
 
 end
+
+function compare_write2bids_consistency(testCase)
+   %TODO
+   % inout directory from 
+
+
+end 
