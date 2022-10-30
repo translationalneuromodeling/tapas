@@ -123,6 +123,8 @@ verifyEqual(testCase, actRaw.r, expRaw.r, 'Raw respiratory trace does not match'
 
 end
 
+
+% compare  newly written bids output file from the Phillips ECG V3 test case to saved files
 function compare_write2bids_consistency(testCase)
    %TODO
    % inout directory from 
