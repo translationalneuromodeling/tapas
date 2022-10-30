@@ -126,8 +126,11 @@ end
 
 % compare  newly written bids output file from the Phillips ECG V3 test case to saved files
 function compare_write2bids_consistency(testCase)
-   %TODO
-   % inout directory from 
+   % lcoation  in which the new bids coded files will be written by running the example anew
+   pathCurrentExample = fullfile(pathExamples, 'ECG3T_V2');
+   % location where the reference files are stored
+   pathReferenceFiles = fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'write2bids', ...
+   'sub-01_task_desc_physio_sync.tsv');
 
 
 end 
