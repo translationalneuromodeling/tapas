@@ -132,5 +132,19 @@ function compare_write2bids_consistency(testCase)
    pathReferenceFiles = fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'write2bids', ...
    'sub-01_task_desc_physio_sync.tsv');
 
+   % location of the physio file that will be passed to create_main_regrssors
+   fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'write2bids', ...
+    'physio.mat');
+    load(fileReferenceData, 'physio');
+    expPhysio = physio;
+
+    % adjust physio file
+
+
+    % run physio create main regrssors with the physio file
+
+    % only now physio_out exists
+
+    % compare results
 
 end 
