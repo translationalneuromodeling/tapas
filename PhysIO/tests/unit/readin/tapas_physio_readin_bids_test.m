@@ -121,3 +121,38 @@ verifyEqual(testCase, actRaw.cpulse, expRaw.cpulse, 'Raw cardiac trace does not 
 verifyEqual(testCase, actRaw.r, expRaw.r, 'Raw respiratory trace does not match');
 
 end
+
+
+% compare  newly written bids output file from the Phillips ECG V3 test case to saved files
+function compare_write2bids_consistency(testCase)
+   % location where the reference files are stored - step norm
+   pathReferenceFiles = fullfile(pathExamples, 'TestReferenceResults', 'write2bids', 'norm');
+
+   % location of the physio example file that will be passed to create_main_regrssors
+   pathExampleData = fullfile(pathExamples, 'write2bids', 'norm');
+   
+   load(fullfile(pathExampleData, 'physio.mat'), 'physio'); % this physio structure contains data from step 2
+    
+    % does that work?
+    cd(pathExampleData)
+    physio = tapas_physio_main_create_regressors(physio);
+
+    % read json file from example data
+    cd(fullfile(pathExampleData, 'physio_out')
+
+    fileName = 'sub-01_task_desc_physio_norm.json'; % filename in JSON extension 
+    str = fileread(fileName); % dedicated for reading files as text 
+    ExampleJson = jsondecode(str);
+
+    % read json file from reference folder
+    cd(fullfile(pathReferenceFiles)
+
+    fileName = 'sub-01_task_desc_physio_norm.json'; % filename in JSON extension 
+    str = fileread(fileName); % dedicated for reading files as text 
+    ReferenceJson = jsondecode(str);
+
+
+    
+    verifyEqual(testCase, ExampleJson, ReferenceJson, 'json files do not match');
+
+end 
