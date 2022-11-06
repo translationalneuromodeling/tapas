@@ -1,6 +1,6 @@
-function data_table = tapas_physio_siemens_line2table(lineData, cardiacModality)
-% transforms data line of Siemens log file into table (sorting amplitude
-% and trigger signals)
+function [data_table, log_parts] = tapas_physio_siemens_line2table(lineData, cardiacModality)
+% transforms data line of Siemens log file (before linebreak after 5003
+% signal for recording end) into table (sorting amplitude and trigger signals)
 %
 %   data_table = tapas_physio_siemens_line2table(input)
 %
@@ -9,12 +9,13 @@ function data_table = tapas_physio_siemens_line2table(lineData, cardiacModality)
 %                   of file. See also tapas_physio_read_physlogfiles_siemens_raw
 %
 % OUT
-%   data_table      [nSamples,3] table of channel_1, channels_AVF and trigger
+%   data_table      [nSamples,nChannels+1] table of recording channel_1, ..., channel_N and trigger
 %                   signal with trigger codes:
 %                   5000 = cardiac pulse on
 %                   6000 = cardiac pulse off
 %                   6002 = phys recording on
 %                   6003 = phys recording off
+%   log_parts       part of logfile according to markers by Siemens
 %
 % EXAMPLE
 %   tapas_physio_siemens_line2table
@@ -32,120 +33,160 @@ function data_table = tapas_physio_siemens_line2table(lineData, cardiacModality)
 % COPYING or <http://www.gnu.org/licenses/>.
 
 
-% signals start of data logging
-iTrigger = regexpi(lineData, ' 6002 ');
+% NOTE: The following extraction of data from the logfiles might seem
+% parsimonious, but it's written in a way to support all different physio
+% trace modalities and logfile versions (more detail below)
 
-if ~isempty(iTrigger)
-    % crop string after trigger
-    lineData = lineData((iTrigger(end)+6):end);
-    doCropLater = false;
-else
-    % crop first 4 values as in UPenn manual after conversion
-    doCropLater = true;
+% The typical logfile structure is as follows (all data in first line of
+% logfile, the footer is in the next line (after 5003), not used in this
+% file, but tapas_physio_read_physlogfiles_siemens_raw)
+%
+% <Header> 5002 <LOGVERSION XX> 6002
+% <[optional] training trace data> 5002 uiHwRevisionPeru ... [optional] 6002
+% 5002 <infoRegion3> 6002 5002 <infoRegion4> 6002 ... 5002 <infoRegionN> 6002
+% <trace data 1 (all channels, arbitrary number of samples, trigger markers 5000, 6000)> ...
+% 5002 <infoRegionN+1> 6002
+% <trace data 2 (all channels, arbitrary number of samples, trigger markers 5000, 6000)> ...
+% 5002 <infoRegionN+2> 6002 ...
+% <trace data M> ... 5003
+%
+% Since the number and content of actual info regions and number of data
+% channels differs by trace modality and logfile version, we have to cut
+% data out carefully:
+%
+% 1. Cut away header
+% 2. Cut away logfile version
+% 3. Cut away optional training trace
+% 4. Remove all infoRegions can be interleaved with trace data, e.g.,
+%    cushionGain for RESP trace)
+% 5. Remove all trigger markers (5000, 6000), but remmember position
+% 6. Sort remaining trace into coresponding channels (number of channels is
+% logfile-version dependent)
+% 7. Re-insert trigger markers as extra column
+
+
+
+%% 1. Header goes from start of line to first occurence of 5002
+[iStartHeader, iEndHeader, logHeader] = regexp(lineData, '^(.*?) (?=\<5002\>)', 'start', 'end', 'tokens' );
+logHeader = logHeader{1}{1};
+lineData(iStartHeader:iEndHeader) = []; % remove header, but keep 5002 for next step
+
+
+%% 2. Logfile version (which alters no of channels etc.)
+% stored in first 5002/6002 info region
+%   5002 LOGVERSION   1 6002%
+%   5002 LOGVERSION_RESP   3 6002%
+%   5002 LOGVERSION_PULS   3 6002%
+[iStartVersionInfo, iEndVersionInfo, logVersion] = regexp(lineData, '^\<5002\> LOGVERSION[^0-9]*(\d+)\s\<6002\>', 'start', 'end', 'tokens' );
+logVersion = str2double(logVersion{1}{1});
+lineData(iStartVersionInfo:iEndVersionInfo) = []; % remove version info region incl. 5002/6002 markers
+
+
+%% 3. Optional training data (for Siemens own peak detection) is after
+% "6002" of Logversion info and "5002 uiHwRevisionPeru"
+[iStartTraining, iEndTraining, dataTraining] = regexp(lineData, '^\s*(.*?) (?=\<5002\> uiHwRevisionPeru)', 'start', 'end', 'tokens');
+if ~isempty(iStartTraining) % training trace does not always exist
+    dataTraining = dataTraining{1}{1};
+    lineData(iStartTraining:iEndTraining) = []; % remove training trace, but keep following 5002 for next step
 end
 
-data = textscan(lineData, '%d', 'Delimiter', ' ', 'MultipleDelimsAsOne',1);
 
-if doCropLater
-    % crop first 4 values;
-    data{1} = data{1}(5:end);
-end
+%% 4. Identify and remove info regions between 5002 and 6002 (may be
+% interleaved with trace data (e.g., messages or cushion Gain for RESP)
+[iStartInfoRegion, iEndInfoRegion, logInfoRegion] = regexp(lineData, '\<5002\>(.*?)\<6002\>', 'start', 'end', 'tokens' );
+logInfoRegion = cellfun(@(x) x{1,1}, logInfoRegion, 'UniformOutput', false)';
+traceData = regexprep(lineData, '\<5002\>(.*?)\<6002\>\s', '');
+traceData = regexprep(traceData, '\<5003\>$', ''); % remove 5003 mark of trace end
 
+log_parts.logHeader = logHeader;
+log_parts.logInfoRegion = logInfoRegion;
+log_parts.logVersion = logVersion;
+
+% convert remaining data (all numbers string) to number (int32)
+data = textscan(traceData, '%d', 'Delimiter', ' ', 'MultipleDelimsAsOne', true);
+
+
+%% 5. Remove all trigger markers (5000, 6000), but remmember position
 % Remove the systems own evaluation of triggers.
 cpulse  = find(data{1} == 5000);  % System uses identifier 5000 as trigger ON
 cpulse_off = find(data{1} == 6000); % System uses identifier 5000 as trigger OFF
-recording_on = find(data{1} == 6002);% Scanner trigger to Stim PC?
-recording_off = find(data{1} == 5003);
-
-
 % Filter the trigger markers from the ECG data
 % Note: depending on when the scan ends, the last size(t_off)~=size(t_on).
-iNonEcgSignals = [cpulse; cpulse_off; recording_on; recording_off];
-codeNonEcgSignals = [5000*ones(size(cpulse)); ...
-    6000*ones(size(cpulse_off)); ...
-    6002*ones(size(recording_on))
-    5003*ones(size(recording_off))];
+iTriggerMarker = [cpulse; cpulse_off];
+codeTriggerMarker = [5000*ones(size(cpulse)); ...
+    6000*ones(size(cpulse_off))];
 
-% data_stream contains only the 2 ECG-channel time courses (with
-% interleaved samples
+% data_stream contains only the time courses (with
+% interleaved samples for each channel)
 data_stream = data{1};
-data_stream(iNonEcgSignals) = [];
+data_stream(iTriggerMarker) = [];
 
-%iDataStream contains the indices of all true ECG signals in the full
-%data{1}-Array that contains also non-ECG-signals
+%iDataStream contains the indices of all true trace signals in the full
+%data{1}-Array that contains also the trigger markers
 iDataStream = 1:numel(data{1});
-iDataStream(iNonEcgSignals) = [];
+iDataStream(iTriggerMarker) = [];
 
+
+%% 6. Sort remaining trace into coresponding channels (number of channels is
+% logfile-version dependent)
 nSamples = numel(data_stream);
-
 switch upper(cardiacModality) % ecg has two channels, resp and puls only one
     case 'ECG'
-        nRows = ceil(nSamples/2);
-        
-        % create a table with channel_1, channels_AVF and trigger signal in
-        % different Columns
-        % - iData_table is a helper table that maps the original indices of the
-        % ECG signals in data{1} onto their new positions
-        data_table = zeros(nRows,3);
-        iData_table = zeros(nRows,3);
-        
-        data_table(1:nRows,1) = data_stream(1:2:end);
-        iData_table(1:nRows,1) = iDataStream(1:2:end);
-        
-        if mod(nSamples,2) == 1
-            data_table(1:nRows-1,2) = data_stream(2:2:end);
-            iData_table(1:nRows-1,2) = iDataStream(2:2:end);
-        else
-            data_table(1:nRows,2) = data_stream(2:2:end);
-            iData_table(1:nRows,2) = iDataStream(2:2:end);
+        switch logVersion
+            case 1
+                nChannels = 2;
+            case 3
+                nChannels = 4;
+        end
+    case 'PPU'
+        nChannels = 1;
+    case 'RESP'
+        switch logVersion
+            case 1
+                nChannels = 1;
+            case 3
+                nChannels = 5; % breathing belt plus 4 channel biomatrix
         end
         
-        % now fill up 3rd column with trigger data
-        % - for each trigger index in data{1}, check where ECG data with closest
-        % smaller index ended up in the data_table ... and put trigger code in
-        % same row of that table
-        nTriggers = numel(iNonEcgSignals);
-        
-        for iTrigger = 1:nTriggers
-            % find index before trigger event in data stream and
-            % detect it in table
-            iRow = find(iData_table(:,2) == iNonEcgSignals(iTrigger)-1);
-            
-            % look in 1st column as well whether maybe signal detected there
-            if isempty(iRow)
-                iRow = find(iData_table(:,1) == iNonEcgSignals(iTrigger)-1);
-            end
-            
-            data_table(iRow,3) = codeNonEcgSignals(iTrigger);
-        end
-        
-    case {'RESP', 'PPU'} % only one channel available, fill second row with zeros
-        nRows = nSamples;
-        
-        % create a table with channel_1 and trigger signal in
-        % different Columns
-        % - iData_table is a helper table that maps the original indices of the
-        % ECG signals in data{1} onto their new positions
-        data_table = zeros(nRows,3);
-        iData_table = zeros(nRows,3);
-        
-        data_table(1:nRows,1) = data_stream;
-        iData_table(1:nRows,1) = iDataStream;
-        
-        % now fill up 3rd column with trigger data
-        % - for each trigger index in data{1}, check where ECG data with closest
-        % smaller index ended up in the data_table ... and put trigger code in
-        % same row of that table
-        nTriggers = numel(iNonEcgSignals);
-        
-        for iTrigger = 1:nTriggers
-            % find index before trigger event in data stream and
-            % detect it in table
-            iRow = find(iData_table(:,1) == iNonEcgSignals(iTrigger)-1);
-            if ~isempty(iRow)
-                data_table(iRow,3) = codeNonEcgSignals(iTrigger);
-            end
-        end
     otherwise
         error('unknown cardiac/respiratory logging modality: %s', cardiacModality);
+end
+
+nRows = ceil(nSamples/nChannels);
+
+% create a table with channel_1, channels_AVF and trigger signal in
+% different Columns
+% - iData_table is a helper table that maps the original indices of the
+% ECG signals in data{1} onto their new positions
+data_table = zeros(nRows,nChannels+1);
+iData_table = zeros(nRows,nChannels+1);
+
+for iChannel = 1:nChannels
+    data_table(1:nRows,iChannel) = data_stream(iChannel:nChannels:end);
+    iData_table(1:nRows,iChannel) = iDataStream(iChannel:nChannels:end);
+end
+
+% TODO: deal with mod(nSamples, nChannels) > 0 (incomplete data?)
+
+
+%% 7. Re-insert trigger markers as extra column
+% now fill up nChannel+1. column with trigger data
+% - for each trigger index in data{1}, check where ECG data with closest
+% smaller index ended up in the data_table ... and put trigger code in
+% same row of that table
+nTriggers = numel(iTriggerMarker);
+
+for iTrigger = 1:nTriggers
+    % find index before trigger event in data stream and
+    % detect it in table, look in last columns first, then go
+    % backwards
+    iRow = [];
+    iChannel = nChannels;
+    while isempty(iRow)
+        
+        iRow = find(iData_table(:,iChannel) == iTriggerMarker(iTrigger)-1);
+        iChannel = iChannel - 1;
+    end
+    
+    data_table(iRow,nChannels+1) = codeTriggerMarker(iTrigger);
 end

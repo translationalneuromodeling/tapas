@@ -29,13 +29,16 @@ function [COEFF, SCORE, LATENT, EXPLAINED, MU] = tapas_physio_pca( timeseries, m
 
 [nVoxels,nVolumes] = size(timeseries);
 
-if nVoxels <= nVolumes
-    error([mfilename ':NotEnoughVoxels'], 'nVoxels <= nVolumes')
-end
-
 if nargin < 2
     method = 'svd';
 end
+
+if nVoxels <= nVolumes
+    % TODO: reimplement using PCA of COV((X-mu)'*(X-mu))
+    method = 'stats-pca';
+    % error([mfilename ':NotEnoughVoxels'], 'nVoxels <= nVolumes')
+end
+
 
 switch lower(method)
     
@@ -56,8 +59,8 @@ switch lower(method)
         LATENT          = eigen_values; % [nPCs, 1]
         
         % Eigen_values -> Variance explained
-        vairance_explained = 100*eigen_values/sum(eigen_values); % in percent (%)
-        EXPLAINED          = vairance_explained;                 % [nPCs, 1]
+        variance_explained = 100*eigen_values/sum(eigen_values); % in percent (%)
+        EXPLAINED          = variance_explained;                 % [nPCs, 1]
         
         % Sign convention : the max(abs(PCs)) is positive
         [~,maxabs_idx] = max(abs(v));

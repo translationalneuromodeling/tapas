@@ -68,7 +68,7 @@ defaults.endCropSeconds     = 1;
 % used channel depends on cardiac modality
 switch cardiac_modality
     case 'ECG'
-        defaults.ecgChannel = 'mean'; %'mean'; 'v1'; 'v2'
+        defaults.ecgChannel = 'mean'; %'mean'; 'v1'; 'v2'; 'v3'; 'v4'
     otherwise
         defaults.ecgChannel = 'v1';
 end
@@ -139,31 +139,27 @@ if hasCardiacData
     
     [lineData, logFooter] = tapas_physio_read_physlogfiles_siemens_raw(...
         log_files.cardiac);
-    tLogTotal = logFooter.LogStopTimeSeconds - logFooter.LogStartTimeSeconds;
+    tLogTotal = logFooter.StopTimeSeconds - logFooter.StartTimeSeconds;
     
     
     if hasScanTimingDicomImage
-        tStartScan = tStartScanDicom; % this is just the start of the selected DICOM volume
-        tStopScan = tStopScanDicom;    
+        tStartScan = tStartScanDicom; % this is the start of the DICOM volume selected for sync
+        tStopScan = tStopScanDicom;   % this is the end time (start + TR) of the DICOM volume selected for sync 
     else
-        % Just different time scale, gives bad scaling in plots, and not
-        % needed...
-        %     tStartScan = logFooter.ScanStartTimeSeconds;
-        %     tStopScan = logFooter.ScanStopTimeSeconds;
-        tStartScan = logFooter.LogStartTimeSeconds;
-        tStopScan = logFooter.LogStopTimeSeconds;
+        tStartScan = logFooter.StartTimeSeconds;
+        tStopScan = logFooter.StopTimeSeconds;
     end
     
     switch log_files.align_scan
         case 'first'
             relative_start_acquisition = tStartScan ...
-                - logFooter.LogStartTimeSeconds;
+                - logFooter.StartTimeSeconds;
         case 'last'
             % shift onset of first scan by knowledge of run duration and
             % onset of last scan in run
             relative_start_acquisition = ...
                 (tStopScan - sqpar.Nscans*sqpar.TR) ... 
-                - logFooter.LogStartTimeSeconds;
+                - logFooter.StartTimeSeconds;
     end
     
     
@@ -214,30 +210,26 @@ end
 if hasRespData
     [lineData, logFooter] = tapas_physio_read_physlogfiles_siemens_raw(...
         log_files.respiration);
-    tLogTotal = logFooter.LogStopTimeSeconds - logFooter.LogStartTimeSeconds;
+    tLogTotal = logFooter.StopTimeSeconds - logFooter.StartTimeSeconds;
     
     if hasScanTimingDicomImage
-        tStartScan = tStartScanDicom;
-        tStopScan = tStopScanDicom; % is incorrect, use tStartScan + TR!
-    else
-        % Just different time scale, gives bad scaling in plots, and not
-        % needed...
-        %     tStartScan = logFooter.ScanStartTimeSeconds;
-        %     tStopScan = logFooter.ScanStopTimeSeconds;
-        tStartScan = logFooter.LogStartTimeSeconds;
-        tStopScan = logFooter.LogStopTimeSeconds; 
+        tStartScan = tStartScanDicom; % this is the start of the DICOM volume selected for sync
+        tStopScan = tStopScanDicom;   % this is the end time (start + TR) of the DICOM volume selected for sync 
+   else
+        tStartScan = logFooter.StartTimeSeconds;
+        tStopScan = logFooter.StopTimeSeconds; 
     end
     
     switch log_files.align_scan
         case 'first'
             relative_start_acquisition = tStartScan - ...
-                logFooter.LogStartTimeSeconds;
+                logFooter.StartTimeSeconds;
         case 'last'
             % shift onset of first scan by knowledge of run duration and
             % onset of last scan in run
             relative_start_acquisition = ...
-                (tStartScan - (sqpar.Nscans-1)*sqpar.TR) ... 
-                - logFooter.LogStartTimeSeconds;
+                (tStopScan - sqpar.Nscans*sqpar.TR) ... 
+                - logFooter.StartTimeSeconds;
     end
     
     

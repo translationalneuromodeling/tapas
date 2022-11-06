@@ -31,10 +31,10 @@ end
 % results
 function test_readin_bids_ppu3t(testCase)
 
-% run BIDS PPU example and extract physio
+% Get PhysIO public repo base folder from this file's location
 pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-% TODO: Make generic!
-pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
+pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
+
 
 % load SPM matlabbatch, but convert to pure script before executing
 % remove unnecessary (beyond read-in) part from job exeuction (e.g.
@@ -79,8 +79,7 @@ function test_readin_bids_cpulse3t(testCase)
 
 % run BIDS cpulse3t example and extract physio
 pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-% TODO: Make generic!
-pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
+pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
 
 % load SPM matlabbatch, but convert to pure script before executing
 % remove unnecessary (beyond read-in) part from job exeuction (e.g.
