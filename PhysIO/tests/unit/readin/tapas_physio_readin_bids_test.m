@@ -138,20 +138,18 @@ function compare_write2bids_consistency(testCase)
     physio = tapas_physio_main_create_regressors(physio);
 
     % read json file from example data
-    cd(fullfile(pathExampleData, 'physio_out')
+    cd(fullfile(pathExampleData, 'physio_out'))
 
     fileName = 'sub-01_task_desc_physio_norm.json'; % filename in JSON extension 
     str = fileread(fileName); % dedicated for reading files as text 
     ExampleJson = jsondecode(str);
 
     % read json file from reference folder
-    cd(fullfile(pathReferenceFiles)
+    cd(fullfile(pathReferenceFiles))
 
     fileName = 'sub-01_task_desc_physio_norm.json'; % filename in JSON extension 
     str = fileread(fileName); % dedicated for reading files as text 
     ReferenceJson = jsondecode(str);
-
-
     
     verifyEqual(testCase, ExampleJson, ReferenceJson, 'json files do not match');
 
