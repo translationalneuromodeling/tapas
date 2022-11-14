@@ -12,7 +12,7 @@ and
 each GitHub User listed in the following table:  
 
 Name                     | Company/Institution/Address        | City      | Country | E-Mail/GitHub Username | CLA version accepted
------------------------- | ---------------------------------- | --------- | ------- | ---------------------- | ------------------
+------------------------ | ---------------------------------- | --------- | ------- | ---------------------- | --------------------
 Lars Kasper              | TNU, University of Zurich          | Zurich    | CH      | mrikasper              | 1.0
 Eduardo Aponte           | TNU, University of Zurich          | Zurich    | CH      | tnutapas               | 1.0
 Daniel Hoffmann Ayala    | Technical University               | Munich    | D       | DanielHoffmannAyala    | 1.0
