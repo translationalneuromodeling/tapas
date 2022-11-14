@@ -178,18 +178,7 @@ for r = 1:nRois
     [fpRoi,fnRoi] = fileparts(Vroi.fname);
     Vroi.fname = fullfile(fpRoi, sprintf('noiseROI_%s.nii', fnRoi));
     spm_write_vol(Vroi,roi);
-    
-    % Overlay the final noise ROI (code from spm_orthviews:add_c_image)
-    if verbose.level >= 2
-        spm_orthviews('addcolouredimage',r,Vroi.fname ,[1 0 0]);
-        hlabel = sprintf('%s (%s)',Vroi.fname ,'Red');
-        c_handle    = findobj(findobj(st.vols{r}.ax{1}.cm,'label','Overlay'),'Label','Remove coloured blobs');
-        ch_c_handle = get(c_handle,'Children');
-        set(c_handle,'Visible','on');
-        uimenu(ch_c_handle(2),'Label',hlabel,'ForegroundColor',[1 0 0],...
-            'Callback','c = get(gcbo,''UserData'');spm_orthviews(''context_menu'',''remove_c_blobs'',2,c);');
-        spm_orthviews('redraw')
-    end
+    final_roi_files{r} = Vroi.fname;
     
     Yroi = Yimg(roi(:)==1, :); % Time series of the fMRI volume in the noise ROIs
     
@@ -274,7 +263,7 @@ for r = 1:nRois
     
     % plot
     if verbose.level >=2
-        stringFig = sprintf('Model: Noise\\_rois: Extracted principal components for ROI %d', r);
+        stringFig = sprintf('Model: Noise Rois: Extracted principal components for ROI %d', r);
         verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
         set(gcf, 'Name', stringFig);
         plot(R);
@@ -299,6 +288,29 @@ for r = 1:nRois
     R_noise_rois = [R_noise_rois, R];
     
     
-end % nROI
+end % nROIs
+
+
+%% Summary plot noise roise location
+% Overlay intial and final noise ROI (code from spm_orthviews:add_c_image)
+% (before/after reslice, threshold and erosion)
+if verbose.level >= 2
+    spm_check_registration( roi_files{:} );
+    spm_orthviews('context_menu','interpolation',3); % disable interpolation // 3->NN , 2->Trilin , 1->Sinc
+    for r = 1:nRois
+        Vroi.fname = final_roi_files{r};
+        spm_orthviews('addcolouredimage',r,Vroi.fname ,[1 0 0]);
+        hlabel = sprintf('%s (%s)',Vroi.fname ,'Red');
+        
+        if isprop(st.vols{r}.ax{1}, 'cm')
+            c_handle    = findobj(findobj(st.vols{r}.ax{1}.cm,'label','Overlay'),'Label','Remove coloured blobs');
+            ch_c_handle = get(c_handle,'Children');
+            set(c_handle,'Visible','on');
+            uimenu(ch_c_handle(2),'Label',hlabel,'ForegroundColor',[1 0 0],...
+                'Callback','c = get(gcbo,''UserData'');spm_orthviews(''context_menu'',''remove_c_blobs'',2,c);');
+        end
+    end
+    spm_orthviews('redraw')
+end
 
 end % function
