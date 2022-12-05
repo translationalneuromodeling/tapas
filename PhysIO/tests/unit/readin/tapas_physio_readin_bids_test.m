@@ -134,17 +134,19 @@ function test_compare_write2bids_consistency(testCase)
    pathReferenceFiles = fullfile(pathExamples, 'TestReferenceResults', 'write2bids', 'norm');
 
    % location of the physio example file that will be passed to create_main_regrssors
-   pathExampleData = fullfile(pathExamples, 'write2bids', 'norm');
+   % pathExampleData = fullfile(pathExamples, 'write2bids', 'norm');
    
-   load(fullfile(pathExampleData, 'physio.mat'), 'physio'); % this physio structure contains data from step 2
+   pathExampleData = fullfile(pathExamples, 'Philips', 'ECG3T_V2');
+   load(fullfile(pathExampleData,'physio_out', 'physio.mat'), 'physio'); % this physio structure contains data from step 2
     
     % does that work?
-    cd(pathExampleData)
+    cd(fullfile(pathExampleData))
     physio = tapas_physio_main_create_regressors(physio);
 
     % read json file from example data
     cd(fullfile(pathExampleData, 'physio_out'))
 
+    % go on here
     fileName = 'sub-01_task_desc_physio_norm.json'; % filename in JSON extension 
     str = fileread(fileName); % dedicated for reading files as text 
     ExampleJson = jsondecode(str);
