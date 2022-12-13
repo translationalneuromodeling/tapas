@@ -1,5 +1,6 @@
 Contributor License Agreement
 =============================
+Version 1.1 (2022-09-21)
 
 This AGREEMENT is made by and between the 
 
@@ -10,16 +11,18 @@ and
 
 each GitHub User listed in the following table:  
 
-Name                     | Company/Institution/Address        | City      | Country | E-Mail/GitHub Username 
------------------------- | ---------------------------------- | --------- | ------- | ----------------------
-Lars Kasper              | TNU, University of Zurich          | Zurich    | CH      | mrikasper
-Eduardo Aponte           | TNU, University of Zurich          | Zurich    | CH      | tnutapas
-Daniel Hoffmann Ayala    | Technical University               | Munich    | D       | DanielHoffmannAyala
-Benoît Béranger          | CENIR, ICM                         | Paris     | FR      | benoitberanger
-Stephan Heunis           | Eindhoven University of Technology | Eindhoven | NL      | jsheunis
-Niklas Bürgi             | SNS, University of Zurich          | Zurich    | CH      | nbuergi
-Alexandre Sayal          | CIBIT, University of Coimbra       | Coimbra   | PT      | alexsayal
-**- Add Entry here -**   | **- Add Entry here -**             | **Add**   | **Add** | **Add**                    
+Name                     | Company/Institution/Address        | City      | Country | E-Mail/GitHub Username | CLA version accepted
+------------------------ | ---------------------------------- | --------- | ------- | ---------------------- | ------------------
+Lars Kasper              | TNU, University of Zurich          | Zurich    | CH      | mrikasper              | 1.0
+Eduardo Aponte           | TNU, University of Zurich          | Zurich    | CH      | tnutapas               | 1.0
+Daniel Hoffmann Ayala    | Technical University               | Munich    | D       | DanielHoffmannAyala    | 1.0
+Benoît Béranger          | CENIR, ICM                         | Paris     | FR      | benoitberanger         | 1.0
+Stephan Heunis           | Eindhoven University of Technology | Eindhoven | NL      | jsheunis               | 1.0
+Niklas Bürgi             | SNS, University of Zurich          | Zurich    | CH      | nbuergi                | 1.0
+Alexandre Sayal          | CIBIT, University of Coimbra       | Coimbra   | PT      | alexsayal              | 1.0
+Matthias Müller-Schrader | TNU, University of Zurich          | Zurich    | CH      | mms-neuro              | 1.1
+Saskia Bollmann          | The University of Queensland       | Brisbane  | AUS     | SaskiaBollmann         | 1.1
+**- Add Entry here -**   | **- Add Entry here -**             | **Add**   | **Add** | **Add**                | 1.1
 
 (hereinafter referred to as "Contributor")
 
@@ -41,7 +44,7 @@ TERMS AND CONDITIONS
 
     1.1 "Contribution" means any source code, object code, patch, tool, sample, graphic, specification, manual, documentation, or any other material posted or submitted by Contributor to the Project.
 
-    1.2 "Agreement" shall mean this document as signed by the authorized official of the Contributor.
+    1.2 "Agreement" shall mean this document.
 
 2.  Grant/Scope of License  
 
@@ -60,7 +63,7 @@ TERMS AND CONDITIONS
 
 4.  Rights of Contributor
 
-    Except as set out above, Contributor keeps all right, title, and interest in Contributions. The rights that Contributor grants to University of Zurich under these terms are effective on the date Contributor first submitted a contribution to University of Zurich, even if Contributor's submission took place before the date Contributor signs this Agreement. Any contribution University of Zurich makes available under any license will also be made available under a suitable FSF (Free Software Foundation) or OSI (Open Source Initiative) approved license.
+    Except as set out above, Contributor keeps all right, title, and interest in Contributions. The rights that Contributor grants to University of Zurich under these terms are effective on the date Contributor first submitted a contribution to University of Zurich, even if Contributor's submission took place before the date Contributor accepts this Agreement. Any contribution University of Zurich makes available under any license will also be made available under a suitable FSF (Free Software Foundation) or OSI (Open Source Initiative) approved license.
 
 5.  Warranty
 
@@ -69,7 +72,7 @@ TERMS AND CONDITIONS
         -  to the best of Contributor's knowledge, each contribution will not violate any third party's copyrights, trademarks, patents, or other intellectual property rights; and  
         -  each contribution shall be in compliance with applicable export and import laws.
 
-    5.2 Contributor agrees to notify University of Zurich if Contributor becomes aware of any circumstance which would make any of the foregoing representations inaccurate in any respect. University of Zurich may publicly disclose Contributor's participation in the project, including the fact that Contributor has signed this Agreement. 
+    5.2 Contributor agrees to notify University of Zurich if Contributor becomes aware of any circumstance which would make any of the foregoing representations inaccurate in any respect. University of Zurich may publicly disclose Contributor's participation in the project, including the fact that Contributor has accepted this Agreement. 
 
 6.  Miscellaneous
 
