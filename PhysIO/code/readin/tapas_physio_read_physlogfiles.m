@@ -59,6 +59,9 @@ if nargin < 3
 end
 
 switch lower(log_files.vendor)
+    case {'adinstruments_txt', 'labchart_txt'}
+        [c, r, t, cpulse, acq_codes] = ...
+            tapas_physio_read_physlogfiles_adinstruments_txt(log_files, cardiac_modality, verbose);
     case 'bids'
         [c, r, t, cpulse, acq_codes] = ...
             tapas_physio_read_physlogfiles_bids(log_files, cardiac_modality, verbose);

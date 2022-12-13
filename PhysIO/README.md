@@ -246,7 +246,7 @@ Contributors
 ------------
 
 - Lead Programmer: 
-    - [Lars Kasper](https://www.tnu.ethz.ch/en/team/faculty-and-scientific-staff/kasper.html),
+    - [Lars Kasper](https://brain-to.ca/content/lars-kasper),
       TNU & MR-Technology Group, IBT, University of Zurich & ETH Zurich
 - Project Team: 
     - Steffen Bollmann, Centre for Advanced Imaging, University of Queensland, Australia

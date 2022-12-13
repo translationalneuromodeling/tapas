@@ -56,6 +56,16 @@ end
 
 
 switch upper(fileType)
+    case {'ADINSTRUMENTS_TXT', 'LABCHART_TXT'}
+        strColumnHeader = 'ChannelTitle=';
+
+        %sub-02 from CUBRIC
+        parsePatternPerNColumns{4} = '%f %f %f %f';
+        nEmptyLinesAfterHeader(4) = 1;
+
+        %sub-01 from CUBRIC
+        parsePatternPerNColumns{7} = '%f %f %f %f %f %f %f';
+        nEmptyLinesAfterHeader(7) = 4;
     case 'BIDS'
         strColumnHeader = '';
         parsePatternPerNColumns{3} = '%f %f %f';
@@ -116,6 +126,9 @@ while ~haveFoundColumnHeader
 end
 
 switch upper(fileType)
+    case {'ADINSTRUMENTS_TXT', 'LABCHART_TXT'}
+        columnNames = regexp(strLine, '([\t])', 'split');
+        nColumns = numel(columnNames);
     case 'BIDS' % will be in separate json-file
         columnNames = {};
         nColumns = 3;
@@ -138,7 +151,7 @@ nHeaderLines = nHeaderLines + nEmptyLinesAfterHeader(nColumns); % since empty li
 % now read the rest of the file
 fid = fopen(fileName);
 switch upper(fileType)
-    case {'BIDS', 'BIOPAC_TXT', 'INFO', 'PULS', 'RESP'}
+    case {'ADINSTRUMENTS_TXT', 'LABCHART_TXT', 'BIDS', 'BIOPAC_TXT', 'INFO', 'PULS', 'RESP'}
         C = textscan(fid, parsePatternPerNColumns{nColumns}, 'HeaderLines', nHeaderLines);
     case 'PHILIPS' % sometimes odd lines with single # occur within text file
         C = textscan(fid, parsePatternPerNColumns{nColumns}, 'HeaderLines', nHeaderLines, 'CommentStyle', '#');
