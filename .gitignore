@@ -18,6 +18,7 @@ lib
 .idea
 .idea/*
 examples
+.MATLABDriveTag
 
 # Python
 # See e.g. https://github.com/github/gitignore/blob/master/Python.gitignore
