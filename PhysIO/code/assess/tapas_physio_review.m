@@ -118,12 +118,31 @@ if ~isfield(verbose, 'close_figs') || isempty(verbose.close_figs)
     verbose.close_figs = false;
 end
 
+% Figure Raw data
 verbose = tapas_physio_plot_raw_physdata(ons_secs.raw, verbose);
+
+
+% Figure 2 Peak detection
+dt = physio.ons_secs.t(2) - physio.ons_secs.t(1);
+minPulseDistanceSamples = ...
+    floor((1 / (physio.preproc.cardiac.initial_cpulse_select.max_heart_rate_bpm / 60)) / dt);
+
+if isempty(minPulseDistanceSamples)
+    % minPulseDistanceSamples = round(0.5 / dt); % heart rate < 120 bpm
+    physio.preproc.cardiac.initial_cpulse_select.min = round(0.5 / dt);
+end
+
+if cpulse_detect_options.method == {'auto'| 'auto_template' | 'auto_matched'}
+   cpulse, verbose] = ...
+                    tapas_physio_get_cardiac_pulses_auto_matched( ...
+                    physio.ons_secs.c, physio.ons_secs.t, cpulse_detect_options.min, minPulseDistanceSamples, verbose);
+end
+
+% tapas_physio_get_cardiac_pulses_auto_matched -> subfunction for plot, only called
+% if in this sub-branch
 
 % tapas_physio_get_onsets_from_locs -> create plot function out of
 % sub-function
-% tapas_physio_get_cardiac_pulses_auto_matched -> subfunction for plot, only called
-% if in this sub-branch
 
 if verbose.level >= 2
     verbose.fig_handles(end+1) = ...
