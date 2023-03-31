@@ -1,7 +1,8 @@
-function [verbose] = tapas_physio_preproc_peak_detection_from_automatically_generated(t,c,...
+function [verbose] = tapas_physio_plot_peak_detection_from_automatically_generated(t,c,...
     cpulse, verbose)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+% Helper function to create peak detection plot.
+%   IN: t, c, cpulse
+
         verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
         stringTitle = 'Preproc: Peak Detection from Automatically Generated Template';
         set(gcf, 'Name', stringTitle);
