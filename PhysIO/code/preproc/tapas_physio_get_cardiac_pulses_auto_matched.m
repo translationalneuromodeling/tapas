@@ -104,10 +104,10 @@ else
              cpulse, verbose);
 
     % freeze versions of t, c and cpulse for review
-        verbose.review =[];
-        verbose.review.peak.t = t;
-        verbose.review.peak.c = c;
-        verbose.review.peak.cpulse =cpulse;
+    verbose.review =[];
+    verbose.review.peak.t = t;
+    verbose.review.peak.c = c;
+    verbose.review.peak.cpulse = cpulse;
     end
     
 end
