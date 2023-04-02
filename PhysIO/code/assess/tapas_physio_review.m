@@ -152,6 +152,10 @@ if verbose.level >= 2
         tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar, verbose);
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure: Perproc Diagnostics for raw physiological time series
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 [verbose, ons_secs.c_outliers_low, ons_secs.c_outliers_high, ...
     ons_secs.r_hist] = ...
     tapas_physio_plot_raw_physdata_diagnostics(ons_secs.cpulse, ...
