@@ -72,6 +72,7 @@ sqpar       = scan_timing.sqpar;
 sync        = scan_timing.sync;
 model       = physio.model;
 verbose     = physio.verbose;
+review      = physio.verbose.review;
 
 % Compatibility with old versions
 if ~isfield(model, 'R_column_names')
@@ -130,18 +131,12 @@ verbose = tapas_physio_plot_raw_physdata(ons_secs.raw, verbose);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if ismember(preproc.cardiac.initial_cpulse_select.method, {'auto','auto_template', 'auto_matched'})
-    dt = ons_secs.t(2) - ons_secs.t(1);
-    minPulseDistanceSamples = ...
-    floor((1 / (preproc.cardiac.initial_cpulse_select.max_heart_rate_bpm / 60)) / dt);
-
-    if isempty(minPulseDistanceSamples)
-    % minPulseDistanceSamples = round(0.5 / dt); % heart rate < 120 bpm
-        preproc.cardiac.initial_cpulse_select.min = round(0.5 / dt);
+   
+    if verbose.level >=2
+        
+        [verbose] = tapas_physio_plot_peak_detection_from_automatically_generated(review.peak.t, review.peak.c, ...
+             review.peak.cpulse, verbose);
     end
-
-   [cpulse, verbose] = tapas_physio_get_cardiac_pulses_auto_matched( ...
-        ons_secs.c, ons_secs.t, preproc.cardiac.initial_cpulse_select.min, ... 
-        minPulseDistanceSamples, verbose);
 end
 
 
