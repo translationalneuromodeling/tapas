@@ -143,6 +143,10 @@ end
 % tapas_physio_get_onsets_from_locs -> create plot function out of
 % sub-function
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure: Perproc Coutcout actual scans - all events and gradients
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 if verbose.level >= 2
     verbose.fig_handles(end+1) = ...
         tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar, verbose);
