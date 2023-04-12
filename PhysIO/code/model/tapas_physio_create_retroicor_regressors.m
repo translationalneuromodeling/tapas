@@ -106,9 +106,13 @@ if ~hasPhaseData
         fr = ons_secs.fr;
         
         if verbose.level >=3
-            [r_phase, verbose.fig_handles(end+1)] = ...
+            [pulset, rsampint, rout, resp_max, cumsumh, sumh, h, ...
+        npulse, dpulse, r_phase, verbose.fig_handles(end+1)] = ...
                 tapas_physio_get_respiratory_phase( ...
                 fr,rsampint, verbose.level);
+        % save variables in verbose 
+        verbose.review.traces.pulset 
+
         else
             r_phase = tapas_physio_get_respiratory_phase(fr,rsampint, 0);
         end
@@ -122,7 +126,8 @@ if ~hasPhaseData
         respire_sess = [];
         r_sample_phase =[];
     end
-    
+
+
 else % compute Fourier expansion directly from cardiac/respiratory phases
     % select subset of slice-wise sampled phase for current onset_slice
     c_sample_phase = ons_secs.c_sample_phase;
