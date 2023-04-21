@@ -162,7 +162,13 @@ end
     ons_secs.r, preproc.cardiac.posthoc_cpulse_select, verbose, ...
     ons_secs.t, ons_secs.c);
 
+if verbose.level >=3
+    fh = tapas_physio_plot_traces(review.traces.pulset, review.traces.rsampint, ...
+        review.traces.rout, review.traces.resp_max, review.traces.cumsumh,...
+        review.traces.sumh, review.traces.h, review.traces.npulse, review.traces.dpulse, ...
+        review.traces.r_phase)
 
+end
 % verbose level >= 3
 % in tapas_physio_create_retroicor_regressors:
 % tapas_physio_get_respiratory_phase
