@@ -88,6 +88,7 @@ if length(SLICELOCS{Nallvols})~=Nslices && ~hasWarned
 end
 
 if verbose.level >= 3
+    
     stringTitle =  'Sync: Slice bundles belonging to 1 volume';
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
     set(gcf, 'Name', stringTitle);
