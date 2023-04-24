@@ -92,7 +92,7 @@ if verbose.level >= 3
 
         % save relevant parameters
         verbose.review.sync_bundles.Nallvols = Nallvols;
-        verbose.revoew.sync_bundles.t = t;
+        verbose.review.sync_bundles.t = t;
         verbose.review.sync_bundles.SLICELOCS =SLICELOCS;
 
 end
