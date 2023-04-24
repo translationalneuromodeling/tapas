@@ -143,8 +143,10 @@ end
 % tapas_physio_get_onsets_from_locs -> create plot function out of
 % sub-function
 
-[verbose] = tapas_physio_plot_sync_bundles(eview.sync_bundles.Nallvols, eview.sync_bundles.t, ...
-    eview.sync_bundles.SLICELOCS, eview.sync_bundles.verbose)
+if verbose.level >= 3
+[verbose] = tapas_physio_plot_sync_bundles(review.sync_bundles.Nallvols, review.sync_bundles.t, ...
+    review.sync_bundles.SLICELOCS, review.sync_bundles.verbose)
+end 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Figure: Perproc Coutcout actual scans - all events and gradients
