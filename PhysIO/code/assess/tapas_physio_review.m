@@ -127,7 +127,7 @@ verbose = tapas_physio_plot_raw_physdata(ons_secs.raw, verbose);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Figure 2 Peak detection
+% Figure:  Peak detection
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if ismember(preproc.cardiac.initial_cpulse_select.method, {'auto','auto_template', 'auto_matched'})
@@ -140,13 +140,25 @@ if ismember(preproc.cardiac.initial_cpulse_select.method, {'auto','auto_template
 end
 
 
-% tapas_physio_get_onsets_from_locs -> create plot function out of
-% sub-function
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure:  Sync Bundles
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if verbose.level >= 3
 [verbose] = tapas_physio_plot_sync_bundles(review.sync_bundles.Nallvols, review.sync_bundles.t, ...
-    review.sync_bundles.SLICELOCS, review.sync_bundles.verbose)
+    review.sync_bundles.SLICELOCS, verbose)
 end 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure: Get cardiac
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if verbose.level >= 3
+[verbose] = tapas_physio_plot_get_cardiac_phase(review.get_cardiac.scannert, ...
+    review.get_cardiac.cardiac_phase, review.get_cardiac.pulset, ...
+    review.get_cardiac.svolpulse, verbose)
+
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Figure: Perproc Coutcout actual scans - all events and gradients
