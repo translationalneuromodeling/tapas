@@ -139,6 +139,8 @@ if ismember(preproc.cardiac.initial_cpulse_select.method, {'auto','auto_template
     end
 end
 
+%
+% tapas_physio_get_cardiac_pulse_template: Iterative Template
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Figure:  Sync Bundles
@@ -161,7 +163,7 @@ if verbose.level >= 3
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Figure: Perproc Coutcout actual scans - all events and gradients
+% Figure: Preproc Coutcout actual scans - all events and gradients
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if verbose.level >= 2
@@ -170,7 +172,15 @@ if verbose.level >= 2
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Figure: Perproc Diagnostics for raw physiological time series
+% Figure: Preproc Respiratory filtering
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if verbose.level>=3
+    [verbose] = tapas_physio_plot_filter_respiratory(rpulset,rsampint, verbose)
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure: Preproc Diagnostics for raw physiological time series
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 [verbose, ons_secs.c_outliers_low, ons_secs.c_outliers_high, ...
