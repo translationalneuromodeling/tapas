@@ -235,6 +235,14 @@ if model.rvt.include
       verbose.fig_handles(end+1) = tapas_physio_plot_rvt(ons_secs, sqpar);
 end
 
+if verbose.level >= 2
+    if model.rvt.include
+      [verbose] = tapas_physio_plot_rvt_hilbert(review.rvt_hilbert.t,review.rvt_hilbert.fr, ... 
+          review.rvt_hilbert.fr_lp, review.rvt_hilbert.fr_mag, review.rvt_hilbert.fr_rv, ... 
+    review.rvt_hilbert.fr_phase, review.rvt_hilbert.fr_if, verbose)
+    end
+end
+
 %% tapas_physio_create_hrv_regressors, tapas_physio_create_rvt_regressors
 % tapas_physio_create_noise_rois_regressors
 % => create functions out of inline-plotting
