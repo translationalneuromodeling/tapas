@@ -176,7 +176,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if verbose.level>=3
-    [verbose] = tapas_physio_plot_filter_respiratory(rpulset,rsampint, verbose)
+    [verbose] = tapas_physio_plot_filter_respiratory(review.resp_filter.rpulset, ...
+        review.resp_filter.rsampint, verbose)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
