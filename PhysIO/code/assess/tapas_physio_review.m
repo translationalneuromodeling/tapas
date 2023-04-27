@@ -243,7 +243,14 @@ if verbose.level >= 2
     end
 end
 
-%% tapas_physio_create_hrv_regressors, tapas_physio_create_rvt_regressors
+%% tapas_physio_create_hrv_regressors,
+if verbose.level>=2
+[verbose] = tapas_physio_plot_create_hrv_regressors(review.create_hrv_regressors.sample_points, ... 
+    review.create_hrv_regressors.hrOut, review.create_hrv_regressors.hr, review.create_hrv_regressors.t, ...
+    review.create_hrv_regressors.crf, review.create_hrv_regressors.convHRV, ... 
+    review.create_hrv_regressors.delays,review.create_hrv_regressors.samplePointsOut,...
+    review.create_hrv_regressors.convHRVOut, verbose)
+end
 % tapas_physio_create_noise_rois_regressors
 % => create functions out of inline-plotting
 
