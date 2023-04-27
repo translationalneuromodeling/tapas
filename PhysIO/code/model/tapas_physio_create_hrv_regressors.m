@@ -55,39 +55,15 @@ slicenum = 1:sqpar.Nslices;
 sample_points  = tapas_physio_get_sample_points(ons_secs, sqpar, slicenum);
 hr = tapas_physio_hr(ons_secs.cpulse, sample_points);
 
-if verbose.level>=2
-    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf, 'Name', 'Model: Regressors Heart Rate: HRV X CRF');
-    subplot(2,2,1)
-    plot(sample_points,hr,'r');xlabel('time (seconds)');
-    title('Heart Rate');
-    ylabel('beats per min (bpm)');
-end
-
-
 % Generate CRF
 dt = sqpar.TR/sqpar.Nslices;
 t = 0:dt:30;  % seconds
 crf = tapas_physio_crf(t);
 crf = crf / max(abs(crf));
 
-if verbose.level>=2
-    subplot(2,2,2)
-    plot(t, crf,'r');xlabel('time (seconds)');
-    title('Cardiac response function');
-end
-
-
 % Convolve and rescale for display purposes
 convHRV = tapas_physio_conv(hr, crf, 'causal');
 convHRV = convHRV / max(abs(convHRV));
-
-if verbose.level>=2
-    subplot(2,2,3)
-    plot(sample_points, convHRV,'r');xlabel('time (seconds)');
-    title('Heart rate X cardiac response function');
-end
-
 
 % Create shifted regressors convolved time series, which is equivalent to
 % delayed response functions according to Wikipedia (convolution)
@@ -123,6 +99,27 @@ for iDelay = 1:nDelays
         convHRVOut(:,iDelay,iSlice) = convHRVShifted(onset_slice:sqpar.Nslices:end);
         samplePointsOut(:,iSlice) = sample_points(onset_slice:sqpar.Nslices:end);
     end
+end
+
+if verbose.level>=2
+    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
+    set(gcf, 'Name', 'Model: Regressors Heart Rate: HRV X CRF');
+    subplot(2,2,1)
+    plot(sample_points,hr,'r');xlabel('time (seconds)');
+    title('Heart Rate');
+    ylabel('beats per min (bpm)');
+end
+
+if verbose.level>=2
+    subplot(2,2,2)
+    plot(t, crf,'r');xlabel('time (seconds)');
+    title('Cardiac response function');
+end
+
+if verbose.level>=2
+    subplot(2,2,3)
+    plot(sample_points, convHRV,'r');xlabel('time (seconds)');
+    title('Heart rate X cardiac response function');
 end
 
 if verbose.level>=2
