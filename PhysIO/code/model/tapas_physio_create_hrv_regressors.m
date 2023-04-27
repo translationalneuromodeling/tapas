@@ -101,7 +101,7 @@ end
 
 % remove mean and linear trend to fulfill periodicity condition for
 % shifting
-convHRV = detrend(convHRV);
+convHRV_detrend = detrend(convHRV);
 
 % TODO: what happens at the end/beginning of shifted convolutions?
 nDelays = numel(delays);
@@ -116,7 +116,7 @@ convHRVOut = zeros(nScans,nDelays,nSampleSlices);
 samplePointsOut = zeros(nScans,nSampleSlices);
 
 for iDelay = 1:nDelays
-    convHRVShifted = circshift(convHRV, nShiftSamples(iDelay));
+    convHRVShifted = circshift(convHRV_detrend, nShiftSamples(iDelay));
     for iSlice = 1:nSampleSlices
         onset_slice = sqpar.onset_slice(iSlice);
         hrOut(:,iSlice) = hr(onset_slice:sqpar.Nslices:end)';
