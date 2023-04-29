@@ -164,7 +164,7 @@ end
 %% Normalise, if requested
 
 if normalize
-    rpulset = rpulset/max(abs(rpulset));
+    rpulset_out_trend_filt = rpulset_out_trend_filt/max(abs(rpulset_out_trend_filt));
 end
 
 %%
