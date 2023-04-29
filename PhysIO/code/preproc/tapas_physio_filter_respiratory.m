@@ -83,9 +83,10 @@ z_thresh = 5.0;  % Relatively high, as distribution is typically skewed
 mpulse = mean(rpulset);
 stdpulse = 1.4826 * mad(rpulset, 1);  % Robust to outliers: https://en.wikipedia.org/wiki/Robust_measures_of_scale
 outliers = (rpulset > (mpulse + (z_thresh * stdpulse)));
-rpulset(outliers) = mpulse + (z_thresh * stdpulse);
-outliers = (rpulset < (mpulse - (z_thresh * stdpulse)));
-rpulset(outliers) = mpulse - (z_thresh * stdpulse);
+rpulset_out = rpulset;
+rpulset_out(outliers) = mpulse + (z_thresh * stdpulse);
+outliers = (rpulset_out < (mpulse - (z_thresh * stdpulse)));
+rpulset_out(outliers) = mpulse - (z_thresh * stdpulse);
 % if verbose.level>=3
 %     plot([t(1), t(end)], [z_thresh, z_thresh], 'Color', [0.7, 0.7, 0.7]);
 %     plot([t(1), t(end)], [-z_thresh, -z_thresh], 'Color', [0.7, 0.7, 0.7]);
