@@ -83,8 +83,18 @@ end
 if doDebug
  
     [verbose] = tapas_physio_plot_iterative_template_creation(hasFirstGuessPeaks,...
-    t, c, cpulse1stGuess, nPulses1, nPulses2, cpulse2ndGuess, meanLag1, meanLag2, verbose)
+    t, c, cpulse1stGuess, nPulses1, nPulses2, cpulse2ndGuess, meanLag1, meanLag2, verbose);
 
+    %save relevant functions
+    verbose.review.iter_temp.hasFirstGuessPeaks = hasFirstGuessPeaks;
+    verbose.review.iter_temp.t = t;
+    verbose.review.iter_temp.c = c;
+    verbose.review.iter_temp.cpulse1stGuess = cpulse1stGuess;
+    verbose.review.iter_temp.nPulses1 = nPulses1;
+    verbose.review.iter_temp.nPulses2 = nPulses2;
+    verbose.review.iter_temp.cpulse2ndGuess = cpulse2ndGuess;
+    verbose.review.iter_temp.meanLag1 = meanLag1; 
+    verbose.review.iter_temp.meanLag2 = meanLag2;
 end 
 
 
