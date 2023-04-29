@@ -120,7 +120,7 @@ if ~isfield(verbose, 'close_figs') || isempty(verbose.close_figs)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Figure Raw data
+% Figure: Raw data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 verbose = tapas_physio_plot_raw_physdata(ons_secs.raw, verbose);
@@ -141,6 +141,12 @@ end
 
 %
 % tapas_physio_get_cardiac_pulse_template: Iterative Template
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure: Iterative template
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Figure:  Sync Bundles
@@ -175,9 +181,17 @@ end
 % Figure: Preproc Respiratory filtering
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 if verbose.level>=3
+
+    if isfield(review, 'resp_filter');
+
     [verbose] = tapas_physio_plot_filter_respiratory(review.resp_filter.rpulset, ...
-        review.resp_filter.rsampint, verbose)
+        review.resp_filter.m, review.resp_filter.s, review.resp_filter.t, ...
+        review.resp_filter.rpulset_out, review.resp_filter.rpulset_out_trend,...
+        review.resp_filter.trend,review.resp_filter.rpulset_out_trend_filt, verbose);
+
+    end 
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,14 +259,15 @@ end
 
 %% tapas_physio_create_hrv_regressors,
 if verbose.level>=2
-[verbose] = tapas_physio_plot_create_hrv_regressors(review.create_hrv_regressors.sample_points, ... 
-    review.create_hrv_regressors.hrOut, review.create_hrv_regressors.hr, review.create_hrv_regressors.t, ...
-    review.create_hrv_regressors.crf, review.create_hrv_regressors.convHRV, ... 
-    review.create_hrv_regressors.delays,review.create_hrv_regressors.samplePointsOut,...
-    review.create_hrv_regressors.convHRVOut, verbose)
+    if model.rvt.include
+        [verbose] = tapas_physio_plot_create_hrv_regressors(review.create_hrv_regressors.sample_points, ... 
+        review.create_hrv_regressors.hrOut, review.create_hrv_regressors.hr, review.create_hrv_regressors.t, ...
+        review.create_hrv_regressors.crf, review.create_hrv_regressors.convHRV, ... 
+        review.create_hrv_regressors.delays,review.create_hrv_regressors.samplePointsOut,...
+        review.create_hrv_regressors.convHRVOut, verbose)
+    end
 end
-% tapas_physio_create_noise_rois_regressors
-% => create functions out of inline-plotting
+
 
 %% Overall regressors
 
