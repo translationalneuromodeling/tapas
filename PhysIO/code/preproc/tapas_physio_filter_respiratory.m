@@ -138,7 +138,7 @@ trend = filtfilt(d, rpulset_padded);
 % figure('Name', 'rpulset_padded'); plot(rpulset_padded); hold on; plot(trend)
 
 trend = trend(n_pad+1:end-n_pad);
-rpulset = rpulset - trend;
+rpulset_out_trend = rpulset_out - trend;
 
 if verbose.level>=3
     figure(verbose.fig_handles(end));
