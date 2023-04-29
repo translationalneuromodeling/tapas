@@ -96,11 +96,11 @@ rpulset_out(outliers) = mpulse - (z_thresh * stdpulse);
 if despike
     mad_thresh = 5.0;  % Again, relatively high so only get large spikes (low-pass filter gets the rest)
     n_pad = ceil(0.25 / rsampint);  % 0.5 s total window length
-    rpulset_padded = padarray(rpulset, n_pad, 'symmetric');
+    rpulset_padded = padarray(rpulset_out, n_pad, 'symmetric');
     medians = movmedian(rpulset_padded, 2 * n_pad + 1, 'Endpoints', 'discard');
     mads = movmad(rpulset_padded, 2 * n_pad + 1, 'Endpoints', 'discard');
-    outliers = (abs(rpulset - medians) > mad_thresh * mads);
-    rpulset(outliers) = medians(outliers);
+    outliers = (abs(rpulset_out - medians) > mad_thresh * mads);
+    rpulset_out(outliers) = medians(outliers);
     % if verbose.level>=3
     %     plot(t, (medians - m) / s, 'Color', [0.7, 0.7, 0.7]);
     %     plot(t, (medians + mad_thresh * mads - m) / s, 'Color', [0.7, 0.7, 0.7]);
