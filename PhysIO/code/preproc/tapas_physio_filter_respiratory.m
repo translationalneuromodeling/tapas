@@ -128,7 +128,7 @@ d = designfilt( ...
 
 % Use a large padding, and window so tapers back to mean naturally
 padding_window = window(@blackmanharris, 2 * n_pad + 1);
-rpulset_padded = padarray(rpulset, n_pad, 'symmetric');
+rpulset_padded = padarray(rpulset_out, n_pad, 'symmetric');
 rpulset_padded(1:n_pad) = padding_window(1:n_pad) .* rpulset_padded(1:n_pad);
 rpulset_padded(end-n_pad+1:end) = padding_window(end-n_pad+1:end) .* rpulset_padded(end-n_pad+1:end);
 
