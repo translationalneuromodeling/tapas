@@ -153,8 +153,8 @@ end
 d = designfilt( ...
     'lowpassiir', 'HalfPowerFrequency', cutoff_freqs(2), ...
     'FilterOrder', 20, 'SampleRate', sampfreq);
-rpulset = filtfilt(d, padarray(rpulset, n_pad, 'symmetric'));
-rpulset = rpulset(n_pad+1:end-n_pad);
+rpulset_out_trend_filt = filtfilt(d, padarray(rpulset_out_trend, n_pad, 'symmetric'));
+rpulset_out_trend_filt = rpulset_out_trend_filt(n_pad+1:end-n_pad);
 
 if verbose.level>=3
     handles(end+1) = plot(t, (rpulset - m) / s - 5.0);
