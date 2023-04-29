@@ -67,13 +67,8 @@ rpulset(isnan(rpulset)) = nanmean(rpulset);
 
 rpulset = detrend(rpulset, 3);  % Demean / detrend to reduce edge effects
 
-if verbose.level>=3
-    [verbose, t] = tapas_physio_plot_filter_respiratory(rpulset,rsampint, verbose);
-
-    % save relevant variavles for retrospective plotting
-    verbose.review.resp_filter.rpulset =rpulset;
-    verbose.review.resp_filter.rsampint = rsampint;
-end
+ m = mean(rpulset); s = std(rpulset);
+ t = linspace(0.0, rsampint * (length(rpulset) - 1), length(rpulset));
 
 
 % Now do a check for any gross outliers relative to the statistics of the
@@ -108,10 +103,10 @@ if despike
     % end
 end
 
-if verbose.level>=3
-    handles(end+1) = plot(t, (rpulset - m) / s);
-    labels{end+1} = '... without outliers';
-end
+% if verbose.level>=3
+%     handles(end+1) = plot(t, (rpulset_out - m) / s);
+%     labels{end+1} = '... without outliers';
+% end
 
 %% Detrend and remove noise via filtering
 
@@ -140,14 +135,14 @@ trend = filtfilt(d, rpulset_padded);
 trend = trend(n_pad+1:end-n_pad);
 rpulset_out_trend = rpulset_out - trend;
 
-if verbose.level>=3
-    figure(verbose.fig_handles(end));
-    handles(end+1) = plot(t, (trend - m) / s);
-    labels{end+1} = '... low frequency trend';
-    plot([t(1), t(end)], [-5.0, -5.0], 'Color', [0.7, 0.7, 0.7]);
-    handles(end+1) = plot(t, (rpulset - m) / s - 5.0);
-    labels{end+1} = '... detrended';
-end
+% if verbose.level>=3
+%     figure(verbose.fig_handles(end));
+%     handles(end+1) = plot(t, (trend - m) / s);
+%     labels{end+1} = '... low frequency trend';
+%     plot([t(1), t(end)], [-5.0, -5.0], 'Color', [0.7, 0.7, 0.7]);
+%     handles(end+1) = plot(t, (rpulset_out_trend - m) / s - 5.0);
+%     labels{end+1} = '... detrended';
+% end
 
 % Low-pass filter to remove noise
 d = designfilt( ...
@@ -156,10 +151,10 @@ d = designfilt( ...
 rpulset_out_trend_filt = filtfilt(d, padarray(rpulset_out_trend, n_pad, 'symmetric'));
 rpulset_out_trend_filt = rpulset_out_trend_filt(n_pad+1:end-n_pad);
 
-if verbose.level>=3
-    handles(end+1) = plot(t, (rpulset - m) / s - 5.0);
-    labels{end+1} = '... after low-pass filter';
-end
+% if verbose.level>=3
+%     handles(end+1) = plot(t, (rpulset_out_trend_filt - m) / s - 5.0);
+%     labels{end+1} = '... after low-pass filter';
+% end
 
 %% Normalise, if requested
 
@@ -169,11 +164,24 @@ end
 
 %%
 
+% if verbose.level>=3
+%     xlim([t(1), t(end)]);
+%     xlabel('Time (s)');
+%     yticks([]);
+%     legend(handles, labels);
+% end
+
+% Plot 
 if verbose.level>=3
-    xlim([t(1), t(end)]);
-    xlabel('Time (s)');
-    yticks([]);
-    legend(handles, labels);
+    [verbose] = tapas_physio_plot_filter_respiratory(rpulset,m, s, t, ...
+        rpulset_out, rpulset_out_trend,trend,rpulset_out_trend_filt, verbose);
+
+    % save relevant variavles for retrospective plotting
+    verbose.review.resp_filter.rpulset =rpulset;
+    verbose.review.resp_filter.rsampint = rsampint;
 end
 
+
+
+rpulset = rpulset_out_trend_filt;
 end
