@@ -133,5 +133,11 @@ if doDebug
     [verbose] = tapas_physio_plot_templates_of_cycle_time(tTemplate, ...
     template, pulseTemplate, pulseCleanedTemplate, verbose);
 
+    %save relevant structures for review
+
+    verbose.review.temp_cyc.tTemplate = tTemplate;
+    verbose.review.temp_cyc.template = template;
+    verbose.review.temp_cyc.pulseTemplate = pulseTemplate;
+    verbose.review.temp_cyc.pulseCleanedTemplate = pulseCleanedTemplate;
     
 end
