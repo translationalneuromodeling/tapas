@@ -41,8 +41,8 @@ function verbose = tapas_physio_review(physio, newVerboseLevel)
 %
 %   See also
 
-% Author: Lars Kasper
-% Created: 2016-10-27
+% Author: Johanna Bayer, Lars Kasper
+% Created: 2016-10-27, completed 2023
 % Copyright (C) 2016 TNU, Institute for Biomedical Engineering,
 %                    University of Zurich and ETH Zurich.
 %
