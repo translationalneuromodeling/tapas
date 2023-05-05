@@ -8,6 +8,15 @@ Current Release
 
 April 5th, 2022
 
+Upcoming Release Notes (v8.2.0-beta)
+------------------------------------
+
+### Added
+- Added suport for logfile version 3 of Siemens physio recordings 
+    - multi ECG/Resp channels and interleaved status messages
+### Fixed
+- Removed dependence on `nanmean` (Statistics Toolbox)
+    - See GitHub issue #205 and 
 
 Minor Release Notes (v8.1.0)
 ----------------------------

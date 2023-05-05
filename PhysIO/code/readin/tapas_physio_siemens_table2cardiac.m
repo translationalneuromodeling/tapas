@@ -18,19 +18,24 @@ function dataCardiac = tapas_physio_siemens_table2cardiac(data_table, ...
 %                   onset of first scan (t=0)
 %
 % OUT
+%
 % dataCardiac = struct(...
 %     'cpulse_on', cpulse_on, ...
 %     'cpulse_off', cpulse_off, ...
 %     'recording_on', recording_on, ...
 %     'recording_off', recording_off, ...
-%     'channel_1', channel_1, ...
-%     'channel_AVF', channel_AVF, ...
+%     'recordingChannels', recordingChannels, ...
 %     'meanChannel', meanChannel, ...
 %     'c', c, ...
 %     't', t, ...
 %     'ampl', ampl, ...
 %     'stopSample', stopSample ...
 %     );
+%   
+%   AVF means "Augmented Vector Foot" and is a label for a unipolar lead
+%   of the ECG electrode setup. For .ecg- LOGVERSIOM one, this was the 2nd
+%   column ("channel") in the data (based on Siemens' Physioload function), 
+%   but for later versions, it's not clear
 %
 % EXAMPLE
 %   tapas_physio_siemens_table2cardiac
@@ -49,27 +54,32 @@ function dataCardiac = tapas_physio_siemens_table2cardiac(data_table, ...
 % COPYING or <http://www.gnu.org/licenses/>.
 
 
-% set new indices to actual
-cpulse_on          = find(data_table(:,3) == 5000);
-cpulse_off      = find(data_table(:,3) == 6000);
-recording_on    = find(data_table(:,3) == 6002);
-recording_off   = find(data_table(:,3) == 5003);
+% set new indices to actual, last column contains 
+cpulse_on          = find(data_table(:,end) == 5000);
+cpulse_off      = find(data_table(:,end) == 6000);
+recording_on    = find(data_table(:,end) == 6002);
+recording_off   = find(data_table(:,end) == 5003);
 
 % Split a single stream of ECG data into channel 1 and channel 2.
-channel_1       = data_table(:,1);
-channel_AVF     = data_table(:,2);
-meanChannel     = mean([channel_1(:) channel_AVF(:)],2);
+nChannels = size(data_table,2) - 1;
+
+for iChannel = 1:nChannels
+   recordingChannels(:,iChannel) = data_table(:,iChannel); 
+end
+
+meanChannel = mean(recordingChannels, 2);
 
 % Make them the same length and get time estimates.
-switch ecgChannel
+switch lower(ecgChannel)
     case 'mean'
         c = meanChannel - mean(meanChannel);
         
-    case 'v1'
-        c = channel_1 - mean(channel_1);
-        
-    case 'v2'
-        c = channel_AVF - mean(channel_AVF);
+    case {'v1', 'v2', 'v3', 'v4'}
+        iChannel = str2double(ecgChannel(2));
+        c = recordingChannels(:,iChannel) - mean(recordingChannels(:,iChannel));
+    case {'avf'}
+        iChannel =2;
+        c = recordingChannels(:,iChannel) - mean(recordingChannels(:,iChannel));
 end
 
 % compute timing vector and time of detected trigger/cpulse events
@@ -94,8 +104,7 @@ dataCardiac = struct(...
     'cpulse_off', cpulse_off, ...
     'recording_on', recording_on, ...
     'recording_off', recording_off, ...
-    'channel_1', channel_1, ...
-    'channel_AVF', channel_AVF, ...
+    'recordingChannels', recordingChannels, ...
     'meanChannel', meanChannel, ...
     'c', c, ...
     't', t, ...
