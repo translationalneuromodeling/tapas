@@ -133,9 +133,11 @@ verbose = tapas_physio_plot_raw_physdata(ons_secs.raw, verbose);
 if ismember(preproc.cardiac.initial_cpulse_select.method, {'auto','auto_template', 'auto_matched'})
 
     if verbose.level >=2
+        if isfield(review, 'peak')
 
-        [verbose] = tapas_physio_plot_peak_detection_from_automatically_generated(review.peak.t, review.peak.c, ...
+            [verbose] = tapas_physio_plot_peak_detection_from_automatically_generated(review.peak.t, review.peak.c, ...
              review.peak.cpulse, verbose);
+        end
     end
 end
 
@@ -170,9 +172,11 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if verbose.level >= 3
+    if isfield(review, 'sync_bundles')
 
-    [verbose] = tapas_physio_plot_sync_bundles(review.sync_bundles.Nallvols, review.sync_bundles.t, ...
-        review.sync_bundles.SLICELOCS, verbose);
+        [verbose] = tapas_physio_plot_sync_bundles(review.sync_bundles.Nallvols, review.sync_bundles.t, ...
+            review.sync_bundles.SLICELOCS, verbose);
+    end
 end 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,9 +185,12 @@ end
 
 if verbose.level >= 3
 
-    [verbose] = tapas_physio_plot_get_cardiac_phase(review.get_cardiac.scannert, ...
-        review.get_cardiac.cardiac_phase, review.get_cardiac.pulset, ...
-        review.get_cardiac.svolpulse, verbose);
+    if isfield(review, 'get_cardiac')
+
+        [verbose] = tapas_physio_plot_get_cardiac_phase(review.get_cardiac.scannert, ...
+            review.get_cardiac.cardiac_phase, review.get_cardiac.pulset, ...
+            review.get_cardiac.svolpulse, verbose);
+    end
 
 end
 
@@ -225,10 +232,13 @@ end
 
 
 if verbose.level >=3
-    fh = tapas_physio_plot_traces(review.traces.pulset, review.traces.rsampint, ...
-        review.traces.rout, review.traces.resp_max, review.traces.cumsumh,...
-        review.traces.sumh, review.traces.h, review.traces.npulse, review.traces.dpulse, ...
-        review.traces.r_phase);
+
+    if isfield(review, 'traces')
+        fh = tapas_physio_plot_traces(review.traces.pulset, review.traces.rsampint, ...
+            review.traces.rout, review.traces.resp_max, review.traces.cumsumh,...
+            review.traces.sumh, review.traces.h, review.traces.npulse, review.traces.dpulse, ...
+            review.traces.r_phase);
+    end 
 
 end
 
