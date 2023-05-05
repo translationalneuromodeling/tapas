@@ -131,9 +131,9 @@ verbose = tapas_physio_plot_raw_physdata(ons_secs.raw, verbose);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if ismember(preproc.cardiac.initial_cpulse_select.method, {'auto','auto_template', 'auto_matched'})
-   
+
     if verbose.level >=2
-        
+
         [verbose] = tapas_physio_plot_peak_detection_from_automatically_generated(review.peak.t, review.peak.c, ...
              review.peak.cpulse, verbose);
     end
@@ -146,15 +146,33 @@ end
 % Figure: Iterative template
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% First and second figure
 
+if verbose.level >= 3
+    
+    if isfield(review, 'iter_temp')
+        [verbose] = tapas_physio_plot_iterative_template_creation(review.iter_temp.hasFirstGuessPeaks,...
+            review.iter_temp.t, review.iter_temp.c, review.iter_temp.cpulse1stGuess, review.iter_temp.nPulses1, ...
+            review.iter_temp.nPulses2, review.iter_temp.cpulse2ndGuess, review.iter_temp.meanLag1, ...
+            review.iter_temp.meanLag2, verbose);
+    end 
+
+% thrid figure
+    if isfield(review, 'temp_cyc')
+        [verbose] = tapas_physio_plot_templates_of_cycle_time(review.temp_cyc.tTemplate, ...
+            review.temp_cyc.template, review.temp_cyc.pulseTemplate, ... 
+            review.temp_cyc.pulseCleanedTemplate, verbose)
+    end
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Figure:  Sync Bundles
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if verbose.level >= 3
-[verbose] = tapas_physio_plot_sync_bundles(review.sync_bundles.Nallvols, review.sync_bundles.t, ...
-    review.sync_bundles.SLICELOCS, verbose)
+
+    [verbose] = tapas_physio_plot_sync_bundles(review.sync_bundles.Nallvols, review.sync_bundles.t, ...
+        review.sync_bundles.SLICELOCS, verbose);
 end 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,9 +180,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if verbose.level >= 3
-[verbose] = tapas_physio_plot_get_cardiac_phase(review.get_cardiac.scannert, ...
-    review.get_cardiac.cardiac_phase, review.get_cardiac.pulset, ...
-    review.get_cardiac.svolpulse, verbose)
+
+    [verbose] = tapas_physio_plot_get_cardiac_phase(review.get_cardiac.scannert, ...
+        review.get_cardiac.cardiac_phase, review.get_cardiac.pulset, ...
+        review.get_cardiac.svolpulse, verbose);
 
 end
 
@@ -184,7 +203,7 @@ end
 
 if verbose.level>=3
 
-    if isfield(review, 'resp_filter');
+    if isfield(review, 'resp_filter')
 
     [verbose] = tapas_physio_plot_filter_respiratory(review.resp_filter.rpulset, ...
         review.resp_filter.m, review.resp_filter.s, review.resp_filter.t, ...
@@ -209,7 +228,7 @@ if verbose.level >=3
     fh = tapas_physio_plot_traces(review.traces.pulset, review.traces.rsampint, ...
         review.traces.rout, review.traces.resp_max, review.traces.cumsumh,...
         review.traces.sumh, review.traces.h, review.traces.npulse, review.traces.dpulse, ...
-        review.traces.r_phase)
+        review.traces.r_phase);
 
 end
 
@@ -253,7 +272,7 @@ if verbose.level >= 2
     if model.rvt.include
       [verbose] = tapas_physio_plot_rvt_hilbert(review.rvt_hilbert.t,review.rvt_hilbert.fr, ... 
           review.rvt_hilbert.fr_lp, review.rvt_hilbert.fr_mag, review.rvt_hilbert.fr_rv, ... 
-    review.rvt_hilbert.fr_phase, review.rvt_hilbert.fr_if, verbose)
+    review.rvt_hilbert.fr_phase, review.rvt_hilbert.fr_if, verbose);
     end
 end
 
@@ -264,7 +283,7 @@ if verbose.level>=2
         review.create_hrv_regressors.hrOut, review.create_hrv_regressors.hr, review.create_hrv_regressors.t, ...
         review.create_hrv_regressors.crf, review.create_hrv_regressors.convHRV, ... 
         review.create_hrv_regressors.delays,review.create_hrv_regressors.samplePointsOut,...
-        review.create_hrv_regressors.convHRVOut, verbose)
+        review.create_hrv_regressors.convHRVOut, verbose);
     end
 end
 
