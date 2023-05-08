@@ -1,4 +1,4 @@
-function worked = tapas_test_in_environment(toolbox)
+function worked = tapas_test_in_environment(logfile,toolbox)
 % TAPAS_TEST_IN_ENVIRONMENT run test in separate environment
 %
 % IN 
@@ -21,8 +21,11 @@ function worked = tapas_test_in_environment(toolbox)
 % The reason is that it will be copied by run_tapas_test_in_environment 
 % to a file with the proper name (to avoid shadowing of the path).
 
-diary('tapas-test.log')
-if nargin < 1 || isempty(toolbox)
+if nargin < 1 || isempty(logfile)
+    logfile = 'tapas-test.log'; % Will be in temp-folder.
+end
+diary(logfile); % Write output to file.
+if nargin < 2 || isempty(toolbox)
    disp('Testing all tooboxes!')
     toolbox = {}; % Everything.
 elseif ~iscell(toolbox)

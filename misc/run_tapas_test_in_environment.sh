@@ -24,22 +24,36 @@ TAPASREPO="git@tnurepository.ethz.ch:TNU/tapas.git"
 BRANCH="tapas-v-6-1-0"
 TOOLBOX="physio"
 DESKTOPOPT='-nodesktop'
+#LOGFILE="${TMPDIR}/tapas-test.log"
+LOGFILE="$HOME/tapas-test.log"
 
 ## Create directory
 echo "Using temporal directory $TMPDIR"
-touch "${TMPDIR}/tapas-test.log"
-echo "MATLAB-log will be written to ${TMPDIR}/tapas-test.log"
+touch "$LOGFILE"
+echo "$START LOGGING AT $(date)" >> "$LOGFILE"
+echo "MATLAB-log will be written to $LOGFILE"
 ## Copy script in there
 cp tapas_test_in_environment_template.m "${TMPDIR}/tapas_test_in_environment.m"
 cd "$TMPDIR"
 
 ## Clone tapas and spm
-git clone --depth=1 --branch "$BRANCH" --single-branch "$TAPASREPO"
-git clone --depth=1 https://github.com/spm/spm.git # Development version
-
+git clone --depth=1 --branch "$BRANCH" --single-branch "$TAPASREPO" |& tee -a "$LOGFILE"
+git clone --depth=1 https://github.com/spm/spm.git |& tee -a "$LOGFILE" # Development version
+## Document hashes:
+cd tapas
+echo "TAPAS REPO $TAPASREPO BRANCH $BRANCH hash:" |& tee -a "$LOGFILE"
+git rev-parse HEAD |& tee -a "$LOGFILE"
+cd ../spm
+echo "SPM git hash:" |& tee -a "$LOGFILE"
+git rev-parse HEAD |& tee -a "$LOGFILE"
+cd ..
+echo "========== COPY OF TEST SCRIPT ===========" >> "$LOGFILE"
+cat tapas_test_in_environment.m >> "$LOGFILE"
+echo "========== END COPY OF TEST SCRIPT =======" >> "$LOGFILE"
 ## Start matlab:
 echo "Everything is ready - starting matlab"
-matlab -sd "$TMPDIR" $DESKTOPOPT -r "tapas_test_in_environment ${TOOLBOX} "
+echo matlab -sd "$TMPDIR" $DESKTOPOPT -r "tapas_test_in_environment $LOGFILE $TOOLBOX " >> "$LOGFILE"
+matlab -sd "$TMPDIR" $DESKTOPOPT -r "tapas_test_in_environment $LOGFILE $TOOLBOX "
 
 # We don't delete temporal directory, since a) that can be often done by UNIX 
 # and b) allows us to inspect the directory for debugging.
