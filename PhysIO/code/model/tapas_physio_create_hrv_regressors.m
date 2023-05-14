@@ -101,21 +101,21 @@ for iDelay = 1:nDelays
     end
 end
 
+% save relevant structures
+verbose.review.create_hrv_regressors.sample_points = sample_points;
+verbose.review.create_hrv_regressors.hrOut = hrOut;
+verbose.review.create_hrv_regressors.hr = hr;
+verbose.review.create_hrv_regressors.t = t;
+verbose.review.create_hrv_regressors.crf = crf;
+verbose.review.create_hrv_regressors.convHRV = convHRV;
+verbose.review.create_hrv_regressors.delays = delays;
+verbose.review.create_hrv_regressors.samplePointsOut = samplePointsOut;
+verbose.review.create_hrv_regressors.convHRVOut = convHRVOut;
+
 if verbose.level>=2
    [verbose] = tapas_physio_plot_create_hrv_regressors(sample_points, hrOut, ...
     hr, t, crf, convHRV, delays,samplePointsOut, convHRVOut, verbose)
 
-   % save relevant structures
-   verbose.review.create_hrv_regressors.sample_points = sample_points;
-   verbose.review.create_hrv_regressors.hrOut = hrOut;
-   verbose.review.create_hrv_regressors.hr = hr;
-   verbose.review.create_hrv_regressors.t = t;
-   verbose.review.create_hrv_regressors.crf = crf;
-   verbose.review.create_hrv_regressors.convHRV = convHRV;
-   verbose.review.create_hrv_regressors.delays = delays;
-   verbose.review.create_hrv_regressors.samplePointsOut = samplePointsOut;
-   verbose.review.create_hrv_regressors.convHRVOut = convHRVOut;
- 
 end
 
 end
