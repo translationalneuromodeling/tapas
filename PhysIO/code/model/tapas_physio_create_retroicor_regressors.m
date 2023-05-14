@@ -105,13 +105,7 @@ if ~hasPhaseData
         
         fr = ons_secs.fr;
         
-        if verbose.level >=3
-            [pulset, rsampint, rout, resp_max, cumsumh, sumh, h, ...
-        npulse, dpulse, r_phase, verbose.fig_handles(end+1)] = ...
-                tapas_physio_get_respiratory_phase( ...
-                fr,rsampint, verbose.level);
-        
-            % save variables in verbose 
+        % save variables in verbose 
         verbose.review.traces.pulset = pulset;
         verbose.review.traces.rsampint = rsampint;
         verbose.review.traces.rout = rout;
@@ -123,7 +117,11 @@ if ~hasPhaseData
         verbose.review.traces.dpulse = dpulse;
         verbose.review.traces.r_phase = r_phase;
 
-
+        if verbose.level >=3
+            [pulset, rsampint, rout, resp_max, cumsumh, sumh, h, ...
+        npulse, dpulse, r_phase, verbose.fig_handles(end+1)] = ...
+                tapas_physio_get_respiratory_phase( ...
+                fr,rsampint, verbose.level);
         else
             r_phase = tapas_physio_get_respiratory_phase(fr,rsampint, 0);
         end
