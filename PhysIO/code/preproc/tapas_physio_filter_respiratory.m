@@ -152,22 +152,22 @@ end
 
 %%
 
+ % save relevant variavles for retrospective plotting
+ verbose.review.resp_filter.rpulset = rpulset;
+ verbose.review.resp_filter.rsampint = rsampint;
+ verbose.review.resp_filter.m = m;
+ verbose.review.resp_filter.s = s;
+ verbose.review.resp_filter.t = t;
+ verbose.review.resp_filter.rpulset_out = rpulset_out;
+ verbose.review.resp_filter.rpulset_out_trend = rpulset_out_trend;
+ verbose.review.resp_filter.trend = trend;
+ verbose.review.resp_filter.rpulset_out_trend_filt = rpulset_out_trend_filt;
 
 % Debug and plot
 if verbose.level>=3
     [verbose] = tapas_physio_plot_filter_respiratory(rpulset,m, s, t, ...
         rpulset_out, rpulset_out_trend,trend,rpulset_out_trend_filt, verbose);
 
-    % save relevant variavles for retrospective plotting
-    verbose.review.resp_filter.rpulset = rpulset;
-    verbose.review.resp_filter.rsampint = rsampint;
-    verbose.review.resp_filter.m = m;
-    verbose.review.resp_filter.s = s;
-    verbose.review.resp_filter.t = t;
-    verbose.review.resp_filter.rpulset_out = rpulset_out;
-    verbose.review.resp_filter.rpulset_out_trend = rpulset_out_trend;
-    verbose.review.resp_filter.trend = trend;
-    verbose.review.resp_filter.rpulset_out_trend_filt = rpulset_out_trend_filt;
 end
 
 rpulset = rpulset_out_trend_filt;
