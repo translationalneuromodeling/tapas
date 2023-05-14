@@ -141,8 +141,6 @@ if ismember(preproc.cardiac.initial_cpulse_select.method, {'auto','auto_template
     end
 end
 
-%
-% tapas_physio_get_cardiac_pulse_template: Iterative Template
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Figure: Iterative template
