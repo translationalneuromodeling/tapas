@@ -142,17 +142,21 @@ fr_rvt = fr_rv .* fr_if;
 
 %% Plot figures %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% save relevant structures
+
+verbose.review.rvt_hilbert.t = t;
+verbose.review.rvt_hilbert.fr = fr;
+verbose.review.rvt_hilbert.fr_lp = fr_lp;
+verbose.review.rvt_hilbert.fr_mag = fr_mag;
+verbose.review.rvt_hilbert.fr_rv = fr_rv
+verbose.review.rvt_hilbert.fr_phase = fr_phase;
+verbose.review.rvt_hilbert.fr_if = fr_if;
+
 if verbose.level>=2
     [verbose] = tapas_physio_plot_rvt_hilbert(t,fr, fr_lp, fr_mag, fr_rv, ... 
     fr_phase, fr_if, verbose)
     
-    verbose.review.rvt_hilbert.t = t;
-    verbose.review.rvt_hilbert.fr = fr;
-    verbose.review.rvt_hilbert.fr_lp = fr_lp;
-    verbose.review.rvt_hilbert.fr_mag = fr_mag;
-    verbose.review.rvt_hilbert.fr_rv = fr_rv
-    verbose.review.rvt_hilbert.fr_phase = fr_phase;
-    verbose.review.rvt_hilbert.fr_if = fr_if;
+    
 end
 
 %% Downsample %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
