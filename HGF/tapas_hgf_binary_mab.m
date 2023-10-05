@@ -67,7 +67,14 @@ th   = exp(p(5*l-1));
 
 % Add dummy "zeroth" trial
 u = [0; r.u(:,1)];
-y = [1; r.y(:,1)];
+try % For estimation
+    y = [1; r.y(:,1)];
+    r.irr = r.irr;
+catch % For simulation
+    y = [1; r.u(:,2)];
+    r.irr = find(isnan(r.u(:,2)));
+end
+
 
 % Number of trials (including prior)
 n = size(u,1);
