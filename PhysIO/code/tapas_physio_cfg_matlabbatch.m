@@ -1341,7 +1341,10 @@ noise_rois.tag  = 'noise_rois';
 noise_rois.name = 'Noise ROIs model (Principal components of anatomical regions)';
 noise_rois.val  = {noise_rois_no};
 noise_rois.values  = {noise_rois_no, noise_rois_yes};
-noise_rois.help = {'Noise ROIs model (Principal components of anatomical regions), similar to aCompCor, Behzadi et al. 2007'};
+noise_rois.help = {
+    'Noise ROIs model (Principal components of anatomical regions), similar to aCompCor, Behzadi et al. 2007'
+    'If you want a test different level of threshold of crops, you can try "tapas_physio_interactive_noiseROI_mask()"'
+    };
 
 
 
