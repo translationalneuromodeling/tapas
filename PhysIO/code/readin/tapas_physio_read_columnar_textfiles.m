@@ -70,6 +70,10 @@ switch upper(fileType)
         strColumnHeader = '';
         parsePatternPerNColumns{3} = '%f %f %f';
         nEmptyLinesAfterHeader(3) = 0;
+    case 'BIDS_SEPARATE'
+        strColumnHeader = '';
+        parsePatternPerNColumns{1} = '%f';
+        nEmptyLinesAfterHeader(1) = 0;        
     case 'BIOPAC_TXT'
         strColumnHeader = '.*RESP.*';
         parsePatternPerNColumns{4} = '%f %f %f %d';
@@ -132,6 +136,9 @@ switch upper(fileType)
     case 'BIDS' % will be in separate json-file
         columnNames = {};
         nColumns = 3;
+    case 'BIDS_SEPARATE' % will be in separate json-file
+        columnNames = {};
+        nColumns = 1;
     case 'BIOPAC_TXT' % bad column names with spaces...e.g. 'RESP - RSP100C'
         columnNames = regexp(strLine, '([\t])', 'split');
         nColumns = numel(columnNames);
@@ -151,7 +158,7 @@ nHeaderLines = nHeaderLines + nEmptyLinesAfterHeader(nColumns); % since empty li
 % now read the rest of the file
 fid = fopen(fileName);
 switch upper(fileType)
-    case {'ADINSTRUMENTS_TXT', 'LABCHART_TXT', 'BIDS', 'BIOPAC_TXT', 'INFO', 'PULS', 'RESP'}
+    case {'ADINSTRUMENTS_TXT', 'LABCHART_TXT', 'BIDS', 'BIDS_SEPARATE', 'BIOPAC_TXT', 'INFO', 'PULS', 'RESP'}
         C = textscan(fid, parsePatternPerNColumns{nColumns}, 'HeaderLines', nHeaderLines);
     case 'PHILIPS' % sometimes odd lines with single # occur within text file
         C = textscan(fid, parsePatternPerNColumns{nColumns}, 'HeaderLines', nHeaderLines, 'CommentStyle', '#');

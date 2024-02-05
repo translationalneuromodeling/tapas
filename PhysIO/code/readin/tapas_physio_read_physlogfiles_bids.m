@@ -87,7 +87,7 @@ if hasCardiacFile && hasRespirationFile && diffCardiacRespirationFile % if the s
     fileName{2} = log_files.respiration;
     
     [c,r,t,cpulse,acq_codes] = tapas_physio_read_physlogfiles_bids_separate(fileName,log_files,hasExplicitJsonFile,DEBUG,verbose);
-    
+
 elseif hasCardiacFile
     fileName = log_files.cardiac;
     [c,r,t,cpulse,acq_codes] = tapas_physio_read_physlogfiles_bids_unified(fileName,log_files,hasExplicitJsonFile,DEBUG,verbose);
@@ -96,6 +96,12 @@ elseif hasRespirationFile
     fileName = log_files.respiration;
     [c,r,t,cpulse,acq_codes] = tapas_physio_read_physlogfiles_bids_unified(fileName,log_files,hasExplicitJsonFile,DEBUG,verbose);
 end
+
+% De-mean data
+c_mean = mean(c);
+r_mean = mean(r);
+c = c - c_mean;
+r = r - r_mean;
 
 end
 
@@ -147,7 +153,7 @@ if isempty(log_files.relative_start_acquisition)
     if hasJsonFile
         % in BIDS, start of the phys logging is stated relative to the first volume scan start.
         % PhysIO defines the scan acquisiton relative to the phys log start
-        tRelStartScan = -val.StartTime;
+        tRelStartScanCardiac = -val.StartTime;
     else
         verbose = tapas_physio_log(...
             ['No .json file found and empty log_files.relative_start_acquisition. ' ...
@@ -156,9 +162,9 @@ if isempty(log_files.relative_start_acquisition)
 else
     if hasJsonFile
         % add both delays
-        tRelStartScan = log_files.relative_start_acquisition - val.StartTime;
+        tRelStartScanCardiac = log_files.relative_start_acquisition - val.StartTime;
     else
-        tRelStartScan = log_files.relative_start_acquisition;
+        tRelStartScanCardiac = log_files.relative_start_acquisition;
     end
 end
 
@@ -175,9 +181,13 @@ for iCol = 1:2
     end
 end
 
-C = tapas_physio_read_columnar_textfiles(fileNameCardiac, 'BIDS');
+C = tapas_physio_read_columnar_textfiles(fileNameCardiac, 'BIDS_SEPARATE');
 c = double(C{idxCol(1)});
-iAcqStart = (double(C{idxCol(2)})~=0); % trigger has 1, rest is 0;
+try
+    iAcqStart = (double(C{idxCol(2)})~=0); % trigger has 1, rest is 0;
+catch
+    iAcqStart = [];
+end
 
 %% delete temporary unzipped file
 if isZipped
@@ -228,6 +238,26 @@ if isempty(dtRespiration)
     end
 end
 
+% sum implicit (.json) and explicit relative shifts of log/scan acquisition
+if isempty(log_files.relative_start_acquisition)
+    if hasJsonFile
+        % in BIDS, start of the phys logging is stated relative to the first volume scan start.
+        % PhysIO defines the scan acquisiton relative to the phys log start
+        tRelStartScanRespiratory = -val.StartTime;
+    else
+        verbose = tapas_physio_log(...
+            ['No .json file found and empty log_files.relative_start_acquisition. ' ...
+            'Please specify explicitly.'], verbose, 2);
+    end
+else
+    if hasJsonFile
+        % add both delays
+        tRelStartScanRespiratory = log_files.relative_start_acquisition - val.StartTime;
+    else
+        tRelStartScanRespiratory = log_files.relative_start_acquisition;
+    end
+end
+
 % default columns in text file for phys recordings; overruled by JSON file
 % 1 = resp, 2 = trigger
 bidsColumnNamesRespiration = {'respiratory', 'trigger'};
@@ -248,8 +278,8 @@ r = double(C{idxCol(1)});
 nSamplesCardiac = length(c);
 nSamplesRespiration = length(r);
 
-tCardiac = -tRelStartScan + ((0:(nSamplesCardiac-1))*dtCardiac)';
-tRespiration = -tRelStartScan + ((0:(nSamplesRespiration-1))*dtRespiration)';
+tCardiac = -tRelStartScanCardiac + ((0:(nSamplesCardiac-1))*dtCardiac)';
+tRespiration = -tRelStartScanRespiratory + ((0:(nSamplesRespiration-1))*dtRespiration)';
 
 %% Deal with NaNs in c and r timecourse
 c(isnan(c)) = interp1(tCardiac(~isnan(c)), c(~isnan(c)), tCardiac(isnan(c)));
@@ -272,7 +302,9 @@ end
 %dtRespiration = tRespiration(2) - tRespiration(1);
 
 isHigherSamplingCardiac = dtCardiac < dtRespiration;
-if isHigherSamplingCardiac
+isSameSamplingDiffNSamples = (dtCardiac == dtRespiration) && (nSamplesCardiac ~= nSamplesRespiration);
+
+if isHigherSamplingCardiac && ~isSameSamplingDiffNSamples
     t = tCardiac;
     rInterp = interp1(tRespiration, r, t);
     %racq_codesInterp = interp1(tRespiration, racq_codes, t, 'nearest');
@@ -285,7 +317,7 @@ if isHigherSamplingCardiac
     end
     r = rInterp;
     
-else
+elseif ~isHigherSamplingCardiac && ~isSameSamplingDiffNSamples
     t = tRespiration;
     cInterp = interp1(tCardiac, c, t);
     %cacq_codesInterp = interp1(tCardiac, cacq_codes, t, 'nearest');
@@ -297,7 +329,44 @@ else
         verbose.fig_handles(end+1) = fh;
     end
     c = cInterp;
-    
+   
+elseif isSameSamplingDiffNSamples
+    % first we must syncronize the time vectors
+    if tRespiration(1) < tCardiac(1)
+        
+        [~, indexOfMin] = min(abs(tRespiration-tCardiac(1)));
+
+        tRespiration = tRespiration(indexOfMin:end);
+        r = r(indexOfMin:end);
+        nSamplesRespiration = length(r);
+
+    else 
+
+        [~, indexOfMin] = min(abs(tCardiac-tRespiration(1)));
+
+        tCardiac = tCardiac(indexOfMin:end);
+        c = c(indexOfMin:end);
+        nSamplesCardiac = length(c);
+
+    end
+   
+%     % then fill the shorter file with zeros
+%     if nSamplesRespiration < nSamplesCardiac
+%         t = tCardiac;
+%         r(nSamplesRespiration+1:nSamplesCardiac) = 0;
+%     else
+%         t = tRespiration;
+%         c(nSamplesCardiac+1:nSamplesRespiration) = 0;
+%     end
+
+    % then trim the longer file
+    if nSamplesCardiac > nSamplesRespiration
+        c = c(1:nSamplesRespiration);
+        t = tRespiration;
+    else
+        r = r(1:nSamplesCardiac);
+        t = tCardiac;
+    end
 end
 
 %% Recompute acq_codes as for Siemens (volume on/volume off)
