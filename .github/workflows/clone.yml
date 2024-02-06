@@ -2,7 +2,7 @@ name: Clone Count Update
 
 on:
   schedule:
-    - cron: "10 0 * * SUN"
+    - cron: "09 0 * * SUN"
   workflow_dispatch:
 
 jobs:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: clone_count
       
