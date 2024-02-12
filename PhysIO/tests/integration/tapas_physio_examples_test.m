@@ -41,10 +41,9 @@ end
 
 % path to examples, needed for all test cases
 function setupOnce(testCase)
-% run GE example and extract physio
+% Get PhysIO public repo base folder from this file's location
 testCase.TestData.pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..');
-% TODO: Make generic!
-testCase.TestData.pathExamples =  fullfile(testCase.TestData.pathPhysioPublic, '..', 'examples');
+testCase.TestData.pathExamples =  tapas_physio_get_path_examples(testCase.TestData.pathPhysioPublic);
 end
 
 
@@ -82,6 +81,7 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+
 function test_biopac_txt_ppu3t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of BioPac_txt/PPU3T example using matlab only
@@ -108,7 +108,6 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_philips_ecg3t_v2_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG3T_V2 example using matlab only
@@ -117,7 +116,6 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_philips_ecg7t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG7T example using matlab only
@@ -125,7 +123,6 @@ dirExample = 'Philips/ECG7T';
 doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
-
 
 function test_philips_ppu3t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -153,6 +150,13 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_siemens_vb_ecg3t_logversion_3_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using matlab only
+dirExample = 'Siemens_VB/ECG3T_Logversion_3';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
 
 function test_siemens_vb_ppu3t_sync_first_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -163,12 +167,27 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_siemens_vb_ppu3t_sync_last_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Siemens_VB/PPU3T example using matlab only
 % synced to last DICOM volume of run
 dirExample = 'Siemens_VB/PPU3T_Sync_Last';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_siemens_vb_resp3t_logversion_1_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using matlab only
+dirExample = 'Siemens_VB/RESP3T_Logversion_1';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_siemens_vb_resp3t_logversion_3_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using matlab only
+dirExample = 'Siemens_VB/RESP3T_Logversion_3';
 doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
@@ -232,6 +251,7 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+
 function test_biopac_txt_ppu3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of BioPac_txt/PPU3T example using SPM Batch Editor
@@ -258,7 +278,6 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_philips_ecg3t_v2_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG3T_V2 example using SPM Batch Editor
@@ -267,7 +286,6 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_philips_ecg7t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG7T example using SPM Batch Editor
@@ -275,7 +293,6 @@ dirExample = 'Philips/ECG7T';
 doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
-
 
 function test_philips_ppu3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -303,6 +320,14 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_siemens_vb_ecg3t_logversion_3_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using SPM Batch Editor
+dirExample = 'Siemens_VB/ECG3T_Logversion_3';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
 function test_siemens_vb_ppu3t_sync_first_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Siemens_VB/PPU3T example
@@ -321,6 +346,22 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_siemens_vb_resp3t_logversion_1_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using SPM Batch Editor
+dirExample = 'Siemens_VB/RESP3T_Logversion_1';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_siemens_vb_resp3t_logversion_3_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using SPM Batch Editor
+dirExample = 'Siemens_VB/RESP3T_Logversion_3';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
 
 function test_siemens_vd_ppu3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -329,7 +370,6 @@ dirExample = 'Siemens_VD/PPU3T';
 doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
-
 
 function test_siemens_vd_ppu3t_for_bids_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -398,6 +438,7 @@ end
 
 % hard-coded relative tolerance
 relTol = 0.01; % 0.01 means 1 percent deviation from expected value allowed
+absTol = 1e-6; % for time courses (e.g., breathing) that reach close to 0, relative tolerance can be misleading, use relative value to max instead
 
 %% Generic settings
 % methods for recursively comparing structures, see
@@ -487,8 +528,21 @@ if doTestOnsSecsRaw
         IsEqualTo(expPhysio.ons_secs.raw,  ...
         'Using', StructComparator(NumericComparator, 'Recursively', true), ...
         'Within', RelativeTolerance(relTol), ...
-        'IgnoringFields',  {'spulse_per_vol'}...
+        'IgnoringFields',  {'spulse_per_vol', 'fr'}...
         ), 'Comparing all numeric subfields of ons_secs.raw to check read-in and basic filtering of phys recordings');
+
+    % test filtered respiratory trace separetely, because of values close
+    % to zero in trace (relative errors can be huge even if 1e-6)
+    % if isempty, set arbitrary tolerance
+    absTolFr = absTol*max(abs(expPhysio.ons_secs.raw.fr));
+    if isempty(absTolFr)
+        absTolFr = absTol;
+    end
+
+    verifyEqual(testCase, actPhysio.ons_secs.raw.fr, expPhysio.ons_secs.raw.fr, ...
+        'AbsTol', absTolFr, ...
+        'Comparing ons_secs.raw.fr (raw filtered respiratory trace)');
+
 end
 
 % 2. Check some crucial timing parameters more vigorously
