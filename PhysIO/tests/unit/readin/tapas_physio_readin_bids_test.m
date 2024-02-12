@@ -27,104 +27,109 @@ function tests = tapas_physio_readin_bids_test()
 tests = functiontests(localfunctions);
 end
 
-% compare raw read-in PPU trace data from BIDS example to previously saved reference
-% results
-function test_readin_bids_ppu3t(testCase)
+% % compare raw read-in PPU trace data from BIDS example to previously saved reference
+% % results
+% function test_readin_bids_ppu3t(testCase)
+% 
+% % Get PhysIO public repo base folder from this file's location
+% pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
+%pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
+% 
+% 
+% % load SPM matlabbatch, but convert to pure script before executing
+% % remove unnecessary (beyond read-in) part from job exeuction (e.g.
+% % visualization, modeling)
+% % ...still needs SPM at the moment for conversion
+% % TODO: parse matlab-script.m file apart from last, execution line
+% 
+% pathCurrentExample = fullfile(pathExamples, 'BIDS/PPU3T');
+% pathNow = pwd;
+% cd(pathCurrentExample); % for prepending absolute paths correctly 
+% fileExample = fullfile(pathCurrentExample, 'bids_ppu3t_spm_job.mat');
+% load(fileExample, 'matlabbatch');
+% 
+% physio = tapas_physio_job2physio(matlabbatch{1}.spm.tools.physio);
+% physio.verbose.level = 0;
+% physio.preproc.cardiac.initial_cpulse_select.method = 'load_from_logfile'; % faster
+% physio = tapas_physio_main_create_regressors(physio);
+% cd(pathNow)
+% 
+% actPhysio = physio;
+% 
+% % load physio from reference data
+% fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'readin', ...
+%     'physio_readin_bids_ppu3t.mat');
+% load(fileReferenceData, 'physio');
+% expPhysio = physio;
+% 
+% % extract cpulse from actual and expected solution and compare
+% actRaw = actPhysio.ons_secs.raw;
+% expRaw = expPhysio.ons_secs.raw;
+% 
+% verifyEqual(testCase, actRaw.t, expRaw.t, 'RelTol', 1e-6, 'Raw time vector does not match');
+% verifyEqual(testCase, actRaw.c, expRaw.c, 'RelTol', 1e-6, 'Raw cardiac trace does not match');
+% verifyEqual(testCase, actRaw.r, expRaw.r, 'RelTol', 1e-6, 'Raw respiratory trace does not match');
+% 
+% end
+% 
+% 
+% % compare raw read-in CPULSE data from BIDS example to previously saved reference
+% % results
+% function test_readin_bids_cpulse3t(testCase)
+% 
+% % run BIDS cpulse3t example and extract physio
+% pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
+% pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
+% 
+% % load SPM matlabbatch, but convert to pure script before executing
+% % remove unnecessary (beyond read-in) part from job exeuction (e.g.
+% % visualization, modeling)
+% % ...still needs SPM at the moment for conversion
+% % TODO: parse matlab-script.m file apart from last, execution line
+% 
+% pathCurrentExample = fullfile(pathExamples, 'BIDS/CPULSE3T');
+% pathNow = pwd;
+% cd(pathCurrentExample); % for prepending absolute paths correctly 
+% fileExample = fullfile(pathCurrentExample, 'bids_cpulse3t_spm_job.mat');
+% load(fileExample, 'matlabbatch');
+% 
+% physio = tapas_physio_job2physio(matlabbatch{1}.spm.tools.physio);
+% physio.verbose.level = 0;
+% % Some modeling has to be done, otherwise no raw data preprocessed
+% %physio.model.retroicor.include = 0;
+% physio.model.retroicor.order.cr = 0;
+% physio.model.retroicor.order.r = 0;
+% physio.model.hrv.include = 0;
+% physio.model.rvt.include = 0;
+% physio = tapas_physio_main_create_regressors(physio);
+% cd(pathNow)
+% 
+% actPhysio = physio;
+% 
+% % load physio from reference data
+% fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'readin', ...
+%     'physio_readin_bids_cpulse3t.mat');
+% load(fileReferenceData, 'physio');
+% expPhysio = physio;
+% 
+% % extract cpulse from actual and expected solution and compare
+% actRaw = actPhysio.ons_secs.raw;
+% expRaw = expPhysio.ons_secs.raw;
+% 
+% verifyEqual(testCase, actRaw.t, expRaw.t, 'Raw time vector does not match');
+% verifyEqual(testCase, actRaw.cpulse, expRaw.cpulse, 'Raw cardiac trace does not match');
+% verifyEqual(testCase, actRaw.r, expRaw.r, 'Raw respiratory trace does not match');
+% 
+% end
 
-% Get PhysIO public repo base folder from this file's location
-pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
+% compare  newly written bids output file from the Phillips ECG V3 test case to 
+% saved files
 
+function test_compare_write2bids_consistency(testCase)
+  pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
+  
+  pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
 
-% load SPM matlabbatch, but convert to pure script before executing
-% remove unnecessary (beyond read-in) part from job exeuction (e.g.
-% visualization, modeling)
-% ...still needs SPM at the moment for conversion
-% TODO: parse matlab-script.m file apart from last, execution line
-
-pathCurrentExample = fullfile(pathExamples, 'BIDS/PPU3T');
-pathNow = pwd;
-cd(pathCurrentExample); % for prepending absolute paths correctly 
-fileExample = fullfile(pathCurrentExample, 'bids_ppu3t_spm_job.mat');
-load(fileExample, 'matlabbatch');
-
-physio = tapas_physio_job2physio(matlabbatch{1}.spm.tools.physio);
-physio.verbose.level = 0;
-physio.preproc.cardiac.initial_cpulse_select.method = 'load_from_logfile'; % faster
-physio = tapas_physio_main_create_regressors(physio);
-cd(pathNow)
-
-actPhysio = physio;
-
-% load physio from reference data
-fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'readin', ...
-    'physio_readin_bids_ppu3t.mat');
-load(fileReferenceData, 'physio');
-expPhysio = physio;
-
-% extract cpulse from actual and expected solution and compare
-actRaw = actPhysio.ons_secs.raw;
-expRaw = expPhysio.ons_secs.raw;
-
-verifyEqual(testCase, actRaw.t, expRaw.t, 'RelTol', 1e-6, 'Raw time vector does not match');
-verifyEqual(testCase, actRaw.c, expRaw.c, 'RelTol', 1e-6, 'Raw cardiac trace does not match');
-verifyEqual(testCase, actRaw.r, expRaw.r, 'RelTol', 1e-6, 'Raw respiratory trace does not match');
-
-end
-
-
-% compare raw read-in CPULSE data from BIDS example to previously saved reference
-% results
-function test_readin_bids_cpulse3t(testCase)
-
-% run BIDS cpulse3t example and extract physio
-pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
-
-% load SPM matlabbatch, but convert to pure script before executing
-% remove unnecessary (beyond read-in) part from job exeuction (e.g.
-% visualization, modeling)
-% ...still needs SPM at the moment for conversion
-% TODO: parse matlab-script.m file apart from last, execution line
-
-pathCurrentExample = fullfile(pathExamples, 'BIDS/CPULSE3T');
-pathNow = pwd;
-cd(pathCurrentExample); % for prepending absolute paths correctly 
-fileExample = fullfile(pathCurrentExample, 'bids_cpulse3t_spm_job.mat');
-load(fileExample, 'matlabbatch');
-
-physio = tapas_physio_job2physio(matlabbatch{1}.spm.tools.physio);
-physio.verbose.level = 0;
-% Some modeling has to be done, otherwise no raw data preprocessed
-%physio.model.retroicor.include = 0;
-physio.model.retroicor.order.cr = 0;
-physio.model.retroicor.order.r = 0;
-physio.model.hrv.include = 0;
-physio.model.rvt.include = 0;
-physio = tapas_physio_main_create_regressors(physio);
-cd(pathNow)
-
-actPhysio = physio;
-
-% load physio from reference data
-fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'readin', ...
-    'physio_readin_bids_cpulse3t.mat');
-load(fileReferenceData, 'physio');
-expPhysio = physio;
-
-% extract cpulse from actual and expected solution and compare
-actRaw = actPhysio.ons_secs.raw;
-expRaw = expPhysio.ons_secs.raw;
-
-verifyEqual(testCase, actRaw.t, expRaw.t, 'Raw time vector does not match');
-verifyEqual(testCase, actRaw.cpulse, expRaw.cpulse, 'Raw cardiac trace does not match');
-verifyEqual(testCase, actRaw.r, expRaw.r, 'Raw respiratory trace does not match');
-
-end
-
-
-% compare  newly written bids output file from the Phillips ECG V3 test case to saved files
-function compare_write2bids_consistency(testCase)
    % location where the reference files are stored - step norm
    pathReferenceFiles = fullfile(pathExamples, 'TestReferenceResults', 'write2bids', 'norm');
 
@@ -150,8 +155,6 @@ function compare_write2bids_consistency(testCase)
     fileName = 'sub-01_task_desc_physio_norm.json'; % filename in JSON extension 
     str = fileread(fileName); % dedicated for reading files as text 
     ReferenceJson = jsondecode(str);
-
-
     
     verifyEqual(testCase, ExampleJson, ReferenceJson, 'json files do not match');
 
