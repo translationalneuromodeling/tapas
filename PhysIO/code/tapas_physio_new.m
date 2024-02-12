@@ -101,7 +101,12 @@ else
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     log_files              = [];
     
-    % vendor                Name depending on your MR Scanner system
+    % vendor                Name depending on your MR Scanner / 
+    %                       physiological recording system
+    %                       'ADInstruments/LabChart_Txt'' - Text file (.txt) 
+    %                           export of .adinst files, for recordings 
+    %                           from AD Instruments devices, typically 
+    %                           viewed and processed in LabChart
     %                       'BIDS' - Brain Imaging Data Structure (http://bids.neuroimaging.io/bids_spec.pdf, section 8.6)'
     %                       'Biopac_Txt' - exported txt files from Biopac system (4 columns, [Resp PPU GSR Trigger]'
     %                       'Biopac_Mat' - exported mat files from Biopac system'

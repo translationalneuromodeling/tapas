@@ -11,7 +11,7 @@ function [c, r, t, cpulse, acq_codes] = tapas_physio_read_physlogfiles_philips(l
 %           .cardiac
 %           .sampling_interval
 %           .relative_start_acquisition
-%   cardiac_modality    
+%   cardiac_modality
 %                       'ecg1_filtered'     filtered 1st ECG channel signal
 %                                           (Default)
 %                       'ecg2_filtered'     filteered 2nd ECG channel
@@ -24,7 +24,7 @@ function [c, r, t, cpulse, acq_codes] = tapas_physio_read_physlogfiles_philips(l
 %                       Note: for ECG, append '_wifi'
 %                       for adjusted sampling rate in
 %                       wireless Ingenia Scanners
-%                       
+%
 %
 % OUT
 %   c                   cardiac time series (ECG or pulse oximetry)
@@ -33,8 +33,8 @@ function [c, r, t, cpulse, acq_codes] = tapas_physio_read_physlogfiles_philips(l
 %   cpulse              time events of R-wave peak in cardiac time series (seconds)
 %   acq_codes           slice/volume start events marked by number <> 0
 %                       for time points in t
-%                       10/20 = scan start/end; 
-%                       1 = ECG pulse; 2 = OXY max; 4 = Resp trigger; 
+%                       10/20 = scan start/end;
+%                       1 = ECG pulse; 2 = OXY max; 4 = Resp trigger;
 %                       8 = scan volume trigger
 %
 % EXAMPLE
@@ -64,8 +64,31 @@ else
 end
 
 if hasCardiac || hasResp
-    y = tapas_physio_read_physlogfiles_philips_matrix(logfile);
-    acq_codes   = y(:,10);
+    %    y = tapas_physio_read_physlogfiles_philips_matrix(logfile);
+    [C, columnNames] = tapas_physio_read_columnar_textfiles(logfile, 'PHILIPS');
+    
+    idxColHex = find(contains(columnNames, 'mark')); % mark and mark2 are hexadecimal columns
+    idxColDec = setdiff(1:numel(columnNames), idxColHex);
+    C(idxColDec)  = cellfun(@double, C(idxColDec), 'UniformOutput', false);
+    
+    
+    %% Convert hexadecimal acquisition codes
+    for iCol = idxColHex
+        C{iCol}       = hex2dec(C{iCol});
+    end
+    
+    
+    %% Account for incomplete rows
+    nMinRows    = min(cellfun(@numel,C));
+    C           = cellfun(@(x) x(1:nMinRows), C, 'UniformOutput', false);
+    y           = cell2mat(C);
+    
+    idxColAcqCodes = idxColHex(1); % first 'mark' column
+    idxColResp =  find(contains(columnNames, 'resp')); % first 'mark' column
+    acq_codes   = y(:,idxColAcqCodes);
+    
+    
+    
 else
     y = [];
     acq_codes = [];
@@ -101,10 +124,10 @@ t= -log_files.relative_start_acquisition + ((0:(Nsamples-1))*dt)';
 cpulse = find(acq_codes==1);
 if ~isempty(cpulse)
     cpulse = t(cpulse);
-end;
+end
 
 if hasResp
-    r = y(:,6);
+    r = y(:,idxColResp);
 else
     r = [];
 end
@@ -129,18 +152,20 @@ if hasCardiac
         iModality = iModality + 1;
         cardiac_modality = cardiacModalityArray{iModality};
         switch lower(cardiac_modality)
-            case {'ecg_raw', 'ecg1_raw'}
-                c = y(:,1);
-            case {'ecg2_raw'}
-                c = y(:,2);
-            case {'ecg1', 'ecg_filtered', 'ecg1_filtered'}
-                c = y(:,3);
-            case { 'ecg2', 'ecg2_filtered'}
-                c = y(:,4);
-            case {'oxy','oxyge', 'ppu'}
-                c = y(:,5);
+            case {'ecg_raw', 'ecg1_raw', 'v1raw'}
+                labelColCardiac = 'v1raw';
+            case {'ecg2_raw', 'v2raw'}
+                labelColCardiac = 'v2raw';
+            case {'ecg1', 'ecg_filtered', 'ecg1_filtered', 'v1'}
+                labelColCardiac = 'v1';
+            case { 'ecg2', 'ecg2_filtered', 'v2'}
+                labelColCardiac = 'v2';
+            case {'oxy','oxyge', 'ppu'}                
+                labelColCardiac = 'ppu';
         end
         
+        idxColCardiac = find(strcmpi(columnNames, labelColCardiac));
+        c = y(:, idxColCardiac);
         hasValidCardiacReadout = any(c);
         
     end
