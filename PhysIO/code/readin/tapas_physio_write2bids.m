@@ -1,12 +1,14 @@
 function []= tapas_physio_write2bids(ons_secs, write_bids, log_files)
 % Converts trigger, cardiac and respiratory data from physio structure into
-% a .tsv file according to BIDS format, with meta data in a corresponding json file.
-
-
-% IN: ons_secs:     onsecs structure
-%     write_bids:   parameter describing the stage of the processing pipeline
-%                   at which the files are being written
-%    save_dir: where the file should be written to
+% a .tsv file according to BIDS format. Meta data is written in a corresponding .json file.
+%
+% Parameters:
+% IN: 
+%     ons_secs:                 onsecs structure
+%     write_bids.bids_step      integer describing the stage of the processing pipeline at which the files are being written.
+%                               Options: 1, 2, 3 
+      
+%     write_bods. bids_dir:     where the file should be written to
         
 
 % OUT: tsv file(s) caridac, respiratory, trigger
