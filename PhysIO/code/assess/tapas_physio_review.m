@@ -161,7 +161,7 @@ if verbose.level >= 3
     if isfield(review, 'temp_cyc')
         [verbose] = tapas_physio_plot_templates_of_cycle_time(review.temp_cyc.tTemplate, ...
             review.temp_cyc.template, review.temp_cyc.pulseTemplate, ... 
-            review.temp_cyc.pulseCleanedTemplate, verbose)
+            review.temp_cyc.pulseCleanedTemplate, verbose);
     end
 end
 
