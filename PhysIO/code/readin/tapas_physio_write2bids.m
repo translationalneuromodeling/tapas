@@ -1,4 +1,4 @@
-function []= tapas_physio_write2bids(ons_secs, write_bids, log_files)
+function [] = tapas_physio_write2bids(ons_secs, write_bids, log_files)
 % Converts trigger, cardiac and respiratory data from physio structure into
 % a .tsv file according to BIDS format. Meta data is written in a corresponding .json file.
 %
@@ -20,8 +20,8 @@ function []= tapas_physio_write2bids(ons_secs, write_bids, log_files)
 
 % Author: Johanna Bayer 2022
 
-bids_step=write_bids.bids_step;
-bids_dir=write_bids.bids_dir{1};
+bids_step = write_bids.bids_step;
+bids_dir = write_bids.bids_dir{1};
 bids_prefix = write_bids.bids_prefix{1};
 
 % after step1
@@ -35,7 +35,7 @@ switch bids_step
         "SamplingFrequency",log_files.sampling_interval, "Columns", ["cardiac", "respiratory"]); 
 
         % create JSON file
-        JSONFILE_name= sprintf('%2$s_desc_physio_%1$s.json',tag, bids_prefix); 
+        JSONFILE_name = sprintf('%2$s_desc_physio_%1$s.json',tag, bids_prefix); 
         fid = fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
         if verLessThan('matlab', '9.10')
             encodedJSON = jsonencode(s); 
@@ -50,7 +50,7 @@ switch bids_step
         %writematrix(respiratory,fullfile(bids_dir,sprintf('%s_respiratory.txt',tag)),'Delimiter','tab')
     
         mat=[cardiac respiratory];
-        save_file= fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
+        save_file = fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
         save(save_file,"mat",'-ascii');
         gzip(save_file);
  
@@ -63,7 +63,7 @@ switch bids_step
         "SamplingFrequency",log_files.sampling_interval, "Columns", ["cardiac", "respiratory"]); 
 
         % create JSON file
-        JSONFILE_name= sprintf('%2$s_desc_physio_%1$s.json',tag, bids_prefix);
+        JSONFILE_name = sprintf('%2$s_desc_physio_%1$s.json',tag, bids_prefix);
         fid = fopen(fullfile(bids_dir,JSONFILE_name),'w'); 
         if verLessThan('matlab', '9.10')
             encodedJSON = jsonencode(s); 
@@ -79,7 +79,7 @@ switch bids_step
    
 
        mat=[cardiac respiratory];
-       save_file= fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
+       save_file = fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
        save(save_file,"mat",'-ascii');
        gzip(save_file);
 
@@ -93,7 +93,7 @@ switch bids_step
     
         % triggers have to be replaced into 1 (trigger) 0 (no trigger)
     
-        trigger_binary=zeros(numel(ons_secs.t),1);
+        trigger_binary = zeros(numel(ons_secs.t),1);
 
         for iVolume = 1:numel(ons_secs.svolpulse)
             row_number = ons_secs.svolpulse(iVolume)==ons_secs.t;
@@ -121,7 +121,7 @@ switch bids_step
        % writematrix(trigger_binary,fullfile(bids_dir,sprintf('%s_trigger_binary.txt',tag)),'Delimiter','\t')
        
        mat=[cardiac respiratory trigger_binary];
-       save_file= fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
+       save_file = fullfile(bids_dir,sprintf('%2$s_desc_physio_%1$s.tsv',tag, bids_prefix));
        save(save_file,"mat",'-ascii');
        gzip(save_file);
 end
