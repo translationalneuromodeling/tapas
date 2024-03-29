@@ -32,6 +32,8 @@ save_dir.num     = [0 1];
 %% Sub-structure log_files
 %==========================================================================
 
+write_bids      = tapas_physio_gui_write_bids();
+
 %--------------------------------------------------------------------------
 % vendor
 %--------------------------------------------------------------------------
@@ -1646,7 +1648,7 @@ verbose.val    = {level fig_output_file use_tabs};
 physio      = cfg_exbranch;
 physio.tag  = 'physio';
 physio.name = 'TAPAS PhysIO Toolbox';
-physio.val  = {save_dir files scan_timing preproc model verbose};
+physio.val  = {save_dir write_bids files scan_timing preproc model verbose};
 physio.help = {'...'};
 physio.prog = @run_physio;
 physio.vout = @vout_physio;
