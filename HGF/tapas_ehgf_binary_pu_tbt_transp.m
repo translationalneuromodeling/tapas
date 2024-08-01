@@ -1,7 +1,7 @@
 function [pvec, pstruct] = tapas_ehgf_binary_pu_tbt_transp(r, ptrans)
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2024 Anna Yurova, Irene Sophia Plank, LMU University
-% Hospital; Rebecca Lawson, Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2024 Anna Yurova, Irene Sophia Plank, LMU University Hospital; 
+% ehgf adaptation based on the function tapas_hgf_binary_pu_tbt_transp by Rebecca Lawson, Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL

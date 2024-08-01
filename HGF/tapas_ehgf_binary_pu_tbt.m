@@ -13,8 +13,8 @@ function [traj, infStates] = tapas_ehgf_binary_pu_tbt(r, p, varargin)
 %     transformed space, and 'trans' is a flag indicating this.
 %
 % --------------------------------------------------------------------------------------------------
-% Copyright (C) 2024 Anna Yurova, Irene Sophia Plank, LMU University
-% Hospital; Rebecca Lawson, Christoph Mathys, TNU, UZH & ETHZ
+% Copyright (C) 2024 Anna Yurova, Irene Sophia Plank, LMU University Hospital; 
+% ehgf adaptation based on the function tapas_hgf_binary_pu_tbt by Rebecca Lawson, Christoph Mathys, TNU, UZH & ETHZ
 %
 % This file is part of the HGF toolbox, which is released under the terms of the GNU General Public
 % Licence (GPL), version 3. You can redistribute it and/or modify it under the terms of the GPL
