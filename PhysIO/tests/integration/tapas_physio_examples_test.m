@@ -43,7 +43,7 @@ end
 function setupOnce(testCase)
 % Get PhysIO public repo base folder from this file's location
 testCase.TestData.pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..');
-testCase.TestData.pathExamples =  tapas_physio_get_path_examples(testCase.TestData.pathPhysioPublic);
+testCase.TestData.pathExamples =  '/Users/johannabayer/Documents/Github/physio-examples'; %tapas_physio_get_path_examples(testCase.TestData.pathPhysioPublic);
 end
 
 

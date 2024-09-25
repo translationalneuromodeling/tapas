@@ -48,7 +48,7 @@ bids_dir.help    = {['Specify a directory where the bids output files should ' .
     'be written to']};
 bids_dir.filter  = 'dir';
 bids_dir.ufilter = '.*';
-bids_dir.num     = [0 1]
+bids_dir.num     = [0 1];
 
 %--------------------------------------------------------------------------
 % Bids prefix
@@ -60,7 +60,7 @@ bids_prefix.help    = {['specify a prefix of your liking for the bids file ' ...
     'created']};
 bids_prefix.strtype = 's';
 bids_prefix.num     = [0 Inf];
-bids_prefix.val     = {'norm'};
+bids_prefix.val     = {'sub-control01_task-YOURTASK_run-1'};
 
 %--------------------------------------------------------------------------
 % Compose structure
