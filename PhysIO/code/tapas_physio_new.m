@@ -91,7 +91,7 @@ else
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Overarching directory, relative to which output files are saved
-    save_dir = '';
+    save_dir = {'physio_out'};
     
     
     
@@ -145,11 +145,11 @@ else
     %   '<id>_PAV.ecg'          (Siemens Trio etc. (VB))
     %   '<date>_ECG1-4.log'     (Siemens Prisma etc (VD))
     %   'ECGData_epiRT_<date>'  (GE)
-    log_files.cardiac      = '';
+    log_files.cardiac      = {''};
     
     % Logfile with respiratory data, e.g. 'SCANPHYSLOG.log';
     % (same as .cardiac for Philips)
-    log_files.respiration  = '';
+    log_files.respiration  = {''};
     
     % additional file for relative timing information between logfiles and
     % MRI scans.
@@ -159,7 +159,7 @@ else
     %               axis as the time stamp in the physiological log file
     % Siemens_Tics: log-file which holds table conversion for tics axis to
     %               time conversion
-    log_files.scan_timing  = '';
+    log_files.scan_timing  = {''};
     
     % Sampling interval in seconds (i.e. time between two rows in logfile
     % if empty, default value will be set: 2e-3 for Philips, variable for GE, e.g. 40e-3
@@ -753,7 +753,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 write_bids.bids_step = 1;               % defines at which processing stage the data should be written, default = 1 (raw)
-write_bids.bids_dir = 'physio_out';     % output file of file, default = 'physio_out'
+write_bids.bids_dir = {'physio_out'};   % output file of file, default = 'physio_out'
 write_bids.bids_prefix = '';            % BIDS prefix
 
 
