@@ -12,7 +12,7 @@ function tests = tapas_physio_readin_bids_test()
 %   tapas_physio_readin_bids_test
 %
 %   See also
- 
+
 % Author:   Lars Kasper
 % Created:  2019-03-14
 % Copyright (C) 2019 TNU, Institute for Biomedical Engineering,
@@ -23,18 +23,27 @@ function tests = tapas_physio_readin_bids_test()
 % redistribute it and/or modify it under the terms of the GPL (either
 % version 3 or, at your option, any later version). For further details,
 % see the file COPYING or <http://www.gnu.org/licenses/>.
- 
+
 tests = functiontests(localfunctions);
 end
 
-% compare raw read-in PPU trace data from BIDS example to previously saved reference
+%% Setup path to examples, needed for all test cases
+function setupOnce(testCase)
+testCase.TestData.pathExamples = tapas_physio_get_path_examples();
+testCase.TestData.createdFigHandles = [];
+end
+
+
+%% close all created figures from examples after each test
+function teardown(testCase)
+close(testCase.TestData.createdFigHandles);
+end
+
+%% Compare raw read-in PPU trace data from BIDS example to previously saved reference
 % results
 function test_readin_bids_ppu3t(testCase)
 
-% Get PhysIO public repo base folder from this file's location
-pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
-
+pathExamples = testCase.TestData.pathExamples;
 
 % load SPM matlabbatch, but convert to pure script before executing
 % remove unnecessary (beyond read-in) part from job exeuction (e.g.
@@ -44,7 +53,7 @@ pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
 
 pathCurrentExample = fullfile(pathExamples, 'BIDS/PPU3T');
 pathNow = pwd;
-cd(pathCurrentExample); % for prepending absolute paths correctly 
+cd(pathCurrentExample); % for prepending absolute paths correctly
 fileExample = fullfile(pathCurrentExample, 'bids_ppu3t_spm_job.mat');
 load(fileExample, 'matlabbatch');
 
@@ -73,13 +82,12 @@ verifyEqual(testCase, actRaw.r, expRaw.r, 'RelTol', 1e-6, 'Raw respiratory trace
 end
 
 
-% compare raw read-in CPULSE data from BIDS example to previously saved reference
+%% Compare raw read-in CPULSE data from BIDS example to previously saved reference
 % results
 function test_readin_bids_cpulse3t(testCase)
 
 % run BIDS cpulse3t example and extract physio
-pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
+pathExamples = testCase.TestData.pathExamples;
 
 % load SPM matlabbatch, but convert to pure script before executing
 % remove unnecessary (beyond read-in) part from job exeuction (e.g.
@@ -89,7 +97,7 @@ pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
 
 pathCurrentExample = fullfile(pathExamples, 'BIDS/CPULSE3T');
 pathNow = pwd;
-cd(pathCurrentExample); % for prepending absolute paths correctly 
+cd(pathCurrentExample); % for prepending absolute paths correctly
 fileExample = fullfile(pathCurrentExample, 'bids_cpulse3t_spm_job.mat');
 load(fileExample, 'matlabbatch');
 
@@ -122,41 +130,59 @@ verifyEqual(testCase, actRaw.r, expRaw.r, 'Raw respiratory trace does not match'
 
 end
 
-% compare  newly written bids output file from the Phillips ECG V3 test case to 
+%% Compare newly written bids output file from the Phillips ECG V3 test case to
 % saved files
-
 function test_compare_write2bids_consistency(testCase)
-  pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-  
-  pathExamples = tapas_physio_get_path_examples(pathPhysioPublic);
 
-   % location where the reference files are stored - step norm
-   pathReferenceFiles = fullfile(pathExamples, 'TestReferenceResults', 'examples','write2bids', 'norm');
+pathExamples = testCase.TestData.pathExamples;
 
-   % location of the physio example file that will be passed to create_main_regrssors
-   % pathExampleData = fullfile(pathExamples, 'write2bids', 'norm');
-   
-   pathExampleData = fullfile(pathExamples, 'Philips', 'ECG3T_V2');
-   load(fullfile(pathExampleData,'physio_out', 'physio.mat'), 'physio'); % this physio structure contains data from step 2
-    
-    % does that work?
-    cd(fullfile(pathExampleData))
-    physio = tapas_physio_main_create_regressors(physio);
+dirCurrentExample = 'Philips/ECG3T_V2';
 
-    % read json file from example data
+% location where the reference files are stored - step norm
+pathReferenceFiles = fullfile(pathExamples, 'TestReferenceResults', 'examples', dirCurrentExample);
 
-    % go on here
-    fileName = './physio_out/sub-01_task_desc_physio_norm.json'; % filename in JSON extension 
-    str = fileread(fileName); % dedicated for reading files as text 
-    ExampleJson = jsondecode(str);
+% location of the physio example file that will be passed to create_main_regrssors
+pathCurrentExample = fullfile(pathExamples, dirCurrentExample);
+pathNow = pwd;
+cd(pathCurrentExample); % for prepending absolute paths correctly
+fileExample = fullfile(pathCurrentExample, 'philips_ecg3t_v2_spm_job.mat');
+load(fileExample, 'matlabbatch');
 
-    % read json file from reference folder
-    cd(fullfile(pathReferenceFiles))
+physio = tapas_physio_job2physio(matlabbatch{1}.spm.tools.physio);
+physio.verbose.level = 0;
+% Some modeling has to be done, otherwise no raw data preprocessed
+%physio.model.retroicor.include = 0;
+physio.model.retroicor.order.cr = 0;
+physio.model.retroicor.order.r = 0;
+physio.model.hrv.include = 0;
+physio.model.rvt.include = 0;
+physio = tapas_physio_main_create_regressors(physio);
+cd(pathNow)
 
-    fileName = 'sub-01_task_desc_physio_norm.json'; % filename in JSON extension 
-    str = fileread(fileName); % dedicated for reading files as text 
-    ReferenceJson = jsondecode(str);
-    
-    verifyEqual(testCase, ExampleJson, ReferenceJson, 'json files do not match');
+% read json file from example data
 
-end 
+% Determine filename of physio output file
+switch physio.write_bids.bids_step
+    case 1
+        tag = "raw";
+    case 2
+        tag = "norm";
+    case 3
+        tag = "sync";
+end
+bids_prefix = physio.write_bids.bids_prefix;
+jsonFilename = sprintf('%2$s_desc-%1$s_physio.json',tag, bids_prefix);
+actualJsonFile = fullfile(pathCurrentExample, physio.write_bids.bids_dir{1}, ...
+    jsonFilename);
+
+str = fileread(actualJsonFile); % dedicated for reading files as text
+actualJson = jsondecode(str);
+
+expectedJsonFile = fullfile(pathReferenceFiles, jsonFilename);
+
+str = fileread(expectedJsonFile); % dedicated for reading files as text
+expectedJson = jsondecode(str);
+
+verifyEqual(testCase, actualJson, expectedJson, 'BIDS-writer JSON files do not match');
+
+end

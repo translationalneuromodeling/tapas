@@ -41,14 +41,8 @@ end
 
 % path to examples, needed for all test cases
 function setupOnce(testCase)
-% Get PhysIO public repo base folder from this file's location
-% testCase.TestData.pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..');
-
-%official examples from TAPAS release, download via
-%tapas_download_example_data()
-%testCase.TestData.pathExamples = 'C:\Users\kasperla\OneDrive - University of Toronto\Documents\Personal\Projects\PhysIO\code\tapas\examples\6.0.1\PhysIO' ; % tapas_physio_get_path_examples(testCase.TestData.pathPhysioPublic);
-
-testCase.TestData.pathExamples = 'C:\Users\kasperla\OneDrive - University of Toronto\Documents\Personal\Projects\PhysIO\code\physio-examples';
+testCase.TestData.pathExamples = tapas_physio_get_path_examples();
+testCase.TestData.createdFigHandles = [];
 end
 
 
