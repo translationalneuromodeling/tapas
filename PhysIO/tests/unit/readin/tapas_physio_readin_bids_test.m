@@ -130,9 +130,9 @@ verifyEqual(testCase, actRaw.r, expRaw.r, 'Raw respiratory trace does not match'
 
 end
 
-%% Compare newly written bids output file from the Phillips ECG V3 test case to
-% saved files
-function test_compare_write2bids_consistency(testCase)
+%% Compare newly written bids output header (.json) file from the Phillips ECG V3 test case to
+% saved reference .json file
+function test_write2bids_json(testCase)
 
 pathExamples = testCase.TestData.pathExamples;
 
@@ -150,8 +150,8 @@ load(fileExample, 'matlabbatch');
 
 physio = tapas_physio_job2physio(matlabbatch{1}.spm.tools.physio);
 physio.verbose.level = 0;
-% Some modeling has to be done, otherwise no raw data preprocessed
-%physio.model.retroicor.include = 0;
+
+% minimize model, we only need some output
 physio.model.retroicor.order.cr = 0;
 physio.model.retroicor.order.r = 0;
 physio.model.hrv.include = 0;
@@ -184,5 +184,64 @@ str = fileread(expectedJsonFile); % dedicated for reading files as text
 expectedJson = jsondecode(str);
 
 verifyEqual(testCase, actualJson, expectedJson, 'BIDS-writer JSON files do not match');
+
+end
+
+%% Compare newly written bids output (.tsv) file from the Phillips ECG V3 test case to
+% saved reference .tsv file
+function test_write2bids_tsv(testCase)
+
+pathExamples = testCase.TestData.pathExamples;
+
+dirCurrentExample = 'Philips/ECG3T_V2';
+
+% location where the reference files are stored - step norm
+pathReferenceFiles = fullfile(pathExamples, 'TestReferenceResults', 'examples', dirCurrentExample);
+
+% location of the physio example file that will be passed to create_main_regrssors
+pathCurrentExample = fullfile(pathExamples, dirCurrentExample);
+pathNow = pwd;
+cd(pathCurrentExample); % for prepending absolute paths correctly
+fileExample = fullfile(pathCurrentExample, 'philips_ecg3t_v2_spm_job.mat');
+load(fileExample, 'matlabbatch');
+
+physio = tapas_physio_job2physio(matlabbatch{1}.spm.tools.physio);
+physio.verbose.level = 0;
+
+
+% minimize model, we only need some output
+physio.model.retroicor.order.cr = 0;
+physio.model.retroicor.order.r = 0;
+physio.model.hrv.include = 0;
+physio.model.rvt.include = 0;
+physio = tapas_physio_main_create_regressors(physio);
+cd(pathNow)
+
+% read json file from example data
+
+% Determine filename of physio output file
+switch physio.write_bids.bids_step
+    case 1
+        tag = "raw";
+    case 2
+        tag = "norm";
+    case 3
+        tag = "sync";
+end
+bids_prefix = physio.write_bids.bids_prefix;
+tsvFilename = sprintf('%2$s_desc-%1$s_physio.tsv',tag, bids_prefix);
+
+actualTsvFile = fullfile(pathCurrentExample, physio.write_bids.bids_dir{1}, ...
+    tsvFilename);
+
+% unzip compressed tab-separated values file and read into matlab variable
+gunzip([actualTsvFile, '.gz']);
+actualTsv = load(actualTsvFile, 'ascii');
+
+expectedTsvFile = fullfile(pathReferenceFiles, tsvFilename);
+gunzip([expectedTsvFile, '.gz']);
+expectedTsv = load(expectedTsvFile, 'ascii');
+
+verifyEqual(testCase, actualTsv, expectedTsv, 'BIDS-writer TSV files do not match');
 
 end
