@@ -11,7 +11,7 @@ function [] = tapas_physio_write2bids(ons_secs, write_bids, log_files)
 %     write_bods. bids_dir:     where the file should be written to
 
 
-% OUT: tsv file(s) caridac, respiratory, trigger
+% OUT: tsv file(s) cardiac, respiratory, trigger
 %      json file with meta data
 
 % REFERENCES:
@@ -24,40 +24,29 @@ bids_step = write_bids.bids_step;
 bids_dir = write_bids.bids_dir{1};
 bids_prefix = write_bids.bids_prefix;
 
+cardiac = ons_secs.c;
+respiratory = ons_secs.r;
+
+
+
 % after step1
 switch bids_step
     case 1
         tag = "raw";
-        cardiac = ons_secs.c;
-        respiratory = ons_secs.r;
-
-        s = struct("StartTime", log_files.relative_start_acquisition , ...
-            "SamplingFrequency",log_files.sampling_interval, "Columns", ["cardiac", "respiratory"]);
-
+        columnsStrings = ["cardiac", "respiratory"];
         mat=[cardiac respiratory];
-
 
     case 2
         tag = "norm";
-        cardiac = ons_secs.c;
-        respiratory = ons_secs.r;
-
-        s = struct("StartTime", log_files.relative_start_acquisition , ...
-            "SamplingFrequency",log_files.sampling_interval, "Columns", ["cardiac", "respiratory"]);
-
+        columnsStrings = ["cardiac", "respiratory"];
         mat=[cardiac respiratory];
 
-
-    case 3
+    case 3 % triggers available, save as well!
         tag = "sync";
-        % triggerafter step 2
         cardiac = ons_secs.c;
         respiratory = ons_secs.r;
 
-        trigger= ons_secs.svolpulse;
-
         % triggers have to be replaced into 1 (trigger) 0 (no trigger)
-
         trigger_binary = zeros(numel(ons_secs.t),1);
 
         for iVolume = 1:numel(ons_secs.svolpulse)
@@ -65,12 +54,38 @@ switch bids_step
             trigger_binary(row_number)=1;
         end
 
-        % prepare structure to write into BIDS
-        s = struct("StartTime", log_files.relative_start_acquisition , ...
-            "SamplingFrequency",log_files.sampling_interval, "Columns", ["cardiac", "respiratory", "trigger"]);
+
+        columnsStrings =  ["cardiac", "respiratory", "trigger"];
 
         mat=[cardiac respiratory trigger_binary];
 
+end
+
+
+cardiacStruct = struct("Description", "continuous pulse measurement", ...
+    "Units", "a.u.");
+respiratoryStruct = struct("Description", "continuous amplitude measurements by respiration belt", ...
+    "Units", "a.u.");
+triggerStruct = struct("Description", "continuous binary indicator variable of scanner trigger signal detected by PhysIO", ...
+    "Units", "a.u.");
+
+% prepare structure to write into BIDS
+
+if bids_step < 3 % before synchronization
+    s = struct("StartTime", log_files.relative_start_acquisition , ...
+        "SamplingFrequency",log_files.sampling_interval, "Columns", columnsStrings, ...
+        "Manufacturer", log_files.vendor, ...
+        "SoftwareVersions", "BIDS Conversion by TAPAS PhysIO Toolbox", ...
+        "cardiac", cardiacStruct, ...
+        "respiratory", respiratoryStruct);
+else
+    s = struct("StartTime", log_files.relative_start_acquisition , ...
+        "SamplingFrequency",log_files.sampling_interval, "Columns", columnsStrings, ...
+        "Manufacturer", logfiles.vendor, ...
+        "SoftwareVersions", "BIDS Conversion by TAPAS PhysIO Toolbox", ...
+        "cardiac", cardiacStruct, ...
+        "respiratory", respiratoryStruct, ...
+        "trigger", triggerStruct);
 end
 
 % create JSON file
