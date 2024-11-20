@@ -18,23 +18,59 @@
 #
 
 ## Parameters
-# TODO: Use getopts.
-TMPDIR=`mktemp -d -t tapas_test.XXX` # TODO: Check if that will work under mac. 
 TAPASREPO="git@tnurepository.ethz.ch:TNU/tapas.git"
 BRANCH="tapas-v-6-1-0"
+BRANCH=$(git rev-parse --abbrev-ref HEAD) # Uses current branch as default
 TOOLBOX="physio"
-DESKTOPOPT='-nodesktop'
-#LOGFILE="${TMPDIR}/tapas-test.log"
+MATLABOPT='-nodesktop'
+#LOGFILE="${TEMPDIR}/tapas-test.log"
 LOGFILE="$HOME/tapas-test.log"
+DORUN=true
+optstring="hdt:r:b:f:t:d:l:"
+while getopts ${optstring} arg; do
+    case "${arg}" in
+    h)
+        echo "run_tapas_test_in_environment: Run tapas-tests in isolated environment"
+        echo "Options:"
+        echo "  -h Show this help text."
+        echo "  -d Perform dry run (not starting matlab)"
+        echo "  -t <toolbox>    Test toolbox <toolbox> (default: physio)."
+        echo "  -f <tempdir>    Use <tempdir> as directory (default: new tmpdir will be created)."
+        echo "  -r <tapasRepo>  Use <tapasRepo> as repository (default: $TAPASREPO). "
+        echo "  -b <branch>     Checkout <branch> (default: $TOOLBOX)." 
+        echo "  -o <matlabOpt> Pass <matlabOpt> to matlab (default: $MATLABOPT)."
+        echo "  -l <logFile>    Use <logFile> as logfile (default: $LOGFILE)"
+        exit 0;;
+    d)
+        DORUN=false;;
+    t)  
+        TOOLBOX="$OPTARG";;  
+    f)  
+        TEMPDIR="$OPTARG";;  
+    r)
+        TAPASREPO="$OPTARG";;
+    b)
+        BRANCH="$OPTARG";;
+    o)
+        MATLABOPT="$OPTARG";;
+    l)
+        LOGFILE="$OPTARG";;
+    esac
+done 
+shift $((OPTIND -1))
+if [ -z "$TEMPDIR" ]; then
+    TEMPDIR=$(mktemp -d -t tapas_test.XXX) # TODO: Check if that will work under mac 
+    # Under macOS, this could be a different dir.
+fi
 
-## Create directory
-echo "Using temporal directory $TMPDIR"
+## Create Logfile
+echo "Using temporal directory $TEMPDIR"
 touch "$LOGFILE"
 echo "$START LOGGING AT $(date)" >> "$LOGFILE"
 echo "MATLAB-log will be written to $LOGFILE"
 ## Copy script in there
-cp tapas_test_in_environment_template.m "${TMPDIR}/tapas_test_in_environment.m"
-cd "$TMPDIR"
+cp tapas_test_in_environment_template.m "${TEMPDIR}/tapas_test_in_environment.m"
+cd "$TEMPDIR"
 
 ## Clone tapas and spm
 git clone --depth=1 --branch "$BRANCH" --single-branch "$TAPASREPO" |& tee -a "$LOGFILE"
@@ -52,8 +88,12 @@ cat tapas_test_in_environment.m >> "$LOGFILE"
 echo "========== END COPY OF TEST SCRIPT =======" >> "$LOGFILE"
 ## Start matlab:
 echo "Everything is ready - starting matlab"
-echo matlab -sd "$TMPDIR" $DESKTOPOPT -r "tapas_test_in_environment $LOGFILE $TOOLBOX " >> "$LOGFILE"
-matlab -sd "$TMPDIR" $DESKTOPOPT -r "tapas_test_in_environment $LOGFILE $TOOLBOX "
+echo matlab -sd "$TEMPDIR" $MATLABOPT -r "tapas_test_in_environment $LOGFILE $TOOLBOX " |& tee -a "$LOGFILE"
+if $DORUN; then
+    matlab -sd "$TEMPDIR" $MATLABOPT -r "tapas_test_in_environment $LOGFILE $TOOLBOX "
+else
+    echo "Skipping execution of matlab in dry run (option -d)." |& tee -a "$LOGFILE"
+fi
 
 # We don't delete temporal directory, since a) that can be often done by UNIX 
 # and b) allows us to inspect the directory for debugging.

@@ -2,8 +2,10 @@ function worked = tapas_test_in_environment(logfile,toolbox)
 % TAPAS_TEST_IN_ENVIRONMENT run test in separate environment
 %
 % IN 
-%    toolbox [character]
-%	Toolbox to test. If empty, all toolboxes will be tested.
+%   logfile [character]
+%       Logfile to print output to.
+%   toolbox [character]
+%       Toolbox to test. If empty, all toolboxes will be tested.
 % 
 % Authors: Matthias Müller-Schrader & Lars Kasper
 % Created: 2023-05-08
@@ -37,7 +39,7 @@ restoredefaultpath; % Ensure that path is clean.
 addpath(fullfile(pwd,'spm')); % Add SPM-folder.
 cd('tapas'); % Go into tapas-folder to init tapas
 tapas_init(toolbox{:}); % Init tapas.
-cd('..') % Execute rest in tapas-folder.
+cd('..') % Execute rest in temporal folder.
 tapas_download_example_data(); % Download example data for the tests.
 nFailed = tapas_test(toolbox{:}); % Run the tests.
 diary('off')
