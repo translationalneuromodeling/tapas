@@ -35,6 +35,8 @@ elseif ~iscell(toolbox)
 end
 
 fprintf('Running tapas_test_in_environment at %s\n',datetime)
+%fprintf('MATLAB-Version:\n\t%s\n',version())
+ver(); % Use not recommended anymore, but gives very nice overview over installed toolboxes
 restoredefaultpath; % Ensure that path is clean.
 addpath(fullfile(pwd,'spm')); % Add SPM-folder.
 cd('tapas'); % Go into tapas-folder to init tapas

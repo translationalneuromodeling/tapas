@@ -26,7 +26,7 @@ MATLABOPT='-nodesktop'
 #LOGFILE="${TEMPDIR}/tapas-test.log"
 LOGFILE="$HOME/tapas-test.log"
 DORUN=true
-optstring="hdt:r:b:f:t:d:l:"
+optstring="hdt:r:b:f:t:o:l:"
 while getopts ${optstring} arg; do
     case "${arg}" in
     h)
@@ -40,6 +40,9 @@ while getopts ${optstring} arg; do
         echo "  -b <branch>     Checkout <branch> (default: $TOOLBOX)." 
         echo "  -o <matlabOpt> Pass <matlabOpt> to matlab (default: $MATLABOPT)."
         echo "  -l <logFile>    Use <logFile> as logfile (default: $LOGFILE)"
+        echo ""
+        echo "By default, matlab starts in a non-graphical environment. For a "
+        echo "  graphical environment, use pass the following arguments: -o -desktop "
         exit 0;;
     d)
         DORUN=false;;
