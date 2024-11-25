@@ -20,6 +20,7 @@ Benoît Béranger          | CENIR, ICM                         | Paris     | FR
 Stephan Heunis           | Eindhoven University of Technology | Eindhoven | NL      | jsheunis               | 1.0
 Niklas Bürgi             | SNS, University of Zurich          | Zurich    | CH      | nbuergi                | 1.0
 Alexandre Sayal          | CIBIT, University of Coimbra       | Coimbra   | PT      | alexsayal              | 1.0
+Filippo Ferrari          | ANC, University of Edinburgh       | Edinburgh | UK      | filippoferrari         | 1.1
 Matthias Müller-Schrader | TNU, University of Zurich          | Zurich    | CH      | mms-neuro              | 1.1
 Saskia Bollmann          | The University of Queensland       | Brisbane  | AUS     | SaskiaBollmann         | 1.1
 **- Add Entry here -**   | **- Add Entry here -**             | **Add**   | **Add** | **Add**                | 1.1
