@@ -23,6 +23,8 @@ Alexandre Sayal          | CIBIT, University of Coimbra       | Coimbra   | PT  
 Filippo Ferrari          | ANC, University of Edinburgh       | Edinburgh | UK      | filippoferrari         | 1.1
 Matthias Müller-Schrader | TNU, University of Zurich          | Zurich    | CH      | mms-neuro              | 1.1
 Saskia Bollmann          | The University of Queensland       | Brisbane  | AUS     | SaskiaBollmann         | 1.1
+Anna Yurova              | LMU University Hospital            | Munich    | GER     | a-yur                  | 1.1
+Irene Sophia Plank       | LMU University Hospital            | Munich    | GER     | IreneSophia            | 1.1
 **- Add Entry here -**   | **- Add Entry here -**             | **Add**   | **Add** | **Add**                | 1.1
 
 (hereinafter referred to as "Contributor")
