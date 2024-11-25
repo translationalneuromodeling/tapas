@@ -567,7 +567,7 @@ if any(isinf(H(:))) || any(isnan(H(:))) || any(eig(H)<=0)
         % Parameter correlation
         Corr = tapas_Cov2Corr(Sigma);
         % Log-model evidence ~ negative variational free energy
-        LME = -optres.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
+        LME = -optres.valMin + 1/2*log(1/det(H)) - d/2*log(2*pi);
         % decomposed LME
         decompLME.logjoint = -optres.valMin;
         decompLME.postpredcorr = 1/2*log(1/det(H));
@@ -584,7 +584,7 @@ else
     % Parameter correlation
     Corr = tapas_Cov2Corr(Sigma);
     % Log-model evidence ~ negative variational free energy
-    LME = -optres.valMin + 1/2*log(1/det(H)) + d/2*log(2*pi);
+    LME = -optres.valMin + 1/2*log(1/det(H)) - d/2*log(2*pi);
     % decomposed LME
     decompLME.logjoint = -optres.valMin;
     decompLME.postpredcorr = 1/2*log(1/det(H));
