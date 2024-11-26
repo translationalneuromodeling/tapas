@@ -16,6 +16,11 @@ TAPAS toolbox
         - as listed in `spm_get_defaults('tbx')`
     - Refactoring of Philips read-in to support novel 12-column logfile version, see [GitHub issue #207](https://github.com/translationalneuromodeling/tapas/issues/207#issuecomment-1246078600)
 
+## [6.0.2] 2024-11-25
+
+### Fixed
+- HGF: Bugfix version v7.1.2 #288, fixes issue [#286](https://github.com/translationalneuromodeling/tapas/issues/286) about log model evidence calculation
+
 ## [6.0.1] 2022-05-17
 
 ### Fixed
