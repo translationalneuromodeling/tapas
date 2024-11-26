@@ -4,7 +4,7 @@ TAPAS toolbox
 ## [6.0.2] 2024-11-25
 
 ### Fixed
-- HGF:: Bugfix version v7.1.2 #288, fixes issue #286
+- HGF: Bugfix version v7.1.2 #288, fixes issue [#286](https://github.com/translationalneuromodeling/tapas/issues/286) about log model evidence calculation
 
 ## [6.0.1] 2022-05-17
 
