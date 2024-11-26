@@ -1,4 +1,4 @@
 [submodule "wikidocs"]
 	path = PhysIO/wikidocs
-	url = git@tnurepository.ethz.ch:physio/physio-public.wiki.git
+	url = https://gitlab.ethz.ch/physio/physio-doc.wiki.git
 	branch = master
