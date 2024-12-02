@@ -16,7 +16,6 @@ sw    = warning('off','MATLAB:log:logOfZero');
 % assume diagonal form
 %--------------------------------------------------------------------------
 TOL   = 1e-16;
-n     = length(C);
 s     = diag(C);
 i     = find(s > TOL & s < 1/TOL);
 C     = C(i,i);
@@ -24,7 +23,7 @@ H     = sum(log(diag(C)));
 
 % invoke det if non-diagonal
 %--------------------------------------------------------------------------
-[i j] = find(C);
+[i, j] = find(C);
 if any(i ~= j)
       n = length(C);
       a = exp(H/n);
