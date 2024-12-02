@@ -87,7 +87,7 @@ if ( options.visualize )
             imagesc(output.Ep.A)
             title('estimated','FontSize',14)
             axis square
-            caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
+            clim([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
             colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
@@ -100,7 +100,7 @@ if ( options.visualize )
             imagesc(DCM.Tp.A)
             title('true','FontSize',14)
             axis square
-            caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
+            clim([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
             colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
@@ -151,7 +151,7 @@ if ( options.visualize )
             imagesc(output.Ep.A)
             title('estimated','FontSize',16)
             axis square
-            caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
+            clim([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
             colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
@@ -164,7 +164,7 @@ if ( options.visualize )
             imagesc(DCM.Tp.A)
             title('true','FontSize',16)
             axis square
-            caxis([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
+            clim([-1*max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A))))) max(max(abs(DCM.Tp.A-diag(diag(DCM.Tp.A)))))])
             colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
@@ -184,7 +184,7 @@ if ( options.visualize )
             imagesc(output.Ep.A)
             title('estimated','FontSize',14)
             axis square
-            caxis([-1*max(max(abs(output.Ep.A-diag(diag(output.Ep.A))))) max(max(abs(output.Ep.A-diag(diag(output.Ep.A)))))])
+            clim([-1*max(max(abs(output.Ep.A-diag(diag(output.Ep.A))))) max(max(abs(output.Ep.A-diag(diag(output.Ep.A)))))])
             colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
@@ -197,7 +197,7 @@ if ( options.visualize )
             imagesc(output.Ip.A)
             title('Pp binary indicator','FontSize',14)
             axis square
-            caxis([0 1])
+            clim([0 1])
             colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
@@ -249,7 +249,7 @@ if ( options.visualize )
             imagesc(output.Ep.A)
             title('estimated','FontSize',16)
             axis square
-            caxis([-1*max(max(abs(output.Ep.A-diag(diag(output.Ep.A))))) max(max(abs(output.Ep.A-diag(diag(output.Ep.A)))))])
+            clim([-1*max(max(abs(output.Ep.A-diag(diag(output.Ep.A))))) max(max(abs(output.Ep.A-diag(diag(output.Ep.A)))))])
             colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
@@ -262,7 +262,7 @@ if ( options.visualize )
             imagesc(output.Ip.A)
             title('Pp binary indicator','FontSize',16)
             axis square
-            caxis([0 1])
+            clim([0 1])
             colorbar
             set(gca,'xtick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
             set(gca,'ytick',[1 round(size(output.Ep.A,1)/2) size(output.Ep.A,1)])
