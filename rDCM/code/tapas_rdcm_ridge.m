@@ -84,11 +84,10 @@ for k = 1:nr
     Y_r = Y(idx_y,k);
     
     % effective number of data points
-    N_eff = sum(idx_y)/(args.r_dt);
+    N_eff = sum(idx_y);
     
     % effective dimensionality
     D_r = sum(idx(k,:));
-    
     
     %% read priors
     
@@ -109,7 +108,7 @@ for k = 1:nr
     t = a0/b0;
     
     % estimate alpha_N
-    aN_r = a0 + N_eff/ (2*args.r_dt);
+    aN_r = a0 + N_eff/2;
     
     % cycle stops after 500 iterations
     count = 500; 

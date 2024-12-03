@@ -181,7 +181,7 @@ for k = ord_regions
         % intialize z, t & aN per regions
         z_r   = p0;
         t     = a0/b0;
-        aN_r  = a0 + N_eff/(2*args.r_dt);
+        aN_r  = a0 + N_eff/2;
         
         
         % cycle stops after 500 iterations;
@@ -263,7 +263,7 @@ for k = ord_regions
             %% compute model evidence
 
             % compute the components of the model evidence
-            log_lik = N_eff*(psi(aN_r) - log(bN_r))/2 - N_eff*log(2*pi)/2 - t*QF/2;
+            log_lik = N_eff*(psi(aN_r) - log(bN_r))/2 - N_eff*log(2*pi)/2 - t*QF;
             log_p_weight = 1/2*tapas_rdcm_spm_logdet(l0_r) - D*log(2*pi)/2 - (mN_r-m0_r)'*l0_r*(mN_r-m0_r)/2 - trace(l0_r*sN_r)/2;
             log_p_prec = a0*log(b0) - gammaln(a0) + (a0-1)*(psi(aN_r) - log(bN_r)) - b0*t;
             log_p_z = sum(log(1-p0(z_idx)) + z_r(z_idx).*log(p0(z_idx)./(1-p0(z_idx))));
@@ -303,7 +303,7 @@ for k = ord_regions
         %% compute model evidence
 
         % compute the components of the model evidence
-        log_lik_iter(iter)      = N_eff*(psi(aN_r) - log(bN_r))/2 - N_eff*log(2*pi)/2 - t*QF/2;
+        log_lik_iter(iter)      = N_eff*(psi(aN_r) - log(bN_r))/2 - N_eff*log(2*pi)/2 - t*QF;
         log_p_weight_iter(iter) = 1/2*tapas_rdcm_spm_logdet(l0_r) - D*log(2*pi)/2 - (mN_r-m0_r)'*l0_r*(mN_r-m0_r)/2 - trace(l0_r*sN_r)/2;
         log_p_prec_iter(iter)   = a0*log(b0) - gammaln(a0) + (a0-1)*(psi(aN_r) - log(bN_r)) - b0*t;
         log_p_z_iter(iter)      = sum(log(1-p0(z_idx)) + z_r(z_idx).*log(p0(z_idx)./(1-p0(z_idx))));
