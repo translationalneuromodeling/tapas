@@ -1,6 +1,15 @@
 # Changelog
 Regression Dynamic Causal Modeling (rDCM) toolbox 
 
+## [1.5] 2024-12-03
+### Added
+none
+### Changed
+- Fix bug in calculation of negative free energy for sparse rDCM
+- remove r_dt from update equations
+- clean up code
+### Removed
+none
 
 ## [1.4] 2022-03-22
 
