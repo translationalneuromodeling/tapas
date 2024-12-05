@@ -72,7 +72,7 @@ bopars = tapas_fitModel([],...
 % by fitModel. The most important of these is the log-model evidence (LME).
 %% Simulate responses
 % Next, we simulate an agent's responses using the simModel function. To do 
-% that, we simply choose values for $\omega$. Here, we take $\omega_2=-2.5$ and 
+% that, we simply choose values for $\omega$. Here, we take $\omega_2=-2.5$ and  
 % $\omega_3=-6$. But in addition to the perceptual model _hgf_binary_, we now 
 % need a response model. Here, we take the unit square sigmoid model, _unitsq_sgm_, 
 % with parameter $\zeta=5$. The last argument is an optional seed for the random 
@@ -142,7 +142,7 @@ tapas_fit_plotCorr(est)
 % In this case, there is nothing to worry about. Unless their correlation is 
 % very close to +1 or -1, two parameters are identifiable, meaning that they describe 
 % distinct aspects of the data.
-%% 
+% 
 % The posterior parameter correlation matrix is stored in est.optim.Corr,
 
 disp(est.optim.Corr)
@@ -239,7 +239,7 @@ est1a = tapas_fitModel(sim.y,...
                        'tapas_quasinewton_optim_config');
 %% 
 % The single estimated perceptual parameter is the constant learning rate $\alpha$.
-%% 
+% 
 % Just as for _hgf_binary_, we can plot posterior correlations and inferred 
 % trajectories for _rw_binary_.
 
@@ -369,7 +369,7 @@ tapas_fit_plotResidualDiagnostics(est2)
 % model*, not the perceptual model. Ultimately, we want to be able to predict 
 % responses, not just filter inputs, and the residuals of the response model capture 
 % the performance of the combination of perceptual and response models.
-%% 
+% 
 % Looking at the same diagnostics for binary responses is less straightforward. 
 % The HGF Toolbox uses *Pearson residuals* in this case, defined as
 % 
