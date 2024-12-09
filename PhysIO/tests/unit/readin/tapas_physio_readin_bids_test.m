@@ -244,4 +244,8 @@ expectedTsv = load(expectedTsvFile, 'ascii');
 
 verifyEqual(testCase, actualTsv, expectedTsv, 'BIDS-writer TSV files do not match');
 
+% delete unzipped files after testing completed
+delete(expectedTsvFile);
+delete(actualTsvFile);
+
 end
