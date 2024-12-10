@@ -33,19 +33,20 @@ respiratory = ons_secs.r;
 switch bids_step
     case 1
         tag = "raw";
+        desc = "raw, after vendor file read-in";
         columnsStrings = ["cardiac", "respiratory"];
         mat=[cardiac respiratory];
 
     case 2
         tag = "norm";
+        desc = "processed: normalized amplitudes, padded for scan duration";
         columnsStrings = ["cardiac", "respiratory"];
         mat=[cardiac respiratory];
 
     case 3 % triggers available, save as well!
         tag = "sync";
-        cardiac = ons_secs.c;
-        respiratory = ons_secs.r;
-
+        desc = "processed: normalized amplitudes, padded for scan duration, scan trigger extracted";
+        
         % triggers have to be replaced into 1 (trigger) 0 (no trigger)
         trigger_binary = zeros(numel(ons_secs.t),1);
 
@@ -59,33 +60,76 @@ switch bids_step
 
         mat=[cardiac respiratory trigger_binary];
 
+    case 4 % preprocessed time series with detected cardiac pulses
+
+        tag = "preproc";
+        desc = "processed: normalized amplitudes, padded for scan duration, scan trigger extracted, filtered respiratory data";
+        
+        respiratory = ons_secs.r;
+
+        % triggers have to be replaced into 1 (trigger) 0 (no trigger)
+        trigger_binary = zeros(numel(ons_secs.t),1);
+
+        for iVolume = 1:numel(ons_secs.svolpulse)
+            row_number = ons_secs.svolpulse(iVolume)==ons_secs.t;
+            trigger_binary(row_number)=1;
+        end
+
+        % triggers have to be replaced into 1 (trigger) 0 (no trigger)
+        cpulse_binary = zeros(numel(ons_secs.t),1);
+
+        for iVolume = 1:numel(ons_secs.cpulse)
+            row_number = ons_secs.cpulse(iVolume)==ons_secs.t;
+            cpulse_binary(row_number)=1;
+        end
+
+        columnsStrings =  ["cardiac", "respiratory", "trigger", "cardiac_pulse"];
+
+        mat=[cardiac respiratory trigger_binary, cpulse_binary];
+
 end
 
 
-cardiacStruct = struct("Description", "continuous pulse measurement", ...
+%% Prepare structure to write into BIDS
+cardiacStruct = struct("Description", ...
+    sprintf("continuous pulse measurement (%s)", desc), ...
     "Units", "a.u.");
-respiratoryStruct = struct("Description", "continuous amplitude measurements by respiration belt", ...
+respiratoryStruct = struct("Description", ...
+    sprintf("continuous amplitude measurements by respiration belt (%s)", desc), ...
     "Units", "a.u.");
 triggerStruct = struct("Description", "continuous binary indicator variable of scanner trigger signal detected by PhysIO", ...
     "Units", "a.u.");
+cardiacPulseStruct = struct("Description", "continuous binary indicator variable of cardiac pulse (peak) detected by PhysIO", ...
+    "Units", "a.u.");
 
-% prepare structure to write into BIDS
-
-if bids_step < 3 % before synchronization
+switch bids_step
+    case {1,2}
     s = struct("StartTime", log_files.relative_start_acquisition , ...
-        "SamplingFrequency",log_files.sampling_interval, "Columns", columnsStrings, ...
+        "SamplingFrequency", 1./ons_secs.dt, "Columns", columnsStrings, ...
         "Manufacturer", log_files.vendor, ...
-        "SoftwareVersions", "BIDS Conversion by TAPAS PhysIO Toolbox", ...
+        "SoftwareVersions", ...
+        sprintf("BIDS Conversion by TAPAS PhysIO Toolbox (%s)", tapas_physio_version()), ...
         "cardiac", cardiacStruct, ...
         "respiratory", respiratoryStruct);
-else
+    case 3
     s = struct("StartTime", log_files.relative_start_acquisition , ...
-        "SamplingFrequency",log_files.sampling_interval, "Columns", columnsStrings, ...
+        "SamplingFrequency", 1./ons_secs.dt, "Columns", columnsStrings, ...
         "Manufacturer", logfiles.vendor, ...
-        "SoftwareVersions", "BIDS Conversion by TAPAS PhysIO Toolbox", ...
+        "SoftwareVersions", ...
+        sprintf("BIDS Conversion by TAPAS PhysIO Toolbox (%s)", tapas_physio_version()), ...
         "cardiac", cardiacStruct, ...
         "respiratory", respiratoryStruct, ...
         "trigger", triggerStruct);
+    case 4
+        s = struct("StartTime", log_files.relative_start_acquisition , ...
+        "SamplingFrequency", 1./ons_secs.dt, "Columns", columnsStrings, ...
+        "Manufacturer", logfiles.vendor, ...
+        "SoftwareVersions", ...
+        sprintf("BIDS Conversion by TAPAS PhysIO Toolbox (%s)", tapas_physio_version()), ...
+        "cardiac", cardiacStruct, ...
+        "respiratory", respiratoryStruct, ...
+        "trigger", triggerStruct, ...
+        "cardiac_pulse", cardiacPulseStruct);
 end
 
 % create JSON file
