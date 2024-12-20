@@ -115,6 +115,20 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_philips_ecg3t_v2_for_bids_vs_bids_converted_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% from same Siemens VD data externally converted to BIDS
+% to current output of re-run of Siemens_VD/PPU3T_For_BIDS example using matlab only
+% !!!TODO: FIX Results, not equivalent to external BIDS converter results
+dirExample = 'Philips/ECG3T_V2';
+dirRefResults = 'BIDS/ECG3T_V2';
+doUseSpm = false;
+idxTests = [1:5]; % empty for now, should be 1:5, or at least 4:5
+run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
+    dirRefResults, idxTests)
+end
+
+
 function test_philips_ecg7t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG7T example using matlab only

@@ -24,18 +24,18 @@ bids_step        = cfg_menu;
 bids_step.tag    = 'bids_step';
 bids_step.name   = 'Processing step for BIDS conversion';
 bids_step.help   = {'At which state of preprocessing should the bids file be written?'
-    '   ''raw''    Chebychev Type II filter, use for steep transition from'
-    '               start to stop band'
-    '   ''norm''    Butterworth filter, standard filter with maximally flat'
-    '               passband (Infinite impulse response), but stronger'
-    '               ripples in transition band'
-    '   ''sync''    Butterworth filter, standard filter with maximally flat'
-    '               passband (Infinite impulse response), but stronger'
-    '               ripples in transition band'
+'   none    (0) - No BIDS files written'
+'   raw     (1) - Write raw vendor file data to BIDS'
+'   norm    (2) - Write padded and normalized time series'
+'                 to BIDS'
+'   sync    (3) - Write padded/normalized data to BIDS'
+'                 including extracted scan triggers'
+'   preproc (4) - Write preprocessed data to BIDS (filtering,'
+'                 cropping to acquisition window, cardiac pulse detection) (DEFAULT)'
 };
-bids_step.labels = {'raw', 'norm', 'sync'};
-bids_step.values = {1, 2, 3};
-bids_step.val    = {2};
+bids_step.labels = {'none', 'raw', 'norm', 'sync', 'preproc'};
+bids_step.values = {0, 1, 2, 3, 4};
+bids_step.val    = {4};
 
 %--------------------------------------------------------------------------
 % output directory

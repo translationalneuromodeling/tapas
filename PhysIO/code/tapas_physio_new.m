@@ -752,9 +752,23 @@ end
 % .json file
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-write_bids.bids_step = 1;               % defines at which processing stage the data should be written, default = 1 (raw)
-write_bids.bids_dir = {'physio_out'};   % output file of file, default = 'physio_out'
-write_bids.bids_prefix = '';            % BIDS prefix
+%     write_bids.bids_step      integer describing the stage of the 
+%                               processing pipeline at which the files are 
+%                               being written.
+%                               Options: 
+%                               0 - No BIDS files written
+%                               1 - Write raw vendor file data to BIDS
+%                               2 - Write padded and normalized time series 
+%                                   to BIDS
+%                               3 - Write padded/normalized data to BIDS, 
+%                                   including extracted scan triggers
+%                               4 - Write preprocessed data to BIDS (filtering,
+%                                   cropping to acquisition window, cardiac 
+%                                   pulse detection)write_bids.bids_step =
+%                                   4 (DEFAULT); 
+write_bids.bids_step            = 4;
+write_bids.bids_dir             = {'physio_out'};   % output file of file, default = 'physio_out'
+write_bids.bids_prefix          = '';               % BIDS prefix
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

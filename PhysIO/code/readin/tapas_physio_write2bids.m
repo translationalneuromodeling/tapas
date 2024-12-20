@@ -5,20 +5,40 @@ function [] = tapas_physio_write2bids(ons_secs, write_bids, log_files)
 % Parameters:
 % IN:
 %     ons_secs:                 onsecs structure
-%     write_bids.bids_step      integer describing the stage of the processing pipeline at which the files are being written.
-%                               Options: 1, 2, 3
-
-%     write_bods. bids_dir:     where the file should be written to
-
-
-% OUT: tsv file(s) cardiac, respiratory, trigger
-%      json file with meta data
-
+%     write_bids.bids_step      integer describing the stage of the 
+%                               processing pipeline at which the files are 
+%                               being written.
+%                               Options: 
+%                               0 - No BIDS files written
+%                               1 - Write raw vendor file data to BIDS
+%                               2 - Write padded and normalized time series 
+%                                   to BIDS
+%                               3 - Write padded/normalized data to BIDS, 
+%                                   including extracted scan triggers
+%                               4 - Write preprocessed data to BIDS (filtering,
+%                                   cropping to acquisition window, cardiac 
+%                                   pulse detection)
+%     write_bids.bids_dir:     where the file should be written to
+% OUT: 
+%       tsv.gz file             zipped tab-separated value text file, colums
+%                               with cardiac, respiratory, [scan trigger], 
+%                               [cardiac pulse trigger]
+%       json file with meta data
+%
 % REFERENCES:
 % https://bids-specification.readthedocs.io/en/stable/04-modality-specific
 % -files/06-physiological-and-other-continuous-recordings.html
 
-% Author: Johanna Bayer 2022
+% Author: Johanna Bayer
+% Created: 2022
+% Copyright (C) 2011-2024 TNU, Institute for Biomedical Engineering, 
+%               University of Zurich and ETH Zurich.
+%
+% This file is part of the TAPAS PhysIO Toolbox, which is released under
+% the terms of the GNU General Public Licence (GPL), version 3. You can
+% redistribute it and/or modify it under the terms of the GPL (either
+% version 3 or, at your option, any later version). For further details,
+% see the file COPYING or <http://www.gnu.org/licenses/>.
 
 bids_step = write_bids.bids_step;
 bids_dir = write_bids.bids_dir{1};
@@ -28,6 +48,7 @@ cardiac = ons_secs.c;
 respiratory = ons_secs.r;
 
 
+if bids_step > 0
 
 % after step1
 switch bids_step
@@ -151,4 +172,6 @@ gzip(save_file);
 % delete uncompressed .tsv file after zipping
 if isfile([save_file, '.gz'])
     delete(save_file)
+end
+
 end

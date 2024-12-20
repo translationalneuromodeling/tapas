@@ -169,6 +169,8 @@ switch physio.write_bids.bids_step
         tag = "norm";
     case 3
         tag = "sync";
+    case 4
+        tag = 'preproc';
 end
 bids_prefix = physio.write_bids.bids_prefix;
 jsonFilename = sprintf('%2$s_desc-%1$s_physio.json',tag, bids_prefix);
@@ -227,6 +229,8 @@ switch physio.write_bids.bids_step
         tag = "norm";
     case 3
         tag = "sync";
+    case 4
+        tag = 'preproc';
 end
 bids_prefix = physio.write_bids.bids_prefix;
 tsvFilename = sprintf('%2$s_desc-%1$s_physio.tsv',tag, bids_prefix);
