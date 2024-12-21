@@ -123,9 +123,10 @@ function test_philips_ecg3t_v2_for_bids_vs_bids_converted_matlab_only(testCase)
 dirExample = 'BIDS/ECG3T_V2';
 dirRefResults = 'Philips/ECG3T_V2';
 doUseSpm = false;
+isVerbose = true;
 idxTests = [1:5]; % empty for now, should be 1:5, or at least 4:5
 run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
-    dirRefResults, idxTests)
+    dirRefResults, idxTests, isVerbose)
 end
 
 
@@ -411,7 +412,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
-    dirRefResults, idxTests)
+    dirRefResults, idxTests, isVerbose)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of example in specified example sub-folder
 % Note: both SPM or matlab-script based execution is possible
@@ -437,9 +438,16 @@ function run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
 %               equivalency is expected (e.g., using the same data window,
 %               but from a shorter logfile, ons_secs.raw will differ)
 %               default: [1 2 3 4 5] (all)
+%   isVerbose   true or false; default: false
+%               plots comparison results between actual and expected physio
+%               struct fields
 %
 % OUT
 %
+
+if nargin < 6
+    isVerbose = false;
+end
 
 if nargin < 5
     idxTests = 1:5;
@@ -522,7 +530,6 @@ fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'examples', .
     dirRefResults, fileExampleOutputPhysio);
 load(fileReferenceData, 'physio');
 expPhysio = physio;
-
 
 % Compare all numeric sub-fields of physio with some tolerance
 % ons_secs has all the computed preprocessed physiological and scan timing
@@ -608,6 +615,14 @@ if doTestMultipleRegressorsTxt
     verifyEqual(testCase, actRegressorsFromTxt, expRegressorsFromTxt, ...
         'RelTol', relTol, ...
         'Comparing multiple regressors in txt-files');
+end
+
+if isVerbose
+    try % test should not fail because of a bad plot
+        tapas_physio_plot_results_comparison(actPhysio, expPhysio);
+    catch
+        warning('Comparison plot of actual vs reference physio struct failed');
+    end
 end
 
 end
