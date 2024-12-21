@@ -545,7 +545,7 @@ modality.tag    = 'modality';
 modality.name   = 'modality';
 modality.help   = {'Shall ECG or PPU data be read from logfiles?'};
 modality.labels = {'ECG', 'OXY/PPU', 'ECG_WiFi', 'PPU_WiFi'};
-modality.values = {'ECG', 'PPU', 'ECG_WiFi', 'PPU_Wifi'};
+modality.values = {'ECG', 'PPU', 'ECG_WiFi', 'PPU_WiFi'};
 modality.val    = {'ECG'};
 
 
