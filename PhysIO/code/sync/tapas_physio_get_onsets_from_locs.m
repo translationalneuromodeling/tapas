@@ -88,13 +88,11 @@ if length(SLICELOCS{Nallvols})~=Nslices && ~hasWarned
 end
 
 if verbose.level >= 3
-        verbose = tapas_physio_plot_sync_bundles(Nallvols, t,SLICELOCS, verbose)
-
+        verbose = tapas_physio_plot_sync_bundles(Nallvols, t,SLICELOCS, verbose);
         % save relevant parameters
         verbose.review.sync_bundles.Nallvols = Nallvols;
         verbose.review.sync_bundles.t = t;
-        verbose.review.sync_bundles.SLICELOCS =SLICELOCS;
-
+        verbose.review.sync_bundles.SLICELOCS = SLICELOCS;
 end
 
 try

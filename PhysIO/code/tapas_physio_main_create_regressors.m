@@ -179,7 +179,7 @@ if ~hasPhaseLogfile
             % Write padded/normalized data to BIDS, including extracted
             % scan triggers
             if isequal(write_bids.bids_step,3)
-                tapas_physio_write2bids(ons_secs, write_bids, log_files );
+                tapas_physio_write2bids(ons_secs, write_bids, log_files);
             end
 
 

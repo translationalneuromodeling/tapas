@@ -64,6 +64,14 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_bids_ecg3t_v2_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of BIDS/ECG3T_V2 example using matlab only
+dirExample = 'BIDS/ECG3T_V2';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
 function test_bids_ppu3t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of BIDS/PPU3T example using matlab only
@@ -136,7 +144,6 @@ ignoredFieldsOnsSecs = {'acq_codes', 'c_scaling', 'r_scaling'};
 run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
     dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose);
 end
-
 
 function test_philips_ecg7t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -253,6 +260,14 @@ function test_bids_cpulse3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of BIDS/CPULSE3T example using SPM Batch Editor
 dirExample = 'BIDS/CPULSE3T';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_bids_ecg3t_v2_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of BIDS/ECG3T_V2 example using matlab only
+dirExample = 'BIDS/ECG3T_V2';
 doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end

@@ -4,7 +4,9 @@ function [] = tapas_physio_write2bids(ons_secs, write_bids, log_files)
 %
 % Parameters:
 % IN:
-%     ons_secs:                 onsecs structure
+%     ons_secs:                 ons_secs (onsets in seconds) structure
+%                               that contains PhysIO traces and
+%                               preprocessing stages
 %     write_bids.bids_step      integer describing the stage of the 
 %                               processing pipeline at which the files are 
 %                               being written.
