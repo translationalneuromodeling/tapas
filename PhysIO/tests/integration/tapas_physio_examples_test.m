@@ -123,10 +123,18 @@ function test_philips_ecg3t_v2_for_bids_vs_bids_converted_matlab_only(testCase)
 dirExample = 'BIDS/ECG3T_V2';
 dirRefResults = 'Philips/ECG3T_V2';
 doUseSpm = false;
-isVerbose = true;
-idxTests = [1:5]; % empty for now, should be 1:5, or at least 4:5
+isVerbose = false;
+idxTests = [1:5]; % raw and processed data tested in different steps
+% some fields from Philips data are not converted to BIDS, because:
+% acq_codes:    contain detected cardiac peaks from Philips which we typically
+%               ignore and don't write to BIDS
+% c_scaling:    BIDS dataset is saved already after normalization,
+%               amplitudes are set to one vs Philips
+% r_scaling:    BIDS dataset is saved already after normalization,
+%               amplitudes are set to one vs Philips
+ignoredFieldsOnsSecs = {'acq_codes', 'c_scaling', 'r_scaling'};
 run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
-    dirRefResults, idxTests, isVerbose)
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose);
 end
 
 
@@ -412,7 +420,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
-    dirRefResults, idxTests, isVerbose)
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of example in specified example sub-folder
 % Note: both SPM or matlab-script based execution is possible
@@ -438,6 +446,9 @@ function run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
 %               equivalency is expected (e.g., using the same data window,
 %               but from a shorter logfile, ons_secs.raw will differ)
 %               default: [1 2 3 4 5] (all)
+%   ignoredFieldsOnsSecs
+%               extra fields ignored from ons_secs substruct of physio
+%               default: {}
 %   isVerbose   true or false; default: false
 %               plots comparison results between actual and expected physio
 %               struct fields
@@ -445,8 +456,12 @@ function run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
 % OUT
 %
 
-if nargin < 6
+if nargin < 7
     isVerbose = false;
+end
+
+if nargin < 6
+    ignoredFieldsOnsSecs = {};
 end
 
 if nargin < 5
@@ -548,7 +563,7 @@ if doTestOnsSecsRaw
         IsEqualTo(expPhysio.ons_secs.raw,  ...
         'Using', StructComparator(NumericComparator, 'Recursively', true), ...
         'Within', RelativeTolerance(relTol), ...
-        'IgnoringFields',  {'spulse_per_vol', 'fr'}...
+        'IgnoringFields', [ignoredFieldsOnsSecs {'spulse_per_vol', 'fr'}] ...
         ), 'Comparing all numeric subfields of ons_secs.raw to check read-in and basic filtering of phys recordings');
 
     % test filtered respiratory trace separetely, because of values close
@@ -579,7 +594,7 @@ if doTestOnsSecs
         IsEqualTo(expPhysio.ons_secs,  ...
         'Using', StructComparator(NumericComparator, 'Recursively', true), ...
         'Within', RelativeTolerance(relTol), ...
-        'IgnoringFields',  {'spulse_per_vol', 'raw'}...
+        'IgnoringFields',  [ignoredFieldsOnsSecs {'spulse_per_vol', 'raw'}] ...
         ), 'Comparing all numeric subfields of ons_secs to check full preprocessing of phys recordings');
 end
 
