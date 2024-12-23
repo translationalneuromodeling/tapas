@@ -90,6 +90,7 @@ else % assemble physio-structure
     physio.model        = varargin{4};
     physio.verbose      = varargin{5};
     physio.save_dir     = varargin{6};
+    physio.write_bids   = varargin{7};
 end
 
 % fill up empty parameters
@@ -110,6 +111,7 @@ preproc     = physio.preproc;
 scan_timing = physio.scan_timing;
 model       = physio.model;
 verbose     = physio.verbose;
+write_bids  = physio.write_bids; % 
 
 hasPhaseLogfile = strcmpi(log_files.vendor, 'CustomPhase');
 doesNeedPhyslogFiles = model.retroicor.include || model.rvt.include || model.hrv.include;
@@ -133,10 +135,15 @@ if ~hasPhaseLogfile
             %% 1. Read in vendor-specific physiological log-files
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
-            [ons_secs.c, ons_secs.r, ons_secs.t, ons_secs.cpulse, ons_secs.acq_codes, ...
-                verbose] = tapas_physio_read_physlogfiles(...
-                log_files, preproc.cardiac.modality, verbose, scan_timing.sqpar);
+            [ons_secs, verbose] = tapas_physio_read_physlogfiles(log_files, ...
+                preproc.cardiac.modality, ...
+                scan_timing.sqpar, ons_secs, verbose);
             
+            % Write raw vendor file data to BIDS, if selected
+            if isequal(write_bids.bids_step, 1)
+                tapas_physio_write2bids(ons_secs, write_bids, log_files);
+            end
+
             % also: normalize cardiac/respiratory data, if wanted
             doNormalize = true;
             
@@ -151,7 +158,10 @@ if ~hasPhaseLogfile
             
             verbose = tapas_physio_plot_raw_physdata(ons_secs, verbose);
             
-            
+            % Write padded and normalized time series to BIDS
+            if isequal(write_bids.bids_step, 2)
+                tapas_physio_write2bids(ons_secs, write_bids, log_files );
+            end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %% 2. Create scan timing nominally or from logfile
@@ -166,7 +176,13 @@ if ~hasPhaseLogfile
                 log_files, scan_timing, ons_secs, verbose);
             minConstantIntervalAlertSamples = ceil(minConstantIntervalAlertSeconds/ons_secs.dt);
             
-            
+            % Write padded/normalized data to BIDS, including extracted
+            % scan triggers
+            if isequal(write_bids.bids_step,3)
+                tapas_physio_write2bids(ons_secs, write_bids, log_files);
+            end
+
+
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %% 3. Extract and preprocess physiological data, crop to scan aquisition
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -263,7 +279,12 @@ else
     
 end
 
-
+% TODO: Call BIDS derivative writer function here
+% For now: write to BIDS file with note on preprocessing (filtering,
+% cropping to acquisition window, cardiac pulse detection)
+if isequal(write_bids.bids_step,4)
+    tapas_physio_write2bids(ons_secs, write_bids, log_files);
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 4. Create physiological noise model regressors for GLM for all specified

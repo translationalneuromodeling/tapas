@@ -41,9 +41,8 @@ end
 
 % path to examples, needed for all test cases
 function setupOnce(testCase)
-% Get PhysIO public repo base folder from this file's location
-testCase.TestData.pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..');
-testCase.TestData.pathExamples =  tapas_physio_get_path_examples(testCase.TestData.pathPhysioPublic);
+testCase.TestData.pathExamples = tapas_physio_get_path_examples();
+testCase.TestData.createdFigHandles = [];
 end
 
 
@@ -61,6 +60,14 @@ function test_bids_cpulse3t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of BIDS/CPULSE3T example using matlab only
 dirExample = 'BIDS/CPULSE3T';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_bids_ecg3t_v2_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of BIDS/ECG3T_V2 example using matlab only
+dirExample = 'BIDS/ECG3T_V2';
 doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
@@ -114,6 +121,28 @@ function test_philips_ecg3t_v2_matlab_only(testCase)
 dirExample = 'Philips/ECG3T_V2';
 doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_philips_ecg3t_v2_for_bids_vs_bids_converted_matlab_only(testCase)
+%% Checking self-consistency of PhysIO bids_writer: 
+% Compares reference output of preprocessing and modeling results of PhysIO 
+% from Philips vendor data to output starting with PhysIO BIDS-writer 
+% created BIDS files
+dirExample = 'BIDS/ECG3T_V2';
+dirRefResults = 'Philips/ECG3T_V2';
+doUseSpm = false;
+isVerbose = false;
+idxTests = [1:5]; % raw and processed data tested in different steps
+% some fields from Philips data are not converted to BIDS, because:
+% acq_codes:    contain detected cardiac peaks from Philips which we typically
+%               ignore and don't write to BIDS
+% c_scaling:    BIDS dataset is saved already after normalization,
+%               amplitudes are set to one vs Philips
+% r_scaling:    BIDS dataset is saved already after normalization,
+%               amplitudes are set to one vs Philips
+ignoredFieldsOnsSecs = {'acq_codes', 'c_scaling', 'r_scaling'};
+run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose);
 end
 
 function test_philips_ecg7t_matlab_only(testCase)
@@ -231,6 +260,14 @@ function test_bids_cpulse3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of BIDS/CPULSE3T example using SPM Batch Editor
 dirExample = 'BIDS/CPULSE3T';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_bids_ecg3t_v2_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of BIDS/ECG3T_V2 example using matlab only
+dirExample = 'BIDS/ECG3T_V2';
 doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
@@ -398,7 +435,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
-    dirRefResults, idxTests)
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of example in specified example sub-folder
 % Note: both SPM or matlab-script based execution is possible
@@ -424,9 +461,23 @@ function run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
 %               equivalency is expected (e.g., using the same data window,
 %               but from a shorter logfile, ons_secs.raw will differ)
 %               default: [1 2 3 4 5] (all)
+%   ignoredFieldsOnsSecs
+%               extra fields ignored from ons_secs substruct of physio
+%               default: {}
+%   isVerbose   true or false; default: false
+%               plots comparison results between actual and expected physio
+%               struct fields
 %
 % OUT
 %
+
+if nargin < 7
+    isVerbose = false;
+end
+
+if nargin < 6
+    ignoredFieldsOnsSecs = {};
+end
 
 if nargin < 5
     idxTests = 1:5;
@@ -510,7 +561,6 @@ fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'examples', .
 load(fileReferenceData, 'physio');
 expPhysio = physio;
 
-
 % Compare all numeric sub-fields of physio with some tolerance
 % ons_secs has all the computed preprocessed physiological and scan timing
 % sync data, from which .model derives the physiological regressors later
@@ -528,7 +578,7 @@ if doTestOnsSecsRaw
         IsEqualTo(expPhysio.ons_secs.raw,  ...
         'Using', StructComparator(NumericComparator, 'Recursively', true), ...
         'Within', RelativeTolerance(relTol), ...
-        'IgnoringFields',  {'spulse_per_vol', 'fr'}...
+        'IgnoringFields', [ignoredFieldsOnsSecs {'spulse_per_vol', 'fr'}] ...
         ), 'Comparing all numeric subfields of ons_secs.raw to check read-in and basic filtering of phys recordings');
 
     % test filtered respiratory trace separetely, because of values close
@@ -559,7 +609,7 @@ if doTestOnsSecs
         IsEqualTo(expPhysio.ons_secs,  ...
         'Using', StructComparator(NumericComparator, 'Recursively', true), ...
         'Within', RelativeTolerance(relTol), ...
-        'IgnoringFields',  {'spulse_per_vol', 'raw'}...
+        'IgnoringFields',  [ignoredFieldsOnsSecs {'spulse_per_vol', 'raw'}] ...
         ), 'Comparing all numeric subfields of ons_secs to check full preprocessing of phys recordings');
 end
 
@@ -595,6 +645,14 @@ if doTestMultipleRegressorsTxt
     verifyEqual(testCase, actRegressorsFromTxt, expRegressorsFromTxt, ...
         'RelTol', relTol, ...
         'Comparing multiple regressors in txt-files');
+end
+
+if isVerbose
+    try % test should not fail because of a bad plot
+        tapas_physio_plot_results_comparison(actPhysio, expPhysio);
+    catch
+        warning('Comparison plot of actual vs reference physio struct failed');
+    end
 end
 
 end

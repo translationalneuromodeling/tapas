@@ -8,8 +8,8 @@ Current Release
 
 November 22nd, 2022
 
-Minor Release Notes (v8.2.0)
-----------------------------
+Upcoming Release Notes (v8.2.0-beta)
+------------------------------------
 
 ### Added
 - Interface `tapas_physio_test` to TAPAS-generic `tapas_test` function
