@@ -171,9 +171,9 @@ if hasCardiacData
     
     if isempty(dt)
         nSamplesC = size(data_table,1);
-        dt_c = tLogTotal/(nSamplesC-1);
+        dt_c = round(tLogTotal/(nSamplesC-1), 4);
     else
-        dt_c = dt(1);
+        dt_c = round(dt(1), 4);
     end
     
     dataCardiac = tapas_physio_siemens_table2cardiac(data_table, ecgChannel, dt_c, ...
@@ -241,9 +241,9 @@ if hasRespData
     
     if isempty(dt)
         nSamplesR = size(data_table,1);
-        dt_r = tLogTotal/(nSamplesR-1);
+        dt_r = round(tLogTotal/(nSamplesR-1), 4);
     else
-        dt_r = dt(end);
+        dt_r = round(dt(end), 4);
     end
     
     dataResp = tapas_physio_siemens_table2cardiac(data_table, ecgChannel, ...
@@ -270,6 +270,33 @@ else
     t_r = [];
 end
 
+%% As the start times of both signal recordings might be different, we should syncronize them before padding
+nSamplesR = numel(r);
+nSamplesC = numel(c);
+
+isSameSamplingDiffNSamples = (dt_c == dt_r) && (nSamplesC ~= nSamplesR);
+
+if isSameSamplingDiffNSamples
+
+    % first we must syncronize the time vectors
+    if t_r(1) < t_c(1)
+        
+        [~, indexOfMin] = min(abs(t_r-t_c(1)));
+
+        t_r = t_r(indexOfMin:end);
+        r = r(indexOfMin:end);
+        nSamplesR = length(r);
+
+    else 
+
+        [~, indexOfMin] = min(abs(t_c-t_r(1)));
+
+        t_c = t_c(indexOfMin:end);
+        c = c(indexOfMin:end);
+        nSamplesC = length(c);
+
+    end
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Adapt time scales resp/cardiac, i.e. zero fill c or r
