@@ -23,7 +23,7 @@ function tests = tapas_physio_readin_bids_test()
 % redistribute it and/or modify it under the terms of the GPL (either
 % version 3 or, at your option, any later version). For further details,
 % see the file COPYING or <http://www.gnu.org/licenses/>.
-
+ 
 tests = functiontests(localfunctions);
 end
 
@@ -31,10 +31,13 @@ end
 function setupOnce(testCase)
 testCase.TestData.pathExamples = tapas_physio_get_path_examples();
 testCase.TestData.createdFigHandles = [];
+% for time courses (e.g., breathing) that reach close to 0, relative
+% tolerance can be misleading, use relative value to max instead
+testCase.TestData.absTol = 1e-6;
 end
 
 
-%% close all created figures from examples after each test
+%% Close all created figures from examples after each test
 function teardown(testCase)
 close(testCase.TestData.createdFigHandles);
 end

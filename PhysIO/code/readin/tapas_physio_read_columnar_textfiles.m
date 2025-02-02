@@ -1,4 +1,4 @@
-function [C, columnNames] = tapas_physio_read_columnar_textfiles(fileName, fileType)
+function [C, columnNames] = tapas_physio_read_columnar_textfiles(fileName, fileType, nColumns)
 % Reads _PULS, _RESP, _ECG, _Info-files from Siemens tics format with
 % multiple numbers of columns and different column headers
 %
@@ -10,6 +10,11 @@ function [C, columnNames] = tapas_physio_read_columnar_textfiles(fileName, fileT
 %               If not specified, this is read from the last part of the
 %               filename after the last underscore, e.g.
 %               Physio_*_ECG.log -> log
+%   nColumns    optional, number of columns in columnar logfile
+%               if not specified, this function tries to estimate from the
+%               column headers how many columns exist (default: [], will be
+%               estimated from header)
+%
 % OUT
 %   C           cell(1, nColumns) of cells(nRows,1) of values
 %   columnNames cell(1, nColumns) of column names
@@ -31,7 +36,9 @@ function [C, columnNames] = tapas_physio_read_columnar_textfiles(fileName, fileT
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
-
+if nargin < 3
+    nColumns = [];
+end
 
 %_AcquisitionInfo
 
@@ -68,8 +75,14 @@ switch upper(fileType)
         nEmptyLinesAfterHeader(7) = 4;
     case 'BIDS'
         strColumnHeader = '';
-        parsePatternPerNColumns{3} = '%f %f %f';
-        nEmptyLinesAfterHeader(3) = 0;
+        
+        if isempty(nColumns)
+            nColumns = 3;
+        end
+
+        parsePatternPerNColumns{nColumns} = repmat('%f ', 1, nColumns);
+        parsePatternPerNColumns{nColumns}(end) = [];
+        nEmptyLinesAfterHeader(nColumns) = 0;
     case 'BIOPAC_TXT'
         strColumnHeader = '.*RESP.*';
         parsePatternPerNColumns{4} = '%f %f %f %d';
@@ -131,7 +144,6 @@ switch upper(fileType)
         nColumns = numel(columnNames);
     case 'BIDS' % will be in separate json-file
         columnNames = {};
-        nColumns = 3;
     case 'BIOPAC_TXT' % bad column names with spaces...e.g. 'RESP - RSP100C'
         columnNames = regexp(strLine, '([\t])', 'split');
         nColumns = numel(columnNames);

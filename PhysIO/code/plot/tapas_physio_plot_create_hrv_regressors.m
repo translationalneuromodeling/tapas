@@ -22,7 +22,7 @@ function [verbose] = tapas_physio_plot_create_hrv_regressors(sample_points, hrOu
 
     subplot(2,2,4)
     [tmp, iShiftMin] = min(abs(delays));
-    
+
     hp{1} = plot(samplePointsOut, hrOut,'k--'); hold all;
     hp{2} = plot(samplePointsOut, squeeze(convHRVOut(:,iShiftMin,:)),'r');
     xlabel('time (seconds)');ylabel('regessor');

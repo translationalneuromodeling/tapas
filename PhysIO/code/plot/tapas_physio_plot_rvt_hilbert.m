@@ -1,10 +1,10 @@
-function [verbose] = tapas_physio_plot_rvt_hilbert(t,fr, fr_lp, fr_mag, fr_rv, ... 
+function [verbose] = tapas_physio_plot_rvt_hilbert(t,fr, fr_lp, fr_mag, fr_rv, ...
     fr_phase, fr_if, verbose);
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
     set(gcf, 'Name', 'Model: Hilbert RVT (Respiratory Volume per Time)');
-    
+
     hs(1) = subplot(2,1,1);
     hold on;
     plot([t(1), t(end)], [0.0, 0.0], 'Color', [0.7, 0.7, 0.7]);

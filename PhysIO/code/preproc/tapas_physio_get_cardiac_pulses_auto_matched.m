@@ -99,7 +99,6 @@ else
     cpulse = t(cpulse);
     
     if verbose.level >=2
-        
         [verbose] = tapas_physio_plot_peak_detection_from_automatically_generated(t, c, ...
              cpulse, verbose);
 

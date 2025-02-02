@@ -4,12 +4,28 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2022b, v8.2.0*
+*Current version: PhysIO Toolbox Release R2024a, v9.0.0*
 
-November 22nd, 2022
+January 29th, 2025
 
-Upcoming Release Notes (v8.2.0-beta)
-------------------------------------
+Major Release Notes (v9.0.0)
+----------------------------
+
+### Added
+- BIDS writer: write out BIDS-compatbile physiological logfiles (`.tsv.gz` and `.json`)
+  from any vendor format
+- Greatly expanded Review visualization (`tapas_physio_review`): Allow more detailed re-creation of figures from online execution, control visual verbosity retrospectively (e.g., for debugging)
+- Read-In of field `AcquisitionTime` from BIDS `.json` side-car file for converted Siemens DICOMs after [dcm2niix](https://www.nitrc.org/plugins/mwiki/index.php/dcm2nii:MainPage) conversion for synchronization (Gitlab issue 109)
+
+### Changed
+- Expanded usage of scan trigger trace (continuous, binary, on/off vs alternating levels)
+
+### Fixed
+- Bugfix processing of short Siemens IdeaCmdTool logfiles (stop before scan ending)
+- DICOM Read-in for files without extension
+
+Minor Release Notes (v8.2.0)
+----------------------------
 
 ### Added
 - Interface `tapas_physio_test` to TAPAS-generic `tapas_test` function
@@ -244,8 +260,7 @@ Minor Release Notes (R2019a, v7.1.0)
 ------------------------------------
 
 ### Added
-- BIDS reader and example (Brain Imaging Data Structure, 
-http://bids.neuroimaging.io/bids_spec.pdf) for `*_physio.tsv[.gz]/.json` files
+- Brain Imaging Data Structure ([BIDS](https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continuous-recordings.html)) reader and example for `*_physio.tsv[.gz]/.json` files
 - Added BioPac txt-File read-in and example
 - Template example with all physio-fields for matlab script and settings as in default SPM batch
 - Started unit testing framework in folder `tests`

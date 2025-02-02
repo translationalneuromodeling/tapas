@@ -61,13 +61,14 @@ function [c, r, t, cpulse, acq_codes, verbose, gsr] = tapas_physio_read_physlogf
 % COPYING or <http://www.gnu.org/licenses/>.
 
 %% read out values
+thresholdTrigger = 4; % Volt, TTL trigger
+
 DEBUG = verbose.level >= 2;
-doDebugTriggers = verbose.level >= 3;
 doReplaceNans = true;
 
-% if true, assume that trigger switches between +5V and 0 for start of one
+% alternating assumes that trigger switches between +5V and 0 for start of one
 % volume, and back to 5V at start of next volume
-hasAlternatingTriggerFlank = true; 
+triggerEdge = 'alternating'; %'rising', 'falling';
 
 hasRespirationFile = ~isempty(log_files.respiration);
 hasCardiacFile = ~isempty(log_files.cardiac);
@@ -108,12 +109,10 @@ else % older Matlab versions, checking chars only up to length of label
     idxColTrigger = find(strncmpi(columnNames, labelColTrigger, numel(labelColTrigger)));
 end
 
-thresholdTrigger = 4; % Volt, TTL trigger
-
 c = C{idxColCardiac};
 r = C{idxColResp};
 gsr = C{2}; % TODO: do correctly!
-iAcqOn = (C{idxColTrigger}>thresholdTrigger); % trigger is 5V, but flips on/off between volumes
+trigger_trace = C{idxColTrigger};
 
 % replace NaNs by max or min depending on nearest non-NaN-neighbour
 % (whether it was closer to max or min)
@@ -170,70 +169,8 @@ nSamples = max(numel(c), numel(r));
 t = -log_files.relative_start_acquisition + ((0:(nSamples-1))*dt)';
 
 %% Recompute acq_codes as for Siemens (volume on/volume off)
-acq_codes = [];
-
-if ~isempty(iAcqOn) % otherwise, nothing to read ...
-    % iAcqOn is a column of 1s and 0s, 1 whenever scan acquisition is on
-    % Determine 1st start and last stop directly via first/last 1
-    % Determine everything else in between via difference (go 1->0 or 0->1)
-    iAcqStart   = find(iAcqOn, 1, 'first');
-    iAcqEnd     = find(iAcqOn, 1, 'last');
-    d_iAcqOn    = diff(iAcqOn);
-    
-    % index shift + 1, since diff vector has index of differences i_(n+1) - i_n,
-    % and the latter of the two operands (i_(n+1)) has sought value +1
-    iAcqStart   = [iAcqStart; find(d_iAcqOn == 1) + 1];
-    % no index shift, for the same reason
-    iAcqEnd     = [find(d_iAcqOn == -1); iAcqEnd];
-    
-    % remove duplicate entries
-    iAcqStart = unique(iAcqStart);
-    iAcqEnd = unique(iAcqEnd);
-
-    if hasAlternatingTriggerFlank
-        % choose all rising and falling triggers as volume starts (instead
-        % of interpreting falling as an end of a trigger)
-        iAcqStartNew = sort([iAcqStart;iAcqEnd]);
-        iAcqEndNew = [];
-    else
-        iAcqStartNew = iAcqStart;
-        iAcqEndNew = iAcqEnd;
-    end
-
-
-    if doDebugTriggers
-        figure;plot(C{1},C{idxColTrigger})
-        hold all;
-        stem(C{1}(iAcqStart), C{idxColTrigger}(iAcqStart))
-        stem(C{1}(iAcqEnd), C{idxColTrigger}(iAcqEnd))
-        stem(C{1}(iAcqStartNew), 0.8*C{idxColTrigger}(iAcqStartNew))
-        
-        title('Trigger Debugging')
-        legend('Volume Trigger Signal', 'Trigger Rising Flank', ...
-            'Trigger Falling Flank', 'Chosen Trigger Volume Start')
-    end
-    
-    iAcqStart = iAcqStartNew;
-    iAcqEnd = iAcqEndNew;
-
-    acq_codes = zeros(nSamples,1);
-    acq_codes(iAcqStart) = 8; % to match Philips etc. format
-    acq_codes(iAcqEnd) = 16; % don't know...
-    
-    % report estimated onset gap between last slice of volume_n and 1st slice of
-    % volume_(n+1)
-    nAcqStarts = numel(iAcqStart);
-    nAcqEnds = numel(iAcqEnd);
-    nAcqs = min(nAcqStarts, nAcqEnds);
-    
-    if nAcqs >= 1
-        % report time of acquisition, as defined in SPM
-        TA = mean(t(iAcqEnd(1:nAcqs)) - t(iAcqStart(1:nAcqs)));
-        verbose = tapas_physio_log(...
-            sprintf('TA = %.4f s (Estimated time of acquisition during one volume TR)', ...
-            TA), verbose, 0);
-    end
-end
+[acq_codes, verbose] = tapas_physio_create_acq_codes_from_trigger_trace(t, trigger_trace, verbose, ...
+    thresholdTrigger, triggerEdge, 'maxpeaks_and_alternating');
 
 
 %% Plot, if wanted

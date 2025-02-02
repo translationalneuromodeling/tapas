@@ -105,8 +105,6 @@ if ~hasPhaseData
         
         fr = ons_secs.fr;
         
-      
-
         if verbose.level >=3
             [r_phase, pulset, rsampint, rout, resp_max, cumsumh, sumh, h, ...
         npulse, dpulse, verbose.fig_handles(end+1)] = ...
@@ -124,7 +122,8 @@ if ~hasPhaseData
             verbose.review.traces.npulse = npulse;
             verbose.review.traces.dpulse = dpulse;
             verbose.review.traces.r_phase = r_phase;
-            
+ 
+
         else
             r_phase = tapas_physio_get_respiratory_phase(fr,rsampint, 0);
         end

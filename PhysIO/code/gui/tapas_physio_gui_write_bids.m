@@ -5,18 +5,18 @@ function write_bids = tapas_physio_gui_write_bids()
 %
 %
 %   See also
- 
+
 % Author:   Johanna Bayer
 % Created:  2024-27-03
-% Copyright (C) 2024 
-%                   
+% Copyright (C) 2024
+%
 %
 % This file is part of the TAPAS PhysIO Toolbox, which is released under
 % the terms of the GNU General Public License (GPL), version 3. You can
 % redistribute it and/or modify it under the terms of the GPL (either
 % version 3 or, at your option, any later version). For further details,
 % see the file COPYING or <http://www.gnu.org/licenses/>.
- 
+
 %--------------------------------------------------------------------------
 % write bids step
 %--------------------------------------------------------------------------
@@ -71,6 +71,3 @@ write_bids.tag  = 'write_bids';
 write_bids.name = 'write_bids';
 write_bids.val  = {bids_step, bids_dir, bids_prefix};
 write_bids.help = {'Specidy bids conversion parameters'};
-
-
-

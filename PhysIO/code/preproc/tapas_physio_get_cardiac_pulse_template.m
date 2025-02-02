@@ -72,16 +72,16 @@ if hasFirstGuessPeaks
 
     end
 
-else 
+else
     verbose = tapas_physio_log(['No peaks found in raw cardiac time series. Check raw ' ...
         'physiological recordings figure whether there is any non-constant ' ...
         'cardiac data'], verbose, 2); % error!
-end 
+end
 
 %% Plot in case of Debugging (verbose =>3)
 
 if doDebug
- 
+
     [verbose] = tapas_physio_plot_iterative_template_creation(hasFirstGuessPeaks,...
     t, c, cpulse1stGuess, nPulses1, nPulses2, cpulse2ndGuess, meanLag1, meanLag2, verbose);
 
@@ -95,7 +95,7 @@ if doDebug
     verbose.review.iter_temp.cpulse2ndGuess = cpulse2ndGuess;
     verbose.review.iter_temp.meanLag1 = meanLag1; 
     verbose.review.iter_temp.meanLag2 = meanLag2;
-end 
+end
 
 
 %% Build template based on the guessed peaks:

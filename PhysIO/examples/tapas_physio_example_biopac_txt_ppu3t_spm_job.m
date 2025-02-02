@@ -1,8 +1,11 @@
 matlabbatch{1}.spm.tools.physio.save_dir = {'physio_out'};
+matlabbatch{1}.spm.tools.physio.write_bids.bids_step = 4;
+matlabbatch{1}.spm.tools.physio.write_bids.bids_dir = {''};
+matlabbatch{1}.spm.tools.physio.write_bids.bids_prefix = 'sub-control01_task-YOURTASK_run-1';
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'Biopac_Txt';
-matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'Biopac_Physio_Data_Export.txt'};
-matlabbatch{1}.spm.tools.physio.log_files.respiration = {'Biopac_Physio_Data_Export.txt'};
-matlabbatch{1}.spm.tools.physio.log_files.scan_timing = {'Biopac_Physio_Data_Export.txt'};
+matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'BioPac_Physio_Data_Export.txt'};
+matlabbatch{1}.spm.tools.physio.log_files.respiration = {'BioPac_Physio_Data_Export.txt'};
+matlabbatch{1}.spm.tools.physio.log_files.scan_timing = {'BioPac_Physio_Data_Export.txt'};
 matlabbatch{1}.spm.tools.physio.log_files.sampling_interval = [];
 matlabbatch{1}.spm.tools.physio.log_files.relative_start_acquisition = 0;
 matlabbatch{1}.spm.tools.physio.log_files.align_scan = 'last';

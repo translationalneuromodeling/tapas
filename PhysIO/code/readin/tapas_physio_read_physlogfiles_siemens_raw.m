@@ -1,13 +1,15 @@
 function [lineData, logFooter, linesFooter] = tapas_physio_read_physlogfiles_siemens_raw(...
-    fileNameLog)
+    fileNameLog, referenceClockString)
 % Read in raw data/footer lines of logfiles, without data selection/sorting
 %
 % [lineData, linesFooter] = tapas_physio_read_physlogfiles_siemens_raw(...
-%        fileNameLog)
+%        fileNameLog, referenceClockString)
 %
 % IN
 %   fileNameLog     file name of physiological log, e.g. *.ecg
-%
+%   referenceClockString
+%                   'MDH' (scanner, default) or 'MPCU' (physiological
+%                   monitoring unit
 % OUT
 %   lineData        all recording amplitude samples are saved in first line
 %                   of file
@@ -33,6 +35,9 @@ function [lineData, logFooter, linesFooter] = tapas_physio_read_physlogfiles_sie
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
+if nargin < 2
+    referenceClockString = 'MDH';
+end
 
 fid             = fopen(fileNameLog);
 
@@ -74,5 +79,11 @@ logFooter.StopTimeSecondsRecordingClock = str2num(char(regexprep(linesFooter(~ce
 % MPCU is the clock of the computer that controls the physiological
 % recording (same as MARS?), but does not know about the scan volume and DICOM timing
 
+switch upper(referenceClockString)
+    case 'MDH'
 logFooter.StartTimeSeconds = logFooter.StartTimeSecondsScannerClock;
 logFooter.StopTimeSeconds = logFooter.StopTimeSecondsScannerClock;
+    case 'MPCU'
+logFooter.StartTimeSeconds = logFooter.StartTimeSecondsRecordingClock;
+logFooter.StopTimeSeconds = logFooter.StopTimeSecondsRecordingClock;
+end

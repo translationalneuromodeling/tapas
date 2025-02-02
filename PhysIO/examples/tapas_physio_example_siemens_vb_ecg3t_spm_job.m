@@ -1,4 +1,7 @@
 matlabbatch{1}.spm.tools.physio.save_dir = {'physio_out'};
+matlabbatch{1}.spm.tools.physio.write_bids.bids_step = 4;
+matlabbatch{1}.spm.tools.physio.write_bids.bids_dir = {''};
+matlabbatch{1}.spm.tools.physio.write_bids.bids_prefix = 'sub-control01_task-YOURTASK_run-1';
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'Siemens';
 matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'siemens_PAV.ecg'};
 matlabbatch{1}.spm.tools.physio.log_files.respiration = {''};

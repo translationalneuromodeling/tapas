@@ -1,6 +1,6 @@
 function [verbose, handles, labels] = tapas_physio_plot_filter_respiratory(rpulset,m, s, t, ...
     rpulset_out, rpulset_out_trend, trend, rpulset_out_trend_filt, verbose)
-% plot repiratory filtering 
+% plot repiratory filtering
 % (C) 2023 Johanna Bayer
     verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
     set(gcf, 'Name', 'Preproc: Respiratory filtering');

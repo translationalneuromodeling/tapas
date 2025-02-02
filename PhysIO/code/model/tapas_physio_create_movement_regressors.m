@@ -31,6 +31,17 @@ function [R, movement, verbose] = tapas_physio_create_movement_regressors(...
 %                       into translations by multiplying with rHead (arc
 %                       length)
 %       FD              framewise displacement (FD)
+%                       as defined by Power et al., 2012 
+%                       (https://doi.org/10.1016/j.neuroimage.2011.10.018), 
+%                       i.e., 
+%                       |rp_x(n) -  rp_x(n-1)| + |rp_y(n) - rp_y(n-1)| + 
+%                       |rp_z(n) -  rp_z(n-1)|' 
+%                       + 50 mm *(|rp_pitch(n) - rp_pitch(n-1)|
+%                       + |rp_roll(n) - rp_roll(n-1)| + |rp_yaw(n) -
+%                       rp_yaw(n-1)|' 
+%                       where 50 mm is an average head radius
+%                       mapping a rotation into a translation of head
+%                       surface'
 %       absTransDisplacement
 %                       sum of absolute values of translational (x,y,z)
 %                       realignment estimates, reflecting absolute

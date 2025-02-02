@@ -14,6 +14,6 @@ function [verbose] = tapas_physio_plot_peak_detection_from_automatically_generat
         'Detected maxima (cardiac pulses / max inhalations)');
         title(stringTitle);
 
-        
+
 end
 

@@ -10,31 +10,31 @@ set(fh, 'Name', ...
    'Preproc: get_respiratory_phase: histogram for respiratory phase estimation');
 
 hs(1) = subplot(2,2,1);
-plot(t,pulset); 
-xlabel('t (s)'); 
-ylabel('breathing amplitude (a. u.)'); 
+plot(t,pulset);
+xlabel('t (s)');
+ylabel('breathing amplitude (a. u.)');
 title('(filtered) breathing time series');
 
-if resp_max < inf 
-    hold on; 
+if resp_max < inf
+    hold on;
     plot(t, ones(size(t)) * resp_max, 'k--');
-    hold on; 
-    hp = plot(t, -ones(size(t)) * resp_max, 'k--');        
+    hold on;
+    hp = plot(t, -ones(size(t)) * resp_max, 'k--');
     legend(hp, ...
-        'threshold for maximum amplitude to be considered in histogram');    
+        'threshold for maximum amplitude to be considered in histogram');
     set(gcf, 'Name', ...
         [get(gcf, 'Name') ' - with amplitude overshoot-correction']);
 end
 
 hs(2) = subplot(2,2,2);
-bar(rout, h); 
-xlabel('normalized breathing amplitude'); 
+bar(rout, h);
+xlabel('normalized breathing amplitude');
 ylabel('counts');
 title('histogram for phase mapping');
 xlim([-0.1 1.1]);
 
-hs(3) = subplot(2,2,3); plot(rout, [feqht, cos(feqht), sin(feqht)]); 
-xlabel('normalized breathing amplitude'); 
+hs(3) = subplot(2,2,3); plot(rout, [feqht, cos(feqht), sin(feqht)]);
+xlabel('normalized breathing amplitude');
 title(...
     'equalized histogram bin amplitude -> phase transfer function (f_{eqht})');
 legend('f: normalized amplitude -> phase transfer function', 'cos(f)', ...
@@ -44,7 +44,7 @@ legend('f: normalized amplitude -> phase transfer function', 'cos(f)', ...
 hs(4) = subplot(2,2,4);
 plot(t, [npulse*10, dpulse, (rphase-pi)]);
 legend('10*normalized breathing belt amplitude', ...
-    '-1 = exhale, 1 = inhale', 'estimated respiratory phase');    
+    '-1 = exhale, 1 = inhale', 'estimated respiratory phase');
 ylim([-0.2 10.2]);
 title('Histogram-based respiration phase estimation');
 

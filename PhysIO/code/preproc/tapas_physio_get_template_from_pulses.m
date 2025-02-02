@@ -129,7 +129,7 @@ end
 pulseCleanedTemplate = mean(template(indHighQualityTemplates, :));
 
 if doDebug
- 
+
     [verbose] = tapas_physio_plot_templates_of_cycle_time(tTemplate, ...
     template, pulseTemplate, pulseCleanedTemplate, verbose);
 
@@ -139,5 +139,5 @@ if doDebug
     verbose.review.temp_cyc.template = template;
     verbose.review.temp_cyc.pulseTemplate = pulseTemplate;
     verbose.review.temp_cyc.pulseCleanedTemplate = pulseCleanedTemplate;
-
+    
 end

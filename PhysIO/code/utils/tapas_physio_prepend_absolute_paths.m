@@ -42,7 +42,10 @@ end
 save_dir = physio.save_dir;
 
 if ~exist(save_dir, 'dir') && ~isempty(save_dir)
-    [~,~] = mkdir(save_dir);
+    [status,msg,msgID] = mkdir(save_dir);
+    if ~status % unsuccessful creation AND directory did not exist before
+       physio.verbose = tapas_physio_log(msg, physio.verbose, 2);
+    end
 end
 
 if ~isequal(save_dir, fileparts(physio.verbose.fig_output_file))

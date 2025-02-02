@@ -59,7 +59,7 @@ switch bids_step
         desc = "raw, after vendor file read-in";
         columnsStrings = ["cardiac", "respiratory"];
         mat=[cardiac respiratory];
-
+ 
     case 2
         tag = "norm";
         desc = "processed: normalized amplitudes, padded for scan duration";
@@ -69,8 +69,9 @@ switch bids_step
     case 3 % triggers available, save as well!
         tag = "sync";
         desc = "processed: normalized amplitudes, padded for scan duration, scan trigger extracted";
-        
+
         % triggers have to be replaced into 1 (trigger) 0 (no trigger)
+
         trigger_binary = zeros(numel(ons_secs.t),1);
 
         for iVolume = 1:numel(ons_secs.svolpulse)
@@ -87,7 +88,7 @@ switch bids_step
 
         tag = "preproc";
         desc = "processed: normalized amplitudes, padded for scan duration, scan trigger extracted, filtered respiratory data";
-        
+
         respiratory = ons_secs.r;
 
         % triggers have to be replaced into 1 (trigger) 0 (no trigger)

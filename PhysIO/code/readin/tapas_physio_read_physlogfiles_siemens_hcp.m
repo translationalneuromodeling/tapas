@@ -68,16 +68,16 @@ hasRespirationFile = ~isempty(log_files.respiration);
 hasCardiacFile = ~isempty(log_files.cardiac);
 
 if hasRespirationFile
-    y   = load(log_files.respiration, 'ascii');
-    iAcqOn_r = y(:,1);
+    y   = load(log_files.respiration, '-ascii');
+    trigger_trace_r = y(:,1);
     r   = y(:,2);
 else
     r = [];
 end
 
 if hasCardiacFile
-    y   = load(log_files.cardiac, 'ascii');
-    iAcqOn_c = y(:,1);
+    y   = load(log_files.cardiac, '-ascii');
+    trigger_trace_c = y(:,1);
     c   = y(:,3);
 else
     c = [];
@@ -95,52 +95,20 @@ end
 nSamples = max(numel(c), numel(r));
 t = -log_files.relative_start_acquisition + ((0:(nSamples-1))*dt)';
 
-%% Recompute acq_codes as for Siemens (volume on/volume off)
-acq_codes = [];
 
-iAcqOn = [];
 if hasCardiacFile
-    iAcqOn = iAcqOn_c;
+    trigger_trace = trigger_trace_c;
 elseif hasRespirationFile
-    iAcqOn = iAcqOn_r;
+    trigger_trace = trigger_trace_r;
 end
 
-if ~isempty(iAcqOn) % otherwise, nothing to read ...
-    % iAcqOn is a column of 1s and 0s, 1 whenever scan acquisition is on
-    % Determine 1st start and last stop directly via first/last 1
-    % Determine everything else in between via difference (go 1->0 or 0->1)
-    iAcqStart   = find(iAcqOn, 1, 'first');
-    iAcqEnd     = find(iAcqOn, 1, 'last');
-    d_iAcqOn    = diff(iAcqOn);
-    
-    % index shift + 1, since diff vector has index of differences i_(n+1) - i_n,
-    % and the latter of the two operands (i_(n+1)) has sought value +1
-    iAcqStart   = [iAcqStart; find(d_iAcqOn == 1) + 1];
-    % no index shift, for the same reason
-    iAcqEnd     = [find(d_iAcqOn == -1); iAcqEnd];
-    
-    acq_codes = zeros(nSamples,1);
-    acq_codes(iAcqStart) = 8; % to match Philips etc. format
-    acq_codes(iAcqEnd) = 16; % don't know...
-    
-    % report estimated onset gap between last slice of volume_n and 1st slice of
-    % volume_(n+1)
-    nAcqStarts = numel(iAcqStart);
-    nAcqEnds = numel(iAcqEnd);
-    nAcqs = min(nAcqStarts, nAcqEnds);
-    
-    if nAcqs >= 1
-        % report time of acquisition, as defined in SPM
-        TA = mean(t(iAcqEnd(1:nAcqs)) - t(iAcqStart(1:nAcqs)));
-        verbose = tapas_physio_log(...
-            sprintf('TA = %.4f s (Estimated time of acquisition during one volume TR)', ...
-            TA), verbose, 0);
-    end
-end
+%% Recompute acq_codes as for Siemens (volume on/volume off)
+% uses new trigger detection
+[acq_codes, verbose] = tapas_physio_create_acq_codes_from_trigger_trace(t, ...
+    trigger_trace, verbose);
 
 
-%% Plot, if wanted
-
+%% Plot extracted traces so far
 if DEBUG
     verbose.fig_handles(end+1) = ...
         tapas_physio_plot_raw_physdata_siemens_hcp(t, c, r, acq_codes);

@@ -80,7 +80,7 @@ end
 cardiac_phase=(2*pi*(scannert'-scannertpriorpulse)./(scannertafterpulse-scannertpriorpulse))';
 
 if isVerbose
-    [verbose] = tapas_physio_plot_get_cardiac_phase(scannert,cardiac_phase, pulset, ... 
+    [verbose] = tapas_physio_plot_get_cardiac_phase(scannert,cardiac_phase, pulset, ...
     svolpulse, verbose)
 
     % save relevent stuctures

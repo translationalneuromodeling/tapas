@@ -41,6 +41,7 @@ end
 
 % path to examples, needed for all test cases
 function setupOnce(testCase)
+% Get PhysIO public repo base folder from this file's location
 testCase.TestData.pathExamples = tapas_physio_get_path_examples();
 testCase.TestData.createdFigHandles = [];
 end
@@ -48,7 +49,11 @@ end
 
 % close all created figures from examples after each test
 function teardown(testCase)
-close(testCase.TestData.createdFigHandles);
+if isfield(testCase, 'TestData') && ...
+        isfield(testCase.TestData, 'createdFigHandles') && ...
+        ~isempty(testCase.TestData.createdFigHandles)
+    close(testCase.TestData.createdFigHandles);
+end
 end
 
 
@@ -124,9 +129,9 @@ run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
 function test_philips_ecg3t_v2_for_bids_vs_bids_converted_matlab_only(testCase)
-%% Checking self-consistency of PhysIO bids_writer: 
-% Compares reference output of preprocessing and modeling results of PhysIO 
-% from Philips vendor data to output starting with PhysIO BIDS-writer 
+%% Checking self-consistency of PhysIO bids_writer:
+% Compares reference output of preprocessing and modeling results of PhysIO
+% from Philips vendor data to output starting with PhysIO BIDS-writer
 % created BIDS files
 dirExample = 'BIDS/ECG3T_V2';
 dirRefResults = 'Philips/ECG3T_V2';
@@ -193,7 +198,12 @@ function test_siemens_vb_ppu3t_sync_first_matlab_only(testCase)
 % synced to first DICOM volume of run
 dirExample = 'Siemens_VB/PPU3T_Sync_First';
 doUseSpm = false;
-run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+dirRefResults = dirExample;
+idxTests = 1:5;
+ignoredFieldsOnsSecs = {}; % {'cpulse'};
+isVerbose = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose)
 end
 
 function test_siemens_vb_ppu3t_sync_last_matlab_only(testCase)
@@ -202,7 +212,12 @@ function test_siemens_vb_ppu3t_sync_last_matlab_only(testCase)
 % synced to last DICOM volume of run
 dirExample = 'Siemens_VB/PPU3T_Sync_Last';
 doUseSpm = false;
-run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+dirRefResults = dirExample;
+idxTests = 1:5;
+ignoredFieldsOnsSecs = {}; % {'cpulse'};
+isVerbose = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose)
 end
 
 function test_siemens_vb_resp3t_logversion_1_matlab_only(testCase)
@@ -371,7 +386,12 @@ function test_siemens_vb_ppu3t_sync_first_with_spm(testCase)
 % (sync to first DICOM volume time stamp) using SPM Batch Editor
 dirExample = 'Siemens_VB/PPU3T_Sync_First';
 doUseSpm = true;
-run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+dirRefResults = dirExample;
+idxTests = 1:5;
+ignoredFieldsOnsSecs = {}; % {'cpulse'}; 
+isVerbose = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose)
 end
 
 function test_siemens_vb_ppu3t_sync_last_with_spm(testCase)
@@ -380,7 +400,12 @@ function test_siemens_vb_ppu3t_sync_last_with_spm(testCase)
 % (sync to last DICOM volume time stamp) using SPM Batch Editor
 dirExample = 'Siemens_VB/PPU3T_Sync_Last';
 doUseSpm = true;
-run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+dirRefResults = dirExample;
+idxTests = 1:5;
+ignoredFieldsOnsSecs = {}; %{'cpulse'}; 
+isVerbose = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose)
 end
 
 function test_siemens_vb_resp3t_logversion_1_with_spm(testCase)
@@ -524,14 +549,46 @@ if doUseSpm
     fileExampleOutputPhysio = matlabbatch{1}.spm.tools.physio.model.output_physio;
     fileExampleOutputTxt = matlabbatch{1}.spm.tools.physio.model.output_multiple_regressors;
     
-else % has verbosity...cannot switch it off
+else % run matlab script, but read it line-by-line, but switch off verbosity
     
     fileJobMScript = [regexprep(lower(dirExample), '/', '_') '_matlab_script.m'];
     fileExample = fullfile(pathExamples, dirExample, fileJobMScript);
     
-    % runs example Matlab script
-    % will output a PhysIO-struct, from which we can parse output files
-    run(fileExample);
+    %% read and eval all lines in example file apart from tapas_physio_main_regressors
+    % then switch off verbosity and execute main
+    % i.e., emulate running the example script via "run(fileExample);" 
+  
+    pathTmp = fileparts(fileExample);
+    if ~isempty(pathTmp) % to emulate behavior of Matlab's "run", we have to CD to the folder
+        pathNow = pwd;
+        cd(pathTmp);
+    end
+    fid = fopen(fileExample);
+    strColumnHeader = 'tapas_physio_main_create_regressors';
+    haveFoundColumnHeader = isempty(strColumnHeader);
+    strLine = 'physio = [];';
+    % execute all lines up to tapas_physio_main_create_regressors
+    while ~haveFoundColumnHeader
+        eval(strLine);
+        strLine = fgets(fid);
+        haveFoundColumnHeader = any(regexpi(strLine, strColumnHeader));        
+    end
+    fclose(fid);
+    physio.verbose.level = 0;
+    
+    try
+        eval(strLine); % execute tapas_physio_main_create_regressors
+        if ~isempty(pathTmp)
+            cd(pathNow);
+        end
+    catch err
+        % at least CD back to original directory
+        if ~isempty(pathTmp)
+            cd(pathNow);
+        end
+        rethrow(err)
+    end
+    % output of example script is  PhysIO-struct, from which we can parse output files
     
     % retrieve output files, remove preprending path
     [~, dirExampleOutput] = fileparts(physio.save_dir);

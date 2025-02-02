@@ -147,7 +147,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % First and second figure
-
+ 
 if verbose.level >= 3
     
     if isfield(review, 'iter_temp')
@@ -165,17 +165,17 @@ if verbose.level >= 3
     end
 end
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Figure:  Sync Bundles
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if verbose.level >= 3
-    if isfield(review, 'sync_bundles')
-
+    if isfield(review, 'sync_bundles') 
         [verbose] = tapas_physio_plot_sync_bundles(review.sync_bundles.Nallvols, review.sync_bundles.t, ...
             review.sync_bundles.SLICELOCS, verbose);
     end
-end 
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Figure: Get cardiac
@@ -215,7 +215,7 @@ if verbose.level>=3
         review.resp_filter.rpulset_out, review.resp_filter.rpulset_out_trend,...
         review.resp_filter.trend,review.resp_filter.rpulset_out_trend_filt, verbose);
 
-    end 
+    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -236,7 +236,7 @@ if verbose.level >=3
             review.traces.rout, review.traces.resp_max, review.traces.cumsumh,...
             review.traces.sumh, review.traces.h, review.traces.npulse, review.traces.dpulse, ...
             review.traces.r_phase);
-    end 
+    end
 
 end
 
@@ -278,8 +278,8 @@ end
 
 if verbose.level >= 2
     if model.rvt.include
-      [verbose] = tapas_physio_plot_rvt_hilbert(review.rvt_hilbert.t,review.rvt_hilbert.fr, ... 
-          review.rvt_hilbert.fr_lp, review.rvt_hilbert.fr_mag, review.rvt_hilbert.fr_rv, ... 
+      [verbose] = tapas_physio_plot_rvt_hilbert(review.rvt_hilbert.t,review.rvt_hilbert.fr, ...
+          review.rvt_hilbert.fr_lp, review.rvt_hilbert.fr_mag, review.rvt_hilbert.fr_rv, ...
     review.rvt_hilbert.fr_phase, review.rvt_hilbert.fr_if, verbose);
     end
 end
@@ -294,7 +294,6 @@ if verbose.level>=2
         review.create_hrv_regressors.convHRVOut, verbose);
     end
 end
-
 
 %% Overall regressors
 

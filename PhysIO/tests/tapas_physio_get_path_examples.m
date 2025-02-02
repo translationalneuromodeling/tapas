@@ -30,13 +30,26 @@ if nargin < 1
 end
     
 % try PhysIO-internal GitLab examples first
-pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
+possibleExamplePaths = {
+    fullfile(pathPhysioPublic, '..', 'examples')    
+    fullfile(pathPhysioPublic, '..', 'physio-examples')
+};
+
+iPath = 0;
+haveFoundExamplePath = false;
+while ~haveFoundExamplePath && iPath < numel(possibleExamplePaths)
+    iPath = iPath + 1;
+    pathExamples = possibleExamplePaths{iPath};
+    haveFoundExamplePath = isfolder(fullfile(pathExamples, 'BIDS'));
+end
 
 % otherwise use public TAPAS examples
-if ~isfolder(fullfile(pathExamples, 'BIDS'))
+if ~haveFoundExamplePath
     pathExamples =  fullfile(pathPhysioPublic, ...
         '..', 'examples', tapas_get_current_version(), 'PhysIO');
 end
+
+pathExamples = tapas_physio_simplify_path(pathExamples);
 
 % If no examples folder found, suggest to download them via tapas-function
 if ~isfolder(fullfile(pathExamples, 'BIDS'))
