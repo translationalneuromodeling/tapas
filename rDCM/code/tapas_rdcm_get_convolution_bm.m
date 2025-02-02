@@ -71,6 +71,5 @@ y   = tapas_dcm_euler_gen(DCM, DCM.Ep);
 
 % sample the HRF at the sampling rate of the data
 h = y(1:r_dt:end,1);
-h = h;
 
 end

@@ -8,18 +8,19 @@ rDCM - regression Dynamic Causal Modeling.
 This ReadMe file provides the relevant information on the regression dynamic causal modeling (rDCM)
 toolbox.
 
+> **_NOTE:_** There is a new implementation of rDCM in Julia which can be found [here](https://github.com/ComputationalPsychiatry/RegressionDynamicCausalModeling.jl).
 
 -------------------
 General information
 -------------------
 
 - Authors: Stefan Frässle (<stefanf@biomed.ee.ethz.ch>), Ekaterina I. Lomakina
-- Copyright (C) 2016-2021 
-- Translational Neuromodeling Unit (TNU)
-- Institute for Biomedical Engineering
-- University of Zurich & ETH Zurich
+- Updated by [Imre Kertesz](https://github.com/ImreKertesz)
+- Copyright (C) 2016-2024
 
-
+Translational Neuromodeling Unit (TNU)
+<br>Institute for Biomedical Engineering
+<br>University of Zurich & ETH Zurich
 
 --------
 Download
@@ -37,7 +38,7 @@ Download
 Purpose
 -------
 
-The regression dynamic causal modeling (rDCM) toobox implements a novel variant 
+The regression dynamic causal modeling (rDCM) toolbox implements a novel variant 
 of DCM for fMRI that enables computationally efficient inference on effective (i.e.,
 directed) connectivity parameters among brain regions. Due to its
 computational efficiency, inversion of large (whole-brain) networks becomes feasible.
@@ -65,7 +66,7 @@ Important Notes
 ---------------
 
 Please note that rDCM is a method that is still in an early stage of development and thus subject to 
-various limiations. Due to these limitations, requirements of rDCM in terms of 
+various limitations. Due to these limitations, requirements of rDCM in terms of 
 fMRI data quality (i.e., fast TR, high SNR) are high. For data that does not
 meet these conditions, the method might not give reliable results. It remains the 
 responsibility of each user to ensure that his/her dataset fulfills these 
@@ -132,6 +133,6 @@ Acknowledgment
 --------------
 
 We would like to highlight and acknowledge that the rDCM toolbox uses some 
-functions that were publised as part of the Statistical Parameteric Mapping 
+functions that were published as part of the Statistical Parametric Mapping 
 ([SPM](https://www.fil.ion.ucl.ac.uk/spm/software/)) toolbox. The respective 
 functions are marked with the prefix `tapas_rdcm_spm_`.

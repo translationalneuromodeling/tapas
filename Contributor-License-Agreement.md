@@ -26,6 +26,7 @@ Johanna M. M. Bayer      | The University of Melbourne        | Melbourne | AU  
 Saskia Bollmann          | The University of Queensland       | Brisbane  | AUS     | SaskiaBollmann         | 1.1
 Anna Yurova              | LMU University Hospital            | Munich    | GER     | a-yur                  | 1.1
 Irene Sophia Plank       | LMU University Hospital            | Munich    | GER     | IreneSophia            | 1.1
+Imre Kertesz             | TNU, University of Zurich          | Zurich    | CH      | ImreKertesz            | 1.1
 **- Add Entry here -**   | **- Add Entry here -**             | **Add**   | **Add** | **Add**                | 1.1
 
 (hereinafter referred to as "Contributor")
