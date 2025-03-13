@@ -177,7 +177,8 @@ switch physio.write_bids.bids_step
 end
 bids_prefix = physio.write_bids.bids_prefix;
 jsonFilename = sprintf('%2$s_desc-%1$s_physio.json',tag, bids_prefix);
-actualJsonFile = fullfile(pathCurrentExample, physio.write_bids.bids_dir{1}, ...
+[~,bids_dir] = fileparts(physio.write_bids.bids_dir{1});
+actualJsonFile = fullfile(pathCurrentExample, bids_dir , ...
     jsonFilename);
 
 str = fileread(actualJsonFile); % dedicated for reading files as text
@@ -238,7 +239,7 @@ end
 bids_prefix = physio.write_bids.bids_prefix;
 tsvFilename = sprintf('%2$s_desc-%1$s_physio.tsv',tag, bids_prefix);
 
-actualTsvFile = fullfile(pathCurrentExample, physio.write_bids.bids_dir{1}, ...
+actualTsvFile = fullfile(pathCurrentExample, bids_dir, ...
     tsvFilename);
 
 % unzip compressed tab-separated values file and read into matlab variable
