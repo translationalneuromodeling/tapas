@@ -238,7 +238,7 @@ switch physio.write_bids.bids_step
 end
 bids_prefix = physio.write_bids.bids_prefix;
 tsvFilename = sprintf('%2$s_desc-%1$s_physio.tsv',tag, bids_prefix);
-
+[~,bids_dir] = fileparts(physio.write_bids.bids_dir{1});
 actualTsvFile = fullfile(pathCurrentExample, bids_dir, ...
     tsvFilename);
 
