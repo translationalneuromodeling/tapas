@@ -39,14 +39,22 @@ if (isempty(parentPath) || ( iscell(parentPath) && isempty([parentPath{:}]))) &&
 end
 
 %% update all affected relative file names with save_dir
-save_dir = physio.save_dir;
 
-if ~exist(save_dir, 'dir') && ~isempty(save_dir)
-    [status,msg,msgID] = mkdir(save_dir);
-    if ~status % unsuccessful creation AND directory did not exist before
-       physio.verbose = tapas_physio_log(msg, physio.verbose, 2);
+requiredDirs = {physio.save_dir, physio.write_bids.bids_dir};
+
+for iRequiredDirs = 1:numel(requiredDirs)
+
+    required_dir = requiredDirs{iRequiredDirs};
+
+    if ~exist(required_dir, 'dir') && ~isempty(required_dir)
+        [status,msg,msgID] = mkdir(required_dir);
+        if ~status % unsuccessful creation AND directory did not exist before
+            physio.verbose = tapas_physio_log(msg, physio.verbose, 2);
+        end
     end
 end
+
+save_dir = physio.save_dir;
 
 if ~isequal(save_dir, fileparts(physio.verbose.fig_output_file))
     physio.verbose.fig_output_file = fullfile(save_dir, ...

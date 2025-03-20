@@ -74,6 +74,6 @@ end
 % if no specific directory is given for BIDS output, write files to where
 % other PhysIO output is written to
 if isempty(physio.write_bids.bids_dir) || ...
-        (iscell(physio.write_bids.bids_dir) && isempty(physio.write_bids.bids_dir{1}))
+        (iscell(physio.write_bids.bids_dir) && isempty([physio.write_bids.bids_dir{:}]))
     physio.write_bids.bids_dir = physio.save_dir;
 end
