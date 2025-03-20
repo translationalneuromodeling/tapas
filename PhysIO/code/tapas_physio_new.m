@@ -91,7 +91,7 @@ else
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Overarching directory, relative to which output files are saved
-    save_dir = {'physio_out'};
+    save_dir = 'physio_out';
     
     
     
@@ -767,8 +767,8 @@ end
 %                                   pulse detection)write_bids.bids_step =
 %                                   4 (DEFAULT);
 write_bids.bids_step            = 4;
-write_bids.bids_dir             = {'physio_out'};   % output file of file, default = 'physio_out'
-write_bids.bids_prefix          = '';               % BIDS prefix
+write_bids.bids_dir             = 'physio_out';   % output director for BIDS converted files, default = 'physio_out'
+write_bids.bids_prefix          = '';             % BIDS prefix
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

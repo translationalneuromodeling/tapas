@@ -43,7 +43,7 @@ function [] = tapas_physio_write2bids(ons_secs, write_bids, log_files)
 % see the file COPYING or <http://www.gnu.org/licenses/>.
 
 bids_step = write_bids.bids_step;
-bids_dir = write_bids.bids_dir{1};
+bids_dir = write_bids.bids_dir;
 bids_prefix = write_bids.bids_prefix;
 
 cardiac = ons_secs.c;

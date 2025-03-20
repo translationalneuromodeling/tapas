@@ -23,6 +23,7 @@ function physio = tapas_physio_cell2char(physio)
 % COPYING or <http://www.gnu.org/licenses/>.
 
 
+physio.write_bids.bids_dir = char(physio.write_bids.bids_dir);
 physio.save_dir = char(physio.save_dir);
 physio.log_files.cardiac = char(physio.log_files.cardiac);
 physio.log_files.respiration = char(physio.log_files.respiration);
