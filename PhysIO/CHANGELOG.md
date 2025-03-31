@@ -6,7 +6,16 @@ Current Release
 
 *Current version: PhysIO Toolbox Release R2024a, v9.0.0*
 
-January 29th, 2025
+March 25th, 2025
+
+
+Bugfix Release Notes (v9.0.1)
+----------------------------
+
+### Fixed
+- Discrepancy Linux/Windows in detected cardiac pulses (`ons_secs.raw.cpulse`) for near-constant traces (e.g., in `tapas_physio_example_siemens_vb_ppu3t_sync_first_spm_job`)
+due to `tapas_physio_corrcoef2` for 
+- Inconsistent Handling of `bids_dir`; now consistent with `save_dir` etc.: as cell in SPM job, but char in `physio` struct
 
 Major Release Notes (v9.0.0)
 ----------------------------
