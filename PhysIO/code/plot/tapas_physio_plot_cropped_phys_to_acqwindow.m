@@ -44,6 +44,7 @@ spulse      = ons_secs.raw.spulse;
 svolpulse   = ons_secs.raw.svolpulse;
 
 hasCardiacData = ~isempty(c);
+hasCardiacPulseData = ~isempty(cpulse);
 hasRespData = ~isempty(r);
 
 maxValc = max(abs(c));
@@ -72,7 +73,7 @@ hold on;
 stem(svolpulse(Ndummies+1:end),ampsv*ones(length(svolpulse)-Ndummies,1),'c', 'LineWidth',2);
 stem(spulse((Ndummies*Nslices+1):end), amps*ones(length(spulse)-Ndummies*Nslices,1), 'c--') ;
 
-if hasCardiacData
+if hasCardiacPulseData
     stem(cpulse, ampc*ones(length(cpulse),1), 'r--') ;
 end
 
@@ -109,7 +110,7 @@ hs(end+1) = stem(spulse((Ndummies*Nslices+1):end), amps*ones(length(spulse)-Ndum
 
 
 
-if hasCardiacData
+if hasCardiacPulseData
     hs(end+1) = stem(cpulse, ampc*ones(length(cpulse),1), 'r') ;
 end
 
@@ -129,13 +130,20 @@ if hasCardiacData && hasRespData
         ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
         ['cardiac pulse (heartbeat) marker (N = ' int2str(length(cpulse)) ')'], ...
         'cardiac signal (dashed = raw)', 'respiratory signal (dashed = raw)'});
-elseif hasCardiacData
+elseif hasCardiacData && hasCardiacPulseData
     legend( hs, {
         'used cardiac signal', ...
         ['dummy scan event marker (N = ' int2str(Ndummies*Nslices) ')'], ...
         ['volume event marker (N = ' int2str(length(svolpulse)-Ndummies) '), without dummies'], ...
         ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
         ['cardiac pulse (heartbeat) marker (N = ' int2str(length(cpulse)) ')'], ...
+        'cardiac signal (dashed = raw)'});
+elseif hasCardiacData
+  legend( hs, {
+        'used cardiac signal', ...
+        ['dummy scan event marker (N = ' int2str(Ndummies*Nslices) ')'], ...
+        ['volume event marker (N = ' int2str(length(svolpulse)-Ndummies) '), without dummies'], ...
+        ['scan event marker (N = ' int2str(length(spulse)-Ndummies*Nslices) ')'], ...
         'cardiac signal (dashed = raw)'});
 else % only respData
     legend( hs, {

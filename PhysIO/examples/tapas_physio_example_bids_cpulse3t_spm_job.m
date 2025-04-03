@@ -1,4 +1,7 @@
 matlabbatch{1}.spm.tools.physio.save_dir = {'physio_out'};
+matlabbatch{1}.spm.tools.physio.write_bids.bids_step = 4;
+matlabbatch{1}.spm.tools.physio.write_bids.bids_dir = {''};
+matlabbatch{1}.spm.tools.physio.write_bids.bids_prefix = 'sub-s998_task-random_run-99';
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'BIDS';
 matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'sub-s998_task-random_run-99_physio.tsv'};
 matlabbatch{1}.spm.tools.physio.log_files.respiration = {''};

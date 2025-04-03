@@ -1,5 +1,5 @@
 function physio = tapas_physio_prepend_absolute_paths(physio)
-%prepend absolute paths for file names, in particular save_dir; creates
+% prepend absolute paths for file names, in particular save_dir; creates
 % save_dir, if necessary
 %
 %   physio = tapas_physio_prepend_absolute_paths(physio)
@@ -25,16 +25,36 @@ function physio = tapas_physio_prepend_absolute_paths(physio)
 
 [parentPath, currentFolder] = fileparts(physio.save_dir);
 
-% only relative folder specified, make absolute
-if isempty(parentPath) && ~isempty(currentFolder)
+%% Make all folders in physio struct absolute
+% only relative folder for save_dir specified, make absolute
+if (isempty(parentPath) || ( iscell(parentPath) && isempty([parentPath{:}]))) && ~isempty(currentFolder)
     physio.save_dir = fullfile(pwd, physio.save_dir);
 end
 
-save_dir = physio.save_dir;
+[parentPath, currentFolder] = fileparts(physio.write_bids.bids_dir);
 
-if ~exist(save_dir, 'dir') && ~isempty(save_dir)
-    [~,~] = mkdir(save_dir);
+% only relative folder specified, make absolute
+if (isempty(parentPath) || ( iscell(parentPath) && isempty([parentPath{:}]))) && ~isempty(currentFolder)
+    physio.write_bids.bids_dir = fullfile(pwd, physio.write_bids.bids_dir);
 end
+
+%% update all affected relative file names with save_dir
+
+requiredDirs = {physio.save_dir, physio.write_bids.bids_dir};
+
+for iRequiredDirs = 1:numel(requiredDirs)
+
+    required_dir = requiredDirs{iRequiredDirs};
+
+    if ~exist(required_dir, 'dir') && ~isempty(required_dir)
+        [status,msg,msgID] = mkdir(required_dir);
+        if ~status % unsuccessful creation AND directory did not exist before
+            physio.verbose = tapas_physio_log(msg, physio.verbose, 2);
+        end
+    end
+end
+
+save_dir = physio.save_dir;
 
 if ~isequal(save_dir, fileparts(physio.verbose.fig_output_file))
     physio.verbose.fig_output_file = fullfile(save_dir, ...

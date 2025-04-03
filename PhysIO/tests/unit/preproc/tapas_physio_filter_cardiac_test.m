@@ -26,15 +26,26 @@ function tests = tapas_physio_filter_cardiac_test()
 tests = functiontests(localfunctions);
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Auxiliary functions for automation of code folder structure
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% path to examples, needed for all test cases
+function setupOnce(testCase)
+% Get PhysIO public repo base folder from this file's location
+testCase.TestData.pathPhysioPublic = tapas_physio_simplify_path(fullfile(fileparts(mfilename('fullpath')), '..', '..', '..'));
+testCase.TestData.pathExamples = tapas_physio_get_path_examples(testCase.TestData.pathPhysioPublic);
+% for time courses (e.g., breathing) that reach close to 0, relative
+% tolerance can be misleading, use relative value to max instead
+testCase.TestData.absTol = 1e-6;
+end
+
+
 function test_philips_ppu7t_filter_cheby2(testCase)
 %% Compares previously saved Chebychev Type 2 IIR-filtered cropped cardiac 
 % time course with current re-run of same batch from Philips 7T PPU data
-% run GE example and extract physio
 
-pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
-
-pathCurrentExample = fullfile(pathExamples, 'Philips/PPU7T');
+pathCurrentExample = fullfile(testCase.TestData.pathExamples, 'Philips/PPU7T');
 cd(pathCurrentExample); % for prepending absolute paths correctly
 fileExample = fullfile(pathCurrentExample, 'philips_ppu7t_spm_job.m');
 run(fileExample); % retrieve matlabbatch
@@ -53,7 +64,7 @@ physio.preproc.cardiac.filter.stopband = [0.4 3.9];
 actPhysio = tapas_physio_main_create_regressors(physio);
 
 % load physio from reference data
-fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'preproc', ...
+fileReferenceData = fullfile(testCase.TestData.pathExamples, 'TestReferenceResults', 'preproc', ...
     'physio_filter_cardiac_cheby2.mat');
 load(fileReferenceData, 'physio');
 expPhysio = physio;
@@ -62,19 +73,17 @@ expPhysio = physio;
 actSolution = actPhysio.ons_secs.c;
 expSolution = expPhysio.ons_secs.c;
 
-verifyEqual(testCase, actSolution, expSolution);
+% RelTol would be too conservative, because values close to 0 in raw
+% timeseries
+verifyEqual(testCase, actSolution, expSolution, ...
+    'AbsTol', testCase.TestData.absTol*max(abs(expSolution)));
 end
 
 function test_philips_ppu7t_filter_butter(testCase)
 %% Compares previously saved butterworth-filtered cropped cardiac time course
 % with current re-run of same batch from Philips 7T PPU data
 
-% run GE example and extract physio
-pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-% TODO: Make generic!
-pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
-
-pathCurrentExample = fullfile(pathExamples, 'Philips/PPU7T');
+pathCurrentExample = fullfile(testCase.TestData.pathExamples, 'Philips/PPU7T');
 cd(pathCurrentExample); % for prepending absolute paths correctly
 fileExample = fullfile(pathCurrentExample, 'philips_ppu7t_spm_job.m');
 run(fileExample); % retrieve matlabbatch
@@ -94,7 +103,7 @@ physio.preproc.cardiac.filter.stopband = [];
 actPhysio = tapas_physio_main_create_regressors(physio);
 
 % load physio from reference data
-fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'preproc', ...
+fileReferenceData = fullfile(testCase.TestData.pathExamples, 'TestReferenceResults', 'preproc', ...
     'physio_filter_cardiac_butter.mat');
 load(fileReferenceData, 'physio');
 expPhysio = physio;
@@ -103,5 +112,8 @@ expPhysio = physio;
 actSolution = actPhysio.ons_secs.c;
 expSolution = expPhysio.ons_secs.c;
 
-verifyEqual(testCase, actSolution, expSolution);
+% RelTol would be too conservative, because values close to 0 in raw
+% timeseries
+verifyEqual(testCase, actSolution, expSolution, ...
+    'AbsTol', testCase.TestData.absTol*max(abs(expSolution)));
 end

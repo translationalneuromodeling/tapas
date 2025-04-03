@@ -32,6 +32,8 @@ save_dir.num     = [0 1];
 %% Sub-structure log_files
 %==========================================================================
 
+write_bids      = tapas_physio_gui_write_bids();
+
 %--------------------------------------------------------------------------
 % vendor
 %--------------------------------------------------------------------------
@@ -39,6 +41,7 @@ vendor        = cfg_menu;
 vendor.tag    = 'vendor';
 vendor.name   = 'vendor';
 vendor.help   = {' Vendor Name depending on your MR Scanner/Physiological recording system'
+    '                       ''ADInstruments/LabChart_Txt'' - Text file (.txt) export of .adinst files, for recordings from AD Instruments devices, typically viewed and processed in LabChart'
     '                       ''BIDS'' - Brain Imaging Data Structure (https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continous-recordings.html)'
     '                       ''Biopac_Txt'' - exported txt files from Biopac system (4 columns, [Resp PPU GSR Trigger]'
     '                       ''Biopac_Mat'' - exported mat files from Biopac system'
@@ -70,14 +73,16 @@ vendor.help   = {' Vendor Name depending on your MR Scanner/Physiological record
     '                           HCP-downloaded files of  name format  *_Physio_log.txt '
     '                           are already preprocessed into this simple 3-column text format'
     };
-vendor.labels = {'BIDS (Brain Imaging Data Structure)', 'Biopac_Txt', 'Biopac_Mat', ...
+vendor.labels = { 'ADInstruments/LabChart_Txt', ...
+    'BIDS (Brain Imaging Data Structure)', 'Biopac_Txt', 'Biopac_Mat', ...
     'BrainProducts', 'Custom', ...
     'GE', 'Philips', ...
-    'Siemens (VB, *.puls/*.ecg/*.resp)', ...
-    'Siemens_Tics (VD: *_PULS.log/*_ECG1.log/*_RESP.log/*_AcquisitionInfo*.log)', ...
+    'Siemens (Manual: IdeaCmdTool, *.puls/*.ecg/*.resp)', ...
+    'Siemens_Tics (Auto: XA60/WIP AdvPhysio, *_PULS.log/*_ECG1.log/*_RESP.log/*_AcquisitionInfo*.log)', ...
     'Siemens_HCP (Human Connectome Project, *Physio_log.txt, 3 column format', ...
     };
-vendor.values = {'BIDS', 'Biopac_Txt','Biopac_Mat', 'BrainProducts', 'Custom', ...
+vendor.values = {'ADInstruments_Txt', 'BIDS', 'Biopac_Txt','Biopac_Mat', ...
+    'BrainProducts', 'Custom', ...
     'GE', 'Philips', 'Siemens', 'Siemens_Tics', 'Siemens_HCP', ...
     };
 vendor.val    = {'Philips'};
@@ -540,7 +545,7 @@ modality.tag    = 'modality';
 modality.name   = 'modality';
 modality.help   = {'Shall ECG or PPU data be read from logfiles?'};
 modality.labels = {'ECG', 'OXY/PPU', 'ECG_WiFi', 'PPU_WiFi'};
-modality.values = {'ECG', 'PPU', 'ECG_WiFi', 'PPU_Wifi'};
+modality.values = {'ECG', 'PPU', 'ECG_WiFi', 'PPU_WiFi'};
 modality.val    = {'ECG'};
 
 
@@ -1423,12 +1428,12 @@ movement_censoring_method.help   = {'Censoring method used for thresholding'
     '  ''None''    - no motion censoring performed'
     '  ''MAXVAL''  - thresholding (max. translation/rotation)'
     '  ''FD''      - frame-wise displacement (as defined by Power et al., 2012)'
-    '                i.e., |rp_x(n+1) - rp_x(n)| + |rp_y(n+1) - rp_y(n)| + |rp_z(n+1) - rp_z(n)|'
-    '                      + 50 mm *(|rp_pitch(n+1) - rp_pitch(n)| + |rp_roll(n+1) - rp_roll(n)| + |rp_yaw(n+1) - rp_yaw(n)|'
+    '                i.e., |rp_x(n) - rp_x(n-1)| + |rp_y(n) - rp_y(n-1)| + |rp_z(n) - rp_z(n-1)|'
+    '                      + 50 mm *(|rp_pitch(n) - rp_pitch(n-1)| + |rp_roll(n) - rp_roll(n-1)| + |rp_yaw(n) - rp_yaw(n-1)|'
     '                      where 50 mm is an average head radius mapping a rotation into a translation of head surface'
     '  ''DVARS''   - root mean square over brain voxels of '
     '                difference in voxel intensity between consecutive volumes'
-    '                (Power et al., 2012)'
+    '                (Power et al., 2012, https://doi.org/10.1016/j.neuroimage.2011.10.018)'
     };
 movement_censoring_method.labels = {'none' 'MAXVAL (Maximum translation/rotation)' 'FD (Framewise Displacement)', 'DVARS'};
 movement_censoring_method.values = {'none', 'MAXVAL', 'FD', 'DVARS'};
@@ -1643,7 +1648,7 @@ verbose.val    = {level fig_output_file use_tabs};
 physio      = cfg_exbranch;
 physio.tag  = 'physio';
 physio.name = 'TAPAS PhysIO Toolbox';
-physio.val  = {save_dir files scan_timing preproc model verbose};
+physio.val  = {save_dir write_bids files scan_timing preproc model verbose};
 physio.help = {'...'};
 physio.prog = @run_physio;
 physio.vout = @vout_physio;

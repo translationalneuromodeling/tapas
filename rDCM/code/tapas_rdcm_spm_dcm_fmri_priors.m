@@ -35,9 +35,9 @@ n = length(A);
 
 % check options and D (for nonlinear coupling)
 %--------------------------------------------------------------------------
-try, options.two_state;  catch, options.two_state  = 0; end
-try, options.endogenous; catch, options.endogenous = 0; end
-try, D;                  catch, D = zeros(n,n,0);       end
+try options.two_state;  catch, options.two_state  = 0; end
+try options.endogenous; catch, options.endogenous = 0; end
+try D;                  catch, D = zeros(n,n,0);       end
 
 
 % prior (initial) states and shrinkage priors on A for endogenous DCMs

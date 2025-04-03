@@ -23,7 +23,7 @@ function [ varargout ] = tapas_rdcm_spm_dcm_generate(syn_model, SNR)
 if isstruct(syn_model)
     DCM       = syn_model;
 else
-    load(syn_model)
+    load(syn_model,"DCM")
 end
 if nargin < 2  || isempty(SNR)
     SNR  = 1;
@@ -35,7 +35,7 @@ end
 U     = DCM.U;        % inputs
 v     = DCM.v;        % number of scans
 n     = DCM.n;        % number of regions
-m     = size(U.u,2);  % number of inputs
+% m     = size(U.u,2);  % number of inputs
 
 
 % Check whether the model is stable by examining the eigenvalue 
@@ -81,8 +81,8 @@ M.ns    = v;
 
 % fMRI slice time sampling
 %--------------------------------------------------------------------------
-try, M.delays = DCM.delays; end
-try, M.TE     = DCM.TE;     end
+try M.delays = DCM.delays; catch, end
+try M.TE     = DCM.TE; catch,     end
 
 
 % Integrate and compute hemodynamic response at v sample points

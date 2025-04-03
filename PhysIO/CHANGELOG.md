@@ -4,10 +4,54 @@ RELEASE INFORMATION
 Current Release
 ---------------
 
-*Current version: PhysIO Toolbox Release R2022a, v8.1.0*
+*Current version: PhysIO Toolbox Release R2024a, v9.0.0*
 
-April 5th, 2022
+March 25th, 2025
 
+
+Bugfix Release Notes (v9.0.1)
+----------------------------
+
+### Fixed
+- Discrepancy Linux/Windows in detected cardiac pulses (`ons_secs.raw.cpulse`) for near-constant traces (e.g., in `tapas_physio_example_siemens_vb_ppu3t_sync_first_spm_job`)
+due to `tapas_physio_corrcoef2` for 
+- Inconsistent Handling of `bids_dir`; now consistent with `save_dir` etc.: as cell in SPM job, but char in `physio` struct
+
+Major Release Notes (v9.0.0)
+----------------------------
+
+### Added
+- BIDS writer: write out BIDS-compatbile physiological logfiles (`.tsv.gz` and `.json`)
+  from any vendor format
+- Greatly expanded Review visualization (`tapas_physio_review`): Allow more detailed re-creation of figures from online execution, control visual verbosity retrospectively (e.g., for debugging)
+- Read-In of field `AcquisitionTime` from BIDS `.json` side-car file for converted Siemens DICOMs after [dcm2niix](https://www.nitrc.org/plugins/mwiki/index.php/dcm2nii:MainPage) conversion for synchronization (Gitlab issue 109)
+
+### Changed
+- Expanded usage of scan trigger trace (continuous, binary, on/off vs alternating levels)
+
+### Fixed
+- Bugfix processing of short Siemens IdeaCmdTool logfiles (stop before scan ending)
+- DICOM Read-in for files without extension
+
+Minor Release Notes (v8.2.0)
+----------------------------
+
+### Added
+- Interface `tapas_physio_test` to TAPAS-generic `tapas_test` function
+- Added suport for logfile version 3 of Siemens physio recordings 
+    - multi ECG/Resp channels and interleaved status messages
+    - new integration test for Siemens VB Logversion 3
+- Added support for ADInstruments/LabChart Txt-export format (see 
+  [CUBRIC Seminar Example](https://github.com/BRAIN-TO/cubric-physio) and
+  gitlab branch #107)
+
+### Fixed
+- Removed dependence on `nanmean` (Statistics Toolbox)
+    - See [GitHub issue #205](https://github.com/translationalneuromodeling/tapas/issues/205) 
+- Compatibility with multiple SPM toolbox locations for `lmod` ([GitHub issue #211](https://github.com/translationalneuromodeling/tapas/issues/211))
+    - as listed in `spm_get_defaults('tbx')`
+- Refactoring of Philips read-in to support novel 12-column logfile version, see [GitHub issue #207](https://github.com/translationalneuromodeling/tapas/issues/207#issuecomment-1246078600)
+- Unit/Integration tests for filtered traces (cardiac and respiratory) switched to absolute tolerances (relative problematic for traces close to zero)
 
 Minor Release Notes (v8.1.0)
 ----------------------------
@@ -225,8 +269,7 @@ Minor Release Notes (R2019a, v7.1.0)
 ------------------------------------
 
 ### Added
-- BIDS reader and example (Brain Imaging Data Structure, 
-http://bids.neuroimaging.io/bids_spec.pdf) for `*_physio.tsv[.gz]/.json` files
+- Brain Imaging Data Structure ([BIDS](https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continuous-recordings.html)) reader and example for `*_physio.tsv[.gz]/.json` files
 - Added BioPac txt-File read-in and example
 - Template example with all physio-fields for matlab script and settings as in default SPM batch
 - Started unit testing framework in folder `tests`

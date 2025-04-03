@@ -12,7 +12,7 @@ function [c, r, t, cpulse, acq_codes, verbose] = ...
 % physiological recordings can be found here:
 %
 % https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/
-% 06-physiological-and-other-continous-recordings.html
+% 06-physiological-and-other-continuous-recordings.html
 %
 % [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles_biopac_txt(...
 %    log_files, cardiac_modality, verbose, varargin)
@@ -30,12 +30,23 @@ function [c, r, t, cpulse, acq_codes, verbose] = ...
 %                             -0.95459	-0.0076297	1
 %                             -0.95459	-0.0076297	0
 %                           - cardiac and respiratory column contain the raw
-%                           physiological traces
-%                              - for cardiac, alternatively, one can set the
+%                             physiological traces
+%                             - for cardiac, alternatively, one can set the
 %                               cardiac triggers (cpulse), e.g. detected
 %                               R-peaks, as 0/1 time series, as for scan trigger
-%                           - trigger is 0 everywhere but at
-%                           start of a scanned volume (=1)
+%                           - trigger, as by the BIDS standard is a
+%                             "continuous measurement of the scanner trigger signal"
+%                           - Typically, this signal is (near-)constant until
+%                             a scan event (e.g. volume start) is triggered
+%                             Then, either 
+%                             a) a short (few ms, min 1 sample) positive signal spike occurs 
+%                                (e.g., for the typical TTL trigger signal
+%                                flanks from 0 to 5V and back)
+%                             b) a switch to another constant signal level
+%                             occurs (e.g., alternating from 0 to 5 V at
+%                             odd scans and back to 0 V at even scan
+%                             onsets)
+%
 %       .log_respiration    same as .log_cardiac
 %       .sampling_interval  sampling interval (in seconds)
 %                           default: 1 ms (1000 Hz)
@@ -123,8 +134,10 @@ end
 
 hasJsonFile = isfile(fileJson);
 
+nColumns = [];
 if hasJsonFile
     val = jsondecode(fileread(fileJson));
+    nColumns = numel(val.Columns);
 else
     verbose = tapas_physio_log(...
         ['No .json file found. Please specify log_files.sampling_interval' ...
@@ -175,9 +188,9 @@ for iCol = 1:2
     end
 end
 
-C = tapas_physio_read_columnar_textfiles(fileNameCardiac, 'BIDS');
+C = tapas_physio_read_columnar_textfiles(fileNameCardiac, 'BIDS', nColumns);
 c = double(C{idxCol(1)});
-iAcqStart = (double(C{idxCol(2)})~=0); % trigger has 1, rest is 0;
+trigger_trace_c = double(C{idxCol(2)});
 
 %% delete temporary unzipped file
 if isZipped
@@ -209,8 +222,10 @@ end
 
 hasJsonFile = isfile(fileJson);
 
+nColumns = [];
 if hasJsonFile
     val = jsondecode(fileread(fileJson));
+    nColumns = numel(val.Columns);
 else
     verbose = tapas_physio_log(...
         ['No .json file found. Please specify log_files.sampling_interval' ...
@@ -241,8 +256,9 @@ for iCol = 1:2
     end
 end
 
-C = tapas_physio_read_columnar_textfiles(fileNameRespiration, 'BIDS');
+C = tapas_physio_read_columnar_textfiles(fileNameRespiration, 'BIDS', nColumns);
 r = double(C{idxCol(1)});
+trigger_trace_r = double(C{idxCol(2)});
 
 %% Create timing vector from samples
 nSamplesCardiac = length(c);
@@ -274,6 +290,7 @@ end
 isHigherSamplingCardiac = dtCardiac < dtRespiration;
 if isHigherSamplingCardiac
     t = tCardiac;
+    trigger_trace = trigger_trace_c;
     rInterp = interp1(tRespiration, r, t);
     %racq_codesInterp = interp1(tRespiration, racq_codes, t, 'nearest');
     %acq_codes = cacq_codes + racq_codesInterp;
@@ -287,6 +304,7 @@ if isHigherSamplingCardiac
     
 else
     t = tRespiration;
+    trigger_trace = trigger_trace_r;
     cInterp = interp1(tCardiac, c, t);
     %cacq_codesInterp = interp1(tCardiac, cacq_codes, t, 'nearest');
     %acq_codes = racq_codes + cacq_codesInterp;
@@ -300,44 +318,13 @@ else
     
 end
 
+
+
 %% Recompute acq_codes as for Siemens (volume on/volume off)
-acq_codes = [];
+[acq_codes, verbose] = tapas_physio_create_acq_codes_from_trigger_trace(t, trigger_trace, verbose, ...
+    1, 'rising', 'auto_matched');
 
-if ~isempty(iAcqStart) % otherwise, nothing to read ...
-    % iAcqStart is a columns of 0 and 1, 1 for the trigger event of a new
-    % volume start
-    
-    % sometimes, trigger is on for several samples; ignore these extended
-    % phases of "on-triggers" as duplicate values, if trigger distance is
-    % very different
-    %
-    % fraction of mean trigger distance; if trigger time difference below that, will be removed
-    outlierThreshold = 0.2;
-    
-    idxAcqStart = find(iAcqStart);
-    dAcqStart = diff(idxAcqStart);
-    
-    % + 1 because of diff
-    iAcqOutlier = 1 + find(dAcqStart < outlierThreshold*mean(dAcqStart));
-    iAcqStart(idxAcqStart(iAcqOutlier)) = 0;
-    
-    acq_codes = zeros(nSamplesCardiac,1);
-    acq_codes(iAcqStart) = 8; % to match Philips etc. format
-    
-    nAcqs = numel(find(iAcqStart));
-    
-    if nAcqs >= 1
-        % report time of acquisition, as defined in SPM
-        meanTR = mean(diff(t(iAcqStart)));
-        stdTR = std(diff(t(iAcqStart)));
-        verbose = tapas_physio_log(...
-            sprintf('TR = %.3f +/- %.3f s (Estimated mean +/- std time of repetition for one volume; nTriggers = %d)', ...
-            meanTR, stdTR, nAcqs), verbose, 0);
-    end
-end
-
-%% Plot, if wanted
-
+%% Plot extracted data so far
 if DEBUG
     stringTitle = 'Read-In: Raw BIDS physlog data (TSV file)';
     verbose.fig_handles(end+1) = ...
@@ -369,8 +356,10 @@ end
 
 hasJsonFile = isfile(fileJson);
 
+nColumns = [];
 if hasJsonFile
     val = jsondecode(fileread(fileJson));
+    nColumns = numel(val.Columns);
 else
     verbose = tapas_physio_log(...
         ['No .json file found. Please specify log_files.sampling_interval' ...
@@ -421,10 +410,10 @@ for iCol = 1:3
     end
 end
 
-C = tapas_physio_read_columnar_textfiles(fileName, 'BIDS');
+C = tapas_physio_read_columnar_textfiles(fileName, 'BIDS', nColumns);
 c = double(C{idxCol(1)});
 r = double(C{idxCol(2)});
-iAcqStart = (double(C{idxCol(3)})~=0); % trigger has 1, rest is 0;
+trigger_trace = double(C{idxCol(3)}); % trigger has 1, rest is 0;
 
 
 %% Create timing vector from samples
@@ -433,43 +422,10 @@ nSamples = max(numel(c), numel(r));
 t = -tRelStartScan + ((0:(nSamples-1))*dt)';
 
 %% Recompute acq_codes as for Siemens (volume on/volume off)
-acq_codes = [];
+[acq_codes, verbose] = tapas_physio_create_acq_codes_from_trigger_trace(t, trigger_trace, verbose, ...
+        1, 'rising', 'auto_matched');
 
-if ~isempty(iAcqStart) % otherwise, nothing to read ...
-    % iAcqStart is a columns of 0 and 1, 1 for the trigger event of a new
-    % volume start
-    
-    % sometimes, trigger is on for several samples; ignore these extended
-    % phases of "on-triggers" as duplicate values, if trigger distance is
-    % very different
-    %
-    % fraction of mean trigger distance; if trigger time difference below that, will be removed
-    outlierThreshold = 0.2;
-    
-    idxAcqStart = find(iAcqStart);
-    dAcqStart = diff(idxAcqStart);
-    
-    % + 1 because of diff
-    iAcqOutlier = 1 + find(dAcqStart < outlierThreshold*mean(dAcqStart));
-    iAcqStart(idxAcqStart(iAcqOutlier)) = 0;
-    
-    acq_codes = zeros(nSamples,1);
-    acq_codes(iAcqStart) = 8; % to match Philips etc. format
-    
-    nAcqs = numel(find(iAcqStart));
-    
-    if nAcqs >= 1
-        % report time of acquisition, as defined in SPM
-        meanTR = mean(diff(t(iAcqStart)));
-        stdTR = std(diff(t(iAcqStart)));
-        verbose = tapas_physio_log(...
-            sprintf('TR = %.3f +/- %.3f s (Estimated mean +/- std time of repetition for one volume; nTriggers = %d)', ...
-            meanTR, stdTR, nAcqs), verbose, 0);
-    end
-end
-
-%% Plot, if wanted
-
+%% Plot extracted traces so far
 if DEBUG
     stringTitle = 'Read-In: Raw BIDS physlog data (TSV file)';
     verbose.fig_handles(end+1) = ...

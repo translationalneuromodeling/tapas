@@ -200,6 +200,8 @@ end
 try
     DCM.y = abs(reshape(output.signal.yd_pred_rdcm_fft,DCM.v,DCM.n)).^2;
     DCM.R = abs(reshape(output.signal.yd_source_fft,DCM.v,DCM.n)).^2 - DCM.y;
+catch
+    
 end
 
 % predicted data (temporal derivative in Fourier space)

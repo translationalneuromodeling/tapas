@@ -68,7 +68,7 @@ defaults.endCropSeconds     = 1;
 % used channel depends on cardiac modality
 switch cardiac_modality
     case 'ECG'
-        defaults.ecgChannel = 'mean'; %'mean'; 'v1'; 'v2'
+        defaults.ecgChannel = 'mean'; %'mean'; 'v1'; 'v2'; 'v3'; 'v4'
     otherwise
         defaults.ecgChannel = 'v1';
 end
@@ -93,114 +93,137 @@ end
 % logfile footers
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-hasScanTimingDicomImage = ~isempty(log_files.scan_timing);
+hasScanTimingFile = ~isempty(log_files.scan_timing);
 hasCardiacData = ~isempty(log_files.cardiac);
 hasRespData = ~isempty(log_files.respiration);
 
-if hasScanTimingDicomImage
+if hasScanTimingFile
     % Times are in seconds since start of the day
-    
-    dicomHeader             = spm_dicom_headers(...
-        fullfile(log_files.scan_timing));
-    
-    try % old example DICOM format
-        tStartScanDicom    = dicomHeader{1}.AcquisitionTime;
-        
-        TR = dicomHeader{1}.RepetitionTime/1000;
-        
-        % TODO: Include AcquisitionNumber? InstanceNumber?
-        
-    catch % new XA30 DICOM export
-        dc = dicomHeader{1};
-        
-        % tried different fields, Study/SeriesTime refer to 1st volume
-        % ContentTime > InstanceCreationTime > dc.AcquisitionDateTime
-        % difference is about one second each
-        % (1.14 and 0.89s for vol 250, 1.35 and 1.97s for vol 001, TR was 1.2s)
-        % Since naming was most similar to AcquisitionDateTime, we chose
-        % that one...
-        % parse Date/Time format from Dicom field, and reformat it as
-        % seconds since start of day
-        dateVector = datevec(dc.AcquisitionDateTime, 'yyyymmddHHMMSS.FFF');
-        tStartScanDicom = dateVector(end-2:end)*[3600 60 1]';
-        TR = dc.SharedFunctionalGroupsSequence{1}.MRTimingAndRelatedParametersSequence{1}.RepetitionTime/1000;
-        
+
+    [~,~, fileType] = fileparts(log_files.scan_timing);
+
+    switch lower(fileType)
+        case '.json'
+            % Assuming that AcquisitionDateTime of first slice of first volume Dicom is
+            % converted by dcm2niix to AcquisitionTime field, see
+            % https://github.com/UNFmontreal/Dcm2Bids/issues/90#issuecomment-708655328
+            if strcmpi(log_files.align_scan, 'last')
+                verbose = tapas_physio_log(['Inconsistency: ' ...
+                    'AcquisitionTime in scan_timing JSON side car typically ' ...
+                    'refers to first slice of first volume, but ' ...
+                    'align_scan = ''last'' is specified. ' ...
+                    'Set align_scan = ''first'' instead'], verbose, 2);
+            end
+            val = jsondecode(fileread(log_files.scan_timing));
+            dateVector = datevec(val.AcquisitionTime, 'HH:MM:SS.FFF');
+            tStartScanImageHeader = dateVector(end-2:end)*[3600 60 1]';
+            TR = val.RepetitionTime;
+
+        otherwise % assume and try DICOM file
+
+            dicomHeader             = spm_dicom_headers(...
+                fullfile(log_files.scan_timing));
+
+            if isempty(dicomHeader) % not a DICOM file
+                verbose = tapas_physio_log(['Unknown file type for scan ' ...
+                    'timing synchronization (expected DICOM .dcm/.ima or BIDS .json)'], ...
+                    verbose, 2);
+            else
+                try % old example DICOM format
+                    tStartScanImageHeader    = dicomHeader{1}.AcquisitionTime;
+
+                    TR = dicomHeader{1}.RepetitionTime/1000;
+
+                    % TODO: Include AcquisitionNumber? InstanceNumber?
+
+                catch % new XA30 DICOM export
+                    dc = dicomHeader{1};
+
+                    % tried different fields, Study/SeriesTime refer to 1st volume
+                    % ContentTime > InstanceCreationTime > dc.AcquisitionDateTime
+                    % difference is about one second each
+                    % (1.14 and 0.89s for vol 250, 1.35 and 1.97s for vol 001, TR was 1.2s)
+                    % Since naming was most similar to AcquisitionDateTime, we chose
+                    % that one...
+                    % parse Date/Time format from Dicom field, and reformat it as
+                    % seconds since start of day
+                    dateVector = datevec(dc.AcquisitionDateTime, 'yyyymmddHHMMSS.FFF');
+                    tStartScanImageHeader = dateVector(end-2:end)*[3600 60 1]';
+                    TR = dc.SharedFunctionalGroupsSequence{1}.MRTimingAndRelatedParametersSequence{1}.RepetitionTime/1000;
+                end
+           end
     end
-    
-    tStopScanDicom     = tStartScanDicom + TR;
+
+    tStopScanImageHeader     = tStartScanImageHeader + TR;
 end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Read in cardiac data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+referenceClockString = 'MDH'; %'MPCU';or 'MDH' (default)
 if hasCardiacData
-    
+
     [lineData, logFooter] = tapas_physio_read_physlogfiles_siemens_raw(...
-        log_files.cardiac);
-    tLogTotal = logFooter.LogStopTimeSeconds - logFooter.LogStartTimeSeconds;
-    
-    
-    if hasScanTimingDicomImage
-        tStartScan = tStartScanDicom; % this is just the start of the selected DICOM volume
-        tStopScan = tStopScanDicom;    
+        log_files.cardiac, referenceClockString);
+    tLogTotal = logFooter.StopTimeSeconds - logFooter.StartTimeSeconds;
+
+
+    if hasScanTimingFile
+        tStartScan = tStartScanImageHeader; % this is the start of the DICOM volume selected for sync
+        tStopScan = tStopScanImageHeader;   % this is the end time (start + TR) of the DICOM volume selected for sync
     else
-        % Just different time scale, gives bad scaling in plots, and not
-        % needed...
-        %     tStartScan = logFooter.ScanStartTimeSeconds;
-        %     tStopScan = logFooter.ScanStopTimeSeconds;
-        tStartScan = logFooter.LogStartTimeSeconds;
-        tStopScan = logFooter.LogStopTimeSeconds;
+        tStartScan = logFooter.StartTimeSeconds;
+        tStopScan = logFooter.StopTimeSeconds;
     end
-    
+
     switch log_files.align_scan
         case 'first'
             relative_start_acquisition = tStartScan ...
-                - logFooter.LogStartTimeSeconds;
+                - logFooter.StartTimeSeconds;
         case 'last'
             % shift onset of first scan by knowledge of run duration and
             % onset of last scan in run
             relative_start_acquisition = ...
-                (tStopScan - sqpar.Nscans*sqpar.TR) ... 
-                - logFooter.LogStartTimeSeconds;
+                (tStopScan - sqpar.Nscans*sqpar.TR) ...
+                - logFooter.StartTimeSeconds;
     end
-    
-    
+
+
     % add arbitrary offset specified by user
     relative_start_acquisition = relative_start_acquisition + ...
         explicit_relative_start_acquisition;
-    
+
     data_table = tapas_physio_siemens_line2table(lineData, cardiac_modality);
-    
+
     if isempty(dt)
         nSamplesC = size(data_table,1);
         dt_c = tLogTotal/(nSamplesC-1);
     else
         dt_c = dt(1);
     end
-    
+
     dataCardiac = tapas_physio_siemens_table2cardiac(data_table, ecgChannel, dt_c, ...
         relative_start_acquisition, endCropSeconds);
-    
+
     if DEBUG
         verbose.fig_handles(end+1) = ...
             tapas_physio_plot_raw_physdata_siemens(dataCardiac);
     end
-    
-    
+
+
     %% crop end of log file
     cpulse = dataCardiac.cpulse_on;
     c = dataCardiac.c;
     t_c = dataCardiac.t;
     stopSample = dataCardiac.stopSample;
-    
+
     cpulse(cpulse > t_c(dataCardiac.stopSample)) = [];
     t_c(stopSample+1:end) = [];
     c(stopSample+1:end) = [];
-    
-    
-    
+
+
+
 else
     c = [];
     t_c = [];
@@ -213,66 +236,62 @@ end
 
 if hasRespData
     [lineData, logFooter] = tapas_physio_read_physlogfiles_siemens_raw(...
-        log_files.respiration);
-    tLogTotal = logFooter.LogStopTimeSeconds - logFooter.LogStartTimeSeconds;
-    
-    if hasScanTimingDicomImage
-        tStartScan = tStartScanDicom;
-        tStopScan = tStopScanDicom; % is incorrect, use tStartScan + TR!
+        log_files.respiration, referenceClockString);
+    tLogTotal = logFooter.StopTimeSeconds - logFooter.StartTimeSeconds;
+
+    if hasScanTimingFile
+        tStartScan = tStartScanImageHeader; % this is the start of the DICOM volume selected for sync
+        tStopScan = tStopScanImageHeader;   % this is the end time (start + TR) of the DICOM volume selected for sync
     else
-        % Just different time scale, gives bad scaling in plots, and not
-        % needed...
-        %     tStartScan = logFooter.ScanStartTimeSeconds;
-        %     tStopScan = logFooter.ScanStopTimeSeconds;
-        tStartScan = logFooter.LogStartTimeSeconds;
-        tStopScan = logFooter.LogStopTimeSeconds; 
+        tStartScan = logFooter.StartTimeSeconds;
+        tStopScan = logFooter.StopTimeSeconds;
     end
-    
+
     switch log_files.align_scan
         case 'first'
             relative_start_acquisition = tStartScan - ...
-                logFooter.LogStartTimeSeconds;
+                logFooter.StartTimeSeconds;
         case 'last'
             % shift onset of first scan by knowledge of run duration and
             % onset of last scan in run
             relative_start_acquisition = ...
-                (tStartScan - (sqpar.Nscans-1)*sqpar.TR) ... 
-                - logFooter.LogStartTimeSeconds;
+                (tStopScan - sqpar.Nscans*sqpar.TR) ...
+                - logFooter.StartTimeSeconds;
     end
-    
-    
+
+
     % add arbitrary offset specified by user
     relative_start_acquisition = relative_start_acquisition + ...
         explicit_relative_start_acquisition;
-    
+
     data_table = tapas_physio_siemens_line2table(lineData, 'RESP');
-    
+
     if isempty(dt)
         nSamplesR = size(data_table,1);
         dt_r = tLogTotal/(nSamplesR-1);
     else
         dt_r = dt(end);
     end
-    
+
     dataResp = tapas_physio_siemens_table2cardiac(data_table, ecgChannel, ...
         dt_r, relative_start_acquisition, endCropSeconds);
-    
+
     if DEBUG
         verbose.fig_handles(end+1) = ...
             tapas_physio_plot_raw_physdata_siemens(dataResp);
     end
-    
-    
+
+
     r = dataResp.c;
     t_r = dataResp.t;
-    
+
     %
     %% crop end of log file???
     % stopSample = dataResp.stopSample;
     % t(stopSample+1:end) = [];
     % c(stopSample+1:end) = [];
-    
-    
+
+
 else
     r = [];
     t_r = [];

@@ -1,11 +1,11 @@
-function [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles(log_files, cardiac_modality, ...
-    verbose, sqpar)
+function [ons_secs, verbose] = tapas_physio_read_physlogfiles(log_files, cardiac_modality, ...
+    sqpar, ons_secs, verbose)
 % reads out physiological time series and timing vector depending on the
 % MR scanner vendor and the modality of peripheral cardiac monitoring (ECG
 % or pulse oximetry)
 %
-% [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles(log_files, cardiac_modality, ...
-%    verbose)
+% [ons_secs, verbose] = tapas_physio_read_physlogfiles(log_files, cardiac_modality, ...
+%     sqpar, ons_secs, verbose)
 %
 % IN
 %   log_files   is a structure containing the following filenames (with full
@@ -25,9 +25,11 @@ function [c, r, t, cpulse, acq_codes, verbose] = tapas_physio_read_physlogfiles(
 %                           only needed for time adjustments of logfile
 %                           relative to duration of a selected run
 % OUT
+% ons_secs.
 %   c                   cardiac time series (ECG or pulse oximetry)
 %   r                   respiratory time series
 %   t                   vector of time points (in seconds)
+%   dt                  sampling interval (in seconds)
 %   cpulse              time events of R-wave peak in cardiac time series (seconds)
 %   acq_codes           slice/volume start events marked by number <> 0
 %                       for time points in t
@@ -59,6 +61,9 @@ if nargin < 3
 end
 
 switch lower(log_files.vendor)
+    case {'adinstruments_txt', 'labchart_txt'}
+        [c, r, t, cpulse, acq_codes] = ...
+            tapas_physio_read_physlogfiles_adinstruments_txt(log_files, cardiac_modality, verbose);
     case 'bids'
         [c, r, t, cpulse, acq_codes] = ...
             tapas_physio_read_physlogfiles_bids(log_files, cardiac_modality, verbose);
@@ -95,13 +100,15 @@ switch lower(log_files.vendor)
             tapas_physio_read_physlogfiles_siemens_hcp(log_files, cardiac_modality, verbose);
 end
 
+% since resampling might have occured during read-in, dt is recalculated
+dt = t(2) - t(1);
+
 % Do not prepend for Siemens Tics, since can be as long as a day
 isSiemensTics = strcmpi(log_files.vendor, 'siemens_tics');
 
 % prepend all data with zeros for better processing, if scan starts before
 % physiological data
 if ~isempty(t) && t(1) > 0 && ~isSiemensTics
-    dt = t(2) - t(1);
     nPrependSamples = ceil(t(1)/dt);
     if ~isempty(c)
         prependSamples = tapas_physio_simulate_pulse_samples(t, c, nPrependSamples, 'pre', verbose);
@@ -117,4 +124,13 @@ if ~isempty(t) && t(1) > 0 && ~isSiemensTics
     
     t = [(0:nPrependSamples-1)'*dt;t]; 
 end
+
+% Assemble ons_secs output
+ons_secs.c = c;
+ons_secs.r = r;
+ons_secs.t = t;
+ons_secs.dt = dt;
+ons_secs.cpulse = cpulse;
+ons_secs.acq_codes = acq_codes;
+
 end

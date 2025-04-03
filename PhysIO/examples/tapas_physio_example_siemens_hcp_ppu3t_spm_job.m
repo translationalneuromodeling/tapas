@@ -1,4 +1,7 @@
 matlabbatch{1}.spm.tools.physio.save_dir = {'physio_out'};
+matlabbatch{1}.spm.tools.physio.write_bids.bids_step = 4;
+matlabbatch{1}.spm.tools.physio.write_bids.bids_dir = {''};
+matlabbatch{1}.spm.tools.physio.write_bids.bids_prefix = 'sub-control01_task-YOURTASK_run-1';
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'Siemens_HCP';
 matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'tfMRI_MOTOR_LR_Physio_log.txt'};
 matlabbatch{1}.spm.tools.physio.log_files.respiration = {'tfMRI_MOTOR_LR_Physio_log.txt'};

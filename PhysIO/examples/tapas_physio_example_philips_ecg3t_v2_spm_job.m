@@ -1,4 +1,7 @@
 matlabbatch{1}.spm.tools.physio.save_dir = {'physio_out'};
+matlabbatch{1}.spm.tools.physio.write_bids.bids_step = 3;
+matlabbatch{1}.spm.tools.physio.write_bids.bids_dir = {'physio_out'};
+matlabbatch{1}.spm.tools.physio.write_bids.bids_prefix = 'sub-control01_task-YOURTASK_run-1';
 matlabbatch{1}.spm.tools.physio.log_files.vendor = 'Philips';
 matlabbatch{1}.spm.tools.physio.log_files.cardiac = {'SCANPHYSLOG.log'};
 matlabbatch{1}.spm.tools.physio.log_files.respiration = {'SCANPHYSLOG.log'};
@@ -15,7 +18,7 @@ matlabbatch{1}.spm.tools.physio.scan_timing.sqpar.onset_slice = 16;
 matlabbatch{1}.spm.tools.physio.scan_timing.sqpar.time_slice_to_slice = [];
 matlabbatch{1}.spm.tools.physio.scan_timing.sqpar.Nprep = [];
 matlabbatch{1}.spm.tools.physio.scan_timing.sync.nominal = struct([]);
-matlabbatch{1}.spm.tools.physio.preproc.cardiac.modality = 'PPU_Wifi';
+matlabbatch{1}.spm.tools.physio.preproc.cardiac.modality = 'PPU_WiFi';
 matlabbatch{1}.spm.tools.physio.preproc.cardiac.filter.no = struct([]);
 matlabbatch{1}.spm.tools.physio.preproc.cardiac.initial_cpulse_select.auto_matched.min = 0.4;
 matlabbatch{1}.spm.tools.physio.preproc.cardiac.initial_cpulse_select.auto_matched.file = 'initial_cpulse_kRpeakfile.mat';

@@ -30,6 +30,16 @@ function tests = tapas_physio_findpeaks_test()
 tests = functiontests(localfunctions);
 end
 
+% path to examples, needed for all test cases
+function setupOnce(testCase)
+% Get PhysIO public repo base folder from this file's location
+testCase.TestData.pathPhysioPublic = tapas_physio_simplify_path(fullfile(fileparts(mfilename('fullpath')), '..', '..', '..'));
+testCase.TestData.pathExamples = tapas_physio_get_path_examples(testCase.TestData.pathPhysioPublic);
+% for time courses (e.g., breathing) that reach close to 0, relative
+% tolerance can be misleading, use relative value to max instead
+testCase.TestData.absTol = 1e-6;
+end
+
 function test_ge_ppu3t_peaks(testCase)
 %% Compares previously saved cpulse (detected cardiac pulses) from 
 % physio-structure to same output when re-running current version of
@@ -40,9 +50,7 @@ function test_ge_ppu3t_peaks(testCase)
 doUseSpm = true;
 
 % run GE example and extract physio
-pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..');
-% TODO: Make generic!
-pathExamples =  fullfile(pathPhysioPublic, '..', 'examples');
+pathExamples = testCase.TestData.pathExamples;
 
 if doUseSpm
     pathCurrentExample = fullfile(pathExamples, 'GE/PPU3T');
