@@ -1,6 +1,6 @@
 # Changelog
 TAPAS toolbox 
-## [6.1.0] 2022-11-18
+## [6.1.0] 2025-04-03
 ### Added 
 - Added `tapas_test` testing function. Started progressive introduction of testing framework.
 - PhysIO [Version 8.2.0](PhysIO/CHANGELOG.md)
