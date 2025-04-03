@@ -23,17 +23,21 @@ BRANCH="tapas-v-6-1-0"
 BRANCH=$(git rev-parse --abbrev-ref HEAD) # Uses current branch as default
 TOOLBOX="physio"
 MATLABOPT='-nodesktop'
+MATLAB_USE_USERWORK="0"
+export MATLAB_USE_USERWORK=0
 #LOGFILE="${TEMPDIR}/tapas-test.log"
 LOGFILE="$HOME/tapas-test.log"
 DORUN=true
-optstring="hdt:r:b:f:t:o:l:"
+DOPRINTENV=false
+optstring="hdpt:r:b:f:t:o:l:"
 while getopts ${optstring} arg; do
     case "${arg}" in
     h)
         echo "run_tapas_test_in_environment: Run tapas-tests in isolated environment"
         echo "Options:"
         echo "  -h Show this help text."
-        echo "  -d Perform dry run (not starting matlab)"
+        echo "  -d Perform dry run (not starting matlab)."
+        echo "  -p Print environment-variables."
         echo "  -t <toolbox>    Test toolbox <toolbox> (default: physio)."
         echo "  -f <tempdir>    Use <tempdir> as directory (default: new tmpdir will be created)."
         echo "  -r <tapasRepo>  Use <tapasRepo> as repository (default: $TAPASREPO). "
@@ -46,6 +50,8 @@ while getopts ${optstring} arg; do
         exit 0;;
     d)
         DORUN=false;;
+    p)
+        DOPRINTENV=true;;
     t)  
         TOOLBOX="$OPTARG";;  
     f)  
@@ -74,7 +80,8 @@ echo "MATLAB-log will be written to $LOGFILE"
 ## Copy script in there
 cp tapas_test_in_environment_template.m "${TEMPDIR}/tapas_test_in_environment.m"
 cd "$TEMPDIR"
-
+#touch startup.m # Overwrite different statup-file
+echo "% This is an auto-generated empty startup-file to prevent the use of other startup-files." > $TEMPDIR/startup.m
 ## Clone tapas and spm
 git clone --depth=1 --branch "$BRANCH" --single-branch "$TAPASREPO" |& tee -a "$LOGFILE"
 git clone --depth=1 https://github.com/spm/spm.git |& tee -a "$LOGFILE" # Development version
@@ -90,6 +97,11 @@ echo "========== COPY OF TEST SCRIPT ===========" >> "$LOGFILE"
 cat tapas_test_in_environment.m >> "$LOGFILE"
 echo "========== END COPY OF TEST SCRIPT =======" >> "$LOGFILE"
 ## Start matlab:
+if $DOPRINTENV; then
+    echo "========== MATLAB ENVIRONMENT ============" |& tee -a "$LOGFILE"
+    matlab -e |& tee -a "$LOGFILE"
+    echo "========== END OF MATLAB ENVIRONMENT ============" |& tee -a "$LOGFILE"
+fi
 echo "Everything is ready - starting matlab"
 echo matlab -sd "$TEMPDIR" $MATLABOPT -r "tapas_test_in_environment $LOGFILE $TOOLBOX " |& tee -a "$LOGFILE"
 if $DORUN; then
