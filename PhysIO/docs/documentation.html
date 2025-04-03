@@ -825,9 +825,10 @@ Help Window of the SPM Batch Editor</p>
 </ol>
 <p class="page" id="README"></p><h1>Readme</h1>
 <h1 id="tapas-physio-toolbox-">TAPAS PhysIO Toolbox </h1>
-<p><em>Current version: Release 2022a, v8.1.0</em></p>
+<p><em>Current version: Release 2024a, v9.0.0</em></p>
 <blockquote>
-<p>Copyright (C) 2012-2022<br>Lars Kasper<br><a href="#mailtox6bx61x73112101x726498105x6fx6dx65x64x2e101x65x2ex65x74x68x7ax2ex63x68">&#x6b;&#x61;&#x73;&#112;&#101;&#x72;&#64;&#98;&#105;&#x6f;&#x6d;&#x65;&#x64;&#x2e;&#101;&#x65;&#x2e;&#x65;&#x74;&#x68;&#x7a;&#x2e;&#x63;&#x68;</a>  </p>
+<p>Copyright (C) 2012-2025<br>Lars Kasper  </p>
+<p><a href="#mailto108x61114x73x2ex6b971151121011146497108x75109x6e10546101116104x7a4699x68">&#108;&#x61;&#114;&#x73;&#x2e;&#x6b;&#97;&#115;&#112;&#101;&#114;&#64;&#97;&#108;&#x75;&#109;&#x6e;&#105;&#46;&#101;&#116;&#104;&#x7a;&#46;&#99;&#x68;</a>  </p>
 <p>Translational Neuromodeling Unit (TNU)<br>Institute for Biomedical Engineering<br>University of Zurich and ETH Zurich  </p>
 </blockquote>
 <h2 id="download">Download</h2>
@@ -856,7 +857,7 @@ to enable physiological noise correction for large-scale and multi-center studie
 <p>Some highlights:</p>
 <ol>
 <li>Robust automatic preprocessing of peripheral recordings via iterative peak 
-detection, validated in noisy data and patients.</li>
+detection and Hilbert transforms, validated in noisy data and patients.</li>
 <li>Flexible support of peripheral data formats (Siemens, Philips, HCP, GE, Biopac, ...) 
 and noise models (RETROICOR, RVHRCOR).</li>
 <li>Fully automated noise correction and performance assessment for group studies.</li>
@@ -864,6 +865,9 @@ and noise models (RETROICOR, RVHRCOR).</li>
 </ol>
 <p>The accompanying technical paper about the toolbox concept and methodology 
 can be found at: <a href="https://doi.org/10.1016/j.jneumeth.2016.10.019">https://doi.org/10.1016/j.jneumeth.2016.10.019</a></p>
+<p>Details on the peak-detection-free computation of respiratory volume and rate are outlined in our publication on the Hilbert transform: <a href="https://doi.org/10.1016/j.neuroimage.2021.117787">https://doi.org/10.1016/j.neuroimage.2021.117787</a></p>
+<p>The PhysIO Toolbox is part of the TAPAS software collection of <em>Translational Algorithms for Psychiatry-Advancing Science</em>, whose design principles are described in the following paper: <a href="https://doi.org/10.3389/fpsyt.2021.680811">https://doi.org/10.3389/fpsyt.2021.680811</a>.</p>
+<p>There is also a video introduction into PhysIO and the TAPAS philosophy, given as part of the MRITogether23 Workshop on open science in MRI: <a href="https://www.youtube.com/watch?v=zkPvQjLV2Is"><em>PhysIO, UniQC and a TAPAStry of Tools</em> (20 min YouTube Video)</a>.</p>
 <h2 id="installation">Installation</h2>
 <h3 id="matlab">Matlab</h3>
 <ol>
@@ -889,7 +893,7 @@ The other two points enable PhysIO&#39;s SPM integration, i.e., certain function
 <li>The PhysIO Example files will be downloaded to <code>tapas/examples/&lt;tapas-version&gt;/PhysIO</code></li>
 </ul>
 </li>
-<li>Run <code>philips_ecg3t_matlab_script.m</code> in subdirectory <code>Philips/ECG3T</code></li>
+<li>Run <code>siemens_vb_ppu3t_sync_first_matlab_script.m</code> in subdirectory <code>Siemens_VB/PPU3T_Sync_First</code></li>
 <li>See subdirectory <code>physio/docs</code> and the next two section of this document for help.</li>
 </ol>
 <p>You may try any of the examples in the other vendor folders as well.</p>
@@ -899,7 +903,7 @@ as every researcher, we only have a limited amount of time. So please excuse, if
 we might not provide a detailed answer to your request, but just some general 
 pointers and templates. Before you contact us, please try the following:</p>
 <ol>
-<li>A first look at the <a href="https://gitlab.ethz.ch/physio/physio-doc/wikis/FAQ">FAQ</a> 
+<li>A first look at the <a href="https://gitlab.ethz.ch/physio/physio-doc/-/wikis/FAQ">FAQ</a> 
 (which is frequently extended) might already answer your questions.</li>
 <li>A lot of questions (before 2018) have also been discussed on our mailinglist 
 <a href="https://sympa.ethz.ch/sympa/info/tapas">tapas@sympa.ethz.ch</a>, 
@@ -918,8 +922,8 @@ user-driven questions (since 2018).</li>
 i.e. major changes in functionality, bugfixes etc.</li>
 </ul>
 </li>
-<li>User Guide: The markdown-based <a href="https://gitlab.ethz.ch/physio/physio-doc/wikis/home">GitLab Wiki</a>, including an FAQ<ul>
-<li>online (and frequently updated) at <a href="http://gitlab.ethz.ch/physio/physio-doc/wikis/home">http://gitlab.ethz.ch/physio/physio-doc/wikis/home</a>.</li>
+<li>User Guide: The markdown-based <a href="https://gitlab.ethz.ch/physio/physio-doc/-/wikis/home">GitLab Wiki</a>, including an FAQ<ul>
+<li>online (and frequently updated) at <a href="http://gitlab.ethz.ch/physio/physio-doc/-/wikis/home">http://gitlab.ethz.ch/physio/physio-doc/-/wikis/home</a>.</li>
 <li>offline (with stables releases) as part of the toolbox in folder <code>physio/wikidocs</code>: <ul>
 <li>plain text <code>.md</code> markdown files</li>
 <li>as single HTML and PDF  file: <code>documentation.{html,pdf}</code></li>
@@ -979,6 +983,32 @@ variance in the time series, they increase sensitivity in all contrasts
 of interest.</li>
 </ul>
 <h2 id="features-of-this-toolbox">Features of this Toolbox</h2>
+<h3 id="flexible-read-in">Flexible Read-in</h3>
+<p>The toolbox is dedicated to seamless integration into a clinical research 
+setting and therefore offers correction methods to recover physiological 
+data from imperfect peripheral measures. Read-in of the following formats is 
+currently supported (alphabetic order):</p>
+<ul>
+<li>BioPac <code>.mat</code> and <code>.txt</code> export files</li>
+<li>Brain Imaging Data Structure files (<a href="https://bids-specification.readthedocs.io/en/stable/modality-specific-files/physiological-and-other-continuous-recordings.html#recommendations-for-specific-use-cases">BIDS</a>) <code>*_physio.tsv[.gz]/.json</code> files</li>
+<li>Custom logfiles: should contain one amplitude value per line, one logfile per 
+device. Sampling interval(s) are provided as a separate parameter to the toolbox.</li>
+<li>General Electric</li>
+<li>Philips SCANPHYSLOG files (all versions from release 2.6 to 5.3)</li>
+<li>Siemens Manual Recordings (acquired via <code>IdeaCmdTool</code>), named &quot;Siemens&quot; files in the PhysIO interface (files <code>.ecg</code>, <code>.resp</code>, <code>.puls</code>)</li>
+<li>Siemens Automatic Recordings (XA60 and above, or WIP Advanced Physiologging (AdvPhysio), or CMRR C2P BOLD sequences), named &quot;Siemens Tics&quot; in the PhysIO interface (files <code>*_ECG.log</code>, <code>*_RESP.log</code>, <code>*_PULS.log</code>, <code>*_Info.log</code>)</li>
+<li>Siemens Human Connectome Project (preprocessed files <code>*Physio_log.txt</code>)</li>
+</ul>
+<p>See also the 
+<a href="https://gitlab.ethz.ch/physio/physio-doc/-/wikis/MANUAL_PART_READIN">Wiki page on Read-In</a> 
+for a more detailed list and description of the supported formats.</p>
+<h3 id="robust-preprocessing">Robust Preprocessing</h3>
+<p>The toolbox has been extensively tested on different recording devices, field strengths and (clinical) study populations, and can handle a wide range of data imperfections in peripheral traces. Highlights are:</p>
+<ul>
+<li>Tested on various systems and subject populations (e.g., HCP, Children, 7T, ADHD, Major Depression, Psychosis)</li>
+<li>Cardiac Data: Iterative peak detection via Bayesian updates of current heart rate estimates (Steffen Bollmann)</li>
+<li>Respiratory Data: Novel volume estimation via Hilbert transform, respects, e.g., sighs, yawns, deep breaths (Samuel J. Harrison)</li>
+</ul>
 <h3 id="physiological-noise-modeling">Physiological Noise Modeling</h3>
 <ul>
 <li>Modeling physiological noise regressors from peripheral data 
@@ -999,69 +1029,44 @@ respiratory and interaction terms (see Harvey2008, Hutton2011)</li>
 </ul>
 <h3 id="automatization-and-performance-assessment">Automatization and Performance Assessment</h3>
 <ul>
+<li>Automatic Quality Assurance Diagnostic Figures (Heart beat-to-beat interval curves, respiration amplitude histograms) and flagging of </li>
 <li>Automatic creation of nuisance regressors, full integration into standard 
-GLMs, tested for SPM8/12 (<code>multiple_regressors.mat</code>)</li>
+GLMs, tested for SPM8/12 (<code>multiple_regressors.mat</code>)<ul>
+<li>Data export as text file available for usage in other analysis packages</li>
+</ul>
+</li>
 <li>Integration in SPM Batch Editor: GUI for parameter input, dependencies to 
 integrate physiological noise correction in preprocessing pipeline</li>
 <li>Performance Assessment: Automatic F-contrast and tSNR Map creation and display 
 for groups of physiological noise regressors, using SPM GLM tools via 
 <code>tapas_physio_report_contrasts()</code>.</li>
 </ul>
-<h3 id="flexible-read-in">Flexible Read-in</h3>
-<p>The toolbox is dedicated to seamless integration into a clinical research 
-setting and therefore offers correction methods to recover physiological 
-data from imperfect peripheral measures. Read-in of the following formats is 
-currently supported (alphabetic order):</p>
+<h2 id="requirements">Requirements</h2>
 <ul>
-<li>Biopac <code>.mat</code> and <code>.txt</code> -export</li>
-<li>Brain Imaging Data Structure (<a href="http://bids.neuroimaging.io/bids_spec.pdf">BIDS</a> for <code>*_physio.tsv[.gz]/.json</code> files)</li>
-<li>Custom logfiles: should contain one amplitude value per line, one logfile per 
-device. Sampling interval(s) are provided as a separate parameter to the toolbox.</li>
-<li>General Electric</li>
-<li>Philips SCANPHYSLOG files (all versions from release 2.6 to 5.3)</li>
-<li>Siemens VB (files <code>.ecg</code>, <code>.resp</code>, <code>.puls</code>)</li>
-<li>Siemens VD (files <code>*_ECG.log</code>, <code>*_RESP.log</code>, <code>*_PULS.log</code>)</li>
-<li>Siemens Human Connectome Project (preprocessed files <code>*Physio_log.txt</code>)</li>
-</ul>
-<p>See also the 
-<a href="https://gitlab.ethz.ch/physio/physio-doc/wikis/MANUAL_PART_READIN">Wiki page on Read-In</a> 
-for a more detailed list and description of the supported formats.</p>
-<h2 id="compatibility">Compatibility</h2>
-<ul>
-<li>Matlab Toolbox</li>
-<li>Input: <ul>
-<li>Fully integrated to work with physiological logfiles for Philips MR systems (SCANPHYSLOG)</li>
-<li>tested for General Electric (GE) log-files</li>
-<li>implementation for Siemens log-files (both VB and VD/VE, CMRR multiband)</li>
-<li>also: interface for &#39;Custom&#39;, i.e. general heart-beat time stamps 
-&amp; breathing volume time courses from other log formats</li>
-<li>BioPac</li>
-<li>... (other upcoming formats)</li>
-</ul>
-</li>
-<li>Output: <ul>
-<li>Nuisance regressors for mass-univariate statistical analysis with SPM5,8,12
-or as text file for export to any other package</li>
-<li>raw and processed physiological logfile data</li>
-<li>Graphical Batch Editor interface to SPM</li>
-</ul>
-</li>
-<li>Part of the TAPAS Software Collection of the Translational Neuromodeling Unit 
-(TNU) Zurich<ul>
-<li>ensures long term support and ongoing development</li>
+<li>All specific software requirements and their versions are in a separate file
+in this folder, <code>requirements.txt</code>.</li>
+<li>In brief:<ul>
+<li>Typically, PhysIO needs Matlab to run, and a few of its toolboxes</li>
+<li>Some functionality requires SPM (GUI via the SPM Batch Editor, nuisance regression, contrast reporting, 
+writing residual and SNR images).    </li>
+<li>There is a standalone version within <a href="https://www.neurodesk.org/tutorials-examples/tutorials/functional_imaging/physio/">Neurodesk</a> that does not require Matlab</li>
 </ul>
 </li>
 </ul>
 <h2 id="contributors">Contributors</h2>
 <ul>
 <li>Lead Programmer: <ul>
-<li><a href="https://www.tnu.ethz.ch/en/team/faculty-and-scientific-staff/kasper.html">Lars Kasper</a>,
+<li><a href="https://brain-to.ca/content/lars-kasper">Lars Kasper</a>,
 TNU &amp; MR-Technology Group, IBT, University of Zurich &amp; ETH Zurich</li>
 </ul>
 </li>
 <li>Project Team: <ul>
-<li>Steffen Bollmann, Centre for Advanced Imaging, University of Queensland, Australia</li>
+<li>Johanna Bayer, Donders Institute for Brain, Cognition and Behaviour, Nijmegen, Netherlands</li>
 <li>Saskia Bollmann, Centre for Advanced Imaging, University of Queensland, Australia</li>
+</ul>
+</li>
+<li>Project Team Alumni:<ul>
+<li>Steffen Bollmann, Centre for Advanced Imaging, University of Queensland, Australia</li>
 <li>Sam Harrison, TNU Zurich</li>
 </ul>
 </li>
@@ -1075,18 +1080,7 @@ TNU &amp; MR-Technology Group, IBT, University of Zurich &amp; ETH Zurich</li>
 </ul>
 </li>
 <li>Contributors (Examples):<ul>
-<li>listed in <a href="https://gitlab.ethz.ch/physio/physio-doc/wikis/EXAMPLES">EXAMPLES.md</a></li>
-</ul>
-</li>
-</ul>
-<h2 id="requirements">Requirements</h2>
-<ul>
-<li>All specific software requirements and their versions are in a separate file
-in this folder, <code>requirements.txt</code>.</li>
-<li>In brief:<ul>
-<li>PhysIO needs Matlab to run, and a few of its toolboxes.</li>
-<li>Some functionality requires SPM (GUI, nuisance regression, contrast reporting, 
-writing residual and SNR images).</li>
+<li>listed in <a href="https://gitlab.ethz.ch/physio/physio-doc/-/wikis/EXAMPLES">EXAMPLES.md</a></li>
 </ul>
 </li>
 </ul>
@@ -1106,6 +1100,9 @@ parameters</li>
 </ul>
 </li>
 </ul>
+<p>We further acknowledge the generous support from the MathWorks (MA, USA), who 
+supported Johanna Bayer for the <a href="https://www.incf.org/blog/second-summer-training-project-collaboration-between-incf-and-mathworks">2022 MATLAB Community Toolbox Training Program</a> 
+established in collaboration with the International Neuroinformatics Coordinating Facility (<a href="https://www.incf.org/">INCF</a>).</p>
 <h2 id="cite-me">Cite Me</h2>
 <h3 id="main-toolbox-and-tapas-reference">Main Toolbox and TAPAS Reference</h3>
 <p>Please cite the following papers in all of your publications that utilized the 
@@ -1130,8 +1127,8 @@ along with a brief description of the physiological noise models used: </p>
 open-source code available as part of the TAPAS software collection: [2], 
 <a href="https://www.translationalneuromodeling.org/tapas">https://www.translationalneuromodeling.org/tapas</a>)</p>
 </blockquote>
-<p>If you use respiratory volume per time (RVT) regressors or preprocess respiratory traces 
-for RETROICOR, please also cite:</p>
+<p>If you process respiratory traces, for example, to compute respiratory volume per time (RVT) or 
+RETROICOR regressors, please also cite:</p>
 <ol start="3">
 <li>Harrison, S.J., Bianchi, S., Heinzle, J., Stephan, K.E., Iglesias, S., Kasper L., 2021.
 A Hilbert-based method for processing respiratory timeseries.
@@ -1140,7 +1137,7 @@ NeuroImage, 117787. <a href="https://doi.org/10.1016/j.neuroimage.2021.117787">h
 </ul>
 </li>
 </ol>
-<p>Our <a href="https://gitlab.ethz.ch/physio/physio-doc/wikis/FAQ#3-how-do-i-cite-physio">FAQ</a> 
+<p>Our <a href="https://gitlab.ethz.ch/physio/physio-doc/-/wikis/FAQ#3-how-do-i-cite-physio">FAQ</a> 
 contains a suggestion for a more comprehensive RETROICOR-related methods paragraph.
 See the <a href="#README">main TAPAS README</a> for more details on citing TAPAS itself.</p>
 <h3 id="related-papers-implemented-noise-correction-algorithms-and-optimal-parameter-choices-">Related Papers (Implemented noise correction algorithms and optimal parameter choices)</h3>
@@ -1213,6 +1210,9 @@ imaging analyses produced by censoring high-motion data points. Hum. Brain Mapp.
 Spurious but systematic correlations in functional connectivity MRI networks 
 arise from subject motion. NeuroImage 59, 2142-2154. 
 <a href="https://doi.org/10.1016/j.neuroimage.2011.10.018">https://doi.org/10.1016/j.neuroimage.2011.10.018</a></p>
+<ul>
+<li><em>definition of framewise displacement</em></li>
+</ul>
 </li>
 </ol>
 <h2 id="copying-license">Copying/License</h2>
@@ -1352,8 +1352,7 @@ imaging analyses produced by censoring high-motion data points. Hum. Brain Mapp.
 <p>Currently, PhysIO natively supports the following physiological logfile types:</p>
 <ul>
 <li>Brain Imaging Data Structure (BIDS)<ul>
-<li>[Standard for peripheral recordings]
-(<a href="https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continous-recordings.html">https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continous-recordings.html</a>)</li>
+<li><a href="https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continuous-recordings.html">Standard for peripheral recordings</a></li>
 <li>both raw physiological traces and pre-computed pulse events are
 supported</li>
 </ul>
@@ -1505,7 +1504,35 @@ it by about 5-10ms to allow for timing inaccuracies).</li>
 </ul>
 </li>
 </ul>
-<h2 id="17-i-cannot-find-the-answer-to-my-question-in-the-faq-whom-do-i-ask-for-help-">17. I cannot find the answer to my question in the FAQ. Whom do I ask for help?</h2>
+<h2 id="17-which-models-do-i-have-to-include-in-my-physiological-regressor-matrix-and-which-number-of-regressors-model-order-delays-per-model-">17. Which models do I have to include in my physiological regressor matrix? And which number of regressors (model order / delays) per model?</h2>
+<p>The question about how many and which regressors you need for successful noise removal depends a lot on your experimental design and your research questions. Here are a couple of rules of thumb:</p>
+<ol>
+<li>To have sufficient degrees of freedom to estimate the parameters of the general linear model (GLM), it is often recommended to have a least 10 times as many datapoints as regressors in your model. That means, for 26 regressors in the GLM, it is advisable to have 260 volumes or more.</li>
+<li>26 regressors is the standard output if you include <ol>
+<li>RETROICOR (3rd order cardiac = 6 regressors (1 cosine and one sine per order), 4th order respiratory = 8 regressors, and 1st order multiplicative terms (4: cos<em>cos, sin</em>sin, cos<em>sin, sin</em>cos), </li>
+<li>HRV (1 regressor), </li>
+<li>RVT (1) and </li>
+<li>motion realignment parameters (6)</li>
+<li>This list also gives an indication of the order of the regressors in the matrix, but see <a href="https://tnurepository.ethz.ch/physio/physio-public/-/wikis/FAQ/edit#10-what-is-the-order-of-the-regressor-columns-in-the-multiple-regressors-file">question 10</a> for details.</li>
+</ol>
+</li>
+<li>You can now reduce the number of regressors by the following observations:<ol>
+<li>The RETROICOR 3/4/1 order is taken from a paper that optimized physiological noise removal in the brainstem [1]. You might not need the full model, if you are interested in other brain areas</li>
+<li>For example, in our PhysIO paper, figure 9 [2], where we evaluated this model for 35 subjects, you   can see that the multiplicative terms explain noise mostly in the midbrain, acquaeduct and more inferior parts of the brainstem.</li>
+<li>Furthermore, also in that figure, you can see that the cardiac RETROICOR terms explain most of the variance (temporal SNR (tSNR) gains of up to 70%, compared to only motion correction), whereas the effect of both respiratory and multiplicative terms is one order of magnitude smaller (5% and 3% tSNR gains, respectively).</li>
+<li>So, you could probably leave out the multiplicative terms and reduce the number of regressors by 4, or reduced the respiratory terms to 2nd or 1st order, reducing them by 4 or 6, respectively. I have also seen 2nd cardiac order models, reducing by a further 2 regressors.</li>
+<li>In total, you would end up with 14 regressors for a RETROICOR 3/2/1, 10 regressors for RETROICOR 3/2/0 and 8 regressors for 2/2/0. In each case, you would still add the 8 regressors from HRV, RVT and motion.</li>
+</ol>
+</li>
+<li>To get a first idea which sets of regressors contribute to noise removal for your data, you can run F-Tests over the columns for the respective regressors only (see also <a href="https://tnurepository.ethz.ch/physio/physio-public/-/wikis/FAQ/edit#11-how-do-i-know-whether-the-physiological-noise-correction-worked">question 11</a> and see where in the brain they explain significant variance (you can also use tapas_physio_compute_tsnr_gains to compute tSNR as in our figure).<ol start="5">
+<li>To formally compare whether it’s warranted to include a set of regressors into your GLM, you would have to do model comparison (as in [1]). There is a toolbox for SPM that can do this automatically for the kind of regressor matrices that are output by PhysIO [3].</li>
+</ol>
+</li>
+</ol>
+<p>[1] Harvey, A.K., Pattinson, K.T.S., Brooks, J.C.W., Mayhew, S.D., Jenkinson, M., Wise, R.G., 2008. Brainstem functional magnetic resonance imaging: Disentangling signal from physiological noise. Journal of Magnetic Resonance Imaging 28, 1337–1344. <a href="https://doi.org/10.1002/jmri.21623">https://doi.org/10.1002/jmri.21623</a></p>
+<p>[2] <a href="https://www.sciencedirect.com/science/article/pii/S016502701630259X#fig0045">https://www.sciencedirect.com/science/article/pii/S016502701630259X#fig0045</a> from: Kasper, L., Bollmann, S., Diaconescu, A.O., Hutton, C., Heinzle, J., Iglesias, S., Hauser, T.U., Sebold, M., Manjaly, Z.-M., Pruessmann, K.P., Stephan, K.E., 2017. The PhysIO Toolbox for Modeling Physiological Noise in fMRI Data. Journal of Neuroscience Methods 276, 56–72. <a href="https://doi.org/10.1016/j.jneumeth.2016.10.019">https://doi.org/10.1016/j.jneumeth.2016.10.019</a></p>
+<p>[3] Soch, J., Allefeld, C., 2018. MACS – a new SPM toolbox for model assessment, comparison and selection. Journal of Neuroscience Methods 306, 19–31. <a href="https://doi.org/10.1016/j.jneumeth.2018.05.017">https://doi.org/10.1016/j.jneumeth.2018.05.017</a></p>
+<h2 id="18-i-cannot-find-the-answer-to-my-question-in-the-faq-whom-do-i-ask-for-help-">18. I cannot find the answer to my question in the FAQ. Whom do I ask for help?</h2>
 <p>We are very happy to provide support on how to use the PhysIO Toolbox. However, 
 as every researcher, we only have a limited amount of time. So please excuse, if 
 we might not provide a detailed answer to your request, but just some general 
@@ -1523,29 +1550,21 @@ but its <a href="https://sympa.ethz.ch/sympa/arc/tapas">archive</a> is still sea
 <h1 id="example-datasets-for-physio">Example Datasets for PhysIO</h1>
 <p>The following datasets are available to explore the read-in and modeling capabilities of PhysIO. They can be downloaded by running the function <code>tapas_download_example_data()</code> in Matlab, which is located in the <code>misc</code> subfolder of the TAPAS software release you downloaded (probably <a href="https://translationalneuromodeling.github.io/tapas/#download">here</a>).</p>
 <p>Afterwards, the examples can be found in <code>tapas/examples/&lt;tapasVersion&gt;/PhysIO</code> as different subfolders (<code>vendor/device</code>) and shall be run directly from within these individual folders.</p>
-<p>Besides the raw physiological logfiles, each example contains example scripts to run PhysIO as </p>
+<p>Besides the raw physiological logfiles, each example contains example scripts to run PhysIO as</p>
 <ul>
-<li>SPM job (<code>*spm_job.mat</code>)</li>
-<li>editable SPM job (<code>*spm_job.m</code>)</li>
-<li>plain matlab script (<code>*matlab_script.m</code>)</li>
+<li>SPM job (<code>\\\*spm_job.mat</code>)</li>
+<li>editable SPM job (<code>\\\*spm_job.m</code>)</li>
+<li>plain matlab script (<code>\\\*matlab_script.m</code>)</li>
 </ul>
 <h2 id="brain-imaging-data-structure-bids-">Brain Imaging Data Structure (BIDS)</h2>
 <h3 id="cpulse-3t">CPULSE 3T</h3>
-<p>Courtesy of Hrvoje Stojic, Max Planck UCL Centre for Computational Psychiatry
-and Ageing Research, University College London</p>
-<p>Vendor-computed (software: Spike2) cardiac pulse events from PPU (finger
-plethysmograph) data, Siemens 3T scanner, Multiband CMRR sequence</p>
-<p>Description: This datasets contains the (compressed) tab-separated value
-(<code>.tsv.gz</code>) files as well as the meta-file (<code>.json</code>) holding sampling rate of
-the physiological recording, and its relative onset to scanning, in adherence
-with the <a href="https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continous-recordings.html">BIDS standard for peripheral recordings
-files</a>.</p>
+<p>Courtesy of Hrvoje Stojic, Max Planck UCL Centre for Computational Psychiatry and Ageing Research, University College London</p>
+<p>Vendor-computed (software: Spike2) cardiac pulse events from PPU (finger plethysmograph) data, Siemens 3T scanner, Multiband CMRR sequence</p>
+<p>Description: This datasets contains the (compressed) tab-separated value (<code>.tsv.gz</code>) files as well as the meta-file (<code>.json</code>) holding sampling rate of the physiological recording, and its relative onset to scanning, in adherence with the <a href="https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continuous-recordings.html">BIDS standard for peripheral recordings files</a>.</p>
 <h3 id="ppu-3t">PPU 3T</h3>
-<p>Courtesy of Hrvoje Stojic, Max Planck UCL Centre for Computational Psychiatry
-and Ageing Research, University College London</p>
+<p>Courtesy of Hrvoje Stojic, Max Planck UCL Centre for Computational Psychiatry and Ageing Research, University College London</p>
 <p>PPU (finger plethysmograph) and breathing belt, Siemens 3T scanner, Multiband CMRR sequence</p>
-<p>Description: Similar to CPULSE3T (same acquisition system), but now with analog
-data instead of vendor-detected pulses, data from different subject</p>
+<p>Description: Similar to CPULSE3T (same acquisition system), but now with analog data instead of vendor-detected pulses, data from different subject</p>
 <h3 id="ppu-3t-separate-files">PPU 3T Separate Files</h3>
 <p>Courtesy of Alexandre Sayal CIBIT, University of Coimbra</p>
 <p>PPU (finger plethysmograph) and breathing belt, Siemens 3T scanner, Multiband CMRR sequence</p>
@@ -1553,70 +1572,67 @@ data instead of vendor-detected pulses, data from different subject</p>
 <h2 id="general-electric">General Electric</h2>
 <h3 id="ppu-3t">PPU 3T</h3>
 <p>Courtesy of Steffen Bollmann, Kinderspital Zurich and ETH Zurich</p>
-<p>PPU (finger plethysmograph) and breathing belt, General Electric 3T
-scanner</p>
-<p>Description: Similar to PPU, but acquired on a GE system with two
-separate output logfiles for pulse oximetry and breathing amplitude,
-sampled with 40 Hz. The quality of the signal is particularly
-challenging, stemming from a patient population.</p>
+<p>PPU (finger plethysmograph) and breathing belt, General Electric 3T scanner</p>
+<p>Description: Similar to PPU, but acquired on a GE system with two separate output logfiles for pulse oximetry and breathing amplitude, sampled with 40 Hz. The quality of the signal is particularly challenging, stemming from a patient population.</p>
 <h2 id="philips">Philips</h2>
 <h3 id="ecg-3t">ECG 3T</h3>
-<p>Courtesy of Sandra Iglesias, Translational Neuromodeling Unit, ETH &amp;
-University of Zurich</p>
+<p>Courtesy of Sandra Iglesias, Translational Neuromodeling Unit, ETH &amp; University of Zurich</p>
 <p>4-electrode ECG and breathing belt, Philips 3T Achieva scanner</p>
-<p>Description: Standard example; shows how to use volume counting either
-from beginning or end of run to synchronize physiological logfile with
-acquisition onsets of fMRI scans.</p>
+<p>Description: Standard example; shows how to use volume counting either from beginning or end of run to synchronize physiological logfile with acquisition onsets of fMRI scans.</p>
 <h3 id="ecg-7t">ECG 7T</h3>
 <p>Courtesy of Zina-Mary Manjaly, University Hospital Zurich</p>
 <p>4-electrode ECG and breathing belt, Philips 7T Achieva scanner</p>
-<p>Description: The ECG data for ultra-high field data is typically much
-noisier than at 3 Tesla. Therefore, R-wave peaks are frequently missed
-by prospective trigger detection and not marked correctly in the
-logfile. This example shows how to select typical R-wave-peaks manually
-and let the algorithm find the heartbeat events.</p>
+<p>Description: The ECG data for ultra-high field data is typically much noisier than at 3 Tesla. Therefore, R-wave peaks are frequently missed by prospective trigger detection and not marked correctly in the logfile. This example shows how to select typical R-wave-peaks manually and let the algorithm find the heartbeat events.</p>
 <h3 id="ppu-3t">PPU 3T</h3>
 <p>Courtesy of Diana Wotruba, University and University Hospital of Zurich</p>
-<p>PPU (finger plethysmograph) and breathing belt, Philips 3T Achieva
-scanner</p>
-<p>Description: Similar to ECG3T, but a plethysmograph instead of an ECG
-was used to monitor the cardiac pulsation. Example shows how to extract
-heart and breathing rate.</p>
+<p>PPU (finger plethysmograph) and breathing belt, Philips 3T Achieva scanner</p>
+<p>Description: Similar to ECG3T, but a plethysmograph instead of an ECG was used to monitor the cardiac pulsation. Example shows how to extract heart and breathing rate.</p>
 <h3 id="ppu-7t">PPU 7T</h3>
 <p>Courtesy of Jakob Heinzle and Lars Kasper, TNU, University Zurich and ETH Zurich</p>
-<p>PPU (finger plethysmograph) and breathing belt, Philips 7T Achieva
-scanner</p>
+<p>PPU (finger plethysmograph) and breathing belt, Philips 7T Achieva scanner</p>
 <p>Description: Challenging cardiac data that requires bandpass-filtering during preprocessing, since it is compromised by both high frequency noise (from the scanner, modulated at every slice TR) and low frequency noise (breathing modulation).</p>
 <h2 id="siemens-vb">Siemens - VB</h2>
 <p>Siemens has different physiological logfile formats, for which examples are provided here. A detailed description of these formats is on a different <a href="#MANUAL_PART_READIN">wiki page</a>.</p>
-<p>This is the older Siemens log file format (also available via <em>manual recording</em>), which is part of software release <em>VB</em>, and can be determined by the file extensions <code>.resp</code>, <code>.ecg</code>, <code>.puls</code>, in combination with an optional <code>.dcm</code> DICOM header file for the first (or last) acquired volume.</p>
-<p>A lot of 7T scanners still use this format.</p>
+<p>This is the older Siemens log file format (also available via <em>manual recording</em>), which is part of software release _VB_, and can be determined by the file extensions <code>.resp</code>, <code>.ecg</code>, <code>.puls</code>, in combination with an optional <code>.dcm</code> DICOM header file for the first (or last) acquired volume.</p>
+<p>A lot of 7T scanners still use this format, but it is also the default on modern 3T systems, if you don&#39;t have C2P sequences for fMRI (e.g., from CMRR) or WIPs from Siemens (see <a href="#siemens-vdve-tics">below</a>).</p>
 <h3 id="ecg-3t">ECG 3T</h3>
 <p>Courtesy of Miriam Sebold, Charite Berlin, and Quentin Huys, TNU Zurich</p>
-<p>4-electrode ECG data, Siemens 3T scanner</p>
+<p>4-electrode ECG data, Siemens 3T scanner, logfile version 1</p>
 <p>Description: Similar to ECG 3T, but acquired on a Siemens system with only one logfile for ECG data. The quality of the signal is challenging, stemming from a patient population.</p>
 <h3 id="ppu3t-sync-first-and-sync-last-">PPU3T (Sync First and Sync Last)</h3>
 <p>Courtesy of Alexander Ritter, University of Jena, Germany</p>
-<p>Siemens 3T pulse oximetry and respiratory bellows data from a complete scan session of a healthy volunteer, plus the DICOM header file of the first and last (382nd) volume of an fMRI run, respectively.</p>
-<p>This showcases scan timing synchronization using the DICOM timestamps in an intricate case, where the physiological logfile spans the whole scan session (and not only the fMRI run). See <a href="https://github.com/translationalneuromodeling/tapas/issues/55">TAPAS github issue #55</a> for further details.</p>
+<p>Siemens 3T pulse oximetry and respiratory bellows data, logfile version 1 DICOM header file of first and last (382nd) volume of an fMRI run, respectively.</p>
+<p>Description: This data covering a complete scan session of a healthy volunteer showcases scan timing synchronization using the DICOM timestamps in an intricate case, where the physiological logfile spans the whole scan session (and not only the fMRI run). See <a href="https://github.com/translationalneuromodeling/tapas/issues/55">TAPAS github issue #55</a> for further details.</p>
+<h3 id="ecg-3t-logversion-3">ECG 3T - Logversion 3</h3>
+<p>Courtesy of Shahin Safa, see <a href="https://github.com/translationalneuromodeling/tapas/issues/204#issuecomment-1199746718">TAPAS GitHub issue 204</a></p>
+<p>4-electrode ECG data, Siemens scanner, logfile version 3 corresponding respiratory data: <a href="#resp-3t-logversion-1">Resp 3T - Logversion 1</a></p>
+<p>Description: This is an fMRI study on the auditory system of the brain, which explains the long TR (10 s), to put scanning gaps when presenting the sound to the subject.</p>
+<h3 id="resp-3t-logversion-1">Resp 3T - Logversion 1</h3>
+<p>Courtesy of Shahin Safa, see <a href="https://github.com/translationalneuromodeling/tapas/issues/204#issuecomment-1199746718">TAPAS GitHub issue 204</a></p>
+<p>Respiratory bellows data, Siemens scanner, logfile version 1 corresponding cardiac data: <a href="#ecg-3t-logversion-3">ECG 3T - Logversion 3</a></p>
+<p>Description: This is an fMRI study on the auditory system of the brain, which explains the long TR (10 s), to put scanning gaps when presenting the sound to the subject.</p>
+<h3 id="resp-3t-logversion-3">Resp 3T - Logversion 3</h3>
+<p>Courtesy of Lars Kasper, University Health Network Toronto, Canada</p>
+<p>Respiratory bellows data, Siemens Prisma 3T, logfile version 3</p>
+<p>Description: Short fingertapping run with logging automatically switched off after about 2 minutes (nominally 5) due to ECG channels not connected, but requested for recording. Biomatrix sensors were not available, but are logged as 4 extra channels with constant values here.</p>
 <h2 id="siemens-hcp">Siemens - HCP</h2>
-<p>The Human Connectome Project uses Siemens scanners, and the logfile format that comes with their published data seems to be pre-converted and custom (even though the documentation desribes the VB format). We have implemented an own reader for that and written a little tutorial for a single subject dataset of the HCP. </p>
+<p>The Human Connectome Project uses Siemens scanners, and the logfile format that comes with their published data seems to be pre-converted and custom (even though the documentation desribes the VB format). We have implemented an own reader for that and written a little tutorial for a single subject dataset of the HCP.</p>
 <p><a href="https://github.com/translationalneuromodeling/tapas/issues/6#issuecomment-361001716">https://github.com/translationalneuromodeling/tapas/issues/6#issuecomment-361001716</a></p>
 <p>If you download the whole dataset (including functional image files), this example with the additional batches mentioned below also demonstrates how to use the toolbox for model assessment using statistical maps (F-contrasts).</p>
 <h3 id="hcp-subject-178748-">HCP (Subject 178748)</h3>
 <p>You will have to download the dataset from the <a href="https://db.humanconnectome.org/">HCP</a> yourself, we just provide the matlab batches and the physiological logfile <code>tfMRI_MOTOR_LR_Physio_log.txt</code> here.</p>
 <p>For consistency with the other example files, the batch files have been renamed compared to the blog entry:</p>
 <ul>
-<li><code>batch_preproc.m</code> -&gt; <code>batch_preproc.m</code> </li>
-<li><code>batch_physio.m</code> -&gt; <code>siemens_hcp_ppu3t_spm_job.m</code> </li>
-<li><code>batch_glm.m</code> -&gt; <code>batch_glm.m</code> </li>
+<li><code>batch_preproc.m</code> -&gt; <code>batch_preproc.m</code></li>
+<li><code>batch_physio.m</code> -&gt; <code>siemens_hcp_ppu3t_spm_job.m</code></li>
+<li><code>batch_glm.m</code> -&gt; <code>batch_glm.m</code></li>
 </ul>
 <p>If you want to run the preproc and glm batch, place them on the same level as the subject folder <code>178748</code> for the downloaded data. The physio-batch shall reside in the same folder as the physiological logfile <code>tfMRI_MOTOR_LR_Physio_log.txt</code>.</p>
 <h2 id="siemens-vd-ve-tics">Siemens - VD/VE Tics</h2>
-<p>This is the most recent logfile format of Siemens, included in Software releases <em>VD</em>, <em>VE</em> and sometimes referred to as the <em>Tics</em> format, because all time stamps in all files refer to the same reference point (start of the day) and count in the same intervals or &quot;<em>tics</em>&quot; of 2.5 ms from there.</p>
-<p>You will recognize this file format via the extensions <code>_Info.log</code> (or <code>_AcquisitionInfo.log</code>), <code>_RESP.log</code>, <code>_ECG.log</code> and <code>_PULS.log</code>. Sometimes, it is also written into the DICOM header (<code>.dcm</code>) file of your functional data directly. In this case, use <a href="https://github.com/CMRR-C2P/MB">extractCMRRPhysio.m</a> to convert it to the above separate files before using PhysIO.</p>
+<p>This is the most recent logfile format of Siemens, included in Software releases _VD_, _VE_ and sometimes referred to as the <em>Tics</em> format, because all time stamps in all files refer to the same reference point (start of the day) and count in the same intervals or &quot;<em>tics</em>&quot; of 2.5 ms from there.</p>
+<p>You will recognize this file format via the extensions <code>\\\_Info.log</code> (or <code>\\\_AcquisitionInfo.log</code>), <code>\\\_RESP.log</code>, <code>\\\_ECG.log</code> and <code>\\\_PULS.log</code>. Sometimes, it is also written into the DICOM header (<code>.dcm</code>) file of your functional data directly. In this case, use <a href="https://github.com/CMRR-C2P/MB">extractCMRRPhysio.m</a> to convert it to the above separate files before using PhysIO.</p>
 <p>Most modern Siemens scanners, such as the Prisma or 7T Terra, use this format.</p>
-<p>There are a couple of variants for this format around (e.g., with the WIP Multiband Protocol that is distributed to multiple sites), and PhysIO tries to support all of them. </p>
+<p>There are a couple of variants for this format around (e.g., with the WIP Multiband Protocol that is distributed to multiple sites), and PhysIO tries to support all of them.</p>
 <h3 id="ppu-3t">PPU 3T</h3>
 <p>Courtesy of Saskia Bollmann, Centre for Advanced Imaging, University of Queensland, Brisbane, Australia</p>
 <p>Pulse oximetry and breathing belt data, Siemens Prisma 3T, logfile version <code>EJA_1</code>, multi-echo fMRI (3 echoes)</p>
@@ -1624,45 +1640,41 @@ scanner</p>
 <h3 id="ppu-3t-separate-files">PPU 3T Separate Files</h3>
 <p>Courtesy of Alexandre Sayal CIBIT, University of Coimbra</p>
 <p>PPU (finger plethysmograph) and breathing belt, Siemens 3T scanner, Multiband CMRR sequence</p>
-<p>Description: Raw data that was used to convert to two separate BIDS files above (<code>BIDS/PPU3T_Separate_Files</code>) for cardiac and respiratory recordings, because of differing sampling rate (5 vs 20 ms). </p>
+<p>Description: Raw data that was used to convert to two separate BIDS files above (<code>BIDS/PPU3T_Separate_Files</code>) for cardiac and respiratory recordings, because of differing sampling rate (5 vs 20 ms).</p>
 <p>The UUID and date/time stamps were altered for anonymization.</p>
 <p class="page" id="MANUAL_PART_READIN"></p><h1>Technical Documentation: Read-in</h1>
 <h1 id="brain-imaging-data-structure-bids-">Brain Imaging Data Structure (BIDS)</h1>
-<p>PhysIO supports physiological logfiles prepared according to the <a href="https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continous-recordings.html">BIDS standard</a></p>
+<p>PhysIO supports physiological logfiles prepared according to the <a href="https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continuous-recordings.html">BIDS standard</a></p>
 <ul>
-<li>In brief, BIDS files are (optionally compressed) tab-separated values 
-(<code>*.tsv[.gz]</code>) files that contain raw traces of peripheral recordings from
-cardiac and respiratory sources, as well as scan trigger events</li>
-<li>The header of the columns of this <code>*.tsv</code> file, as well as meta-information,
-such as sampling rate and relative onset of physiological logging to MRI scan
-onset is described in an accompanying <code>*.json</code> file<ul>
-<li>It is assumed to have the that this <code>*.json</code> file has the same name 
-(apart from the extension) as the <code>*.tsv</code> file</li>
-<li>If PhysIO does not find this file, you can manually enter the timing
-information in the <code>log_files</code> structure, and a default column order of 
-(cardiac, respiratory, trigger) is assumed</li>
+<li>In brief, BIDS files are (optionally compressed) tab-separated values (<code>\*.tsv\[.gz\]</code>) files that contain raw traces of peripheral recordings from cardiac and respiratory sources, as well as scan trigger events</li>
+<li>The header of the columns of this <code>\*.tsv</code> file, as well as meta-information, such as sampling rate and relative onset of physiological logging to MRI scan onset is described in an accompanying <code>\*.json</code> file<ul>
+<li>It is assumed to have the that this <code>\*.json</code> file has the same name (apart from the extension) as the <code>\*.tsv</code> file</li>
+<li>If PhysIO does not find this file, you can manually enter the timing information in the <code>log_files</code> structure, and a default column order of (cardiac, respiratory, trigger) is assumed</li>
 </ul>
 </li>
-<li>Example <code>*.tsv</code> file (with cardiac, respiratory, trigger column
-:<pre class="hljs">                           -<span class="hljs-number">0.949402</span> -<span class="hljs-number">0.00610382</span> <span class="hljs-number">0</span>
-                           -<span class="hljs-number">0.949402</span> -<span class="hljs-number">0.00610382</span> <span class="hljs-number">0</span>
-                           -<span class="hljs-number">0.951233</span> -<span class="hljs-number">0.00915558</span> <span class="hljs-number">0</span>
-                           -<span class="hljs-number">0.951233</span> -<span class="hljs-number">0.00915558</span> <span class="hljs-number">0</span>
-                           -<span class="hljs-number">0.953064</span> -<span class="hljs-number">0.0122073</span>  <span class="hljs-number">0</span>
-                           -<span class="hljs-number">0.953064</span> -<span class="hljs-number">0.0122073</span>  <span class="hljs-number">0</span>
-                           -<span class="hljs-number">0.95459</span>  -<span class="hljs-number">0.0076297</span>  <span class="hljs-number">1</span>
-                           -<span class="hljs-number">0.95459</span>  -<span class="hljs-number">0.0076297</span>  <span class="hljs-number">0</span></pre></li>
-<li>Example <code>*.json</code> file:<pre class="hljs">{
-  <span class="hljs-attr">&quot;SamplingFrequency&quot;</span>: <span class="hljs-number">50.0</span>, 
-  <span class="hljs-attr">&quot;Columns&quot;</span>: [
-      <span class="hljs-string">&quot;cardiac&quot;</span>, 
-      <span class="hljs-string">&quot;respiratory&quot;</span>, 
-      <span class="hljs-string">&quot;trigger&quot;</span>
-  ], 
-  <span class="hljs-attr">&quot;StartTime&quot;</span>: <span class="hljs-number">-255.45</span>
-}</pre></li>
-<li>See <code>tapas_physio_read_physlogfiles_bids.m</code> for more details and technical
-documentation.</li>
+<li>Example <code>\*.tsv</code> file (with cardiac, respiratory, trigger column :</li>
+</ul>
+<pre class="hljs">                             -<span class="hljs-number">0.949402</span> -<span class="hljs-number">0.00610382</span> <span class="hljs-number">0</span>
+                             -<span class="hljs-number">0.949402</span> -<span class="hljs-number">0.00610382</span> <span class="hljs-number">0</span>
+                             -<span class="hljs-number">0.951233</span> -<span class="hljs-number">0.00915558</span> <span class="hljs-number">0</span>
+                             -<span class="hljs-number">0.951233</span> -<span class="hljs-number">0.00915558</span> <span class="hljs-number">0</span>
+                             -<span class="hljs-number">0.953064</span> -<span class="hljs-number">0.0122073</span>  <span class="hljs-number">0</span>
+                             -<span class="hljs-number">0.953064</span> -<span class="hljs-number">0.0122073</span>  <span class="hljs-number">0</span>
+                             -<span class="hljs-number">0.95459</span>  -<span class="hljs-number">0.0076297</span>  <span class="hljs-number">1</span>
+                             -<span class="hljs-number">0.95459</span>  -<span class="hljs-number">0.0076297</span>  <span class="hljs-number">0</span></pre><ul>
+<li>Example <code>\*.json</code> file:</li>
+</ul>
+<pre class="hljs">{
+    <span class="hljs-attr">&quot;SamplingFrequency&quot;</span>: <span class="hljs-number">50.0</span>, 
+    <span class="hljs-attr">&quot;Columns&quot;</span>: [
+        <span class="hljs-string">&quot;cardiac&quot;</span>, 
+        <span class="hljs-string">&quot;respiratory&quot;</span>, 
+        <span class="hljs-string">&quot;trigger&quot;</span>
+    ], 
+    <span class="hljs-attr">&quot;StartTime&quot;</span>: <span class="hljs-number">-255.45</span>
+}</pre><ul>
+<li>Note that <code>StartTime</code> refers to when the physiological recording started relative to the first scan volume of the fMRI run, which means that typically this value is negative, because one starts the recording before the onset of scan volumes.</li>
+<li>See <code>tapas_physio_read_physlogfiles_bids.m</code> for more details and technical documentation.</li>
 </ul>
 <h1 id="biopac">BioPac</h1>
 <h2 id="mat-file-export-mat-">Mat-file Export (<code>.mat</code>)</h2>
@@ -1684,13 +1696,12 @@ documentation.</li>
 <li><p>Export your traces from cardiac and breathing recording devices into 2 text files and select <code>log_files.vendor = &#39;Custom&#39;</code>. The format is explained in <code>tapas_physio_new</code> or the help window of the Batch Editor:</p>
 <ul>
 <li>&#39;Custom&#39; expects the logfiles (separate files for cardiac and respiratory) to be plain text, with one cardiac (or respiratory) sample per row;</li>
-<li><p>If heartbeat (R-wave peak) events are recorded as well, they have to be put as a 2nd column in the cardiac logfile by specifying a 1; 0 in all other rows, e.g.</p>
+<li>If heartbeat (R-wave peak) events are recorded as well, they have to be put as a 2nd column in the cardiac logfile by specifying a 1; 0 in all other rows, e.g.</li>
+</ul>
 <pre class="hljs"><span class="hljs-number">0.2</span>  <span class="hljs-number">0</span>
 <span class="hljs-number">0.4</span>  <span class="hljs-number">1</span> &lt;- cardiac pulse event
 <span class="hljs-number">0.2</span>  <span class="hljs-number">0</span>
 <span class="hljs-number">-0.3</span> <span class="hljs-number">0</span></pre></li>
-</ul>
-</li>
 <li>You have to specify the sampling intervals for these log files (in seconds), via <code>log_files.sampling_interval</code>, e.g. [0.01 0.02] if you have 10 ms (100 Hz) and 20 ms (50 Hz) sampling intervals (frequencies) for cardiac and respiratory data, respectively</li>
 <li>You will probably have to change <code>log_files.relative_start_acquisition</code>, if logging of your physiological recording device does not start synchronized to the first fMRI volume.</li>
 </ol>
@@ -1698,17 +1709,19 @@ documentation.</li>
 <ul>
 <li>Very similar to custom format</li>
 <li>One text file each for ECG, pulse oximetry and respiratory data, e.g., <code>ECGData_epiRT_phys_0921201215_38_08</code> or <code>RespData_epiRT_phys_0921201215_38_08</code></li>
-<li>One amplitude entry per line, e.g.,<pre class="hljs"><span class="hljs-number">2626</span>
-<span class="hljs-number">2649</span>
-<span class="hljs-number">2673</span>
-<span class="hljs-number">2699</span>
-<span class="hljs-number">2727</span>
-<span class="hljs-number">2755</span></pre></li>
+<li>One amplitude entry per line, e.g.,</li>
+</ul>
+<pre class="hljs"> <span class="hljs-number">2626</span>
+ <span class="hljs-number">2649</span>
+ <span class="hljs-number">2673</span>
+ <span class="hljs-number">2699</span>
+ <span class="hljs-number">2727</span>
+ <span class="hljs-number">2755</span></pre><ul>
 <li>sampling rate is determined as a setting beforehand, has to be noted manually (not in log file)</li>
 </ul>
 <h1 id="philips">Philips</h1>
 <ul>
-<li>Physiology automatically recorded into <code>SCANPHYSLOG_&lt;Date&gt;_&lt;Time&gt;.log</code> (one file per scan) as soon as ECG is connected to scanner, and scan is started</li>
+<li>Physiology automatically recorded into <code>SCANPHYSLOG\_&lt;Date&gt;\_&lt;Time&gt;.log</code> (one file per scan) as soon as ECG is connected to scanner, and scan is started</li>
 <li>tabular text (ascii) format, different columns for ECG, pulse oximetry and breathing data<ul>
 <li>additionally, trigger events and gradient timecourses are logged, and can be used for synchronization by the toolbox</li>
 </ul>
@@ -1727,10 +1740,13 @@ documentation.</li>
 <li>fixed sampling rate (2 ms for cable connection, 1/496 ms for Wi-Fi devices)</li>
 </ul>
 <h1 id="siemens">Siemens</h1>
-<h2 id="manual-recording">Manual Recording</h2>
+<h2 id="manual-recording-ideacmdtool-siemens-vb-">Manual Recording (<code>IdeaCmdTool</code>, <code>Siemens VB</code>)</h2>
 <p>Physiological data collection on the Siemens scanners uses the physiological monitoring unit (PMU). The initial sampling is performed at 400 Hz, but through the PMU buffer the effective sampling intervals are ECG: 2.5 ms, RESP: 20 ms, PULS: 20 ms and EXT: 5 ms.</p>
-<p>There are several ways to control the physiological data collection. The &#39;manual&#39; version is available on all platforms. It uses the telnet mpcu/ideacmdtool to manually start and stop the log file acquisition. The log files (logFileName.ecg, logFileName.resp, logFileName.puls, logFileName.ext) are stored in <code>\MedCom\log</code>. More details on how to record these data can be found <a href="https://cfn.upenn.edu/aguirre/wiki/public:pulse-oximetry_during_fmri_scanning">here</a> or in the &quot;Other Miscellaneous Topics&quot; slides from the IDEA course.</p>
-<p>An example of a .puls logfile is given below. The data are stored in one long line. The text between 5002 and 6002 forms the header, and the text between 5003 and 6003 the footer. Important information in the footer is the LogStartMDHTime and the LogStopMDHTime (in ms since midnight), which can be used to synchronize the logfiles with the dicom images using the AcquisitionTime in the dicom header (in hhmmss.ms). The values 5000 and 6000 are inserted into the signal trace and indicate trigger events. Note that only the modality which is selected to be displayed during the acquisition will have triggers.</p>
+<p>There are several ways to control the physiological data collection. The &#39;manual&#39; version is available on all platforms. It uses the telnet <code>mpcu/ideacmdtool</code> to manually start and stop the log file acquisition. The log files (<code>logFileName.ecg</code>, <code>logFileName.resp</code>, <code>logFileName.puls</code>, <code>logFileName.ext</code>) are stored in <code>\\MedCom\\log</code>. More details on how to record these data can be found <a href="https://cfn.upenn.edu/aguirre/wiki/doku.php?id=public:pulse-oximetry_during_fmri_scanning">here</a> or in the &quot;Other Miscellaneous Topics&quot; slides from the IDEA course.</p>
+<p>This is the classical method to do physiological recordings on a Siemens scanner. According to the <a href="https://www.cmrr.umn.edu/multiband/">CMRR multi-band</a> sequence manual (see <a href="https://david-e-warren.me/blog/physiological-data-from-mri/">this blogpost</a>), it used to be accurate in terms of timing until Siemens software release VB (hence the name in PhysIO), but has since been superseded by more integrated methods (like CMRR Tics logging or the AdvPhysio Work-in-progress (WIP) by Siemens, which can write the physiological traces as part of the DICOM image header files, see below).</p>
+<h3 id="general-properties">General Properties</h3>
+<p>An example of a <code>.puls</code> logfile is given below. The data are stored in one long line. The text between 5002 and 6002 forms the header, and the text between 5003 and 6003 the footer. Important information in the footer is the <code>LogStartMDHTime</code> and the <code>LogStopMDHTime</code> (in ms since midnight), which can be used to synchronize the logfiles with the DICOM images using the <code>AcquisitionTime</code> in the DICOM header (in hhmmss.ms). The values 5000 and 6000 are inserted into the signal trace and indicate trigger events. Note that only the modality which is selected to be displayed during the acquisition will have triggers.</p>
+<p>We use the time stamp of the clock of the Measurement Data Header (MDH), i.e., computer that controls the scanner, to synchronize with the DICOMs, because this computer also controls the creation of the scan data, i.e., reconstructed DICOM images. This is in accordance to other packages reading Siemens physiological logfile data, e.g., Chris Rorden&#39;s <a href="https://github.com/neurolabusc/Part#usage">PART</a>, with a detailed explanation on the DICOM timestamp in <code>AcquisitionTime</code> found <a href="https://github.com/nipy/heudiconv/issues/450#issuecomment-645003447">here</a>.</p>
 <pre class="hljs"><span class="hljs-attribute">1</span> <span class="hljs-number">2</span> <span class="hljs-number">40</span> <span class="hljs-number">280</span> <span class="hljs-number">5002</span> Logging PULSE signal: reduction factor = <span class="hljs-number">1</span>, PULS_SAMPLES_PER_SECOND = <span class="hljs-number">50</span>; PULS_SAMPLE_INTERVAL = <span class="hljs-number">20000</span> <span class="hljs-number">6002</span> <span class="hljs-number">1653</span> <span class="hljs-number">1593</span> <span class="hljs-number">1545</span> <span class="hljs-number">1510</span> <span class="hljs-number">1484</span> ...
 <span class="hljs-attribute">ACQ</span> FINISHED
  <span class="hljs-attribute">6002</span> <span class="hljs-number">3093</span> <span class="hljs-number">3096</span> <span class="hljs-number">3064</span> <span class="hljs-number">5000</span> <span class="hljs-number">3016</span> <span class="hljs-number">2926</span> <span class="hljs-number">5003</span>
@@ -1747,9 +1763,25 @@ documentation.</li>
 <span class="hljs-attribute">LogStopMDHTime</span>:   <span class="hljs-number">47654452</span>
 <span class="hljs-attribute">LogStartMPCUTime</span>: <span class="hljs-number">47030087</span>
 <span class="hljs-attribute">LogStopMPCUTime</span>:  <span class="hljs-number">47652240</span>
-<span class="hljs-attribute">6003</span></pre><h2 id="cmrr-sequence">CMRR Sequence</h2>
-<p>The CMRR sequence on VD/VE also allows the automatic recording of physiological log files (to be selected in the sequence special card). For more information have a look at the <a href="https://www.cmrr.umn.edu/multiband/">manual</a>. The physiological traces are stored in logFileName_PULS.log, logFileName_RESP, logFileName_ECG.log. Timing information is stored in logFileName_Info.log and external trigger events in logFileName_EXT.log.</p>
-<p>An example of the current format (December 2017, Release 016a) for the logFileName_Info.log is given below: </p>
+<span class="hljs-attribute">6003</span></pre><h3 id="updates-logversion-3">Updates Logversion 3</h3>
+<p>The above specification for physiological Siemens logfiles has been changed by the new logfile version 3 for both cardiac and respiratory data:</p>
+<ol>
+<li>There may be multiple info regions between <code>5002</code> and <code>6002</code> tags, interleaved with the physiological trace, e.g., to log an update in the respiratory cushion gain.</li>
+<li>The <code>.ecg</code> file has now 4 instead of 2 channels.</li>
+<li>The <code>.resp</code> file now contains not only the respiratory bellows signal, but also 4 datapoints per sampling interval of the biomatrix signals (integrated sensors in patient bed for breathing detection, e.g., in Siemens Vida series).</li>
+</ol>
+<p>A logfile in version 3 therefore adheres to the following template (note the logfile version indicated by keyword <code>LOGVERSION</code> at the start):</p>
+<pre class="hljs"><span class="hljs-string">&lt;Header&gt;</span> <span class="hljs-number">5002</span> <span class="hljs-string">&lt;LOGVERSION</span> <span class="hljs-string">XX&gt;</span> <span class="hljs-number">6002</span>
+<span class="hljs-string">&lt;[optional]</span> <span class="hljs-string">training</span> <span class="hljs-string">trace</span> <span class="hljs-string">data&gt;</span> <span class="hljs-number">5002 </span><span class="hljs-string">uiHwRevisionPeru</span> <span class="hljs-string">...</span> [<span class="hljs-string">optional</span>] <span class="hljs-number">6002</span>
+<span class="hljs-number">5002</span> <span class="hljs-string">&lt;infoRegion3&gt;</span> <span class="hljs-number">6002 </span><span class="hljs-number">5002</span> <span class="hljs-string">&lt;infoRegion4&gt;</span> <span class="hljs-number">6002</span> <span class="hljs-string">...</span> <span class="hljs-number">5002</span> <span class="hljs-string">&lt;infoRegionN&gt;</span> <span class="hljs-number">6002</span>
+<span class="hljs-string">&lt;trace</span> <span class="hljs-string">data</span> <span class="hljs-number">1</span> <span class="hljs-string">(all</span> <span class="hljs-string">channels,</span> <span class="hljs-string">arbitrary</span> <span class="hljs-string">number</span> <span class="hljs-string">of</span> <span class="hljs-string">samples,</span> <span class="hljs-string">trigger</span> <span class="hljs-string">markers</span> <span class="hljs-number">5000</span><span class="hljs-string">,</span> <span class="hljs-number">6000</span><span class="hljs-string">)&gt;</span> <span class="hljs-string">...</span>
+<span class="hljs-number">5002</span> <span class="hljs-string">&lt;infoRegionN+1&gt;</span> <span class="hljs-number">6002</span>
+<span class="hljs-string">&lt;trace</span> <span class="hljs-string">data</span> <span class="hljs-number">2</span> <span class="hljs-string">(all</span> <span class="hljs-string">channels,</span> <span class="hljs-string">arbitrary</span> <span class="hljs-string">number</span> <span class="hljs-string">of</span> <span class="hljs-string">samples,</span> <span class="hljs-string">trigger</span> <span class="hljs-string">markers</span> <span class="hljs-number">5000</span><span class="hljs-string">,</span> <span class="hljs-number">6000</span><span class="hljs-string">)&gt;</span> <span class="hljs-string">...</span>
+<span class="hljs-number">5002</span> <span class="hljs-string">&lt;infoRegionN+2&gt;</span> <span class="hljs-number">6002</span> <span class="hljs-string">...</span>
+<span class="hljs-string">&lt;trace</span> <span class="hljs-string">data</span> <span class="hljs-string">M&gt;</span> <span class="hljs-string">...</span> <span class="hljs-number">5003</span></pre><p>PhysIO automatically reads the Siemens logfiles correctly for all modalities and logfile versions 1,2 and 3.</p>
+<h2 id="cmrr-sequence-wip-advanced-physio-logging-siemens_vd-siemens_tics-">CMRR Sequence / WIP Advanced Physio Logging (<code>Siemens_VD</code>, <code>Siemens_Tics</code>)</h2>
+<p>The CMRR sequence on VD/VE/XA also allows the automatic recording of physiological log files (to be selected in the sequence special card). For more information have a look at the <a href="https://www.cmrr.umn.edu/multiband/">manual</a>. The physiological traces are stored in logFileName_PULS.log, logFileName_RESP, logFileName_ECG.log or in the DICOM image file header (use <a href="https://github.com/CMRR-C2P/MB/blob/master/readCMRRPhysio.m">readCMRRPhysio</a> to extract it into separate files for PhysIO). Timing information is stored in logFileName_Info.log and external trigger events in logFileName_EXT.log.</p>
+<p>An example of the current format (December 2017, Release 016a) for the logFileName_Info.log is given below:</p>
 <pre class="hljs"><span class="hljs-attribute">UUID</span>        = <span class="hljs-number">7</span>a<span class="hljs-number">16</span>ea<span class="hljs-number">95</span>-ac<span class="hljs-number">36</span>-<span class="hljs-number">4</span>ee<span class="hljs-number">3</span>-<span class="hljs-number">9</span>b<span class="hljs-number">76</span>-bbb<span class="hljs-number">686</span>ac<span class="hljs-number">07</span>ca
 <span class="hljs-attribute">ScanDate</span>    = <span class="hljs-number">20171206</span>_<span class="hljs-number">150609</span>
 <span class="hljs-attribute">LogVersion</span>  = EJA_<span class="hljs-number">1</span>
@@ -1798,7 +1830,7 @@ documentation.</li>
      <span class="hljs-attribute">21747877</span>     PULS   <span class="hljs-number">1962</span> </pre><p>PhysIO uses the logFileName_Info.log to synchronize the physiological traces with the data acquisition. Note that the reference slice does not yet take into account the multiband slice ordering, but just assumes an even distribution. Older version of the CMRR sequence produced slightly different output files, which might work. Please log an issue if you have a very different format that is not supported.</p>
 <h1 id="human-connectome-project">Human Connectome Project</h1>
 <p>Disclaimer: Most of the information below is a best guess from the developers, but without any guarantee of accuracy.</p>
-<p>The physiological log file (<code>*paradigm*_Physio_log.txt</code>) distributed with the Human Connectome Project data contains respiratory and puls-oximeter data in one file. The first column marks when data acquisition is performed, the second and third contain the respiratory and puls-oximeter traces, respectively. The files are written at a sampling rate of 400Hz and start and end with the scan. PhysIO does provide a reader, you just need to select the appropriate option in the file format tab. An example is provided below:</p>
+<p>The physiological log file (<code>\*paradigm\*\_Physio_log.txt</code>) distributed with the Human Connectome Project data contains respiratory and puls-oximeter data in one file. The first column marks when data acquisition is performed, the second and third contain the respiratory and puls-oximeter traces, respectively. The files are written at a sampling rate of 400Hz and start and end with the scan. PhysIO does provide a reader, you just need to select the appropriate option in the file format tab. An example is provided below:</p>
 <pre class="hljs"><span class="hljs-symbol">1 </span>   <span class="hljs-number">1904</span>    <span class="hljs-number">1756</span>
 <span class="hljs-symbol">1 </span>   <span class="hljs-number">1904</span>    <span class="hljs-number">1756</span>
 <span class="hljs-symbol">1 </span>   <span class="hljs-number">1907</span>    <span class="hljs-number">1754</span>
@@ -1826,8 +1858,51 @@ documentation.</li>
 <span class="hljs-symbol">1 </span>   <span class="hljs-number">1904</span>    <span class="hljs-number">1780</span></pre><p class="page" id="CHANGELOG"></p><h1>Version History (Changelog)</h1>
 <h1 id="release-information">RELEASE INFORMATION</h1>
 <h2 id="current-release">Current Release</h2>
-<p><em>Current version: PhysIO Toolbox Release R2022a, v8.1.0</em></p>
-<p>April 5th, 2022</p>
+<p><em>Current version: PhysIO Toolbox Release R2024a, v9.0.0</em></p>
+<p>January 29th, 2025</p>
+<h2 id="major-release-notes-v9-0-0-">Major Release Notes (v9.0.0)</h2>
+<h3 id="added">Added</h3>
+<ul>
+<li>BIDS writer: write out BIDS-compatbile physiological logfiles (<code>.tsv.gz</code> and <code>.json</code>)
+from any vendor format</li>
+<li>Greatly expanded Review visualization (<code>tapas_physio_review</code>): Allow more detailed re-creation of figures from online execution, control visual verbosity retrospectively (e.g., for debugging)</li>
+<li>Read-In of field <code>AcquisitionTime</code> from BIDS <code>.json</code> side-car file for converted Siemens DICOMs after <a href="https://www.nitrc.org/plugins/mwiki/index.php/dcm2nii:MainPage">dcm2niix</a> conversion for synchronization (Gitlab issue 109)</li>
+</ul>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>Expanded usage of scan trigger trace (continuous, binary, on/off vs alternating levels)</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Bugfix processing of short Siemens IdeaCmdTool logfiles (stop before scan ending)</li>
+<li>DICOM Read-in for files without extension</li>
+</ul>
+<h2 id="minor-release-notes-v8-2-0-">Minor Release Notes (v8.2.0)</h2>
+<h3 id="added">Added</h3>
+<ul>
+<li>Interface <code>tapas_physio_test</code> to TAPAS-generic <code>tapas_test</code> function</li>
+<li>Added suport for logfile version 3 of Siemens physio recordings <ul>
+<li>multi ECG/Resp channels and interleaved status messages</li>
+<li>new integration test for Siemens VB Logversion 3</li>
+</ul>
+</li>
+<li>Added support for ADInstruments/LabChart Txt-export format (see 
+<a href="https://github.com/BRAIN-TO/cubric-physio">CUBRIC Seminar Example</a> and
+gitlab branch #107)</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Removed dependence on <code>nanmean</code> (Statistics Toolbox)<ul>
+<li>See <a href="https://github.com/translationalneuromodeling/tapas/issues/205">GitHub issue #205</a> </li>
+</ul>
+</li>
+<li>Compatibility with multiple SPM toolbox locations for <code>lmod</code> (<a href="https://github.com/translationalneuromodeling/tapas/issues/211">GitHub issue #211</a>)<ul>
+<li>as listed in <code>spm_get_defaults(&#39;tbx&#39;)</code></li>
+</ul>
+</li>
+<li>Refactoring of Philips read-in to support novel 12-column logfile version, see <a href="https://github.com/translationalneuromodeling/tapas/issues/207#issuecomment-1246078600">GitHub issue #207</a></li>
+<li>Unit/Integration tests for filtered traces (cardiac and respiratory) switched to absolute tolerances (relative problematic for traces close to zero)</li>
+</ul>
 <h2 id="minor-release-notes-v8-1-0-">Minor Release Notes (v8.1.0)</h2>
 <h3 id="added">Added</h3>
 <ul>
@@ -2055,8 +2130,7 @@ when only <code>&#39;RETROICOR&#39;</code> set was chosen</li>
 <h2 id="minor-release-notes-r2019a-v7-1-0-">Minor Release Notes (R2019a, v7.1.0)</h2>
 <h3 id="added">Added</h3>
 <ul>
-<li>BIDS reader and example (Brain Imaging Data Structure, 
-<a href="http://bids.neuroimaging.io/bids_spec.pdf">http://bids.neuroimaging.io/bids_spec.pdf</a>) for <code>*_physio.tsv[.gz]/.json</code> files</li>
+<li>Brain Imaging Data Structure (<a href="https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/06-physiological-and-other-continuous-recordings.html">BIDS</a>) reader and example for <code>*_physio.tsv[.gz]/.json</code> files</li>
 <li>Added BioPac txt-File read-in and example</li>
 <li>Template example with all physio-fields for matlab script and settings as in default SPM batch</li>
 <li>Started unit testing framework in folder <code>tests</code><ul>

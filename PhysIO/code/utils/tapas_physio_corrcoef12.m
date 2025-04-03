@@ -1,11 +1,11 @@
-function [correlation,x,y] = tapas_physio_corrcoef12(x,y, isZtransformed)
+function [correlation,x,y] = tapas_physio_corrcoef12(x,y, isZtransformed,precisionThreshold)
 % computes correlation coefficient (i.e. entry (1,2) of correlation matrix)
 % quickly between two time series
 % The speed-up is mainly due to in-line re-implementation of costly
 % statistical functions, i.e. mean, std, cov, and usage of a pre-applied
 % z-transformation of either of the inputs
 %
-%   [correlation,x,y] = tapas_physio_corrcoef12(x,y, isZtransformed)
+%   [correlation,x,y] = tapas_physio_corrcoef12(x,y, isZtransformed,precisionThreshold)
 %
 %
 % IN
@@ -17,6 +17,11 @@ function [correlation,x,y] = tapas_physio_corrcoef12(x,y, isZtransformed)
 %                   example:
 %                   isZtransformed = [1,0] means that x is z-transformed,
 %                   by y is not, i.e. (y-mean(y))/std(y) will be computed
+%   precisionThreshold [1,1] If x or y are z-transformed and the standard 
+%                   deviation is smaller than precisionThreshold, then the
+%                   the result will be set to NaN to avoid numeric
+%                   instabilities.
+%                   
 % OUT
 %   correlation     correlation(1,2) of correlation = corrcoef(x,y)
 %   x               z-transformed x
@@ -37,6 +42,9 @@ function [correlation,x,y] = tapas_physio_corrcoef12(x,y, isZtransformed)
 
 if nargin < 3
     isZtransformed = [0 0];
+end
+if nargin < 4
+    precisionThreshold = eps('single');
 end
 
 % This is the old implementation; uncomment for comparison purposes
@@ -63,11 +71,21 @@ if any(x) && any(y) % all-zero vectors result in zero correlation
     
     if ~isZtransformed(1) % perform z-transformation
         x = x - sum(x)/nSamples;
-        x = x./sqrt(x'*x*normFactor);
+        sig = sqrt(x'*x*normFactor);
+        if sig < precisionThreshold
+            sig = NaN;
+        end
+        x = x./sig;
+        %x = x./sqrt(x'*x*normFactor);
+        %x = x./sqrt(x')./sqrt(x)./normFactor;
     end
     if ~isZtransformed(2) % perform z-transformation
         y = y - sum(y)/nSamples;
-        y = y./sqrt(y'*y*normFactor);
+        sig = sqrt(y'*y*normFactor);
+        if sig < precisionThreshold
+            sig = NaN;
+        end
+        y = y./sig;
     end
     
     if numel(x) == numel(y)

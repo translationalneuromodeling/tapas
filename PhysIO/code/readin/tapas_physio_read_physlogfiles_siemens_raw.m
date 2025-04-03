@@ -1,13 +1,15 @@
 function [lineData, logFooter, linesFooter] = tapas_physio_read_physlogfiles_siemens_raw(...
-    fileNameLog)
+    fileNameLog, referenceClockString)
 % Read in raw data/footer lines of logfiles, without data selection/sorting
 %
 % [lineData, linesFooter] = tapas_physio_read_physlogfiles_siemens_raw(...
-%        fileNameLog)
+%        fileNameLog, referenceClockString)
 %
 % IN
 %   fileNameLog     file name of physiological log, e.g. *.ecg
-%
+%   referenceClockString
+%                   'MDH' (scanner, default) or 'MPCU' (physiological
+%                   monitoring unit
 % OUT
 %   lineData        all recording amplitude samples are saved in first line
 %                   of file
@@ -33,6 +35,9 @@ function [lineData, logFooter, linesFooter] = tapas_physio_read_physlogfiles_sie
 % (either version 3 or, at your option, any later version). For further details, see the file
 % COPYING or <http://www.gnu.org/licenses/>.
 
+if nargin < 2
+    referenceClockString = 'MDH';
+end
 
 fid             = fopen(fileNameLog);
 
@@ -47,25 +52,38 @@ fclose(fid);
 linesFooter = C{1}(2:end);
 lineData = C{1}{1};
 
-%Get time stamps from footer:
+% Get time stamps from footer:
 
-logFooter.LogStartTimeSeconds =   str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
+% MPCU  = Computer who controls the physiological logging in real-time => physio logging happens here  
+% MDH   = Computer who is the host (Measurement Data Header); console => DICOM time stamp here
+logFooter.StartTimeSecondsScannerClock =   str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
     'LogStartMDHTime'))),'\D',''))) / 1000;
-logFooter.LogStopTimeSeconds =    str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
+logFooter.StopTimeSecondsScannerClock =    str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
     'LogStopMDHTime'))),'\D',''))) / 1000;
 
-% MPCU  = Computer who controls the scanner => physio logging happens here  
-% MDH   = Compute who is the host; console => DICOM time stamp here!
+logFooter.StartTimeSecondsRecordingClock = str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
+    'LogStartMPCUTime'))),'\D',''))) / 1000;
+logFooter.StopTimeSecondsRecordingClock = str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
+    'LogStopMPCUTime'))),'\D',''))) / 1000;
+
 %
-% - according to Chris Rorden, PART
-% (http://www.mccauslandcenter.sc.edu/crnl/tools/part) - MDH is the time we
-% should use for phys logging synchronization, since DICOM conversion uses
-% this clock
+% We use the time stamp of the clock of the Measurement Data Header (MDH),
+% i.e., computer that controls the scanner, to synchronize with the DICOMs,
+% because this computer also controls the creation of the scan data, i.e.,
+% reconstructed DICOM images. This is in accordance to other packages
+% reading Siemens physiological logfile data, e.g., Chris Rorden's PART
+% (https://github.com/neurolabusc/Part#usage),
+% with a detailed explanation on the DICOM timestamp in AcquisitionTime
+% found here (https://github.com/nipy/heudiconv/issues/450#issuecomment-645003447) 
+% 
+% MPCU is the clock of the computer that controls the physiological
+% recording (same as MARS?), but does not know about the scan volume and DICOM timing
 
-% This is just a different time-scale (of the phys log computer), it does 
-% definitely NOT match with the Acquisition time in the DICOM-headers
-logFooter.ScanStartTimeSeconds = str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
-    'LogStartMPCUTime'))),'\D','')));
-logFooter.ScanStopTimeSeconds = str2num(char(regexprep(linesFooter(~cellfun(@isempty,strfind(linesFooter,...
-    'LogStopMPCUTime'))),'\D','')));
-
+switch upper(referenceClockString)
+    case 'MDH'
+logFooter.StartTimeSeconds = logFooter.StartTimeSecondsScannerClock;
+logFooter.StopTimeSeconds = logFooter.StopTimeSecondsScannerClock;
+    case 'MPCU'
+logFooter.StartTimeSeconds = logFooter.StartTimeSecondsRecordingClock;
+logFooter.StopTimeSeconds = logFooter.StopTimeSecondsRecordingClock;
+end

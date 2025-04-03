@@ -41,16 +41,19 @@ end
 
 % path to examples, needed for all test cases
 function setupOnce(testCase)
-% run GE example and extract physio
-testCase.TestData.pathPhysioPublic = fullfile(fileparts(mfilename('fullpath')), '..', '..');
-% TODO: Make generic!
-testCase.TestData.pathExamples =  fullfile(testCase.TestData.pathPhysioPublic, '..', 'examples');
+% Get PhysIO public repo base folder from this file's location
+testCase.TestData.pathExamples = tapas_physio_get_path_examples();
+testCase.TestData.createdFigHandles = [];
 end
 
 
 % close all created figures from examples after each test
 function teardown(testCase)
-close(testCase.TestData.createdFigHandles);
+if isfield(testCase, 'TestData') && ...
+        isfield(testCase.TestData, 'createdFigHandles') && ...
+        ~isempty(testCase.TestData.createdFigHandles)
+    close(testCase.TestData.createdFigHandles);
+end
 end
 
 
@@ -62,6 +65,14 @@ function test_bids_cpulse3t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of BIDS/CPULSE3T example using matlab only
 dirExample = 'BIDS/CPULSE3T';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_bids_ecg3t_v2_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of BIDS/ECG3T_V2 example using matlab only
+dirExample = 'BIDS/ECG3T_V2';
 doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
@@ -81,6 +92,7 @@ dirExample = 'BIDS/PPU3T_Separate_Files';
 doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
+
 
 function test_biopac_txt_ppu3t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -108,7 +120,6 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_philips_ecg3t_v2_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG3T_V2 example using matlab only
@@ -117,6 +128,27 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_philips_ecg3t_v2_for_bids_vs_bids_converted_matlab_only(testCase)
+%% Checking self-consistency of PhysIO bids_writer:
+% Compares reference output of preprocessing and modeling results of PhysIO
+% from Philips vendor data to output starting with PhysIO BIDS-writer
+% created BIDS files
+dirExample = 'BIDS/ECG3T_V2';
+dirRefResults = 'Philips/ECG3T_V2';
+doUseSpm = false;
+isVerbose = false;
+idxTests = [1:5]; % raw and processed data tested in different steps
+% some fields from Philips data are not converted to BIDS, because:
+% acq_codes:    contain detected cardiac peaks from Philips which we typically
+%               ignore and don't write to BIDS
+% c_scaling:    BIDS dataset is saved already after normalization,
+%               amplitudes are set to one vs Philips
+% r_scaling:    BIDS dataset is saved already after normalization,
+%               amplitudes are set to one vs Philips
+ignoredFieldsOnsSecs = {'acq_codes', 'c_scaling', 'r_scaling'};
+run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose);
+end
 
 function test_philips_ecg7t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -125,7 +157,6 @@ dirExample = 'Philips/ECG7T';
 doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
-
 
 function test_philips_ppu3t_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -153,6 +184,13 @@ doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_siemens_vb_ecg3t_logversion_3_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using matlab only
+dirExample = 'Siemens_VB/ECG3T_Logversion_3';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
 
 function test_siemens_vb_ppu3t_sync_first_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -160,15 +198,40 @@ function test_siemens_vb_ppu3t_sync_first_matlab_only(testCase)
 % synced to first DICOM volume of run
 dirExample = 'Siemens_VB/PPU3T_Sync_First';
 doUseSpm = false;
-run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+dirRefResults = dirExample;
+idxTests = 1:5;
+ignoredFieldsOnsSecs = {}; % {'cpulse'};
+isVerbose = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose)
 end
-
 
 function test_siemens_vb_ppu3t_sync_last_matlab_only(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Siemens_VB/PPU3T example using matlab only
 % synced to last DICOM volume of run
 dirExample = 'Siemens_VB/PPU3T_Sync_Last';
+doUseSpm = false;
+dirRefResults = dirExample;
+idxTests = 1:5;
+ignoredFieldsOnsSecs = {}; % {'cpulse'};
+isVerbose = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose)
+end
+
+function test_siemens_vb_resp3t_logversion_1_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using matlab only
+dirExample = 'Siemens_VB/RESP3T_Logversion_1';
+doUseSpm = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_siemens_vb_resp3t_logversion_3_matlab_only(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using matlab only
+dirExample = 'Siemens_VB/RESP3T_Logversion_3';
 doUseSpm = false;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
@@ -216,6 +279,14 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_bids_ecg3t_v2_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of BIDS/ECG3T_V2 example using matlab only
+dirExample = 'BIDS/ECG3T_V2';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
 function test_bids_ppu3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of BIDS/PPU3T example using SPM Batch Editor
@@ -231,6 +302,7 @@ dirExample = 'BIDS/PPU3T_Separate_Files';
 doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
+
 
 function test_biopac_txt_ppu3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -258,7 +330,6 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_philips_ecg3t_v2_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG3T_V2 example using SPM Batch Editor
@@ -267,7 +338,6 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
-
 function test_philips_ecg7t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Philips/ECG7T example using SPM Batch Editor
@@ -275,7 +345,6 @@ dirExample = 'Philips/ECG7T';
 doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
-
 
 function test_philips_ppu3t_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -303,13 +372,26 @@ doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
 
+function test_siemens_vb_ecg3t_logversion_3_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using SPM Batch Editor
+dirExample = 'Siemens_VB/ECG3T_Logversion_3';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
 function test_siemens_vb_ppu3t_sync_first_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of Siemens_VB/PPU3T example
 % (sync to first DICOM volume time stamp) using SPM Batch Editor
 dirExample = 'Siemens_VB/PPU3T_Sync_First';
 doUseSpm = true;
-run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+dirRefResults = dirExample;
+idxTests = 1:5;
+ignoredFieldsOnsSecs = {}; % {'cpulse'}; 
+isVerbose = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose)
 end
 
 function test_siemens_vb_ppu3t_sync_last_with_spm(testCase)
@@ -317,6 +399,27 @@ function test_siemens_vb_ppu3t_sync_last_with_spm(testCase)
 % to current output of re-run of Siemens_VB/PPU3T example
 % (sync to last DICOM volume time stamp) using SPM Batch Editor
 dirExample = 'Siemens_VB/PPU3T_Sync_Last';
+doUseSpm = true;
+dirRefResults = dirExample;
+idxTests = 1:5;
+ignoredFieldsOnsSecs = {}; %{'cpulse'}; 
+isVerbose = false;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose)
+end
+
+function test_siemens_vb_resp3t_logversion_1_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using SPM Batch Editor
+dirExample = 'Siemens_VB/RESP3T_Logversion_1';
+doUseSpm = true;
+run_example_and_compare_reference(testCase, dirExample, doUseSpm)
+end
+
+function test_siemens_vb_resp3t_logversion_3_with_spm(testCase)
+%% Compares previously saved physio-structure and multiple regressors file
+% to current output of re-run of Siemens_VB/ECG3T example using SPM Batch Editor
+dirExample = 'Siemens_VB/RESP3T_Logversion_3';
 doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
@@ -329,7 +432,6 @@ dirExample = 'Siemens_VD/PPU3T';
 doUseSpm = true;
 run_example_and_compare_reference(testCase, dirExample, doUseSpm)
 end
-
 
 function test_siemens_vd_ppu3t_for_bids_with_spm(testCase)
 %% Compares previously saved physio-structure and multiple regressors file
@@ -358,7 +460,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
-    dirRefResults, idxTests)
+    dirRefResults, idxTests, ignoredFieldsOnsSecs, isVerbose)
 %% Compares previously saved physio-structure and multiple regressors file
 % to current output of re-run of example in specified example sub-folder
 % Note: both SPM or matlab-script based execution is possible
@@ -384,9 +486,23 @@ function run_example_and_compare_reference(testCase, dirExample, doUseSpm, ...
 %               equivalency is expected (e.g., using the same data window,
 %               but from a shorter logfile, ons_secs.raw will differ)
 %               default: [1 2 3 4 5] (all)
+%   ignoredFieldsOnsSecs
+%               extra fields ignored from ons_secs substruct of physio
+%               default: {}
+%   isVerbose   true or false; default: false
+%               plots comparison results between actual and expected physio
+%               struct fields
 %
 % OUT
 %
+
+if nargin < 7
+    isVerbose = false;
+end
+
+if nargin < 6
+    ignoredFieldsOnsSecs = {};
+end
 
 if nargin < 5
     idxTests = 1:5;
@@ -398,6 +514,7 @@ end
 
 % hard-coded relative tolerance
 relTol = 0.01; % 0.01 means 1 percent deviation from expected value allowed
+absTol = 1e-6; % for time courses (e.g., breathing) that reach close to 0, relative tolerance can be misleading, use relative value to max instead
 
 %% Generic settings
 % methods for recursively comparing structures, see
@@ -432,14 +549,46 @@ if doUseSpm
     fileExampleOutputPhysio = matlabbatch{1}.spm.tools.physio.model.output_physio;
     fileExampleOutputTxt = matlabbatch{1}.spm.tools.physio.model.output_multiple_regressors;
     
-else % has verbosity...cannot switch it off
+else % run matlab script, but read it line-by-line, but switch off verbosity
     
     fileJobMScript = [regexprep(lower(dirExample), '/', '_') '_matlab_script.m'];
     fileExample = fullfile(pathExamples, dirExample, fileJobMScript);
     
-    % runs example Matlab script
-    % will output a PhysIO-struct, from which we can parse output files
-    run(fileExample);
+    %% read and eval all lines in example file apart from tapas_physio_main_regressors
+    % then switch off verbosity and execute main
+    % i.e., emulate running the example script via "run(fileExample);" 
+  
+    pathTmp = fileparts(fileExample);
+    if ~isempty(pathTmp) % to emulate behavior of Matlab's "run", we have to CD to the folder
+        pathNow = pwd;
+        cd(pathTmp);
+    end
+    fid = fopen(fileExample);
+    strColumnHeader = 'tapas_physio_main_create_regressors';
+    haveFoundColumnHeader = isempty(strColumnHeader);
+    strLine = 'physio = [];';
+    % execute all lines up to tapas_physio_main_create_regressors
+    while ~haveFoundColumnHeader
+        eval(strLine);
+        strLine = fgets(fid);
+        haveFoundColumnHeader = any(regexpi(strLine, strColumnHeader));        
+    end
+    fclose(fid);
+    physio.verbose.level = 0;
+    
+    try
+        eval(strLine); % execute tapas_physio_main_create_regressors
+        if ~isempty(pathTmp)
+            cd(pathNow);
+        end
+    catch err
+        % at least CD back to original directory
+        if ~isempty(pathTmp)
+            cd(pathNow);
+        end
+        rethrow(err)
+    end
+    % output of example script is  PhysIO-struct, from which we can parse output files
     
     % retrieve output files, remove preprending path
     [~, dirExampleOutput] = fileparts(physio.save_dir);
@@ -469,7 +618,6 @@ fileReferenceData = fullfile(pathExamples, 'TestReferenceResults', 'examples', .
 load(fileReferenceData, 'physio');
 expPhysio = physio;
 
-
 % Compare all numeric sub-fields of physio with some tolerance
 % ons_secs has all the computed preprocessed physiological and scan timing
 % sync data, from which .model derives the physiological regressors later
@@ -487,8 +635,21 @@ if doTestOnsSecsRaw
         IsEqualTo(expPhysio.ons_secs.raw,  ...
         'Using', StructComparator(NumericComparator, 'Recursively', true), ...
         'Within', RelativeTolerance(relTol), ...
-        'IgnoringFields',  {'spulse_per_vol'}...
+        'IgnoringFields', [ignoredFieldsOnsSecs {'spulse_per_vol', 'fr'}] ...
         ), 'Comparing all numeric subfields of ons_secs.raw to check read-in and basic filtering of phys recordings');
+
+    % test filtered respiratory trace separetely, because of values close
+    % to zero in trace (relative errors can be huge even if 1e-6)
+    % if isempty, set arbitrary tolerance
+    absTolFr = absTol*max(abs(expPhysio.ons_secs.raw.fr));
+    if isempty(absTolFr)
+        absTolFr = absTol;
+    end
+
+    verifyEqual(testCase, actPhysio.ons_secs.raw.fr, expPhysio.ons_secs.raw.fr, ...
+        'AbsTol', absTolFr, ...
+        'Comparing ons_secs.raw.fr (raw filtered respiratory trace)');
+
 end
 
 % 2. Check some crucial timing parameters more vigorously
@@ -505,7 +666,7 @@ if doTestOnsSecs
         IsEqualTo(expPhysio.ons_secs,  ...
         'Using', StructComparator(NumericComparator, 'Recursively', true), ...
         'Within', RelativeTolerance(relTol), ...
-        'IgnoringFields',  {'spulse_per_vol', 'raw'}...
+        'IgnoringFields',  [ignoredFieldsOnsSecs {'spulse_per_vol', 'raw'}] ...
         ), 'Comparing all numeric subfields of ons_secs to check full preprocessing of phys recordings');
 end
 
@@ -541,6 +702,14 @@ if doTestMultipleRegressorsTxt
     verifyEqual(testCase, actRegressorsFromTxt, expRegressorsFromTxt, ...
         'RelTol', relTol, ...
         'Comparing multiple regressors in txt-files');
+end
+
+if isVerbose
+    try % test should not fail because of a bad plot
+        tapas_physio_plot_results_comparison(actPhysio, expPhysio);
+    catch
+        warning('Comparison plot of actual vs reference physio struct failed');
+    end
 end
 
 end

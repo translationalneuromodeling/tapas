@@ -23,4 +23,4 @@ function versionPhysio = tapas_physio_version()
 % version 3 or, at your option, any later version). For further details,
 % see the file COPYING or <http://www.gnu.org/licenses/>.
 %
-versionPhysio = 'R2022a-v8.1.0';
+versionPhysio = 'R2024a-v9.0.1';

@@ -56,6 +56,12 @@ if isempty(VOLLOCS) % try Philips scan trigger onset code instead
     VOLLOCS = find(acq_codes == 8);
 end
 
+% bugfix if slice-wise triggers were mistaken for volume triggers
+if isempty(LOCS) && numel(VOLLOCS) >= nTotalSlices
+    LOCS = VOLLOCS;
+    VOLLOCS = [];
+end
+
 isValidVOLLOCS = numel(VOLLOCS) >= nTotalVolumes;
 isValidLOCS = numel(LOCS) >= nTotalSlices;
 

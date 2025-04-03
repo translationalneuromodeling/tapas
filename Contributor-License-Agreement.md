@@ -12,7 +12,7 @@ and
 each GitHub User listed in the following table:  
 
 Name                     | Company/Institution/Address        | City      | Country | E-Mail/GitHub Username | CLA version accepted
------------------------- | ---------------------------------- | --------- | ------- | ---------------------- | ------------------
+------------------------ | ---------------------------------- | --------- | ------- | ---------------------- | --------------------
 Lars Kasper              | TNU, University of Zurich          | Zurich    | CH      | mrikasper              | 1.0
 Eduardo Aponte           | TNU, University of Zurich          | Zurich    | CH      | tnutapas               | 1.0
 Daniel Hoffmann Ayala    | Technical University               | Munich    | D       | DanielHoffmannAyala    | 1.0
@@ -22,6 +22,7 @@ Niklas Bürgi             | SNS, University of Zurich          | Zurich    | CH 
 Alexandre Sayal          | CIBIT, University of Coimbra       | Coimbra   | PT      | alexsayal              | 1.0
 Filippo Ferrari          | ANC, University of Edinburgh       | Edinburgh | UK      | filippoferrari         | 1.1
 Matthias Müller-Schrader | TNU, University of Zurich          | Zurich    | CH      | mms-neuro              | 1.1
+Johanna M. M. Bayer      | The University of Melbourne        | Melbourne | AU      | likeajumprope          | 1.1
 Saskia Bollmann          | The University of Queensland       | Brisbane  | AUS     | SaskiaBollmann         | 1.1
 Anna Yurova              | LMU University Hospital            | Munich    | GER     | a-yur                  | 1.1
 Irene Sophia Plank       | LMU University Hospital            | Munich    | GER     | IreneSophia            | 1.1

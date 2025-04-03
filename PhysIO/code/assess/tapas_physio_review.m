@@ -41,8 +41,8 @@ function verbose = tapas_physio_review(physio, newVerboseLevel)
 %
 %   See also
 
-% Author: Lars Kasper
-% Created: 2016-10-27
+% Author: Johanna Bayer, Lars Kasper
+% Created: 2016-10-27, completed 2023
 % Copyright (C) 2016 TNU, Institute for Biomedical Engineering,
 %                    University of Zurich and ETH Zurich.
 %
@@ -72,6 +72,7 @@ sqpar       = scan_timing.sqpar;
 sync        = scan_timing.sync;
 model       = physio.model;
 verbose     = physio.verbose;
+review      = physio.verbose.review;
 
 % Compatibility with old versions
 if ~isfield(model, 'R_column_names')
@@ -118,17 +119,108 @@ if ~isfield(verbose, 'close_figs') || isempty(verbose.close_figs)
     verbose.close_figs = false;
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure: Raw data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 verbose = tapas_physio_plot_raw_physdata(ons_secs.raw, verbose);
 
-% tapas_physio_get_onsets_from_locs -> create plot function out of
-% sub-function
-% tapas_physio_get_cardiac_pulses_auto_matched -> subfunction for plot, only called
-% if in this sub-branch
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure:  Peak detection
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if ismember(preproc.cardiac.initial_cpulse_select.method, {'auto','auto_template', 'auto_matched'})
+
+    if verbose.level >=2
+        if isfield(review, 'peak')
+
+            [verbose] = tapas_physio_plot_peak_detection_from_automatically_generated(review.peak.t, review.peak.c, ...
+             review.peak.cpulse, verbose);
+        end
+    end
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure: Iterative template
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% First and second figure
+ 
+if verbose.level >= 3
+    
+    if isfield(review, 'iter_temp')
+        [verbose] = tapas_physio_plot_iterative_template_creation(review.iter_temp.hasFirstGuessPeaks,...
+            review.iter_temp.t, review.iter_temp.c, review.iter_temp.cpulse1stGuess, review.iter_temp.nPulses1, ...
+            review.iter_temp.nPulses2, review.iter_temp.cpulse2ndGuess, review.iter_temp.meanLag1, ...
+            review.iter_temp.meanLag2, verbose);
+    end 
+
+% thrid figure
+    if isfield(review, 'temp_cyc')
+        [verbose] = tapas_physio_plot_templates_of_cycle_time(review.temp_cyc.tTemplate, ...
+            review.temp_cyc.template, review.temp_cyc.pulseTemplate, ... 
+            review.temp_cyc.pulseCleanedTemplate, verbose);
+    end
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure:  Sync Bundles
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if verbose.level >= 3
+    if isfield(review, 'sync_bundles') 
+        [verbose] = tapas_physio_plot_sync_bundles(review.sync_bundles.Nallvols, review.sync_bundles.t, ...
+            review.sync_bundles.SLICELOCS, verbose);
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure: Get cardiac
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if verbose.level >= 3
+
+    if isfield(review, 'get_cardiac')
+
+        [verbose] = tapas_physio_plot_get_cardiac_phase(review.get_cardiac.scannert, ...
+            review.get_cardiac.cardiac_phase, review.get_cardiac.pulset, ...
+            review.get_cardiac.svolpulse, verbose);
+    end
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure: Preproc Coutcout actual scans - all events and gradients
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if verbose.level >= 2
     verbose.fig_handles(end+1) = ...
         tapas_physio_plot_cropped_phys_to_acqwindow(ons_secs, sqpar, verbose);
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure: Preproc Respiratory filtering
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+if verbose.level>=3
+
+    if isfield(review, 'resp_filter')
+
+    [verbose] = tapas_physio_plot_filter_respiratory(review.resp_filter.rpulset, ...
+        review.resp_filter.m, review.resp_filter.s, review.resp_filter.t, ...
+        review.resp_filter.rpulset_out, review.resp_filter.rpulset_out_trend,...
+        review.resp_filter.trend,review.resp_filter.rpulset_out_trend_filt, verbose);
+
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figure: Preproc Diagnostics for raw physiological time series
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 [verbose, ons_secs.c_outliers_low, ons_secs.c_outliers_high, ...
     ons_secs.r_hist] = ...
@@ -136,10 +228,17 @@ end
     ons_secs.r, preproc.cardiac.posthoc_cpulse_select, verbose, ...
     ons_secs.t, ons_secs.c);
 
-% in tapas_physio_create_retroicor_regressors:
-% tapas_physio_get_respiratory_phase
-% function fh = plot_traces(pulset, rsampint, rout, resp_max, ...
-%   cumsumh, sumh, h, npulse, dpulse, rphase)
+
+if verbose.level >=3
+
+    if isfield(review, 'traces')
+        fh = tapas_physio_plot_traces(review.traces.pulset, review.traces.rsampint, ...
+            review.traces.rout, review.traces.resp_max, review.traces.cumsumh,...
+            review.traces.sumh, review.traces.h, review.traces.npulse, review.traces.dpulse, ...
+            review.traces.r_phase);
+    end
+
+end
 
 
 %% RETROICOR
@@ -177,9 +276,24 @@ if model.rvt.include
       verbose.fig_handles(end+1) = tapas_physio_plot_rvt(ons_secs, sqpar);
 end
 
-%% tapas_physio_create_hrv_regressors, tapas_physio_create_rvt_regressors
-% tapas_physio_create_noise_rois_regressors
-% => create functions out of inline-plotting
+if verbose.level >= 2
+    if model.rvt.include
+      [verbose] = tapas_physio_plot_rvt_hilbert(review.rvt_hilbert.t,review.rvt_hilbert.fr, ...
+          review.rvt_hilbert.fr_lp, review.rvt_hilbert.fr_mag, review.rvt_hilbert.fr_rv, ...
+    review.rvt_hilbert.fr_phase, review.rvt_hilbert.fr_if, verbose);
+    end
+end
+
+%% tapas_physio_create_hrv_regressors,
+if verbose.level>=2
+    if model.rvt.include
+        [verbose] = tapas_physio_plot_create_hrv_regressors(review.create_hrv_regressors.sample_points, ... 
+        review.create_hrv_regressors.hrOut, review.create_hrv_regressors.hr, review.create_hrv_regressors.t, ...
+        review.create_hrv_regressors.crf, review.create_hrv_regressors.convHRV, ... 
+        review.create_hrv_regressors.delays,review.create_hrv_regressors.samplePointsOut,...
+        review.create_hrv_regressors.convHRVOut, verbose);
+    end
+end
 
 %% Overall regressors
 

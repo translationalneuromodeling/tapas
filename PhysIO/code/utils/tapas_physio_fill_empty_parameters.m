@@ -52,7 +52,7 @@ if isempty(physio.log_files.sampling_interval)
     switch lower(physio.log_files.vendor)
         case {'bids', 'biopac_mat', 'brainproducts', 'siemens'} % will be read from file later
             physio.log_files.sampling_interval = [];
-        case 'biopac_txt'
+        case {'adinstruments_txt', 'labchart_txt', 'biopac_txt'}
             physio.log_files.sampling_interval = 1/1000;
         case 'ge'
             physio.log_files.sampling_interval = 25e-3;
@@ -69,4 +69,11 @@ if isempty(physio.log_files.sampling_interval)
         otherwise % e.g. custom
             error('Please specify sampling interval for custom text data');
     end
+end
+
+% if no specific directory is given for BIDS output, write files to where
+% other PhysIO output is written to
+if isempty(physio.write_bids.bids_dir) || ...
+        (iscell(physio.write_bids.bids_dir) && isempty([physio.write_bids.bids_dir{:}]))
+    physio.write_bids.bids_dir = physio.save_dir;
 end

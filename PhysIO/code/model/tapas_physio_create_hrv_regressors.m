@@ -55,39 +55,15 @@ slicenum = 1:sqpar.Nslices;
 sample_points  = tapas_physio_get_sample_points(ons_secs, sqpar, slicenum);
 hr = tapas_physio_hr(ons_secs.cpulse, sample_points);
 
-if verbose.level>=2
-    verbose.fig_handles(end+1) = tapas_physio_get_default_fig_params();
-    set(gcf, 'Name', 'Model: Regressors Heart Rate: HRV X CRF');
-    subplot(2,2,1)
-    plot(sample_points,hr,'r');xlabel('time (seconds)');
-    title('Heart Rate');
-    ylabel('beats per min (bpm)');
-end
-
-
 % Generate CRF
 dt = sqpar.TR/sqpar.Nslices;
 t = 0:dt:30;  % seconds
 crf = tapas_physio_crf(t);
 crf = crf / max(abs(crf));
 
-if verbose.level>=2
-    subplot(2,2,2)
-    plot(t, crf,'r');xlabel('time (seconds)');
-    title('Cardiac response function');
-end
-
-
 % Convolve and rescale for display purposes
 convHRV = tapas_physio_conv(hr, crf, 'causal');
 convHRV = convHRV / max(abs(convHRV));
-
-if verbose.level>=2
-    subplot(2,2,3)
-    plot(sample_points, convHRV,'r');xlabel('time (seconds)');
-    title('Heart rate X cardiac response function');
-end
-
 
 % Create shifted regressors convolved time series, which is equivalent to
 % delayed response functions according to Wikipedia (convolution)
@@ -101,7 +77,7 @@ end
 
 % remove mean and linear trend to fulfill periodicity condition for
 % shifting
-convHRV = detrend(convHRV);
+convHRV_detrend = detrend(convHRV);
 
 % TODO: what happens at the end/beginning of shifted convolutions?
 nDelays = numel(delays);
@@ -116,7 +92,7 @@ convHRVOut = zeros(nScans,nDelays,nSampleSlices);
 samplePointsOut = zeros(nScans,nSampleSlices);
 
 for iDelay = 1:nDelays
-    convHRVShifted = circshift(convHRV, nShiftSamples(iDelay));
+    convHRVShifted = circshift(convHRV_detrend, nShiftSamples(iDelay));
     for iSlice = 1:nSampleSlices
         onset_slice = sqpar.onset_slice(iSlice);
         hrOut(:,iSlice) = hr(onset_slice:sqpar.Nslices:end)';
@@ -125,14 +101,21 @@ for iDelay = 1:nDelays
     end
 end
 
+% save relevant structures
+verbose.review.create_hrv_regressors.sample_points = sample_points;
+verbose.review.create_hrv_regressors.hrOut = hrOut;
+verbose.review.create_hrv_regressors.hr = hr;
+verbose.review.create_hrv_regressors.t = t;
+verbose.review.create_hrv_regressors.crf = crf;
+verbose.review.create_hrv_regressors.convHRV = convHRV;
+verbose.review.create_hrv_regressors.delays = delays;
+verbose.review.create_hrv_regressors.samplePointsOut = samplePointsOut;
+verbose.review.create_hrv_regressors.convHRVOut = convHRVOut;
+
 if verbose.level>=2
-    subplot(2,2,4)
-    [tmp, iShiftMin] = min(abs(delays));
-    
-    hp{1} = plot(samplePointsOut, hrOut,'k--'); hold all;
-    hp{2} = plot(samplePointsOut, squeeze(convHRVOut(:,iShiftMin,:)),'r');
-    xlabel('time (seconds)');ylabel('regessor');
-    legend([hp{1}(1), hp{2}(1)], 'heart rate (bpm)', 'cardiac response regressor');
+   [verbose] = tapas_physio_plot_create_hrv_regressors(sample_points, hrOut, ...
+    hr, t, crf, convHRV, delays,samplePointsOut, convHRVOut, verbose)
+
 end
 
 end

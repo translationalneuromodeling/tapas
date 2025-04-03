@@ -41,9 +41,11 @@ function [infos, auxillary_toolboxes] = tapas_get_toolbox_infos()
 
 	infos.physio.init_dir = strcat('PhysIO',filesep,'code');
 	infos.physio.init_function = 'tapas_physio_init';
-	infos.physio.dependencies = [];
+	infos.physio.dependencies = {'Signal Processing Toolbox', ...
+        'Image Processing Toolbox', ...
+        'Statistics and Machine Learning Toolbox'};
 	infos.physio.diagnose_files = 'tapas_physio_main_create_regressors';
-        infos.physio.test_function_name = '';
+        infos.physio.test_function_name = 'tapas_physio_test';
 
 	infos = tapas_default_toolbox_info(infos,'rDCM');
     

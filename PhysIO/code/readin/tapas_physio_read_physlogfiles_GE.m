@@ -54,13 +54,13 @@ hasRespirationFile = ~isempty(log_files.respiration);
 hasCardiacFile = ~isempty(log_files.cardiac);
 
 if hasRespirationFile
-    r = load(log_files.respiration, 'ascii');
+    r = load(log_files.respiration, '-ascii');
 else
     r = [];
 end
 
 if hasCardiacFile
-    c = load(log_files.cardiac, 'ascii');
+    c = load(log_files.cardiac, '-ascii');
 else
     c = [];
 end
