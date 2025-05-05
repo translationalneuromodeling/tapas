@@ -3,7 +3,7 @@ TAPAS toolbox
 ## [6.1.0] 2025-04-03
 ### Added 
 - Added `tapas_test` testing function. Started progressive introduction of testing framework.
-- PhysIO [Version 8.2.0](PhysIO/CHANGELOG.md)
+- PhysIO [Version 9.0.1](PhysIO/CHANGELOG.md)
     - Interface `tapas_physio_test` to TAPAS-generic `tapas_test` function
     - Added suport for logfile version 3 of Siemens physio recordings 
         - multi ECG/Resp channels and interleaved status messages
