@@ -1,5 +1,5 @@
-> 🚨🚨 **Important** 🚨🚨 <br> 
-> TAPAS has moved to a new [location](https://github.com/ComputationalPsychiatry). This repository is no longer maintained.
+> ## 🚨 **Important** 🚨 <br> 
+> ## TAPAS has moved to a new [location](https://github.com/ComputationalPsychiatry). This repository is no longer maintained.
 
 ![TAPAS Logo](misc/TapasLogo.png?raw=true "TAPAS Logo")
 
